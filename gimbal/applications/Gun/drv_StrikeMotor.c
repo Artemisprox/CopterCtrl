@@ -5,39 +5,40 @@
 #include "drv_thread.h"
 #include "drv_magazine.h"
 #include "drv_utils.h"
+#include "robodata.h"
 
-// ±¾ÎÄ¼ş°üº¬·¢Éä»ú¹¹Ïà¹ØµÄµç»úµÄ¿ØÖÆ
+// æœ¬æ–‡ä»¶åŒ…å«å‘å°„æœºæ„ç›¸å…³çš„ç”µæœºçš„æ§åˆ¶
 #if defined CORE_USING_INFANTRY
-#define STRIKEMOTOR_CANDEV can2_dev             // µç»úËùÔÚCANÉè±¸
-static struct rt_semaphore StrikeMotor_2ms_sem; /* ÓÃÓÚ½ÓÊÕÏûÏ¢µÄĞÅºÅÁ¿ */
-static struct rt_timer StrikeMotor_Tim;         /* ±Õ»·Ïß³Ì¶¨Ê±Æ÷ */
+#define STRIKEMOTOR_CANDEV can2_dev             // ç”µæœºæ‰€åœ¨CANè®¾å¤‡
+static struct rt_semaphore StrikeMotor_2ms_sem; /* ç”¨äºæ¥æ”¶æ¶ˆæ¯çš„ä¿¡å·é‡ */
+static struct rt_timer StrikeMotor_Tim;         /* é—­ç¯çº¿ç¨‹å®šæ—¶å™¨ */
 #endif
 
-// ¶¨Òåµç»ú½á¹¹Ìå£¬±Õ»·×´Ì¬¼ÇÂ¼½á¹¹Ìå
+// å®šä¹‰ç”µæœºç»“æ„ä½“ï¼Œé—­ç¯çŠ¶æ€è®°å½•ç»“æ„ä½“
 Motor_t m_rub[2];
 Motor_t m_launch = {0};
 Motor_CtrlMode_E CTRLMode_Motor[(int)GunMotor_All];
 
-char LaunchMotor_SleepFlag = 0;   // ÖÃ 1 ÔòÇ¿ÖÆÉè¶¨µç»úµÄµçÁ÷ÖµÎª 0
-char StrikeMotor_Enable_Flag = 1; // ÖÃ 0 ±íÊ¾·¢Éä»ú¹¹µç»úÊ§ÄÜ
-rt_uint8_t Gun_Inited_Flag = 0;   // ÓÃÓÚ±êÖ¾·¢Éä»ú¹¹ÊÇ·ñ±»³õÊ¼»¯ÁË
+char LaunchMotor_SleepFlag = 0;   // ç½® 1 åˆ™å¼ºåˆ¶è®¾å®šç”µæœºçš„ç”µæµå€¼ä¸º 0
+char StrikeMotor_Enable_Flag = 1; // ç½® 0 è¡¨ç¤ºå‘å°„æœºæ„ç”µæœºå¤±èƒ½
+rt_uint8_t Gun_Inited_Flag = 0;   // ç”¨äºæ ‡å¿—å‘å°„æœºæ„æ˜¯å¦è¢«åˆå§‹åŒ–äº†
 
-int DeltaRubSpeed; // Ä¦²ÁÂÖ×ªËÙ²î
+int DeltaRubSpeed; // æ‘©æ“¦è½®è½¬é€Ÿå·®
 
-static void (*MotorCTRL_Routine)(void); // ¿ÉÖ¸¶¨µÄÂÖÑ¯º¯Êı
+static void (*MotorCTRL_Routine)(void); // å¯æŒ‡å®šçš„è½®è¯¢å‡½æ•°
 
 void StrikeMotor_Enable(int Enable)
 {
     StrikeMotor_Enable_Flag = Enable;
 }
 
-// ¶ÁÈ¡·¢Éä»ú¹¹ÊÇ·ñ±»³õÊ¼»¯
+// è¯»å–å‘å°„æœºæ„æ˜¯å¦è¢«åˆå§‹åŒ–
 int Read_Gun_Inited(void)
 {
     return (int)Gun_Inited_Flag;
 }
 
-// ¶ÁÈ¡·¢Éä»ú¹¹µÄÖ¸¶¨µç»ú½á¹¹Ìå, ×¢ÒâÅĞ¶Ï·µ»ØÖµÊÇ·ñÎª NULL
+// è¯»å–å‘å°„æœºæ„çš„æŒ‡å®šç”µæœºç»“æ„ä½“, æ³¨æ„åˆ¤æ–­è¿”å›å€¼æ˜¯å¦ä¸º NULL
 Motor_t *Read_Gun_Motor(Gun_Motor_Enum GunMotor)
 {
     if (!Gun_Inited_Flag)
@@ -55,32 +56,32 @@ Motor_t *Read_Gun_Motor(Gun_Motor_Enum GunMotor)
     }
 }
 
-// ½øĞĞ±Õ»·Ê±µÄ±àÂëÆ÷Êı¾İÖÍºóÂË²¨ÏµÊı, ¸ÃÊı¾İÎª¶ÔĞÂÊı¾İµÄÖÃĞÅ¶È
+// è¿›è¡Œé—­ç¯æ—¶çš„ç¼–ç å™¨æ•°æ®æ»åæ»¤æ³¢ç³»æ•°, è¯¥æ•°æ®ä¸ºå¯¹æ–°æ•°æ®çš„ç½®ä¿¡åº¦
 static float Filter_K_Rub = 0.4f;
 static float Filter_K_Launch = 0.5f;
-// ÉÏ´Î±Õ»·Ê±¼ÇÂ¼µÄ±àÂëÆ÷Êı¾İ
+// ä¸Šæ¬¡é—­ç¯æ—¶è®°å½•çš„ç¼–ç å™¨æ•°æ®
 struct Motor_Encode_Data_s
 {
-    float Speed; // ±àÂëÆ÷½ÇËÙ¶È
-    float Angel; // ±àÂëÆ÷½Ç¶È
+    float Speed; // ç¼–ç å™¨è§’é€Ÿåº¦
+    float Angel; // ç¼–ç å™¨è§’åº¦
 };
-static struct Motor_Encode_Data_s m_rub_encoder_filtered[2], m_launch_encoder_filtered; // ÂË²¨ÒÔºóµÄ±àÂëÆ÷Êı¾İ
+static struct Motor_Encode_Data_s m_rub_encoder_filtered[2], m_launch_encoder_filtered; // æ»¤æ³¢ä»¥åçš„ç¼–ç å™¨æ•°æ®
 
 /**
- * @brief ·¢Éä»ú¹¹µç»ú¿ØÖÆ¼ÆËãº¯Êı
+ * @brief å‘å°„æœºæ„ç”µæœºæ§åˆ¶è®¡ç®—å‡½æ•°
  * @author fwlh
- * @param  motor            µ±Ç°¼ÆËãµÄ·¢Éä»ú¹¹µç»ú
- * @param  CtrlMode         µç»úµ±Ç°µÄ¿ØÖÆÄ£Ê½
- * @param  EncoderData      ±àÂëÆ÷Êı¾İ¹ÜÀí½á¹¹Ìå
- * @param  Encoder_Filter_K ±àÂëÆ÷Êı¾İÖÍºóÂË²¨ÏµÊı, ¶Ô¾ÉÊı¾İµÄÖÃĞÅ³Ì¶È
- * @return float            µ±Ç°µç»úĞèÒªÊä³öµÄ¿ØÖÆÊı¾İ
+ * @param  motor            å½“å‰è®¡ç®—çš„å‘å°„æœºæ„ç”µæœº
+ * @param  CtrlMode         ç”µæœºå½“å‰çš„æ§åˆ¶æ¨¡å¼
+ * @param  EncoderData      ç¼–ç å™¨æ•°æ®ç®¡ç†ç»“æ„ä½“
+ * @param  Encoder_Filter_K ç¼–ç å™¨æ•°æ®æ»åæ»¤æ³¢ç³»æ•°, å¯¹æ—§æ•°æ®çš„ç½®ä¿¡ç¨‹åº¦
+ * @return float            å½“å‰ç”µæœºéœ€è¦è¾“å‡ºçš„æ§åˆ¶æ•°æ®
  */
 static float StrikeMotor_Ctrl_Calc(Motor_t* motor, Motor_CtrlMode_E CtrlMode, struct Motor_Encode_Data_s *EncoderData, float Encoder_Filter_K)
 {
-    // ·¢Éä»ú¹¹Î´³õÊ¼»¯µÄÊ±ºò·µ»Ø 0
+    // å‘å°„æœºæ„æœªåˆå§‹åŒ–çš„æ—¶å€™è¿”å› 0
     if (!Read_Gun_Inited())
         return 0.f;
-    // ´«Èë½á¹¹ÌåÖ¸ÕëÎª¿ÕÊ±·µ»Ø 0
+    // ä¼ å…¥ç»“æ„ä½“æŒ‡é’ˆä¸ºç©ºæ—¶è¿”å› 0
     if ((!motor) || (!EncoderData))
         return 0.f;
     switch (CtrlMode)
@@ -100,10 +101,10 @@ static float StrikeMotor_Ctrl_Calc(Motor_t* motor, Motor_CtrlMode_E CtrlMode, st
     }
 }
 
-// ¶¨Ê±ÔËĞĞµÄ·¢Éä»ú¹¹¿ØÖÆº¯Êı
+// å®šæ—¶è¿è¡Œçš„å‘å°„æœºæ„æ§åˆ¶å‡½æ•°
 void StrikeMotor_CtrlRoutine(StrikeMotor_CtrlData_s *DataOut)
 {
-    // Î´³õÊ¼»¯Ê±ËùÓĞÊı¾İÊä³ö 0
+    // æœªåˆå§‹åŒ–æ—¶æ‰€æœ‰æ•°æ®è¾“å‡º 0
     if (!Gun_Inited_Flag)
     {
         DataOut->DataOut[(int)LaunchMotor] = 0.f;
@@ -111,11 +112,11 @@ void StrikeMotor_CtrlRoutine(StrikeMotor_CtrlData_s *DataOut)
         DataOut->DataOut[(int)RubMotorLeft] = 0.f;
         return;
     }
-    // ÅĞ¶Ï·¢Éä»ú¹¹µç»úÊÇ·ñÊ¹ÄÜ
+    // åˆ¤æ–­å‘å°„æœºæ„ç”µæœºæ˜¯å¦ä½¿èƒ½
     if (StrikeMotor_Enable_Flag)
     {
         if (MotorCTRL_Routine != NULL)
-            MotorCTRL_Routine(); // Ö´ĞĞÖ¸¶¨µÄÂÖÑ¯º¯Êı
+            MotorCTRL_Routine(); // æ‰§è¡ŒæŒ‡å®šçš„è½®è¯¢å‡½æ•°
 
         if (DataOut == RT_NULL)
             return;
@@ -124,11 +125,11 @@ void StrikeMotor_CtrlRoutine(StrikeMotor_CtrlData_s *DataOut)
         DataOut->DataOut[(int)RubMotorRight] = StrikeMotor_Ctrl_Calc(Read_Gun_Motor(RubMotorRight), CTRLMode_Motor[(int)RubMotorRight], &m_rub_encoder_filtered[1], Filter_K_Rub);
         DataOut->DataOut[(int)LaunchMotor] = StrikeMotor_Ctrl_Calc(Read_Gun_Motor(LaunchMotor), CTRLMode_Motor[(int)LaunchMotor], &m_launch_encoder_filtered, Filter_K_Launch);
 
-        // ÅĞ¶ÏÏÖÔÚÊÇ²»ÊÇĞèÒª²¥µ¯ÅÌµç»úĞİÏ¢
+        // åˆ¤æ–­ç°åœ¨æ˜¯ä¸æ˜¯éœ€è¦æ’­å¼¹ç›˜ç”µæœºä¼‘æ¯
         if (LaunchMotor_SleepFlag)
             DataOut->DataOut[(int)LaunchMotor] = 0.f;
 
-        // ¼ÇÂ¼×óÓÒÄ¦²ÁÂÖµÄ×ªËÙ²î
+        // è®°å½•å·¦å³æ‘©æ“¦è½®çš„è½¬é€Ÿå·®
         DeltaRubSpeed = abs(abs(m_rub[0].dji.speed) - abs(m_rub[1].dji.speed));
     }
     else
@@ -140,19 +141,19 @@ void StrikeMotor_CtrlRoutine(StrikeMotor_CtrlData_s *DataOut)
 }
 
 #if defined CORE_USING_INFANTRY
-StrikeMotor_CtrlData_s StrikeMotor_CtrlData; // ¼ÆËã·¢Éä»ú¹¹µç»ú PID ¼ÆËãµÄ½á¹û
-/* StrikeMotor_Tim ³¬Ê±º¯Êı */
+StrikeMotor_CtrlData_s StrikeMotor_CtrlData; // è®¡ç®—å‘å°„æœºæ„ç”µæœº PID è®¡ç®—çš„ç»“æœ
+/* StrikeMotor_Tim è¶…æ—¶å‡½æ•° */
 static void StrikeMotor_2ms_IRQHandler(void *parameter)
 {
     while (rt_sem_trytake(&StrikeMotor_2ms_sem) == RT_EOK)
-        continue; // Çå¿Õ¶àÓàµÄĞÅºÅÁ¿
+        continue; // æ¸…ç©ºå¤šä½™çš„ä¿¡å·é‡
     rt_sem_release(&StrikeMotor_2ms_sem);
 }
 
 /**
- * @brief µç»úÍ¨ĞÅÈë¿Úº¯Êı
+ * @brief ç”µæœºé€šä¿¡å…¥å£å‡½æ•°
  * @author fwlh
- * @param  parameter        Ã»ÓĞ±»Ê¹ÓÃ
+ * @param  parameter        æ²¡æœ‰è¢«ä½¿ç”¨
  */
 static void StrikeMotor_2ms_entry(void *parameter)
 {
@@ -165,9 +166,9 @@ static void StrikeMotor_2ms_entry(void *parameter)
     SWDG_START(SWDG_STRIKE_ID);
     while (1)
     {
-        // ·¢Éä»ú¹¹¿ØÖÆÏà¹Ø¼ÆËã
+        // å‘å°„æœºæ„æ§åˆ¶ç›¸å…³è®¡ç®—
         StrikeMotor_CtrlRoutine(&StrikeMotor_CtrlData);
-        // µç»úÍ¨ĞÅ
+        // ç”µæœºé€šä¿¡
         txmsg.data[(int16_t)(LAUNCH_ID - 0x201) * 2] = (rt_uint8_t)((rt_int16_t)StrikeMotor_CtrlData.DataOut[(int)LaunchMotor] >> 8);
         txmsg.data[(int16_t)(LAUNCH_ID - 0x201) * 2 + 1] = (rt_uint8_t)((rt_int16_t)StrikeMotor_CtrlData.DataOut[(int)LaunchMotor]);
         txmsg.data[(int16_t)(ID_RUB_LEFT - 0x201) * 2] = (rt_uint8_t)((rt_int16_t)StrikeMotor_CtrlData.DataOut[(int)RubMotorLeft] >> 8);
@@ -175,18 +176,18 @@ static void StrikeMotor_2ms_entry(void *parameter)
         txmsg.data[(int16_t)(ID_RUB_RIGHT - 0x201) * 2] = (rt_uint8_t)((rt_int16_t)StrikeMotor_CtrlData.DataOut[(int)RubMotorRight] >> 8);
         txmsg.data[(int16_t)(ID_RUB_RIGHT - 0x201) * 2 + 1] = (rt_uint8_t)((rt_int16_t)StrikeMotor_CtrlData.DataOut[(int)RubMotorRight]);
         rt_device_write(STRIKEMOTOR_CANDEV, 0, &txmsg, sizeof(txmsg));
-        // µÈ´ıÏÂÒ»¸ö¶¨Ê±ÖÜÆÚ
+        // ç­‰å¾…ä¸‹ä¸€ä¸ªå®šæ—¶å‘¨æœŸ
         rt_sem_take(&StrikeMotor_2ms_sem, RT_WAITING_FOREVER);
         SWDG_FEED(SWDG_STRIKE_ID);
     }
 }
 #endif
 
-static rt_int16_t GunSpeedNow = 0; // ¼ÇÂ¼µ±Ç°Ä¦²ÁÂÖ×ªËÙÉè¶¨Öµ
+static rt_int16_t GunSpeedNow = 0; // è®°å½•å½“å‰æ‘©æ“¦è½®è½¬é€Ÿè®¾å®šå€¼
 // rt_int16_t setspeed;
 /**
- * @brief  Ä¦²ÁÂÖ×ªËÙÉè¶¨
- * @param  speed£º×ªËÙ
+ * @brief  æ‘©æ“¦è½®è½¬é€Ÿè®¾å®š
+ * @param  speedï¼šè½¬é€Ÿ
  */
 void Rub_speed_set(rt_int16_t speed)
 {
@@ -198,7 +199,7 @@ void Rub_speed_set(rt_int16_t speed)
 #else
 
         if (speed == 0)
-        { // Èç¹û×ªËÙÉè¶¨ÖµÎª0£¬Ôò¿ª»·½µËÙ
+        { // å¦‚æœè½¬é€Ÿè®¾å®šå€¼ä¸º0ï¼Œåˆ™å¼€ç¯é™é€Ÿ
             CTRLMode_Motor[(int)RubMotorLeft] = MOTORCTRL_CLR;
             CTRLMode_Motor[(int)RubMotorRight] = MOTORCTRL_CLR;
             pid_clear(&m_rub[0].spe);
@@ -215,7 +216,7 @@ void Rub_speed_set(rt_int16_t speed)
     }
 }
 
-// ¶ÁÈ¡µ±Ç°Ä¦²ÁÂÖ×ªËÙÉè¶¨Öµ
+// è¯»å–å½“å‰æ‘©æ“¦è½®è½¬é€Ÿè®¾å®šå€¼
 rt_int16_t Rub_speed_ReadSet(void)
 {
     if (GunSpeedNow != -1)
@@ -224,7 +225,7 @@ rt_int16_t Rub_speed_ReadSet(void)
         return 0;
 }
 
-// ¶ÁÈ¡µ±Ç°Ä¦²ÁÂÖÊÇ·ñ¿ªÆô
+// è¯»å–å½“å‰æ‘©æ“¦è½®æ˜¯å¦å¼€å¯
 rt_bool_t Read_Rub_Started(void)
 {
     if ((abs(m_rub[0].dji.speed) > 200) && (abs(m_rub[1].dji.speed) > 200))
@@ -235,21 +236,21 @@ rt_bool_t Read_Rub_Started(void)
 
 #if defined CORE_USING_INFANTRY
 /**
- * @brief  ÈÎÎñ´´½¨
+ * @brief  ä»»åŠ¡åˆ›å»º
  */
 static void strike_start(void)
 {
-    /*¶¨Ê±Æ÷´¦ÀíÏß³Ì*/
+    /*å®šæ—¶å™¨å¤„ç†çº¿ç¨‹*/
     rt_thread_t thread;
     rt_sem_init(&StrikeMotor_2ms_sem, "StrM_sem", 0, RT_IPC_FLAG_FIFO);
     thread = rt_thread_create("StrMCtrl", StrikeMotor_2ms_entry, RT_NULL, 2048, THREAD_PRIO_STRIKEPID, 1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);
 
-    /*¶¨Ê±Æ÷ÖĞ¶Ï*/
+    /*å®šæ—¶å™¨ä¸­æ–­*/
     rt_timer_init(&StrikeMotor_Tim, "Strk_Tim", StrikeMotor_2ms_IRQHandler, RT_NULL, 2,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
-    /* Æô¶¯¶¨Ê±Æ÷ */
+    /* å¯åŠ¨å®šæ—¶å™¨ */
     rt_timer_start(&StrikeMotor_Tim);
 }
 #endif
@@ -276,31 +277,31 @@ static void WaitForMotorData(void)
 }
 
 /**
- * @brief  ·¢Éä»ú¹¹µç»ú±Õ»·³õÊ¼»¯
+ * @brief  å‘å°„æœºæ„ç”µæœºé—­ç¯åˆå§‹åŒ–
  */
 void StrikeMotor_init(void)
 {
-    MotorCTRL_Routine = NULL; // Ä¬ÈÏÃ»ÓĞÂÖÑ¯º¯Êı
-    //µç»ú³õÊ¼»¯
+    MotorCTRL_Routine = NULL; // é»˜è®¤æ²¡æœ‰è½®è¯¢å‡½æ•°
+    //ç”µæœºåˆå§‹åŒ–
 #ifdef RUB_SNAIL
     motor_rub_init();
-#else //Ä¬ÈÏ3508
+#else //é»˜è®¤3508
     motor_init(&m_rub[0], ID_RUB_LEFT, 1, ANGLE_CTRL_EXTRA, 8192, 8192, 0, GUN_RUB_TOGGLE);
     motor_init(&m_rub[1], ID_RUB_RIGHT, 1, ANGLE_CTRL_EXTRA, 8192, 8192, 0, GUN_RUB_TOGGLE);
 #endif
 #if defined CORE_USING_INFANTRY
-    // ³õÊ¼»¯²¦µ¯µç»ú
+    // åˆå§‹åŒ–æ‹¨å¼¹ç”µæœº
     motor_init(&m_launch, LAUNCH_ID, 36.f, ANGLE_CTRL_FULL, 8192, 360, 0, GUN_LAUNCH_TOGGLE);
 #elif defined CORE_USING_HERO
-    // ³õÊ¼»¯²¦µ¯µç»ú
+    // åˆå§‹åŒ–æ‹¨å¼¹ç”µæœº
     motor_init(&m_launch, LAUNCH_ID, 19.202f, ANGLE_CTRL_FULL, 8192, 360, 0, GUN_LAUNCH_TOGGLE);
 #endif
     WaitForMotorData();
 #if defined CORE_USING_INFANTRY
-    //¶æ»ú³õÊ¼»¯
+    //èˆµæœºåˆå§‹åŒ–
     Magazine_servo_init();
 #endif
-    // PID³õÊ¼»¯
+    // PIDåˆå§‹åŒ–
 #if TEST_CLEAR_PID
     pid_init(&m_launch.ang, PID_CLEAR);
     pid_init(&m_launch.spe, PID_CLEAR);
@@ -312,21 +313,21 @@ void StrikeMotor_init(void)
     pid_init(&m_rub[0].spe, RUB_SPE_PID);
     pid_init(&m_rub[1].spe, RUB_SPE_PID);
 #endif
-    //²¦µ¯µç»ú³õÖµÎª0£¨ÕâÀïµÄÉè¶¨ÖµÒÔµç»úÉÏµçÊ±¿Ì½Ç¶ÈÎªÁãÎ»£©
+    //æ‹¨å¼¹ç”µæœºåˆå€¼ä¸º0ï¼ˆè¿™é‡Œçš„è®¾å®šå€¼ä»¥ç”µæœºä¸Šç”µæ—¶åˆ»è§’åº¦ä¸ºé›¶ä½ï¼‰
     Motor_Write_SetAngle_ABS(&m_launch, 0);
 
-    // ÉèÖÃÄ¬ÈÏ±Õ»·×´Ì¬ Ä¦²ÁÂÖ²»±Õ»·£¬²¦µ¯½Ç¶È±Õ»·
+    // è®¾ç½®é»˜è®¤é—­ç¯çŠ¶æ€ æ‘©æ“¦è½®ä¸é—­ç¯ï¼Œæ‹¨å¼¹è§’åº¦é—­ç¯
     CTRLMode_Motor[(int)RubMotorLeft] = MOTORCTRL_CLR;
     CTRLMode_Motor[(int)RubMotorRight] = MOTORCTRL_CLR;
     CTRLMode_Motor[(int)LaunchMotor] = MOTORCTRL_ANG;
 #if defined CORE_USING_INFANTRY
-    //´´½¨·¢Éä»ú¹¹Ïß³Ì
+    //åˆ›å»ºå‘å°„æœºæ„çº¿ç¨‹
     strike_start();
 #endif
     Gun_Inited_Flag = 1;
 }
 
-// Ö¸¶¨ÂÖÑ¯º¯ÊıÖ¸Õë
+// æŒ‡å®šè½®è¯¢å‡½æ•°æŒ‡é’ˆ
 void CTRLRoutine_Set(void (*Func)(void))
 {
     MotorCTRL_Routine = Func;

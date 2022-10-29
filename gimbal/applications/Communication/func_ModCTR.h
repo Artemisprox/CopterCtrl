@@ -6,83 +6,83 @@
 
 typedef enum
 {
-    NO_FOLLOW = 0,     // ²»¸úËæ
-    FOLLOW_GIMBAL,     // ¸úËæ
-    FOLLOWBACK_GIMBAL, // ·´Ïò¸úËæ
-    SLOW_GYRO,         // ÂıÍÓÂİ
-    FAST_GYRO,         // ¿ìÍÓÂİ
-    MOVE_BACK,         // µ¹³µ
-    CHASS_AUTO,        // µ×ÅÌ×ÔÖ÷
+    NO_FOLLOW = 0,     // ä¸è·Ÿéš
+    FOLLOW_GIMBAL,     // è·Ÿéš
+    FOLLOWBACK_GIMBAL, // åå‘è·Ÿéš
+    SLOW_GYRO,         // æ…¢é™€èº
+    FAST_GYRO,         // å¿«é™€èº
+    MOVE_BACK,         // å€’è½¦
+    CHASS_AUTO,        // åº•ç›˜è‡ªä¸»
 } motion_mode_e;
 
 typedef enum
 {
-    AIMBOT_MODE = 0,    // ÆÕÍ¨×ÔÃé
-    AIMBUFF_CONST_MODE, // Ğ¡ÄÜÁ¿»ú¹Ø
-    AIMBUFF_VAR_MODE,   // ´óÄÜÁ¿»ú¹Ø
-    ROTATING_OUTPOST,   // Ğı×ª»÷´òÇ°ÉÚÕ½
-    STATIC_OUTPOST,     // ¾²Ö¹»÷´òÇ°ÉÚÕ½
-    OUTPOST_MODE_F,     // µÚÈıÖÖ»÷´òÇ°ÉÚÕ½µÄÄ£Ê½
-    DANGLING_MODE       // µõÉäÄ£Ê½
+    AIMBOT_MODE = 0,    // æ™®é€šè‡ªç„
+    AIMBUFF_CONST_MODE, // å°èƒ½é‡æœºå…³
+    AIMBUFF_VAR_MODE,   // å¤§èƒ½é‡æœºå…³
+    ROTATING_OUTPOST,   // æ—‹è½¬å‡»æ‰“å‰å“¨æˆ˜
+    STATIC_OUTPOST,     // é™æ­¢å‡»æ‰“å‰å“¨æˆ˜
+    OUTPOST_MODE_F,     // ç¬¬ä¸‰ç§å‡»æ‰“å‰å“¨æˆ˜çš„æ¨¡å¼
+    DANGLING_MODE       // åŠå°„æ¨¡å¼
 } aimbot_mode_e;
 
 typedef enum
 {
-    MainMenu = 0,         // µ±Ç°´¦ÓÚÖ÷²Ëµ¥
-    ChassisModeMenu,      // µ±Ç°´¦ÓÚµ×ÅÌÄ£Ê½²Ëµ¥
-    AimModeMenu,          // µ±Ç°´¦ÓÚ×ÔÃéÄ£Ê½²Ëµ¥
-    MiscMenu,             // µ±Ç°´¦ÓÚÔÓÏî²Ëµ¥
-    RobotResetMenu,       // µ±Ç°´¦ÓÚµ¥Æ¬»ú¸´Î»²Ëµ¥
-    SCAPCtrlMenu,         // µ±Ç°´¦ÓÚ³¬¼¶µçÈİ¿ØÖÆ²Ëµ¥
-    GunSpeedMenu,         // µ±Ç°´¦ÓÚµ¯ËÙÉèÖÃ²Ëµ¥
-    PerformanceMenu,      // µ±Ç°´¦ÓÚ»úÆ÷ÈËĞÔÄÜÉèÖÃ²Ëµ¥
-    PerformanceChooseMenu // µ±Ç°´¦ÓÚ»úÆ÷ÈËĞÔÄÜÑ¡Ôñ²Ëµ¥
+    MainMenu = 0,         // å½“å‰å¤„äºä¸»èœå•
+    ChassisModeMenu,      // å½“å‰å¤„äºåº•ç›˜æ¨¡å¼èœå•
+    AimModeMenu,          // å½“å‰å¤„äºè‡ªç„æ¨¡å¼èœå•
+    MiscMenu,             // å½“å‰å¤„äºæ‚é¡¹èœå•
+    RobotResetMenu,       // å½“å‰å¤„äºå•ç‰‡æœºå¤ä½èœå•
+    SCAPCtrlMenu,         // å½“å‰å¤„äºè¶…çº§ç”µå®¹æ§åˆ¶èœå•
+    GunSpeedMenu,         // å½“å‰å¤„äºå¼¹é€Ÿè®¾ç½®èœå•
+    PerformanceMenu,      // å½“å‰å¤„äºæœºå™¨äººæ€§èƒ½è®¾ç½®èœå•
+    PerformanceChooseMenu // å½“å‰å¤„äºæœºå™¨äººæ€§èƒ½é€‰æ‹©èœå•
 } menu_e;
 
 //typedef __packed struct
 typedef struct
 {
-    // ¹¤×÷×´Ì¬Êı¾İ
-    unsigned ui_reset : 1;                // ÖØÖÃ UI ±êÖ¾Î»
-    unsigned chassis_reset : 1;           // µ×ÅÌ¸´Î»Ö¸Áî
-    unsigned current_menu : 4;            // µ±Ç°Ëù´¦²Ëµ¥
-    unsigned motion_mode : 3;             // µ×ÅÌÄ£Ê½
-    unsigned now_viewing : 1;             // µ±Ç°ÊÇ·ñÔÚÌ½Í·Ä£Ê½
-    unsigned strike_mode : 1;             // ·¢Éä»ú¹¹Ä£Ê½(¸ß/µÍÉäÆµ)
-    unsigned magazine_status : 1;         // µ¯²Õ¸ÇÉè¶¨×´Ì¬
-    unsigned heatlimit_status : 1;        // ÈÈÁ¿×´Ì¬(ÊÇ·ñ¿ªÆôÈÈÁ¿ÏŞÖÆ)
-    unsigned aimbot_mode : 3;             // Ãé×¼Ä£Ê½
-    unsigned self_color : 1;              // µ±Ç°¼º·½ÑÕÉ«
-    unsigned power_restrictions_lim : 1;  // µ×ÅÌ¹¦ÂÊÏŞÖÆ(ÊÇ·ñ¿ªÆô³¬¼¶µçÈİµçÁ¿×Ô¶¯½ÚÊ¡)
-    unsigned rub_started : 1;             // Ä¦²ÁÂÖÒÑ¿ªÆô
-    unsigned now_client_control : 1;      // µ±Ç°Ê¹ÓÃ¿Í»§¶ËÄ£Ê½
-    unsigned capacity_close_flag : 1;     // µ±Ç°ÊÇ·ñ¹Ø±Õ³¬¼¶µçÈİ³äµç
-    unsigned force_refsystem_offline : 1; // µ±Ç°ÊÇ·ñÇ¿ÖÆ²ÃÅĞÏµÍ³ÀëÏß
-    unsigned set_chassis_mode : 2;        // µ±Ç°ÉèÖÃµÄ±¾µØµ×ÅÌÄ£Ê½
-    unsigned set_ammobooster_mode : 2;    // µ±Ç°ÉèÖÃµÄ±¾µØ·¢Éä»ú¹¹Ä£Ê½
-    unsigned set_level : 2;               // ÉèÖÃµÄ±¾µØ»úÆ÷ÈËµÈ¼¶
-    unsigned tick_now : 8;                // µ±Ç°²Ù×÷ÏµÍ³¹¤×÷µÄ Tick/100, Ê¹ÓÃÊ±Èôµ½´ï 255 ¾Í²»ÔÙ±ä¶¯
-    // ÀëÏßÄ£¿éÊı¾İ
-    unsigned visual_com_online : 1;      // ÊÓ¾õÍ¨ĞÅÊÇ·ñÕı³£
-    unsigned visual_working_correct : 1; // ÊÓ¾õ¹¤×÷ÊÇ·ñÕı³£
-    unsigned yaw_motor_online : 1;       // Yaw Öáµç»úÍ¨ĞÅÕı³£
-    unsigned pitch_motor_online : 1;     // Pitch Öáµç»úÍ¨ĞÅÕı³£
-    unsigned right_rub_motor_online : 1; // ÓÒ²àÄ¦²ÁÂÖµç»úÍ¨ĞÅÕı³£
-    unsigned left_rub_motor_online : 1;  // ×ó²àÄ¦²ÁÂÖµç»úÍ¨ĞÅÕı³£
-    unsigned launch_motor_online : 1;    // ²¥µ¯ÅÌµç»úÍ¨ĞÅÕı³£
-    unsigned strike_stuck : 1;           // ·¢Éä»ú¹¹¿¨µ¯
-} mixed_msg_t;                           // ÔÓÏîÊı¾İ°ü
-//} __packed mixed_msg_t;
+    // å·¥ä½œçŠ¶æ€æ•°æ®
+    unsigned ui_reset : 1;                // é‡ç½® UI æ ‡å¿—ä½
+    unsigned chassis_reset : 1;           // åº•ç›˜å¤ä½æŒ‡ä»¤
+    unsigned current_menu : 4;            // å½“å‰æ‰€å¤„èœå•
+    unsigned motion_mode : 3;             // åº•ç›˜æ¨¡å¼
+    unsigned now_viewing : 1;             // å½“å‰æ˜¯å¦åœ¨æ¢å¤´æ¨¡å¼
+    unsigned strike_mode : 1;             // å‘å°„æœºæ„æ¨¡å¼(é«˜/ä½å°„é¢‘)
+    unsigned magazine_status : 1;         // å¼¹èˆ±ç›–è®¾å®šçŠ¶æ€
+    unsigned heatlimit_status : 1;        // çƒ­é‡çŠ¶æ€(æ˜¯å¦å¼€å¯çƒ­é‡é™åˆ¶)
+    unsigned aimbot_mode : 3;             // ç„å‡†æ¨¡å¼
+    unsigned self_color : 1;              // å½“å‰å·±æ–¹é¢œè‰²
+    unsigned power_restrictions_lim : 1;  // åº•ç›˜åŠŸç‡é™åˆ¶(æ˜¯å¦å¼€å¯è¶…çº§ç”µå®¹ç”µé‡è‡ªåŠ¨èŠ‚çœ)
+    unsigned rub_started : 1;             // æ‘©æ“¦è½®å·²å¼€å¯
+    unsigned now_client_control : 1;      // å½“å‰ä½¿ç”¨å®¢æˆ·ç«¯æ¨¡å¼
+    unsigned capacity_close_flag : 1;     // å½“å‰æ˜¯å¦å…³é—­è¶…çº§ç”µå®¹å……ç”µ
+    unsigned force_refsystem_offline : 1; // å½“å‰æ˜¯å¦å¼ºåˆ¶è£åˆ¤ç³»ç»Ÿç¦»çº¿
+    unsigned set_chassis_mode : 2;        // å½“å‰è®¾ç½®çš„æœ¬åœ°åº•ç›˜æ¨¡å¼
+    unsigned set_ammobooster_mode : 2;    // å½“å‰è®¾ç½®çš„æœ¬åœ°å‘å°„æœºæ„æ¨¡å¼
+    unsigned set_level : 2;               // è®¾ç½®çš„æœ¬åœ°æœºå™¨äººç­‰çº§
+    unsigned tick_now : 8;                // å½“å‰æ“ä½œç³»ç»Ÿå·¥ä½œçš„ Tick/100, ä½¿ç”¨æ—¶è‹¥åˆ°è¾¾ 255 å°±ä¸å†å˜åŠ¨
+    // ç¦»çº¿æ¨¡å—æ•°æ®
+    unsigned visual_com_online : 1;      // è§†è§‰é€šä¿¡æ˜¯å¦æ­£å¸¸
+    unsigned visual_working_correct : 1; // è§†è§‰å·¥ä½œæ˜¯å¦æ­£å¸¸
+    unsigned yaw_motor_online : 1;       // Yaw è½´ç”µæœºé€šä¿¡æ­£å¸¸
+    unsigned pitch_motor_online : 1;     // Pitch è½´ç”µæœºé€šä¿¡æ­£å¸¸
+    unsigned right_rub_motor_online : 1; // å³ä¾§æ‘©æ“¦è½®ç”µæœºé€šä¿¡æ­£å¸¸
+    unsigned left_rub_motor_online : 1;  // å·¦ä¾§æ‘©æ“¦è½®ç”µæœºé€šä¿¡æ­£å¸¸
+    unsigned launch_motor_online : 1;    // æ’­å¼¹ç›˜ç”µæœºé€šä¿¡æ­£å¸¸
+    unsigned strike_stuck : 1;           // å‘å°„æœºæ„å¡å¼¹
+} mixed_msg_t;                           // æ‚é¡¹æ•°æ®åŒ…
+// } __packed mixed_msg_t;
 
-extern rt_int8_t FillMode_EN; // ²¹µ¯Ä£Ê½±êÖ¾Î»
-extern rt_int8_t motion_mode; // µ×ÅÌÔË¶¯Ä£Ê½
+extern rt_int8_t FillMode_EN; // è¡¥å¼¹æ¨¡å¼æ ‡å¿—ä½
+extern rt_int8_t motion_mode; // åº•ç›˜è¿åŠ¨æ¨¡å¼
 extern rt_uint8_t GimbalSetPower;
 
-// ½øÈë/ÍË³öÌ½Í·Ä£Ê½ĞèÒªµ÷ÓÃµÄº¯Êı
+// è¿›å…¥/é€€å‡ºæ¢å¤´æ¨¡å¼éœ€è¦è°ƒç”¨çš„å‡½æ•°
 extern void Enter_Probe_Mode(int Enter);
-// ½øÈëÒ»¼ü»ØÍ·Ä£Ê½Ê±µ÷ÓÃµÄº¯Êı
+// è¿›å…¥ä¸€é”®å›å¤´æ¨¡å¼æ—¶è°ƒç”¨çš„å‡½æ•°
 extern void Enter_MoveBack_Mode(void);
-// ¼ÇÂ¼½øÈëµõÉäÄ£Ê½Ê±µÄµ×ÅÌÄ£Ê½
+// è®°å½•è¿›å…¥åŠå°„æ¨¡å¼æ—¶çš„åº•ç›˜æ¨¡å¼
 extern void Dangling_RecNow_MotionMode(void);
 
 extern void Refresh_RemoteSet_Gimbal(void);
@@ -92,13 +92,13 @@ extern void ResetCmd_Write(int Reset_Flag);
 extern void Write_Computer_Ctrl_Status(int Now_Computer_Ctrl);
 
 /***
- * @brief    Ïòµ×ÅÌ·¢ËÍ¸÷ÀàÉè¶¨Êı¾İ
+ * @brief    å‘åº•ç›˜å‘é€å„ç±»è®¾å®šæ•°æ®
  * @param
  * @retval   none
  * @author   dxy
  ***/
 extern void chassis_data_send(void);
 
-extern void ModCTR_Init(void); // ³õÊ¼»¯ÔË¶¯¿ØÖÆÓÃµÄÆ½»¬¿ØÖÆ¿é
+extern void ModCTR_Init(void); // åˆå§‹åŒ–è¿åŠ¨æ§åˆ¶ç”¨çš„å¹³æ»‘æ§åˆ¶å—
 
 #endif

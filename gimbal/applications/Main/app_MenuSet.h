@@ -4,7 +4,7 @@
 #include "mod_KeyCtrl.h"
 #include <rtdef.h>
 
-// ³õÊ¼»¯ĞèÒªÊ¹ÓÃµÄ»úÆ÷ÈË°´¼ü¿ØÖÆ²Ëµ¥
+// åˆå§‹åŒ–éœ€è¦ä½¿ç”¨çš„æœºå™¨äººæŒ‰é”®æ§åˆ¶èœå•
 extern rt_err_t Ctrl_Menu_Init(void);
 
 #endif

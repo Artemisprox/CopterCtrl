@@ -3,22 +3,23 @@
 #include "drv_utils.h"
 #include "func_TempCtr.h"
 #include "drv_GimbalPublic.h"
+#include "robodata.h"
 
-IMU_t HERO_IMU; // IMUÊı¾İ,unit:m/s^2,rad/s
+IMU_t HERO_IMU; // IMUæ•°æ®,unit:m/s^2,rad/s
 ATTI_t gimbal_atti;
 
 rt_int32_t Stable_Count = 0;
-int AimlossFlag = 0; // ×ÔÃé¶ªÊ§Ä¿±êÎª0£¬ÓĞÄ¿±êÎª1¡£ÓĞÄ¿±êÊ±ĞèÒªÇĞ»»³É´¿»ı·ÖÄ£Ê½
+int AimlossFlag = 0; // è‡ªç„ä¸¢å¤±ç›®æ ‡ä¸º0ï¼Œæœ‰ç›®æ ‡ä¸º1ã€‚æœ‰ç›®æ ‡æ—¶éœ€è¦åˆ‡æ¢æˆçº¯ç§¯åˆ†æ¨¡å¼
 
 rt_tick_t IMU_LastValid_tick = 0;
 void IMU_transfer2gm(void);
 
-const float pitch_ecd_offset = IMU_PITCH_FIX; // Ç¹¿Ú¾ø¶ÔË®Æ½Ê±£¬ÍÓÂİÒÇ·¢»ØµÄPitch½Ç¶È µ¥Î» ¡ã
+const float pitch_ecd_offset = IMU_PITCH_FIX; // æªå£ç»å¯¹æ°´å¹³æ—¶ï¼Œé™€èºä»ªå‘å›çš„Pitchè§’åº¦ å•ä½ Â°
 
 /***
  * @Name     gyro_read_extern
- * @brief    ÍÓÂİÒÇ×ËÌ¬½âËãº¯Êıµ÷ÓÃ£¬ÀàËÆÓÚCAN½ÓÊÕ£¬ÓÃÓÚ°åÔØÍÓÂİÒÇµÄ¼æÈİ
- * @param	  float µ¥Î»£ºRad/s¡¢Rad
+ * @brief    é™€èºä»ªå§¿æ€è§£ç®—å‡½æ•°è°ƒç”¨ï¼Œç±»ä¼¼äºCANæ¥æ”¶ï¼Œç”¨äºæ¿è½½é™€èºä»ªçš„å…¼å®¹
+ * @param	  float å•ä½ï¼šRad/sã€Rad
  * @author   ych
  ***/
 void IMU_SetData_Extern(float PitchSpe,
@@ -37,28 +38,28 @@ void IMU_SetData_Extern(float PitchSpe,
     HERO_IMU.roll = RollAng / 3.1415926f * 180;
     HERO_IMU.atti_ready = AttiReady;
 
-    IMU_transfer2gm(); // »»Ëã×ø±êÏµ
+    IMU_transfer2gm(); // æ¢ç®—åæ ‡ç³»
 }
 
 static ATTI_t Gimbal_Atti_Fil_Data = {0};
 float jscope_yaw_bias;
 static float temp_pitch_speed, temp_yaw_speed, temp_roll_speed;
-//ÔÆÌ¨Ïµ(IMU)×ªµ½µç»úÏµ
+//äº‘å°ç³»(IMU)è½¬åˆ°ç”µæœºç³»
 void IMU_transfer2gm(void)
-{ // ¸Ãº¯Êı2msÔËĞĞÒ»´Î
-    // int dir; //ÈÚºÏroll½ÇËÙ¶ÈºóµÄ·½Ïò
+{ // è¯¥å‡½æ•°2msè¿è¡Œä¸€æ¬¡
+    // int dir; //èåˆrollè§’é€Ÿåº¦åçš„æ–¹å‘
 
     gimbal_atti.pitch = HERO_IMU.pitch - pitch_ecd_offset;
     gimbal_atti.yaw = HERO_IMU.yaw;
     gimbal_atti.roll = HERO_IMU.roll;
 
-    // ×¼±¸¿ªÊ¼×ø±êÏµĞı×ª
+    // å‡†å¤‡å¼€å§‹åæ ‡ç³»æ—‹è½¬
     temp_pitch_speed = HERO_IMU.pitch_speed;
     temp_yaw_speed = HERO_IMU.yaw_speed;
     temp_roll_speed = HERO_IMU.roll_speed;
-    // ÑØ Pitch ÖáĞı×ª
+    // æ²¿ Pitch è½´æ—‹è½¬
     utils_point_rotate(&temp_roll_speed, &temp_yaw_speed, DEG2RAD_f(gimbal_atti.pitch));
-    // Ğı×ª½áÊø, ¸³Öµ
+    // æ—‹è½¬ç»“æŸ, èµ‹å€¼
     gimbal_atti.pitch_speed = temp_pitch_speed;
     gimbal_atti.yaw_speed = temp_yaw_speed;
     gimbal_atti.roll_speed = temp_roll_speed;
@@ -73,8 +74,8 @@ void IMU_transfer2gm(void)
 
     if (fabsf(Gimbal_Atti_Fil_Data.pitch_speed) > 45 || fabsf(Gimbal_Atti_Fil_Data.yaw_speed) > 45)
     {
-        // ½üÆÚ³öÏÖÁË´ó½ÇËÙ¶ÈÇé¿ö
-        Stable_Count -= (rt_int32_t)(IMU_STABLE_SET_MS / 100); // Ô¼100ms³ÖĞø¸ßËÙĞı×ª»áÍêÈ«Çå¿Õ¼ÆÊıÖµ
+        // è¿‘æœŸå‡ºç°äº†å¤§è§’é€Ÿåº¦æƒ…å†µ
+        Stable_Count -= (rt_int32_t)(IMU_STABLE_SET_MS / 100); // çº¦100msæŒç»­é«˜é€Ÿæ—‹è½¬ä¼šå®Œå…¨æ¸…ç©ºè®¡æ•°å€¼
     }
     else
     {
@@ -95,15 +96,15 @@ rt_err_t IMU_GetAttiState(void)
         return RT_EOK;
 }
 
-// ÉÏµçºóµÈ´ıÍÓÂİÒÇÆô¶¯Íê³É
+// ä¸Šç”µåç­‰å¾…é™€èºä»ªå¯åŠ¨å®Œæˆ
 rt_err_t IMU_WaitForInit(void)
 {
     HERO_IMU.atti_ready = 0;
 
-    rt_thread_delay(100); // ¼´Ê¹ÍÓÂİÒÇÒÑ¾­Õı³£³õÊ¼»¯¹ı£¬´ËÊ±Ò²ÒªÑÓÊ±Ò»¶ÎÊ±¼ä£¬È·±£²»»á³öÏÖ¸Õ°´¸´Î»¼ü»úÆ÷ÈË¾Í¶¯µÄÇé¿ö
+    rt_thread_delay(100); // å³ä½¿é™€èºä»ªå·²ç»æ­£å¸¸åˆå§‹åŒ–è¿‡ï¼Œæ­¤æ—¶ä¹Ÿè¦å»¶æ—¶ä¸€æ®µæ—¶é—´ï¼Œç¡®ä¿ä¸ä¼šå‡ºç°åˆšæŒ‰å¤ä½é”®æœºå™¨äººå°±åŠ¨çš„æƒ…å†µ
 
     while (!HERO_IMU.atti_ready)
-    { // µÈ´ıÍÓÂİÒÇ³õÊ¼»¯³É¹¦
+    { // ç­‰å¾…é™€èºä»ªåˆå§‹åŒ–æˆåŠŸ
         rt_thread_delay(10);
     }
     return RT_EOK;

@@ -11,12 +11,12 @@
 
 #include <rtdevice.h>
 
-extern rt_device_t can1_dev;      //CAN Éè±¸¾ä±ú
-extern rt_device_t can2_dev;      //CAN Éè±¸¾ä±ú
+extern rt_device_t can1_dev;      //CAN è®¾å¤‡å¥æŸ„
+extern rt_device_t can2_dev;      //CAN è®¾å¤‡å¥æŸ„
 
-//can1³õÊ¼»¯£¬can1Êı¾İ´¦ÀíÏß³ÌºÍÖĞ¶ÏÉè¶¨
+//can1åˆå§‹åŒ–ï¼Œcan1æ•°æ®å¤„ç†çº¿ç¨‹å’Œä¸­æ–­è®¾å®š
 extern int can1_init(void);
-//can2³õÊ¼»¯£¬can2Êı¾İ´¦ÀíÏß³ÌºÍÖĞ¶ÏÉè¶¨
+//can2åˆå§‹åŒ–ï¼Œcan2æ•°æ®å¤„ç†çº¿ç¨‹å’Œä¸­æ–­è®¾å®š
 extern int can2_init(void);
 
 #endif

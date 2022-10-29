@@ -13,7 +13,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable 168M can"
         select CAN168M_ENABLE_
         default y
-    #ÅäÖÃ¼àÊÓÆ÷
+    #é…ç½®ç›‘è§†å™¨
     menuconfig CORE_USING_MONITOR
         bool "Enable software wdg"
         select CORE_USING_BUZZER

@@ -15,12 +15,12 @@
 #include "drv_magazine.h"
 #endif
 
-// ¼ÇÂ¼µ±Ç°²Ëµ¥ÊÇ·ñ´¦ÓÚÖ÷²Ëµ¥£¬´Ë±äÁ¿ÓÉModKeyCTRLÎÄ¼şÖĞµÄÏà¹Ø³ÌĞò½øĞĞĞŞ¸ÄºÍË¢ĞÂ
-// ÓÃÓÚÔÚÒ»Î¬°´¼ü»Øµ÷º¯ÊıÖĞ½øĞĞ²éÑ¯£¬ÒÔÊµÏÖÊ¹ÓÃ¶şÎ¬²Ëµ¥Ê±²»´¥·¢Ò»Î¬°´¼üµÄ¹¦ÄÜµÄĞ§¹û
-char IS_MainMenu = 1; // ÔÚÖ÷²Ëµ¥Ê±Îª1 ³õÊ¼Î»ÖÃÒ»¶¨ÔÚÖ÷²Ëµ¥£¬¹Ê³õÊ¼»¯Îª1
-int current_menu = 0; // µ±Ç°Ëù´¦µÄ²Ëµ¥
+// è®°å½•å½“å‰èœå•æ˜¯å¦å¤„äºä¸»èœå•ï¼Œæ­¤å˜é‡ç”±ModKeyCTRLæ–‡ä»¶ä¸­çš„ç›¸å…³ç¨‹åºè¿›è¡Œä¿®æ”¹å’Œåˆ·æ–°
+// ç”¨äºåœ¨ä¸€ç»´æŒ‰é”®å›è°ƒå‡½æ•°ä¸­è¿›è¡ŒæŸ¥è¯¢ï¼Œä»¥å®ç°ä½¿ç”¨äºŒç»´èœå•æ—¶ä¸è§¦å‘ä¸€ç»´æŒ‰é”®çš„åŠŸèƒ½çš„æ•ˆæœ
+char IS_MainMenu = 1; // åœ¨ä¸»èœå•æ—¶ä¸º1 åˆå§‹ä½ç½®ä¸€å®šåœ¨ä¸»èœå•ï¼Œæ•…åˆå§‹åŒ–ä¸º1
+int current_menu = 0; // å½“å‰æ‰€å¤„çš„èœå•
 
-// ÓÃÓÚ¼ÇÂ¼ÊÇ·ñÔÚÖ÷²Ëµ¥µÄ±êÖ¾Î»ĞŞ¸Äº¯Êı
+// ç”¨äºè®°å½•æ˜¯å¦åœ¨ä¸»èœå•çš„æ ‡å¿—ä½ä¿®æ”¹å‡½æ•°
 void MainMenu_REC_Entry_Fun(int TrigSource)
 {
     IS_MainMenu = 1;
@@ -32,37 +32,37 @@ void MainMenu_REC_Quit_Fun(int TrigSource)
 }
 
 /**
- * @brief£º×ÔÃéÄ£Ê½-°´ÏÂ»Øµ÷º¯Êı
- * @param [in]   ÎŞ
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šè‡ªç„æ¨¡å¼-æŒ‰ä¸‹å›è°ƒå‡½æ•°
+ * @param [in]   æ— 
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 void Aimbot_PressCallback(void)
 {
-    Exit_AimbotFlag = 0; //Õı³£×ÔÃé
+    Exit_AimbotFlag = 0; //æ­£å¸¸è‡ªç„
     Aimbot_FreshMouseClick(1);
-    FireCtrl_AimbotLim_Set(1); // ÔÊĞíÊÓ¾õ×Ô¶¯·¢µ¯
+    FireCtrl_AimbotLim_Set(1); // å…è®¸è§†è§‰è‡ªåŠ¨å‘å¼¹
 }
 
 /**
- * @brief£º×ÔÃéÄ£Ê½-µ¯Æğ»Øµ÷º¯Êı
- * @param [in]   ÎŞ
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šè‡ªç„æ¨¡å¼-å¼¹èµ·å›è°ƒå‡½æ•°
+ * @param [in]   æ— 
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 void Aimbot_LoosenCallback(void)
 {
-    Exit_AimbotFlag = 1; //Ç¿ĞĞ²»×ÔÃé
+    Exit_AimbotFlag = 1; //å¼ºè¡Œä¸è‡ªç„
     Aimbot_FreshMouseClick(0);
-    FireCtrl_AimbotLim_Set(0); // ²»ÔÊĞíÊÓ¾õ×Ô¶¯·¢µ¯
+    FireCtrl_AimbotLim_Set(0); // ä¸å…è®¸è§†è§‰è‡ªåŠ¨å‘å¼¹
 #ifdef CORE_USING_INFANTRY
-    // ¹Ø±Õ¾«Ï¸·¢µ¯¿ØÖÆ
+    // å…³é—­ç²¾ç»†å‘å¼¹æ§åˆ¶
     FireCtrl_VisualFineFire_EN(0);
 #endif
 }
 
 /**
- * @brief Ì½Í·Ä£Ê½-°´ÏÂ»Øµ÷º¯Êı
+ * @brief æ¢å¤´æ¨¡å¼-æŒ‰ä¸‹å›è°ƒå‡½æ•°
  * @author fwlh
  */
 void Probe_PressCallback(void)
@@ -72,7 +72,7 @@ void Probe_PressCallback(void)
 }
 
 /**
- * @brief Ì½Í·Ä£Ê½-µ¯Æğ»Øµ÷º¯Êı
+ * @brief æ¢å¤´æ¨¡å¼-å¼¹èµ·å›è°ƒå‡½æ•°
  * @author fwlh
  */
 void Probe_LoosenCallback(void)
@@ -82,7 +82,7 @@ void Probe_LoosenCallback(void)
 }
 
 /**
- * @brief ·Å¿ª³¬¼¶µçÈİµçÁ¿ÏŞÖÆ-°´ÏÂ»Øµ÷º¯Êı
+ * @brief æ”¾å¼€è¶…çº§ç”µå®¹ç”µé‡é™åˆ¶-æŒ‰ä¸‹å›è°ƒå‡½æ•°
  * @author fwlh
  */
 void SCAP_Reserve_PressCallback(void)
@@ -92,63 +92,63 @@ void SCAP_Reserve_PressCallback(void)
 }
 
 /**
- * @brief£ºÖ÷²Ëµ¥»Øµ÷£º°´×¡CTRLÔòĞŞ¸ÄÇ¹¿ÚÈÈÁ¿ÏŞÖÆÎªÎŞÏŞ£¬²»°´CTRLÔòĞŞ¸Ä·¢µ¯Ä£Ê½ÎªÈıÁ¬·¢
- * @param [in]   ÎŞ
- * @return£º		ÎŞ
- * @author£ºych-zzj
+ * @briefï¼šä¸»èœå•å›è°ƒï¼šæŒ‰ä½CTRLåˆ™ä¿®æ”¹æªå£çƒ­é‡é™åˆ¶ä¸ºæ— é™ï¼Œä¸æŒ‰CTRLåˆ™ä¿®æ”¹å‘å¼¹æ¨¡å¼ä¸ºä¸‰è¿å‘
+ * @param [in]   æ— 
+ * @returnï¼š		æ— 
+ * @authorï¼šych-zzj
  */
 void MouseZ_P_Callback(int TrigSource)
 {
-    // ÅĞ¶ÏCTRL°´¼üµÄ×´Ì¬
+    // åˆ¤æ–­CTRLæŒ‰é”®çš„çŠ¶æ€
     if (Key_GetState(KeyEVT_CTRL))
-    { // CTRL°´ÏÂ£¬ĞèÒª½â³ıÈÈÁ¿ÏŞÖÆ
+    { // CTRLæŒ‰ä¸‹ï¼Œéœ€è¦è§£é™¤çƒ­é‡é™åˆ¶
         GunSet_OverHeat_PermitFlag = 1;
         heatlimit_state = 1;
     }
 #ifdef CORE_USING_HERO
     else
     {
-        // Ó¢ĞÛÃ»ÓĞÈıÁ¬·¢
+        // è‹±é›„æ²¡æœ‰ä¸‰è¿å‘
     }
 #else
     else
     {
-        // ²½±ø£¬ÉèÖÃÈıÁ¬·¢Ä£Ê½
+        // æ­¥å…µï¼Œè®¾ç½®ä¸‰è¿å‘æ¨¡å¼
         Gun_mode_set(GUN_FAST);
     }
 #endif
 }
 /**
- * @brief£ºÖ÷²Ëµ¥»Øµ÷£º°´×¡CTRLÔòĞŞ¸ÄÇ¹¿ÚÈÈÁ¿ÏŞÖÆÎªÏŞÖÆ£¬²»°´CTRLÔòĞŞ¸Ä·¢µ¯Ä£Ê½Îª×Ô¶¯Ä£Ê½
- * @param [in]   ÎŞ
- * @return£º		ÎŞ
- * @author£ºych-zzj
+ * @briefï¼šä¸»èœå•å›è°ƒï¼šæŒ‰ä½CTRLåˆ™ä¿®æ”¹æªå£çƒ­é‡é™åˆ¶ä¸ºé™åˆ¶ï¼Œä¸æŒ‰CTRLåˆ™ä¿®æ”¹å‘å¼¹æ¨¡å¼ä¸ºè‡ªåŠ¨æ¨¡å¼
+ * @param [in]   æ— 
+ * @returnï¼š		æ— 
+ * @authorï¼šych-zzj
  */
 void MouseZ_N_Callback(int TrigSource)
 {
-    // ÅĞ¶ÏCTRL°´¼üµÄ×´Ì¬
+    // åˆ¤æ–­CTRLæŒ‰é”®çš„çŠ¶æ€
     if (Key_GetState(KeyEVT_CTRL))
-    { // CTRL°´ÏÂ£¬ĞèÒª»Ö¸´ÈÈÁ¿ÏŞÖÆ
+    { // CTRLæŒ‰ä¸‹ï¼Œéœ€è¦æ¢å¤çƒ­é‡é™åˆ¶
         GunSet_OverHeat_PermitFlag = 0;
         heatlimit_state = 0;
     }
 #ifdef CORE_USING_HERO
     else
     {
-        // Ó¢ĞÛÃ»ÓĞÈıÁ¬·¢
+        // è‹±é›„æ²¡æœ‰ä¸‰è¿å‘
     }
 #else
     else
     {
-        // ²½±ø£¬»Ö¸´µ¥·¢Ä£Ê½
+        // æ­¥å…µï¼Œæ¢å¤å•å‘æ¨¡å¼
         Gun_mode_set(GUN_SLOW);
     }
 #endif
 }
 
 /**
- * @brief£ºµ×ÅÌÔË¶¯Ä£Ê½-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºych
+ * @briefï¼šåº•ç›˜è¿åŠ¨æ¨¡å¼-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šych
  */
 void MotionModeEntry_Callback(int TrigSource)
 {
@@ -156,29 +156,29 @@ void MotionModeEntry_Callback(int TrigSource)
         current_menu = ChassisModeMenu;
 }
 /**
- * @brief£ºµ×ÅÌÔË¶¯Ä£Ê½-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºych
+ * @briefï¼šåº•ç›˜è¿åŠ¨æ¨¡å¼-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šych
  */
 void MotionModeSet_Callback(int TrigSource)
 {
 #if defined CORE_USING_HERO
-    // Ó¢ĞÛÔÚµõÉäÄ£Ê½ÏÂ²»ÄÜ¸Ä±äµ×ÅÌÄ£Ê½
+    // è‹±é›„åœ¨åŠå°„æ¨¡å¼ä¸‹ä¸èƒ½æ”¹å˜åº•ç›˜æ¨¡å¼
     if (Read_Dangling_Mode())
         return;
 #endif
     switch (TrigSource)
     {
     case CHASSISMODE_KEY_MODE_NO_FOLLOW:
-        motion_mode = NO_FOLLOW; //²»¸úËæ
+        motion_mode = NO_FOLLOW; //ä¸è·Ÿéš
         break;
     case CHASSISMODE_KEY_MODE_FOLLOW:
-        motion_mode = FOLLOW_GIMBAL; //¸úËæ
+        motion_mode = FOLLOW_GIMBAL; //è·Ÿéš
         break;
     case CHASSISMODE_KEY_MODE_SMALL_GYRO:
-        motion_mode = SLOW_GYRO; //ÂıËÙÍÓÂİ
+        motion_mode = SLOW_GYRO; //æ…¢é€Ÿé™€èº
         break;
     case CHASSISMODE_KEY_MODE_FAST_GYRO:
-        motion_mode = FAST_GYRO; //¿ìËÙÍÓÂİ
+        motion_mode = FAST_GYRO; //å¿«é€Ÿé™€èº
         break;
     case CHASSISMODE_KEY_MODE_MOVE_BACK:
         Enter_MoveBack_Mode();
@@ -188,51 +188,51 @@ void MotionModeSet_Callback(int TrigSource)
     }
 }
 /**
- * @brief£ºµ×ÅÌÔË¶¯Ä£Ê½-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºych
+ * @briefï¼šåº•ç›˜è¿åŠ¨æ¨¡å¼-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šych
  */
 void MotionModeQuit_Callback(int TrigSource)
 {
 }
 
 /**
- * @brief£º×ÔÃéÄ£Ê½ÉèÖÃ-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºych
+ * @briefï¼šè‡ªç„æ¨¡å¼è®¾ç½®-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šych
  */
 void AimMode_Entry_Callback(int TrigSource)
-{ // ½øÈë×ÔÃéÄ£Ê½Ñ¡Ôñ²Ëµ¥
+{ // è¿›å…¥è‡ªç„æ¨¡å¼é€‰æ‹©èœå•
     current_menu = AimModeMenu;
 }
 int SetMaxSpeed = 15;
 /**
- * @brief£º×ÔÃéÄ£Ê½ÉèÖÃ-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºych
+ * @briefï¼šè‡ªç„æ¨¡å¼è®¾ç½®-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šych
  */
 void AimMode_Set_Callback(int TrigSource)
-{ // °´ÕÕ°´¼üÇé¿öĞŞ¸Ä×ÔÃéÄ£Ê½
+{ // æŒ‰ç…§æŒ‰é”®æƒ…å†µä¿®æ”¹è‡ªç„æ¨¡å¼
     switch (TrigSource)
     {
     case AIMMODE_SET_AIMBOT:
-        // ³£¹æ×ÔÃéÄ£Ê½
-        // ĞŞ¸Ä±êÖ¾ 01£ºÔÚÕâÀïÌí¼Ó×ÔÃéÄ£Ê½ÇĞ»»Ïà¹Øº¯Êı
+        // å¸¸è§„è‡ªç„æ¨¡å¼
+        // ä¿®æ”¹æ ‡å¿— 01ï¼šåœ¨è¿™é‡Œæ·»åŠ è‡ªç„æ¨¡å¼åˆ‡æ¢ç›¸å…³å‡½æ•°
         ui_aimbot_mode = AIMBOT_MODE;
         Refresh_VisualMode(VISUAL_MODE_AIMBOT_V2);
-        // ¿ªÆô×Ô¶¯·¢µ¯¼ì²é
+        // å¼€å¯è‡ªåŠ¨å‘å¼¹æ£€æŸ¥
         FireCtrl_AimbotLim_Set(1);
 #ifdef CORE_USING_INFANTRY
-        // ¹Ø±Õ¾«Ï¸·¢µ¯¿ØÖÆ
+        // å…³é—­ç²¾ç»†å‘å¼¹æ§åˆ¶
         FireCtrl_VisualFineFire_EN(0);
 #endif
 #ifdef CORE_USING_INFANTRY
-        if (Read_Speed_Lim() > GUN_SPEED_REAL_30) // Éè¶¨µ¯ËÙÎª 30m/s
+        if (Read_Speed_Lim() > GUN_SPEED_REAL_30) // è®¾å®šå¼¹é€Ÿä¸º 30m/s
             Gun_SpeedSet(GUN_SPEED_SET_30);
-        else if (Read_Speed_Lim() > GUN_SPEED_REAL_18) // Éè¶¨µ¯ËÙÎª 18m/s
+        else if (Read_Speed_Lim() > GUN_SPEED_REAL_18) // è®¾å®šå¼¹é€Ÿä¸º 18m/s
             Gun_SpeedSet(GUN_SPEED_SET_18);
         else
             Gun_SpeedSet(GUN_SPEED_SET_15);
 #elif defined CORE_USING_HERO
-        Enter_Dangling_Mode(0);                   // ¹Ø±ÕµõÉäÄ£Ê½
-        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // Éè¶¨µ¯ËÙÎª 15m/s
+        Enter_Dangling_Mode(0);                   // å…³é—­åŠå°„æ¨¡å¼
+        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // è®¾å®šå¼¹é€Ÿä¸º 15m/s
             Gun_SpeedSet(GUN_SPEED_SET_16);
         else
             Gun_SpeedSet(GUN_SPEED_SET_10);
@@ -242,10 +242,10 @@ void AimMode_Set_Callback(int TrigSource)
     case AIMMODE_SET_ROTATING_OUTPOST:
         ui_aimbot_mode = ROTATING_OUTPOST;
         Refresh_VisualMode(VISUAL_MODE_AIMBUFF_ROTATING_OUTPOST);
-        Enter_Dangling_Mode(0); // ¹Ø±ÕµõÉäÄ£Ê½
-        // ¿ªÆô×Ô¶¯·¢µ¯¼ì²é
+        Enter_Dangling_Mode(0); // å…³é—­åŠå°„æ¨¡å¼
+        // å¼€å¯è‡ªåŠ¨å‘å¼¹æ£€æŸ¥
         FireCtrl_AimbotLim_Set(1);
-        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // Éè¶¨µ¯ËÙÎª 16m/s
+        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // è®¾å®šå¼¹é€Ÿä¸º 16m/s
             Gun_SpeedSet(GUN_SPEED_SET_16);
         else
             Gun_SpeedSet(GUN_SPEED_SET_10);
@@ -253,10 +253,10 @@ void AimMode_Set_Callback(int TrigSource)
     case AIMMODE_SET_STATIC_OUTPOST:
         ui_aimbot_mode = STATIC_OUTPOST;
         Refresh_VisualMode(VISUAL_MODE_AIMBUFF_STATIC_OUTPOST);
-        Enter_Dangling_Mode(0); // ¹Ø±ÕµõÉäÄ£Ê½
-        // ¿ªÆô×Ô¶¯·¢µ¯¼ì²é
+        Enter_Dangling_Mode(0); // å…³é—­åŠå°„æ¨¡å¼
+        // å¼€å¯è‡ªåŠ¨å‘å¼¹æ£€æŸ¥
         FireCtrl_AimbotLim_Set(1);
-        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // Éè¶¨µ¯ËÙÎª 16m/s
+        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // è®¾å®šå¼¹é€Ÿä¸º 16m/s
             Gun_SpeedSet(GUN_SPEED_SET_16);
         else
             Gun_SpeedSet(GUN_SPEED_SET_10);
@@ -264,44 +264,44 @@ void AimMode_Set_Callback(int TrigSource)
     case AIMMODE_SET_OUTPOST_F:
         ui_aimbot_mode = OUTPOST_MODE_F;
         Refresh_VisualMode(VISUAL_MODE_AIMBUFF_OUTPOST_F);
-        Enter_Dangling_Mode(0); // ¹Ø±ÕµõÉäÄ£Ê½
-        // ¿ªÆô×Ô¶¯·¢µ¯¼ì²é
+        Enter_Dangling_Mode(0); // å…³é—­åŠå°„æ¨¡å¼
+        // å¼€å¯è‡ªåŠ¨å‘å¼¹æ£€æŸ¥
         FireCtrl_AimbotLim_Set(1);
-        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // Éè¶¨µ¯ËÙÎª 16m/s
+        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // è®¾å®šå¼¹é€Ÿä¸º 16m/s
             Gun_SpeedSet(GUN_SPEED_SET_16);
         else
             Gun_SpeedSet(GUN_SPEED_SET_10);
         break;
     case AIMMODE_SET_DANGLING_MODE:
         ui_aimbot_mode = DANGLING_MODE;
-        Dangling_RecNow_MotionMode();                           // ½øÈëµõÉäÄ£Ê½µÄË²¼ä¼ÇÂ¼Ò»ÏÂµ±Ç°µÄµ×ÅÌÄ£Ê½, ´ÓµõÉäÄ£Ê½»Ö¸´Ê±×Ô¶¯»Ö¸´
-        MotionModeSet_Callback(CHASSISMODE_KEY_MODE_NO_FOLLOW); // ÓÉÓÚµõÉäÄ£Ê½²ÉÓÃ±àÂëÆ÷±Õ»·, ËùÒÔ²»ÄÜ¸úËæ
-        Enter_Dangling_Mode(1);                                 // ½øÈëµõÉäÄ£Ê½
+        Dangling_RecNow_MotionMode();                           // è¿›å…¥åŠå°„æ¨¡å¼çš„ç¬é—´è®°å½•ä¸€ä¸‹å½“å‰çš„åº•ç›˜æ¨¡å¼, ä»åŠå°„æ¨¡å¼æ¢å¤æ—¶è‡ªåŠ¨æ¢å¤
+        MotionModeSet_Callback(CHASSISMODE_KEY_MODE_NO_FOLLOW); // ç”±äºåŠå°„æ¨¡å¼é‡‡ç”¨ç¼–ç å™¨é—­ç¯, æ‰€ä»¥ä¸èƒ½è·Ÿéš
+        Enter_Dangling_Mode(1);                                 // è¿›å…¥åŠå°„æ¨¡å¼
         Smooth_SetData_Restart(&Smooth_YawAngleSet, Read_Real_Set(Yaw_Set));
         Smooth_SetData_Restart(&Smooth_PitchAngleSet, Read_Real_Set(Pitch_Set));
-        // ¹Ø±Õ×Ô¶¯·¢µ¯¼ì²é
+        // å…³é—­è‡ªåŠ¨å‘å¼¹æ£€æŸ¥
         FireCtrl_AimbotLim_Set(0);
-        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // Éè¶¨µ¯ËÙÎª 15m/s
+        if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // è®¾å®šå¼¹é€Ÿä¸º 15m/s
             Gun_SpeedSet(GUN_SPEED_SET_16);
         else
             Gun_SpeedSet(GUN_SPEED_SET_10);
         break;
 #elif defined CORE_USING_INFANTRY /* CORE_USING_HERO */
     case AIMMODE_SET_AIMBUFF_CONST_SPEED:
-        // Ğ¡ÄÜÁ¿»ú¹Ø
-        // ĞŞ¸Ä±êÖ¾ 01£ºÔÚÕâÀïÌí¼Ó×ÔÃéÄ£Ê½ÇĞ»»Ïà¹Øº¯Êı
+        // å°èƒ½é‡æœºå…³
+        // ä¿®æ”¹æ ‡å¿— 01ï¼šåœ¨è¿™é‡Œæ·»åŠ è‡ªç„æ¨¡å¼åˆ‡æ¢ç›¸å…³å‡½æ•°
         ui_aimbot_mode = AIMBUFF_CONST_MODE;
         Refresh_VisualMode(VISUAL_MODE_AIMBUFF_CONST_SPEED);
-        // ¹Ø±Õ×Ô¶¯·¢µ¯¼ì²é
+        // å…³é—­è‡ªåŠ¨å‘å¼¹æ£€æŸ¥
         FireCtrl_AimbotLim_Set(0);
-        // ¿ªÆô¾«Ï¸·¢µ¯¿ØÖÆ
+        // å¼€å¯ç²¾ç»†å‘å¼¹æ§åˆ¶
         FireCtrl_VisualFineFire_EN(1);
         Visual_FineFire_FlagsRenew(VisualFlag_RuneFire);
-        // ÇĞ»»µÍÉäÆµÄ£Ê½
+        // åˆ‡æ¢ä½å°„é¢‘æ¨¡å¼
         Gun_mode_set(GUN_SLOW);
-        // ÄÜÁ¿»ú¹Ø²»¸úËæ
+        // èƒ½é‡æœºå…³ä¸è·Ÿéš
         MotionModeSet_Callback(CHASSISMODE_KEY_MODE_NO_FOLLOW);
-        if (Read_Speed_Lim() > GUN_SPEED_REAL_30) // Éè¶¨µ¯ËÙÎª 30m/s
+        if (Read_Speed_Lim() > GUN_SPEED_REAL_30) // è®¾å®šå¼¹é€Ÿä¸º 30m/s
             Gun_SpeedSet(GUN_SPEED_SET_30);
         else if (Read_Speed_Lim() > GUN_SPEED_REAL_18)
             Gun_SpeedSet(GUN_SPEED_SET_18);
@@ -309,22 +309,22 @@ void AimMode_Set_Callback(int TrigSource)
             Gun_SpeedSet(GUN_SPEED_SET_15);
         break;
     case AIMMODE_SET_AIMBUFF_VARY_SPEED:
-        // ´óÄÜÁ¿»ú¹Ø
-        // ĞŞ¸Ä±êÖ¾ 01£ºÔÚÕâÀïÌí¼Ó×ÔÃéÄ£Ê½ÇĞ»»Ïà¹Øº¯Êı
+        // å¤§èƒ½é‡æœºå…³
+        // ä¿®æ”¹æ ‡å¿— 01ï¼šåœ¨è¿™é‡Œæ·»åŠ è‡ªç„æ¨¡å¼åˆ‡æ¢ç›¸å…³å‡½æ•°
         ui_aimbot_mode = AIMBUFF_VAR_MODE;
         Refresh_VisualMode(VISUAL_MODE_AIMBUFF_VARY_SPEED);
-        // ÇĞ»»µÍÉäÆµÄ£Ê½
+        // åˆ‡æ¢ä½å°„é¢‘æ¨¡å¼
         Gun_mode_set(GUN_SLOW);
-        // ¹Ø±Õ×Ô¶¯·¢µ¯¼ì²é
+        // å…³é—­è‡ªåŠ¨å‘å¼¹æ£€æŸ¥
         FireCtrl_AimbotLim_Set(0);
-        // ¿ªÆô¾«Ï¸·¢µ¯¿ØÖÆ
+        // å¼€å¯ç²¾ç»†å‘å¼¹æ§åˆ¶
         FireCtrl_VisualFineFire_EN(1);
         Visual_FineFire_FlagsRenew(VisualFlag_RuneFire);
-        // ÇĞ»»µÍÉäÆµÄ£Ê½
+        // åˆ‡æ¢ä½å°„é¢‘æ¨¡å¼
         Gun_mode_set(GUN_SLOW);
-        // ÄÜÁ¿»ú¹Ø²»¸úËæ
+        // èƒ½é‡æœºå…³ä¸è·Ÿéš
         MotionModeSet_Callback(CHASSISMODE_KEY_MODE_NO_FOLLOW);
-        if (Read_Speed_Lim() > GUN_SPEED_REAL_30) // Éè¶¨µ¯ËÙÎª 30m/s
+        if (Read_Speed_Lim() > GUN_SPEED_REAL_30) // è®¾å®šå¼¹é€Ÿä¸º 30m/s
             Gun_SpeedSet(GUN_SPEED_SET_30);
         else if (Read_Speed_Lim() > GUN_SPEED_REAL_18)
             Gun_SpeedSet(GUN_SPEED_SET_18);
@@ -337,24 +337,24 @@ void AimMode_Set_Callback(int TrigSource)
     }
 }
 /**
- * @brief£º×ÔÃéÄ£Ê½ÉèÖÃ-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºych
+ * @briefï¼šè‡ªç„æ¨¡å¼è®¾ç½®-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šych
  */
 void AimMode_Quit_Callback(int TrigSource)
 {
 }
 
 /**
- * @brief ÆäËûÉèÖÃ-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºych
+ * @brief å…¶ä»–è®¾ç½®-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šych
  */
 void MiscEntry_Callback(int TrigSource)
 {
     current_menu = MiscMenu;
 }
 /**
- * @brief ÆäËûÉèÖÃ-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºych
+ * @brief å…¶ä»–è®¾ç½®-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šych
  */
 void MiscSet_Callback(int TrigSource)
 {
@@ -365,13 +365,13 @@ void MiscSet_Callback(int TrigSource)
         break;
 #ifndef CORE_USING_HERO
     case MISC_KEY_HATCH_OPEN:
-        // ×Ô¶¯¿ªµ¯²Õ
+        // è‡ªåŠ¨å¼€å¼¹èˆ±
         magazine_state = 1;
         Magazine_servo_set(SERVO_OPEN);
         FillMode_EN = 1;
         break;
     case MISC_KEY_HATCH_CLSE:
-        // ×Ô¶¯¹Øµ¯²Õ
+        // è‡ªåŠ¨å…³å¼¹èˆ±
         magazine_state = 0;
         Magazine_servo_set(SERVO_CLOSE);
         FillMode_EN = 0;
@@ -382,17 +382,17 @@ void MiscSet_Callback(int TrigSource)
     }
 }
 /**
- * @brief ÆäËûÉèÖÃ-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºych
+ * @brief å…¶ä»–è®¾ç½®-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šych
  */
 void MiscQuit_Callback(int TrigSource)
 {
 }
 
 /**
- * @brief µ¥Æ¬»ú¸´Î»Ñ¡Ôñ²Ëµ¥µÄ½øÈëº¯Êı-¶şÎ¬°´¼ü»Øµ÷º¯Êı
+ * @brief å•ç‰‡æœºå¤ä½é€‰æ‹©èœå•çš„è¿›å…¥å‡½æ•°-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
  * @author fwlh
- * @param  TrigSource       °´ÏÂµÄ°´¼ü
+ * @param  TrigSource       æŒ‰ä¸‹çš„æŒ‰é”®
  */
 void ResetEntry_Callback(int TrigSource)
 {
@@ -400,13 +400,13 @@ void ResetEntry_Callback(int TrigSource)
 }
 
 /**
- * @brief µ¥Æ¬»ú¸´Î»Ñ¡Ôñ²Ëµ¥µÄÉèÖÃº¯Êı-¶şÎ¬°´¼ü»Øµ÷º¯Êı
+ * @brief å•ç‰‡æœºå¤ä½é€‰æ‹©èœå•çš„è®¾ç½®å‡½æ•°-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
  * @author fwlh
- * @param  TrigSource       °´ÏÂµÄ°´¼ü
+ * @param  TrigSource       æŒ‰ä¸‹çš„æŒ‰é”®
  */
 void Reset_Callback(int TrigSource)
 {
-    // Èç¹û´ËÊ± Ctrl ¼üÃ»ÓĞ°´ÏÂ¾ÍÖ±½ÓÍË³ö
+    // å¦‚æœæ­¤æ—¶ Ctrl é”®æ²¡æœ‰æŒ‰ä¸‹å°±ç›´æ¥é€€å‡º
     if (!Key_GetState(KeyEVT_CTRL))
         return;
     switch (TrigSource)
@@ -416,11 +416,11 @@ void Reset_Callback(int TrigSource)
         break;
     case MISC_KEY_CHASSIS_RESET:
         ResetCmd_Write(1);
-        chassis_data_send(); // ¸ÃÃüÁî¼´¿ÌÉúĞ§, ËùÒÔĞèÒªµ÷ÓÃÒ»´Î·¢ËÍ
+        chassis_data_send(); // è¯¥å‘½ä»¤å³åˆ»ç”Ÿæ•ˆ, æ‰€ä»¥éœ€è¦è°ƒç”¨ä¸€æ¬¡å‘é€
         break;
     case MISC_KEY_TOTAL_RESET:
         ResetCmd_Write(1);
-        chassis_data_send(); // ¸ÃÃüÁî¼´¿ÌÉúĞ§, ËùÒÔĞèÒªµ÷ÓÃÒ»´Î·¢ËÍ
+        chassis_data_send(); // è¯¥å‘½ä»¤å³åˆ»ç”Ÿæ•ˆ, æ‰€ä»¥éœ€è¦è°ƒç”¨ä¸€æ¬¡å‘é€
         Robot_Reset_Gimbal();
         break;
     default:
@@ -429,18 +429,18 @@ void Reset_Callback(int TrigSource)
 }
 
 /**
- * @brief µ¥Æ¬»ú¸´Î»Ñ¡Ôñ²Ëµ¥µÄÍË³öº¯Êı-¶şÎ¬°´¼ü»Øµ÷º¯Êı
+ * @brief å•ç‰‡æœºå¤ä½é€‰æ‹©èœå•çš„é€€å‡ºå‡½æ•°-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
  * @author fwlh
- * @param  TrigSource       °´ÏÂµÄ°´¼ü
+ * @param  TrigSource       æŒ‰ä¸‹çš„æŒ‰é”®
  */
 void ResetExit_Callback(int TrigSource)
 {
 }
 
 /**
- * @brief ³¬¼¶µçÈİ³äµç¿ª¹ØÑ¡Ôñ²Ëµ¥µÄ½øÈëº¯Êı-¶şÎ¬°´¼ü»Øµ÷º¯Êı
+ * @brief è¶…çº§ç”µå®¹å……ç”µå¼€å…³é€‰æ‹©èœå•çš„è¿›å…¥å‡½æ•°-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
  * @author fwlh
- * @param  TrigSource       °´ÏÂµÄ°´¼ü
+ * @param  TrigSource       æŒ‰ä¸‹çš„æŒ‰é”®
  */
 void SCAP_Ctrl_Entry_Callback(int TrigSource)
 {
@@ -448,9 +448,9 @@ void SCAP_Ctrl_Entry_Callback(int TrigSource)
 }
 
 /**
- * @brief ³¬¼¶µçÈİ³äµç¿ª¹ØÑ¡Ôñ²Ëµ¥µÄÉèÖÃº¯Êı-¶şÎ¬°´¼ü»Øµ÷º¯Êı
+ * @brief è¶…çº§ç”µå®¹å……ç”µå¼€å…³é€‰æ‹©èœå•çš„è®¾ç½®å‡½æ•°-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
  * @author fwlh
- * @param  TrigSource       °´ÏÂµÄ°´¼ü
+ * @param  TrigSource       æŒ‰ä¸‹çš„æŒ‰é”®
  */
 void SCAP_Ctrl_Callback(int TrigSource)
 {
@@ -468,26 +468,26 @@ void SCAP_Ctrl_Callback(int TrigSource)
 }
 
 /**
- * @brief ³¬¼¶µçÈİ³äµç¿ª¹ØÑ¡Ôñ²Ëµ¥µÄÍË³öº¯Êı-¶şÎ¬°´¼ü»Øµ÷º¯Êı
+ * @brief è¶…çº§ç”µå®¹å……ç”µå¼€å…³é€‰æ‹©èœå•çš„é€€å‡ºå‡½æ•°-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
  * @author fwlh
- * @param  TrigSource       °´ÏÂµÄ°´¼ü
+ * @param  TrigSource       æŒ‰ä¸‹çš„æŒ‰é”®
  */
 void SCAP_Ctrl_Exit_Callback(int TrigSource)
 {
 }
 
 /**
- * @brief£ºµ¯ËÙÉèÖÃ-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºzzj
+ * @briefï¼šå¼¹é€Ÿè®¾ç½®-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šzzj
  */
 void GunSpeedSet_Entry_Callback(int TrigSource)
-{ // ½øÈëµ¯ËÙÉèÖÃÑ¡Ôñ²Ëµ¥
+{ // è¿›å…¥å¼¹é€Ÿè®¾ç½®é€‰æ‹©èœå•
     current_menu = GunSpeedMenu;
 }
 
 /**
- * @brief£ºµ¯ËÙÉèÖÃ-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºzzj
+ * @briefï¼šå¼¹é€Ÿè®¾ç½®-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šzzj
  */
 void GunSpeedSet_Set_Callback(int TrigSource)
 {
@@ -520,8 +520,8 @@ void GunSpeedSet_Set_Callback(int TrigSource)
 }
 
 /**
- * @brief£ºµ¯ËÙÉèÖÃ-¶şÎ¬°´¼ü»Øµ÷º¯Êı
- * @author£ºzzj
+ * @briefï¼šå¼¹é€Ÿè®¾ç½®-äºŒç»´æŒ‰é”®å›è°ƒå‡½æ•°
+ * @authorï¼šzzj
  */
 void GunSpeedSet_Quit_Callback(int TrigSource)
 {
@@ -548,7 +548,7 @@ void Performance_Callback(int Trig_Key)
     default:
         break;
     }
-    // ¸üĞÂµ×ÅÌ¹¦ÂÊÉÏÏŞ²ÎÊı
+    // æ›´æ–°åº•ç›˜åŠŸç‡ä¸Šé™å‚æ•°
     LocalHeat_Data_Fresh_Limit(&GimbalSetPower);
 }
 

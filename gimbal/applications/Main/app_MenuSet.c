@@ -1,21 +1,21 @@
 #include "app_MenuSet.h"
 #include "func_KeyCallback.h"
 
-Key_Menu_Str_t MainMenu;              // Ö÷²Ëµ¥
-Key_Menu_Str_t ChassisModeMenu;       // µ×ÅÌÄ£Ê½Ñ¡Ôñ²Ëµ¥
-Key_Menu_Str_t AimModeMenu;           // ×ÔÃéÄ£Ê½Ñ¡Ôñ²Ëµ¥
-Key_Menu_Str_t MiscMenu;              // ÔÓÏîÉèÖÃÑ¡Ôñ²Ëµ¥
-Key_Menu_Str_t RobotResetMenu;        // »úÆ÷ÈË¸´Î»Ñ¡Ôñ²Ëµ¥
-Key_Menu_Str_t SCAPCtrlMenu;          // ³¬¼¶µçÈİ³äµç¿ª¹Ø²Ëµ¥
-Key_Menu_Str_t GunSpeedMenu;          // µ¯ËÙÉèÖÃÑ¡Ôñ²Ëµ¥
-Key_Menu_Str_t PerformanceMenu;       // »úÆ÷ÈËĞÔÄÜ²Ëµ¥
-Key_Menu_Str_t PerformanceChooseMenu; // »úÆ÷ÈËĞÔÄÜÑ¡Ôñ²Ëµ¥
+Key_Menu_Str_t MainMenu;              // ä¸»èœå•
+Key_Menu_Str_t ChassisModeMenu;       // åº•ç›˜æ¨¡å¼é€‰æ‹©èœå•
+Key_Menu_Str_t AimModeMenu;           // è‡ªç„æ¨¡å¼é€‰æ‹©èœå•
+Key_Menu_Str_t MiscMenu;              // æ‚é¡¹è®¾ç½®é€‰æ‹©èœå•
+Key_Menu_Str_t RobotResetMenu;        // æœºå™¨äººå¤ä½é€‰æ‹©èœå•
+Key_Menu_Str_t SCAPCtrlMenu;          // è¶…çº§ç”µå®¹å……ç”µå¼€å…³èœå•
+Key_Menu_Str_t GunSpeedMenu;          // å¼¹é€Ÿè®¾ç½®é€‰æ‹©èœå•
+Key_Menu_Str_t PerformanceMenu;       // æœºå™¨äººæ€§èƒ½èœå•
+Key_Menu_Str_t PerformanceChooseMenu; // æœºå™¨äººæ€§èƒ½é€‰æ‹©èœå•
 
 /**
- * @brief£ºÖ±½Ó´¥·¢µÄ°´¼ü»Øµ÷º¯Êı³õÊ¼»¯
- * @param [in]   ÎŞ
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šç›´æ¥è§¦å‘çš„æŒ‰é”®å›è°ƒå‡½æ•°åˆå§‹åŒ–
+ * @param [in]   æ— 
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 static void Key_Callback_cfg(void)
 {
@@ -24,15 +24,15 @@ static void Key_Callback_cfg(void)
     Key_SetCallBack(SCAP_RESERVE_KEY, &SCAP_Reserve_PressCallback, RT_NULL);
 }
 
-// ³õÊ¼»¯ĞèÒªÊ¹ÓÃµÄ»úÆ÷ÈË°´¼ü¿ØÖÆ²Ëµ¥
+// åˆå§‹åŒ–éœ€è¦ä½¿ç”¨çš„æœºå™¨äººæŒ‰é”®æ§åˆ¶èœå•
 rt_err_t Ctrl_Menu_Init(void)
 {
     int EXIT_Key = FOREWORD_KEY | BACK_KEY | LEFT_KEY | RIGHT_KEY | KeyEVT_MouseZ_N | KeyEVT_MouseZ_P;
 
-    Key_Callback_cfg(); // ³õÊ¼»¯·Ç¶şÎ¬°´¼ü
+    Key_Callback_cfg(); // åˆå§‹åŒ–éäºŒç»´æŒ‰é”®
 
-    KeyCtrl_MenuStr_Init(&MainMenu); // ³õÊ¼»¯Ö÷²Ëµ¥½á¹¹Ìå
-    MenuCmd_SetMainMenu(&MainMenu);  // ÉèÖÃÎª³õÊ¼²Ëµ¥
+    KeyCtrl_MenuStr_Init(&MainMenu); // åˆå§‹åŒ–ä¸»èœå•ç»“æ„ä½“
+    MenuCmd_SetMainMenu(&MainMenu);  // è®¾ç½®ä¸ºåˆå§‹èœå•
     KeyCtrl_MenuStr_Init(&ChassisModeMenu);
     KeyCtrl_MenuStr_Init(&AimModeMenu);
     KeyCtrl_MenuStr_Init(&MiscMenu);
@@ -40,23 +40,23 @@ rt_err_t Ctrl_Menu_Init(void)
     KeyCtrl_MenuStr_Init(&PerformanceChooseMenu);
     KeyCtrl_MenuStr_Init(&SCAPCtrlMenu);
 
-    // ÉèÖÃÓÃÓÚ¼ÇÂ¼ÊÇ·ñÔÚÖ÷²Ëµ¥µÄº¯Êı
+    // è®¾ç½®ç”¨äºè®°å½•æ˜¯å¦åœ¨ä¸»èœå•çš„å‡½æ•°
     MenuSet_Add_EntryFun(&MainMenu, KeyEVT_ALL, MainMenu_REC_Entry_Fun);
     MenuSet_Add_QuitFun(&MainMenu, KeyEVT_ALL, MainMenu_REC_Quit_Fun);
 
-    // µ×ÅÌÄ£Ê½ÉèÖÃ²Ëµ¥½á¹¹
+    // åº•ç›˜æ¨¡å¼è®¾ç½®èœå•ç»“æ„
     MenuSet_Add_SubMenu(&MainMenu, &ChassisModeMenu, CHASSISMODE_KEY_ENTRY);
     MenuSet_Add_EntryFun(&ChassisModeMenu, KeyEVT_ALL, MotionModeEntry_Callback);
     MenuSet_Add_QuitFun(&ChassisModeMenu, CHASSISMODE_KEY_MODE_NO_FOLLOW | CHASSISMODE_KEY_MODE_FOLLOW | CHASSISMODE_KEY_MODE_SMALL_GYRO | CHASSISMODE_KEY_MODE_FAST_GYRO | CHASSISMODE_KEY_MODE_MOVE_BACK, MotionModeSet_Callback);
     MenuSet_Add_QuitFun(&ChassisModeMenu, KeyEVT_ALL, MotionModeQuit_Callback);
     MenuSet_Add_SubMenu(&ChassisModeMenu, &MainMenu, CHASSISMODE_KEY_MODE_NO_FOLLOW | CHASSISMODE_KEY_MODE_FOLLOW | CHASSISMODE_KEY_MODE_SMALL_GYRO | CHASSISMODE_KEY_MODE_FAST_GYRO | CHASSISMODE_KEY_MODE_MOVE_BACK | EXIT_Key);
 
-    // ¹öÂÖÏà¹Ø²Ëµ¥½á¹¹
+    // æ»šè½®ç›¸å…³èœå•ç»“æ„
     MenuSet_Add_SubMenu(&MainMenu, &MainMenu, KeyEVT_MouseZ_N | KeyEVT_MouseZ_P);
     MenuSet_Add_QuitFun(&MainMenu, KeyEVT_MouseZ_P, MouseZ_P_Callback);
     MenuSet_Add_QuitFun(&MainMenu, KeyEVT_MouseZ_N, MouseZ_N_Callback);
 
-    // ×ÔÃéÄ£Ê½²Ëµ¥½á¹¹
+    // è‡ªç„æ¨¡å¼èœå•ç»“æ„
     MenuSet_Add_SubMenu(&MainMenu, &AimModeMenu, AIMMODE_SET_ENTRY);
     MenuSet_Add_EntryFun(&AimModeMenu, KeyEVT_ALL, AimMode_Entry_Callback);
     MenuSet_Add_QuitFun(&AimModeMenu, AIMMODE_SET_AIMBOT |
@@ -74,7 +74,7 @@ rt_err_t Ctrl_Menu_Init(void)
                                                      AIMMODE_SET_AIMBUFF_CONST_SPEED | AIMMODE_SET_AIMBUFF_VARY_SPEED);
 #endif
 
-    // µ¯ËÙÑ¡Ôñ²Ëµ¥½á¹¹
+    // å¼¹é€Ÿé€‰æ‹©èœå•ç»“æ„
     MenuSet_Add_SubMenu(&MainMenu, &GunSpeedMenu, GUNSPEED_SET_ENTRY);
     MenuSet_Add_EntryFun(&GunSpeedMenu, KeyEVT_ALL, GunSpeedSet_Entry_Callback);
     MenuSet_Add_QuitFun(&GunSpeedMenu, KeyEVT_ALL, GunSpeedSet_Quit_Callback);
@@ -86,7 +86,7 @@ rt_err_t Ctrl_Menu_Init(void)
     MenuSet_Add_SubMenu(&GunSpeedMenu, &MainMenu, GUNSPEED_SET_15 | GUNSPEED_SET_18 | GUNSPEED_SET_30 | EXIT_Key);
 #endif
 
-    // ÔÓÏîÉèÖÃ²Ëµ¥½á¹¹
+    // æ‚é¡¹è®¾ç½®èœå•ç»“æ„
     MenuSet_Add_SubMenu(&MainMenu, &MiscMenu, MISC_KEY_ENTRY);
     MenuSet_Add_EntryFun(&MiscMenu, KeyEVT_ALL, MiscEntry_Callback);
 #if defined CORE_USING_INFANTRY
@@ -101,21 +101,21 @@ rt_err_t Ctrl_Menu_Init(void)
     MenuSet_Add_SubMenu(&MiscMenu, &MainMenu, MISC_KEY_UI_RST | EXIT_Key);
 #endif
 
-    // ¸´Î»µ¥Æ¬»úµÄµÚÈıÎ¬°´¼ü
+    // å¤ä½å•ç‰‡æœºçš„ç¬¬ä¸‰ç»´æŒ‰é”®
     MenuSet_Add_SubMenu(&MiscMenu, &RobotResetMenu, MISC_KEY_RESET);
-    // ¹¦ÄÜÉÏ¸´Î»²Ëµ¥ÏîÖ»ÓĞÔÚ°´ÏÂ CTRL ²Å»áÉúĞ§
+    // åŠŸèƒ½ä¸Šå¤ä½èœå•é¡¹åªæœ‰åœ¨æŒ‰ä¸‹ CTRL æ‰ä¼šç”Ÿæ•ˆ
     MenuSet_Add_EntryFun(&RobotResetMenu, KeyEVT_ALL, ResetEntry_Callback);
     MenuSet_Add_QuitFun(&RobotResetMenu, MISC_KEY_GIMBAL_RESET | MISC_KEY_CHASSIS_RESET | MISC_KEY_TOTAL_RESET, Reset_Callback);
-    MenuSet_Add_QuitFun(&RobotResetMenu, KeyEVT_ALL, ResetExit_Callback); // ÒòÎªĞèÒªÌáÇ°°´ÏÂ Ctrl °´¼üËùÒÔ°´ÏÂ Ctrl Ê±²»ÄÜ×Ô¼ºÍË³ö
+    MenuSet_Add_QuitFun(&RobotResetMenu, KeyEVT_ALL, ResetExit_Callback); // å› ä¸ºéœ€è¦æå‰æŒ‰ä¸‹ Ctrl æŒ‰é”®æ‰€ä»¥æŒ‰ä¸‹ Ctrl æ—¶ä¸èƒ½è‡ªå·±é€€å‡º
     MenuSet_Add_SubMenu(&RobotResetMenu, &MainMenu, MISC_KEY_GIMBAL_RESET | MISC_KEY_CHASSIS_RESET | MISC_KEY_TOTAL_RESET | EXIT_Key);
-    // ¿ª¹Ø³¬¼¶µçÈİµÄµÚÈıÎ¬°´¼ü
+    // å¼€å…³è¶…çº§ç”µå®¹çš„ç¬¬ä¸‰ç»´æŒ‰é”®
     MenuSet_Add_SubMenu(&MiscMenu, &SCAPCtrlMenu, MISC_KEY_CLOSE_CAP);
     MenuSet_Add_EntryFun(&SCAPCtrlMenu, KeyEVT_ALL, SCAP_Ctrl_Entry_Callback);
     MenuSet_Add_QuitFun(&SCAPCtrlMenu, MISC_KEY_CAP_OPEN | MISC_KEY_CAP_CLSE, SCAP_Ctrl_Callback);
     MenuSet_Add_QuitFun(&SCAPCtrlMenu, KeyEVT_ALL, SCAP_Ctrl_Exit_Callback);
     MenuSet_Add_SubMenu(&SCAPCtrlMenu, &MainMenu, MISC_KEY_CAP_OPEN | MISC_KEY_CAP_CLSE | EXIT_Key);
 
-    // ĞÔÄÜÑ¡Ôñ²Ëµ¥
+    // æ€§èƒ½é€‰æ‹©èœå•
     MenuSet_Add_SubMenu(&MainMenu, &PerformanceMenu, PERFORMANCE_KEY_ENTRY);
     MenuSet_Add_EntryFun(&PerformanceMenu, KeyEVT_ALL, PerformanceEnter_Callback);
     MenuSet_Add_QuitFun(&PerformanceMenu, PERFORMANCE_KEY_LEVEL1 | PERFORMANCE_KEY_LEVEL2 | PERFORMANCE_KEY_LEVEL3, Performance_Callback);

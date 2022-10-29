@@ -6,21 +6,21 @@
 #include "func_gun.h"
 #include "func_Aimbot_Com.h"
 
-volatile int Last_CANID; // 用于检查收到的无效报文的ID
+volatile int Last_CANID; // 鐢ㄤ簬妫�鏌ユ敹鍒扮殑鏃犳晥鎶ユ枃鐨処D
 
 void can1_rec(struct rt_can_msg *msg)
 {
     switch (msg->id)
     {
-    //更新云台电机数据
+    //鏇存柊浜戝彴鐢垫満鏁版嵁
     case YAW_ID:
-        motor_readmsg(msg, &Yaw.dji);
+        motor_readmsg(msg->data, &Yaw.dji);
         return;
     case PITCH_ID:
-        motor_readmsg(msg, &Pitch.dji);
+        motor_readmsg(msg->data, &Pitch.dji);
         return;
 
-    //底盘
+    //搴曠洏
     case CHASSIS_REC:
         refresh_heat(msg->data);
         return;
@@ -41,7 +41,7 @@ void can2_rec(struct rt_can_msg *msg)
 {
     switch (msg->id)
     {
-    //视觉通信数据接收ID
+    //瑙嗚閫氫俊鏁版嵁鎺ユ敹ID
     case ID_VISUALDATA_AIMFLAGS:
         VisualCom_Receive_Flag(msg->data);
         return;
@@ -49,14 +49,14 @@ void can2_rec(struct rt_can_msg *msg)
         VisualCom_Receive_Atti(msg->data);
         return;
     case ID_RUB_LEFT:
-        motor_readmsg(msg, &Read_Gun_Motor(RubMotorLeft)->dji);
+        motor_readmsg(msg->data, &Read_Gun_Motor(RubMotorLeft)->dji);
         return;
     case ID_RUB_RIGHT:
-        motor_readmsg(msg, &Read_Gun_Motor(RubMotorRight)->dji);
+        motor_readmsg(msg->data, &Read_Gun_Motor(RubMotorRight)->dji);
         return;
 #if defined CORE_USING_INFANTRY
     case LAUNCH_ID:
-        motor_readmsg(msg, &Read_Gun_Motor(LaunchMotor)->dji);
+        motor_readmsg(msg->data, &Read_Gun_Motor(LaunchMotor)->dji);
         return;
 #endif
     default:
