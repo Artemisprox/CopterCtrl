@@ -1,0 +1,12 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Glob('*.c')
+src += ['drv_GunSettings.h']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Gun', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

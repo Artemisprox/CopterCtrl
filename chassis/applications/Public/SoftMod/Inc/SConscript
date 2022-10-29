@@ -1,0 +1,17 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# 包含该文件夹的共用.h文件
+src = Glob('*.c')
+src +=  ['HThread_data.h']
+src +=  ['HCanID_data.h']
+src +=  ['HRef_ID.h']
+src +=  ['HLxfunc.h']
+src +=  ['HList.h']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Public/SoftMod', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

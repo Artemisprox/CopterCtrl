@@ -1,0 +1,12 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Glob('*.c')
+src += ['drv_GimbalPublic.h']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('GimbalCtrl', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

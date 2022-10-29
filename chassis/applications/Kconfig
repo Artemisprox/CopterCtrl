@@ -1,0 +1,105 @@
+menu "Car Customize Config"
+
+#是否使用超级电容限制
+menuconfig USE_CAPACITY
+    bool "Use Super Capacity"
+    default n
+
+#是否使能底盘同步
+menuconfig MOTOR_USE_SYNC
+    bool "Use Chassis Synchronization"
+    default n
+
+menu "Choose Car model Config"
+    
+    #选择兵种
+    choice
+        prompt "select Types of arms" 
+        default CORE_USING_INFANTRY
+        config CORE_USING_INFANTRY
+            bool "infantry"
+        config CORE_USING_HERO
+            bool "hero"
+    endchoice
+
+
+    选择英雄机器人
+    if  CORE_USING_HERO
+        choice
+            prompt "select Types of hero robot" 
+            default CORE_USING_BLACKHEAD_HERO
+            #黑头英雄
+            config CORE_USING_BLACKHEAD_HERO
+                bool "21 black head hero"
+            #C板英雄
+            config CORE_USING_C_BOARD_HERO
+                bool "21 C board hero"
+            #国赛英雄
+            config CORE_USING_NATION_HERO
+                bool "21 nation hero"
+            #22双马尾英雄
+            config CORE_USING_BUNCHES_HERO
+                bool "22 bunches hero"
+        endchoice
+    endif
+
+
+    选择步兵机器人
+    if  CORE_USING_INFANTRY
+        choice
+            prompt "select Types of infantry robot" 
+            default CORE_USING_BLACKHEAD_INFANTRY
+            #黑头步兵
+            config CORE_USING_BLACKHEAD_INFANTRY
+                bool "21 black head infantry"
+            #绿头步兵
+            config CORE_USING_GREENHEAD_INFANTRY
+                bool "21 green head infantry"    
+            #小步兵
+            config CORE_USING_SMALL_INFANTRY
+                bool "21 small infantry"
+            #全向轮步兵
+            config CORE_USING_OMNI_WHEEL_INFANTRY
+                bool "21 omni wheel infantry"
+            #国赛祥云步兵(第一辆)(碳板步兵)
+            config CORE_USING_CLOUD_INFANTRY1
+                bool "21 cloud infantry 1(Carbon Plate Infantry)"
+            #国赛祥云步兵(第二辆)
+            config CORE_USING_CLOUD_INFANTRY2
+                bool "21 cloud infantry 2"
+            #22富贵步兵
+            config CORE_USING_RICH_INFANTRY
+                bool "22 rich infantry"
+            #22玻头步兵
+            config CORE_USING_GLASS_INFANTRY
+                bool "22 glass infantry"
+        endchoice
+    endif
+    
+    #底盘选取麦轮or全向轮
+    choice
+        prompt "select chassis kind"
+        default MECANUM_WHEEL
+        config MECANUM_WHEEL
+            bool "select mecanum"
+        if CORE_USING_INFANTRY      #if语句的 或 用 ||
+            config OMNI_WHEEL
+                bool "select omnidirectional"
+        endif
+    endchoice
+
+    #轮子选取3508驱动or2006驱动
+    choice
+        prompt "select wheel motor kind"
+        default WHEEL_MOTOR_3508
+        config WHEEL_MOTOR_3508
+            bool "select RM 3508"
+        config WHEEL_MOTOR_2006
+            bool "select RM 2006"
+    endchoice
+
+
+endmenu
+
+endmenu
+

@@ -1,0 +1,14 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Glob('*.c')
+src += ['drv_thread.h']
+src += ['robodata.h']
+src += ['roboselect.h']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Main', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
