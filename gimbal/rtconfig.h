@@ -206,6 +206,33 @@
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4
 
+/* Choose Public Libraries */
+
+/* Whether to use the HardWare Libraries */
+
+#define BSP_USING_BUZZER
+#define BUZZER_PWM_DEVICE_NAME "pwm4"
+#define BUZZER_PWM_CHANNEL 3
+#define BSP_USING_REMOTE_DT7
+#define REMOTE_UART_DEVICE_NAME "uart3"
+
+/* Whether to use the SoftWare Libraries */
+
+#define BSP_USING_PID
+#define BSP_USING_MOTORLIB
+#define BSP_USING_SETPLANNING
+#define BSP_USING_QUEUE
+#define BSP_USING_UTILS
+
+/* Use the filter module(s) */
+
+#define BSP_USING_EXACTSMOOTH
+
+/* Use the key-menu module(s) */
+
+#define BSP_USING_KEY_CALLBACK
+#define BSP_USING_KEY_MENU
+
 /* Hardware Drivers Config */
 
 #define SOC_STM32F407IG

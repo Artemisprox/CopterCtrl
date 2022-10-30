@@ -358,40 +358,39 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\applications\Public\Hardware\RGBLight</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Pid</state>
-          <state>$PROJ_DIR$\applications\Public\Hardware\Remote</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Filter</state>
+          <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\applications\Monitor</state>
           <state>$PROJ_DIR$\applications\Communication</state>
-          <state>$PROJ_DIR$\applications\Public\Hardware\Buzzer</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Queue</state>
           <state>$PROJ_DIR$\applications\IMU</state>
           <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers\drv_flash</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Pid</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\applications\Aimbot</state>
           <state>$PROJ_DIR$\applications\Gun</state>
           <state>$PROJ_DIR$\..\..\libraries\STM32F4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Filter</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\applications\Public\Hardware\Magazine</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Queue</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\SetPlanning</state>
+          <state>$PROJ_DIR$\..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include</state>
           <state>$PROJ_DIR$\applications\GimbalCtrl</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Motor</state>
-          <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Menu</state>
-          <state>$PROJ_DIR$\applications\Public\Software\SetPlanning</state>
-          <state>$PROJ_DIR$\..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Utils</state>
+          <state>$PROJ_DIR$\applications\Magazine</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Menu</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Hardware\Remote</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Motor</state>
           <state>$PROJ_DIR$\applications\Main</state>
           <state>$PROJ_DIR$\..\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Utils</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Hardware\Buzzer</state>
+          <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers\config</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1452,40 +1451,39 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\applications\Public\Hardware\RGBLight</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Pid</state>
-          <state>$PROJ_DIR$\applications\Public\Hardware\Remote</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Filter</state>
+          <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\applications\Monitor</state>
           <state>$PROJ_DIR$\applications\Communication</state>
-          <state>$PROJ_DIR$\applications\Public\Hardware\Buzzer</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Queue</state>
           <state>$PROJ_DIR$\applications\IMU</state>
           <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers\drv_flash</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Pid</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\applications\Aimbot</state>
           <state>$PROJ_DIR$\applications\Gun</state>
           <state>$PROJ_DIR$\..\..\libraries\STM32F4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Filter</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\applications\Public\Hardware\Magazine</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Queue</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\SetPlanning</state>
+          <state>$PROJ_DIR$\..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include</state>
           <state>$PROJ_DIR$\applications\GimbalCtrl</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Motor</state>
-          <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Menu</state>
-          <state>$PROJ_DIR$\applications\Public\Software\SetPlanning</state>
-          <state>$PROJ_DIR$\..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Utils</state>
+          <state>$PROJ_DIR$\applications\Magazine</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Menu</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Hardware\Remote</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Software\Motor</state>
           <state>$PROJ_DIR$\applications\Main</state>
           <state>$PROJ_DIR$\..\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\applications\Public\Software\Utils</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Hardware\Buzzer</state>
+          <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers\config</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2327,12 +2325,24 @@
     </file>
   </group>
   <group>
+    <name>Public/Hardware/Magazine</name>
+    <file>
+      <name>$PROJ_DIR$\applications\Magazine\drv_magazine.c</name>
+    </file>
+  </group>
+  <group>
     <name>Main</name>
+    <file>
+      <name>$PROJ_DIR$\applications\Main\app_MenuSet.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\applications\Main\app_robocontrol.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\applications\Main\drv_cpuusage.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\applications\Main\func_KeyCallback.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\applications\Main\main.c</name>
@@ -2366,84 +2376,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\applications\Monitor\mod_Monitor.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Hardware/Buzzer</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Hardware\Buzzer\drv_buzzer.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Hardware/Magazine</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Hardware\Magazine\drv_magazine.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Hardware/Remote</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Hardware\Remote\drv_remote.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Hardware/Light</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Hardware\RGBLight\drv_rgblight.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Software/Filter</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Filter\drv_ExactSmooth.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Filter\drv_PLLFilter.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Software/Menu</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Menu\app_MenuSet.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Menu\func_KeyCallback.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Menu\func_Key_Record.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Menu\mod_KeyCtrl.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Software/Motor</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Motor\drv_motor.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Software/Pid</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Pid\pid.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Software/Queue</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Queue\drv_Queue.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Software/SetPlanning</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\SetPlanning\drv_SetPlanning.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Public/Software/Utils</name>
-    <file>
-      <name>$PROJ_DIR$\applications\Public\Software\Utils\drv_utils.c</name>
     </file>
   </group>
   <group>
@@ -2648,6 +2580,66 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ramfunc.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Hardware/Buzzer</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Hardware\Buzzer\drv_buzzer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Hardware/Remote</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Hardware\Remote\drv_remote.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Software/Filter</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Software\Filter\drv_ExactSmooth.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Software/Menu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Software\Menu\drv_Key_Set.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Software\Menu\func_Key_Record.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Software\Menu\mod_KeyCtrl.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Software/Motor</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Software\Motor\drv_motor.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Software/Pid</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Software\Pid\pid.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Software/Queue</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Software\Queue\drv_Queue.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Software/SetPlanning</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Software\SetPlanning\drv_SetPlanning.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Software/Utils</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Software\Utils\drv_utils.c</name>
     </file>
   </group>
 </project>

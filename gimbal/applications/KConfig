@@ -1,6 +1,6 @@
 menu "Choose Car model Config"
     
-    #Ñ¡Ôñ±øÖÖ
+    #é€‰æ‹©å…µç§
     choice
         prompt "select Types of arms" 
         default CORE_USING_INFANTRY
@@ -11,36 +11,36 @@ menu "Choose Car model Config"
     endchoice
 
 
-    # Ñ¡ÔñÓ¢ĞÛ»úÆ÷ÈË
+    # é€‰æ‹©è‹±é›„æœºå™¨äºº
     if  CORE_USING_HERO
         choice
             prompt "select Types of hero robot" 
             default CORE_USING_NATION_HERO
-            #¹úÈüÓ¢ĞÛ
+            #å›½èµ›è‹±é›„
             config CORE_USING_NATION_HERO
                 bool "21 nation hero"
-            #22Ë«ÂíÎ²Ó¢ĞÛ
+            #22åŒé©¬å°¾è‹±é›„
             config CORE_USING_BUNCHES_HERO
                 bool "22 bunches hero"
         endchoice
     endif
 
 
-    # Ñ¡Ôñ²½±ø»úÆ÷ÈË
+    # é€‰æ‹©æ­¥å…µæœºå™¨äºº
     if  CORE_USING_INFANTRY
         choice
             prompt "select Types of infantry robot" 
             default CORE_USING_GREENHEAD_INFANTRY
-            #ºÚÍ·²½±ø
+            #é»‘å¤´æ­¥å…µ
             config CORE_USING_CARBONPLATE_INFANTRY
                 bool "21 carbon plate infantry"
-            #ÂÌÍ·²½±ø
+            #ç»¿å¤´æ­¥å…µ
             config CORE_USING_GREENHEAD_INFANTRY
                 bool "22 green head infantry"
-            #22¸»¹ó²½±ø
+            #22å¯Œè´µæ­¥å…µ
             config CORE_USING_RICH_INFANTRY
                 bool "22 rich infantry"
-            #22²£Í·²½±ø
+            #22ç»å¤´æ­¥å…µ
             config CORE_USING_GLASS_INFANTRY
                 bool "22 glass infantry"
         endchoice

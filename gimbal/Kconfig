@@ -18,5 +18,6 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "../../libraries/Kconfig"
+source "../../PublicLib/Kconfig"
 source "board/Kconfig"
 source "applications/Kconfig"
