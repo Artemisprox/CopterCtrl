@@ -7,9 +7,9 @@
 #include "drv_Aimbot_Public.h"
 #include "drv_ExactSmooth.h"
 
-// µç»ú±Õ»·Ïà¹ØÉèÖÃ
-// PAL_SCALE_SET ½ÇËÙ¶È»··ÖÆµ£¬¼´ÖÜÆÚÎªPAL_SCALE_SET¸ö1ms
-// ANG_SCALE_SET ½Ç¶È»··ÖÆµ£¬¼´ÖÜÆÚÎªANG_SCALE_SET¸ö1ms
+// ç”µæœºé—­ç¯ç›¸å…³è®¾ç½®
+// PAL_SCALE_SET è§’é€Ÿåº¦ç¯åˆ†é¢‘ï¼Œå³å‘¨æœŸä¸ºPAL_SCALE_SETä¸ª1ms
+// ANG_SCALE_SET è§’åº¦ç¯åˆ†é¢‘ï¼Œå³å‘¨æœŸä¸ºANG_SCALE_SETä¸ª1ms
 #define PAL_SCALE_SET (1)
 #define ANG_SCALE_SET (2)
 
@@ -17,29 +17,29 @@ typedef enum
 {
     Aimbot,
     RoboControl
-} GimbalSet_Source_Enum; // ÓÃÓÚ±ê¼Çµ±Ç°Éè¶¨ÖµÊı¾İÀ´Ô´µÄÃ¶¾ÙÀàĞÍ
+} GimbalSet_Source_Enum; // ç”¨äºæ ‡è®°å½“å‰è®¾å®šå€¼æ•°æ®æ¥æºçš„æšä¸¾ç±»å‹
 
 typedef struct
 {
-    float Pitch;                      // PitchÉè¶¨Öµ
-    float Yaw;                        // YawÉè¶¨Öµ
-    GimbalSet_Source_Enum Set_Source; // Éè¶¨ÖµÀ´Ô´
+    float Pitch;                      // Pitchè®¾å®šå€¼
+    float Yaw;                        // Yawè®¾å®šå€¼
+    GimbalSet_Source_Enum Set_Source; // è®¾å®šå€¼æ¥æº
 } GimbalCTRL_Set_Type;
 
 typedef enum
 {
-    FB_NONE,           // ´íÎóÖµ
-    FB_IMU,            // Ê¹ÓÃ×ËÌ¬´«¸ĞÆ÷Êı¾İ
-    FB_ENCD,           // Ê¹ÓÃ±àÂëÆ÷
-} GimbalFBSelection_E; // ·´À¡À´Ô´Ã¶¾Ù
+    FB_NONE,           // é”™è¯¯å€¼
+    FB_IMU,            // ä½¿ç”¨å§¿æ€ä¼ æ„Ÿå™¨æ•°æ®
+    FB_ENCD,           // ä½¿ç”¨ç¼–ç å™¨
+} GimbalFBSelection_E; // åé¦ˆæ¥æºæšä¸¾
 
 extern Motor_t Yaw;
 extern Motor_t Pitch;
 extern int Exit_AimbotFlag;
-extern float AnglePID_OUT; //½Ç¶È»·Êä³ö
-extern rt_int8_t motion_mode_record; // ÓÃÓÚ¼ÇÂ¼ÉÏ´ÎµÄµ×ÅÌÄ£Ê½
-extern float ViewStartYaw;           // ¿ªÊ¼Ì½Í·µÄÔÆÌ¨yaw½Ç
-// ¶¨ÒåÒ»¸öÓÃÀ´²éÑ¯¶ş´ú×ÔÃé×´Ì¬µÄ½á¹¹Ìå
+extern float AnglePID_OUT; //è§’åº¦ç¯è¾“å‡º
+extern rt_int8_t motion_mode_record; // ç”¨äºè®°å½•ä¸Šæ¬¡çš„åº•ç›˜æ¨¡å¼
+extern float ViewStartYaw;           // å¼€å§‹æ¢å¤´çš„äº‘å°yawè§’
+// å®šä¹‰ä¸€ä¸ªç”¨æ¥æŸ¥è¯¢äºŒä»£è‡ªç„çŠ¶æ€çš„ç»“æ„ä½“
 extern Gimbal_SetCal_Type Gimbal_SetData_Out;
 
 extern ExactSmth_CTRL_S MouseXFix_GimbalSet_Filter, MouseYFix_GimbalSet_Filter;
@@ -47,8 +47,8 @@ extern ExactSmth_CTRL_S MouseXFix_GimbalSet_Filter, MouseYFix_GimbalSet_Filter;
 extern float PitchFix;
 extern float YawFix;
 
-extern float GimbalSetAdd_Rec;           // ÓÃÓÚÒ»¼ü»ØÍ·µÄÔöÁ¿±êÖ¾
-extern float CtrlErr_Pitch, CtrlErr_Yaw; // ¼ÆËãÔÆÌ¨¿ØÖÆÎó²î
+extern float GimbalSetAdd_Rec;           // ç”¨äºä¸€é”®å›å¤´çš„å¢é‡æ ‡å¿—
+extern float CtrlErr_Pitch, CtrlErr_Yaw; // è®¡ç®—äº‘å°æ§åˆ¶è¯¯å·®
 
 extern float Read_YawSet(void);
 extern float Read_PitchSet(void);
@@ -56,7 +56,7 @@ extern float Read_YawNow(void);
 extern float Read_PitchNow(void);
 extern float Read_YawSpeedNow(void);
 
-// ĞŞ¸Äµ±Ç°ÔÆÌ¨Ô¤ÆÚÊı¾İÔ´
+// ä¿®æ”¹å½“å‰äº‘å°é¢„æœŸæ•°æ®æº
 extern void Gimbal_FBS_Set_Pitch(GimbalFBSelection_E Set);
 extern void Gimbal_FBS_Set_Yaw(GimbalFBSelection_E Set);
 

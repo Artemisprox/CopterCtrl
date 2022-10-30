@@ -2,7 +2,7 @@
 
 #include <rthw.h>
 
-// delayµ½Ö¸¶¨tickº¯Êı£¬»áÍ¨¹ıÖ¸ÕëTick_WakeUpÏòÍâÊä³öÏß³Ì»½ĞÑµÄÊµ¼ÊÊ±¿Ì
+// delayåˆ°æŒ‡å®štickå‡½æ•°ï¼Œä¼šé€šè¿‡æŒ‡é’ˆTick_WakeUpå‘å¤–è¾“å‡ºçº¿ç¨‹å”¤é†’çš„å®é™…æ—¶åˆ»
 rt_err_t rt_thread_delay_to_tick(rt_tick_t Tick_WaitFor, rt_tick_t* Tick_WakeUp)
 {
     register rt_base_t level;
@@ -21,7 +21,7 @@ rt_err_t rt_thread_delay_to_tick(rt_tick_t Tick_WaitFor, rt_tick_t* Tick_WakeUp)
 
     if (rt_tick_get() < Tick_WaitFor)
     {
-        // ĞèÒªÑÓÊ±
+        // éœ€è¦å»¶æ—¶
         DelayTick = Tick_WaitFor - rt_tick_get();
 
         /* suspend thread */
@@ -44,7 +44,7 @@ rt_err_t rt_thread_delay_to_tick(rt_tick_t Tick_WaitFor, rt_tick_t* Tick_WakeUp)
     }
     else
     {
-        // ²»ĞèÒªÑÓÊ±
+        // ä¸éœ€è¦å»¶æ—¶
         rt_hw_interrupt_enable(level);
     }
 

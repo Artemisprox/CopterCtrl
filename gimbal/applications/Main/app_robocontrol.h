@@ -8,7 +8,7 @@
 #include "func_Key_Record.h"
 #include "func_KeyCallback.h"
 
-#define GIMBAL_SMOOTHADD_TIME_MAX 60 // ÓÃÓÚÉè¶¨Ò£¿ØÊı¾İÌİĞÎÆ½»¬¹ı³ÌµÄ×î³¤Ê±¼ä
+#define GIMBAL_SMOOTHADD_TIME_MAX 60 // ç”¨äºè®¾å®šé¥æ§æ•°æ®æ¢¯å½¢å¹³æ»‘è¿‡ç¨‹çš„æœ€é•¿æ—¶é—´
 
 extern rt_err_t RoboControl_init(void);
 

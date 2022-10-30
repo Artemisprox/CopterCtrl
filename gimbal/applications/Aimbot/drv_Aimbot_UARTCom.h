@@ -6,23 +6,23 @@
 #ifndef AIMBOT_CIMMUNICATION_USING_CAN
 
 /**
- * @brief ÓÃÓÚ½«´ı·¢ËÍµÄÊı¾İÒÔ·ûºÏÍ¨ĞÅĞ­ÒéµÄ·½Ê½·¢ËÍ³öÈ¥
+ * @brief ç”¨äºå°†å¾…å‘é€çš„æ•°æ®ä»¥ç¬¦åˆé€šä¿¡åè®®çš„æ–¹å¼å‘é€å‡ºå»
  * @author fwlh
- * @param  dev              ´®¿ÚÉè±¸
- * @param  ID               ĞÅÏ¢ ID, 1 ´ú±í×ËÌ¬, 0 ´ú±í±êÖ¾Î»
- * @param  msg              ÕæÊµÊı¾İ(Êı×éÃû)
- * @param  size             Êı×éÖĞÊı¾İµÄÊıÁ¿
- * @return rt_size_t        ·µ»ØĞ´ÈëÊı¾İµÄÊıÁ¿
+ * @param  dev              ä¸²å£è®¾å¤‡
+ * @param  ID               ä¿¡æ¯ ID, 1 ä»£è¡¨å§¿æ€, 0 ä»£è¡¨æ ‡å¿—ä½
+ * @param  msg              çœŸå®æ•°æ®(æ•°ç»„å)
+ * @param  size             æ•°ç»„ä¸­æ•°æ®çš„æ•°é‡
+ * @return rt_size_t        è¿”å›å†™å…¥æ•°æ®çš„æ•°é‡
  */
 extern rt_size_t Aimbot_Write_UART_Data(rt_device_t *dev, rt_uint8_t ID, rt_uint8_t msg[], rt_size_t size);
 
 /**
- * @brief ³õÊ¼»¯ÓëÊÓ¾õÍ¨ĞÅµÄ´®¿Ú
+ * @brief åˆå§‹åŒ–ä¸è§†è§‰é€šä¿¡çš„ä¸²å£
  * @author fwlh
- * @param  aimbot_device    Éè±¸Ö¸Õë
- * @param  flag_get         ´¦Àí±êÖ¾Î»±¨ÎÄµÄº¯Êı
- * @param  atti_get         ´¦ÀíÔÆÌ¨×ËÌ¬±¨ÎÄµÄº¯Êı
- * @return rt_err_t         ³õÊ¼»¯½á¹û
+ * @param  aimbot_device    è®¾å¤‡æŒ‡é’ˆ
+ * @param  flag_get         å¤„ç†æ ‡å¿—ä½æŠ¥æ–‡çš„å‡½æ•°
+ * @param  atti_get         å¤„ç†äº‘å°å§¿æ€æŠ¥æ–‡çš„å‡½æ•°
+ * @return rt_err_t         åˆå§‹åŒ–ç»“æœ
  */
 extern rt_err_t Aimbot_UART_Init(rt_device_t *aimbot_device, rt_err_t (*flag_get)(rt_uint8_t rxmsg[]), rt_err_t (*atti_get)(rt_uint8_t rxmsg[]));
 

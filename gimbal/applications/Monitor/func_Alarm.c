@@ -5,9 +5,9 @@
 extern alarm_dev_t *alarm_hp;
 
 /**
- * @brief    ±¨¾¯Ïß³Ì
- * @param    ÎŞ
- * @return   ÎŞ
+ * @brief    æŠ¥è­¦çº¿ç¨‹
+ * @param    æ— 
+ * @return   æ— 
  * @author   Lvfp
  */
 static void Alarm_Thread(void *parameter)
@@ -16,13 +16,13 @@ static void Alarm_Thread(void *parameter)
     {
         alarm_dev_t *alarm_dev_tem = alarm_hp->next;
 
-        while (alarm_dev_tem != alarm_hp) //Ë÷Òı
+        while (alarm_dev_tem != alarm_hp) //ç´¢å¼•
         {
-            //ÊÇ·ñ±¨¾¯
+            //æ˜¯å¦æŠ¥è­¦
             if (alarm_dev_tem->swdg->if_alarm == RT_TRUE)
             {
 #ifdef BSP_USING_RGB_LIGHT
-                // RGBµÆ±¨¾¯£¬¶à¸öÒì³£¿´ÃÅ¹·£¬ÔòÂÖÁ÷ÏÔÊ¾¶ÔÓ¦µÄÑÕÉ«
+                // RGBç¯æŠ¥è­¦ï¼Œå¤šä¸ªå¼‚å¸¸çœ‹é—¨ç‹—ï¼Œåˆ™è½®æµæ˜¾ç¤ºå¯¹åº”çš„é¢œè‰²
                 switch (alarm_dev_tem->swdg->color)
                 {
                 case ALARM_WHITE:
@@ -52,15 +52,15 @@ static void Alarm_Thread(void *parameter)
                 }
 #endif
 #ifdef BSP_USING_BUZZER
-                //Í¨¹ı²¦Âë¿ª¹Ø¹Ø±Õor¿ªÆô·äÃùÆ÷
+                //é€šè¿‡æ‹¨ç å¼€å…³å…³é—­orå¼€å¯èœ‚é¸£å™¨
                 if (rt_pin_read(SWITCH_BUZZER_PIN))
                 {
-                    // IDÖµ¶àÉÙ¾ÍÏì¼¸´Î
+                    // IDå€¼å¤šå°‘å°±å“å‡ æ¬¡
                     for (int i = 0; i < alarm_dev_tem->swdg->ID; i++)
                     {
                         ALARM_SET
                     }
-                    ALARM_RESET //²»Í¬Òôµ÷£¬Çø·Ö¶à¸öID
+                    ALARM_RESET //ä¸åŒéŸ³è°ƒï¼ŒåŒºåˆ†å¤šä¸ªID
                 }
 #endif
 
@@ -68,7 +68,7 @@ static void Alarm_Thread(void *parameter)
             alarm_dev_tem = alarm_dev_tem->next;
         }
 
-        //Èç¹ûÃ»ÓĞÒì³£¿´ÃÅ¹·£¬¹Ø±ÕRGBºÍ·äÃùÆ÷
+        //å¦‚æœæ²¡æœ‰å¼‚å¸¸çœ‹é—¨ç‹—ï¼Œå…³é—­RGBå’Œèœ‚é¸£å™¨
         if (alarm_hp == alarm_hp->next)
         {
 #ifdef BSP_USING_RGB_LIGHT
@@ -84,25 +84,25 @@ static void Alarm_Thread(void *parameter)
 }
 
 /**
- * @brief    ±¨¾¯³õÊ¼»¯
- * @param    ÎŞ
- * @return   ³õÊ¼»¯³É¹¦orÊ§°Ü
+ * @brief    æŠ¥è­¦åˆå§‹åŒ–
+ * @param    æ— 
+ * @return   åˆå§‹åŒ–æˆåŠŸorå¤±è´¥
  * @author   Lvfp
  */
 rt_err_t Alarm_Init(void)
 {
     rt_err_t res;
-    rt_thread_t alarm_device = RT_NULL; //±¨¾¯Ïß³Ì¾ä±ú
+    rt_thread_t alarm_device = RT_NULL; //æŠ¥è­¦çº¿ç¨‹å¥æŸ„
 
-    //³õÊ¼»¯±¨¾¯Ë«ÏòÁ´±íºÍ´´½¨ËùÓĞ¼àÊÓÆ÷¶ÔÏó
+    //åˆå§‹åŒ–æŠ¥è­¦åŒå‘é“¾è¡¨å’Œåˆ›å»ºæ‰€æœ‰ç›‘è§†å™¨å¯¹è±¡
     Mlist_Init(alarm_hp);
 
-    //±¨¾¯Ïß³Ì´´½¨
+    //æŠ¥è­¦çº¿ç¨‹åˆ›å»º
     alarm_device = rt_thread_create(
         "alarm", Alarm_Thread, RT_NULL,
         512, THREAD_PRIO_ALARM, 2);
 
-    //²é¿´ÊÇ·ñ´´½¨³É¹¦
+    //æŸ¥çœ‹æ˜¯å¦åˆ›å»ºæˆåŠŸ
     if (alarm_device != RT_NULL)
     {
         res = rt_thread_startup(alarm_device);

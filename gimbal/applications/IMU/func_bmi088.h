@@ -8,21 +8,21 @@ typedef struct
 {
   AHRS_Accl_t Accl_Raw;
   AHRS_Gyro_t Gyro_Raw;
-  float Temperature; // ÎÂ¶È
+  float Temperature; // æ¸©åº¦
 
-  int RawDataReady; // Êı¾İÊÇ·ñÓĞĞ§
-  float DataRate; // ÖĞ¶Ï½ÓÊÕÊı¾İµÄÆµÂÊ
+  int RawDataReady; // æ•°æ®æ˜¯å¦æœ‰æ•ˆ
+  float DataRate; // ä¸­æ–­æ¥æ”¶æ•°æ®çš„é¢‘ç‡
 } BMI088_t;
 
-// IMU½á¹¹Ìå£¬ÄÚº¬µ±Ç°×îĞÂµÄÁùÖáÔ­Ê¼Êı¾İºÍÎÂ¶ÈÊı¾İ
+// IMUç»“æ„ä½“ï¼Œå†…å«å½“å‰æœ€æ–°çš„å…­è½´åŸå§‹æ•°æ®å’Œæ¸©åº¦æ•°æ®
 extern BMI088_t HERO_BMI088_DEV;
 
-// BMI088Éè±¸³õÊ¼»¯
-// ³õÊ¼»¯ºó¿ÉÍ¨¹ı HERO_BMI088_DEV »ñÈ¡ÒÑÓĞ×îĞÂÊı¾İ
-// µ÷ÓÃ BMI088_WaitForRawData ¿ÉÒÔ¹ÒÆğµÈ´ıĞÂÊı¾İ²úÉú
+// BMI088è®¾å¤‡åˆå§‹åŒ–
+// åˆå§‹åŒ–åå¯é€šè¿‡ HERO_BMI088_DEV è·å–å·²æœ‰æœ€æ–°æ•°æ®
+// è°ƒç”¨ BMI088_WaitForRawData å¯ä»¥æŒ‚èµ·ç­‰å¾…æ–°æ•°æ®äº§ç”Ÿ
 extern rt_err_t BMI088_Init(void);
 
-// µ÷ÓÃº¯Êıºó»á¹ÒÆğÔÚĞÅºÅÁ¿ÉÏ£¬µÈ´ıĞÂµÄÒ»×éÊı¾İ²úÉú
+// è°ƒç”¨å‡½æ•°åä¼šæŒ‚èµ·åœ¨ä¿¡å·é‡ä¸Šï¼Œç­‰å¾…æ–°çš„ä¸€ç»„æ•°æ®äº§ç”Ÿ
 extern void BMI088_WaitForRawData(void);
 
 #endif

@@ -3,36 +3,36 @@
 
 #include <drv_GimbalPublic.h>
 
-// »ºÆô¶¯Ïà¹ØÉèÖÃ
-#define SOFTSTART_PALLIM_SET (60)//ÉÏµç»ºÆô¶¯¹ı³ÌÖĞ½ÇËÙ¶ÈÏŞ·ùÊıÖµÉèÖÃ µ¥Î»dps
+// ç¼“å¯åŠ¨ç›¸å…³è®¾ç½®
+#define SOFTSTART_PALLIM_SET (60)//ä¸Šç”µç¼“å¯åŠ¨è¿‡ç¨‹ä¸­è§’é€Ÿåº¦é™å¹…æ•°å€¼è®¾ç½® å•ä½dps
 
 
 /**
-* @brief pitchÔÆÌ¨PIDÔËĞĞº¯Êı£¨°üÀ¨½Ç¶È»·½ÇËÙ¶È»·£©
-* @param [gimbalmotor_t*] motor ÔÆÌ¨µç»ú½á¹¹Ìå
-* @param [float] nowPal µ±Ç°½ÇËÙ¶ÈÖµ
-* @param [float] nowAngle µ±Ç°½Ç¶ÈÖµ
-* @param [float] FeedForwardRate_Set Ç°À¡ÏµÊı
-* @return ÎŞ
+* @brief pitchäº‘å°PIDè¿è¡Œå‡½æ•°ï¼ˆåŒ…æ‹¬è§’åº¦ç¯è§’é€Ÿåº¦ç¯ï¼‰
+* @param [gimbalmotor_t*] motor äº‘å°ç”µæœºç»“æ„ä½“
+* @param [float] nowPal å½“å‰è§’é€Ÿåº¦å€¼
+* @param [float] nowAngle å½“å‰è§’åº¦å€¼
+* @param [float] FeedForwardRate_Set å‰é¦ˆç³»æ•°
+* @return æ— 
 * @author zzj
 */
 extern void Gimbal_Pitch_PID_RUN(Motor_t *motor,float nowPal,float nowAngle, float FeedForwardRate_Set);
 
 /**
-* @brief yawÔÆÌ¨PIDÔËĞĞº¯Êı£¨°üÀ¨½Ç¶È»·½ÇËÙ¶È»·£©
-* @param [gimbalmotor_t*] motor ÔÆÌ¨µç»ú½á¹¹Ìå
-* @param [float] nowPal µ±Ç°½ÇËÙ¶ÈÖµ
-* @param [float] nowAngle µ±Ç°½Ç¶ÈÖµ
-* @param [float] FeedForwardRate_Set Ç°À¡ÏµÊı
-* @return ÎŞ
+* @brief yawäº‘å°PIDè¿è¡Œå‡½æ•°ï¼ˆåŒ…æ‹¬è§’åº¦ç¯è§’é€Ÿåº¦ç¯ï¼‰
+* @param [gimbalmotor_t*] motor äº‘å°ç”µæœºç»“æ„ä½“
+* @param [float] nowPal å½“å‰è§’é€Ÿåº¦å€¼
+* @param [float] nowAngle å½“å‰è§’åº¦å€¼
+* @param [float] FeedForwardRate_Set å‰é¦ˆç³»æ•°
+* @return æ— 
 * @author zzj
 */
 extern void Gimbal_Yaw_PID_RUN(Motor_t *motor,float nowPal,float nowAngle, float FeedForwardRate_Set);
 
 /**
-* @brief£ºÓÃÓÚ¿ØÖÆÉÏµçÊ±µÄÔÆÌ¨»º¶¯, ÔÚPIDÃ¿´ÎÔËĞĞÖ®Ç°µ÷ÓÃ´Ëº¯Êı¼´¿É£¬´Ëº¯ÊıÔÚÊ×´ÎÔËĞĞÊ±»áÉè¶¨»º¶¯²ÎÊı£¬Íê³É»ºÆô¶¯Ö®ºó»á×Ô¶¯»Ö¸´PID²ÎÊı
-* @param [pid_t*]	Motor_Pitch_PID£ºÔÆÌ¨Pitch±Õ»·PID½á¹¹Ìå
-* @author£ºych
+* @briefï¼šç”¨äºæ§åˆ¶ä¸Šç”µæ—¶çš„äº‘å°ç¼“åŠ¨, åœ¨PIDæ¯æ¬¡è¿è¡Œä¹‹å‰è°ƒç”¨æ­¤å‡½æ•°å³å¯ï¼Œæ­¤å‡½æ•°åœ¨é¦–æ¬¡è¿è¡Œæ—¶ä¼šè®¾å®šç¼“åŠ¨å‚æ•°ï¼Œå®Œæˆç¼“å¯åŠ¨ä¹‹åä¼šè‡ªåŠ¨æ¢å¤PIDå‚æ•°
+* @param [pid_t*]	Motor_Pitch_PIDï¼šäº‘å°Pitché—­ç¯PIDç»“æ„ä½“
+* @authorï¼šych
 */
 void Gimbal_SoftStart_Ctrl(pid_t *Motor_Pitch_PID);
 

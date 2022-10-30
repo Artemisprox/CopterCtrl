@@ -3,7 +3,7 @@
 
 #include <rtdef.h>
 
-// Ò»×é×ËÌ¬ĞÅÏ¢
+// ä¸€ç»„å§¿æ€ä¿¡æ¯
 typedef struct
 {
     float Roll;
@@ -17,24 +17,24 @@ typedef enum
     My_Color_Blue
 } My_Color_Enum;
 
-// ¶¨Òåµç¿ØÏòÊÓ¾õ·¢ËÍµÄ±êÖ¾Î»×Ö½ÚµÄÄÚÈİ
+// å®šä¹‰ç”µæ§å‘è§†è§‰å‘é€çš„æ ‡å¿—ä½å­—èŠ‚çš„å†…å®¹
 typedef enum
 {
-    AimFlag_MouseRightData = 0, // bit0£ºÊó±êÓÒ¼üÊı¾İ/Ò£¿ØÆ÷ÊÇ·ñ¿ªÆô×ÔÃé
-    AimFlag_MyColor = 1,        // bit1: µ±Ç°¼º·½ÑÕÉ«
-    AimFlag_Shoot = 6,          // bit6: ¸øÊÓ¾õ·¢³öµÄ·¢µ¯±êÖ¾Î», ¸Ã±êÖ¾Î»Ìø±äÑØÓĞĞ§
-    AimFlag_ShootRequire = 7,   // bit7: ¸øÊÓ¾õ·¢³öµÄ·¢µ¯ÇëÇó±êÖ¾Î»
+    AimFlag_MouseRightData = 0, // bit0ï¼šé¼ æ ‡å³é”®æ•°æ®/é¥æ§å™¨æ˜¯å¦å¼€å¯è‡ªç„
+    AimFlag_MyColor = 1,        // bit1: å½“å‰å·±æ–¹é¢œè‰²
+    AimFlag_Shoot = 6,          // bit6: ç»™è§†è§‰å‘å‡ºçš„å‘å¼¹æ ‡å¿—ä½, è¯¥æ ‡å¿—ä½è·³å˜æ²¿æœ‰æ•ˆ
+    AimFlag_ShootRequire = 7,   // bit7: ç»™è§†è§‰å‘å‡ºçš„å‘å¼¹è¯·æ±‚æ ‡å¿—ä½
 } Aimbot_SendFlags_e;
 
 typedef enum
-{                                                // CAN·¢ËÍ±¨ÎÄID
-    VISUAL_MODE_ERR = 0x00,                      // Ä¬ÈÏÊıÖµ£¬±íÊ¾µ±Ç°Ã»ÓĞÊÕµ½¹ıÊÓ¾õµÄ¶ÔÊ±ÉêÇë£¬ÎŞ·¨»ñµÃµ±Ç°ÊÓ¾õµÄ¹¤×÷Ä£Ê½
-    VISUAL_MODE_AIMBOT_V2 = 0x01,                // ¶ş´ú×ÔÃéÊ¶±ğ×°¼×°å
-    VISUAL_MODE_AIMBUFF_CONST_SPEED = 0x02,      // »÷´òÔÈËÙ´ó·ç³µ
-    VISUAL_MODE_AIMBUFF_VARY_SPEED = 0x03,       // »÷´ò±äËÙ´ó·ç³µ
-    VISUAL_MODE_AIMBUFF_ROTATING_OUTPOST = 0x04, // ¶¯Ì¬»÷´òÇ°ÉÚÕ¾
-    VISUAL_MODE_AIMBUFF_STATIC_OUTPOST = 0x05,   // ¾²Ì¬»÷´òÇ°ÉÚÕ¾
-    VISUAL_MODE_AIMBUFF_OUTPOST_F = 0x06,        // µÚÈıÖÖ»÷´òÇ°ÉÚÕ½µÄÄ£Ê½
+{                                                // CANå‘é€æŠ¥æ–‡ID
+    VISUAL_MODE_ERR = 0x00,                      // é»˜è®¤æ•°å€¼ï¼Œè¡¨ç¤ºå½“å‰æ²¡æœ‰æ”¶åˆ°è¿‡è§†è§‰çš„å¯¹æ—¶ç”³è¯·ï¼Œæ— æ³•è·å¾—å½“å‰è§†è§‰çš„å·¥ä½œæ¨¡å¼
+    VISUAL_MODE_AIMBOT_V2 = 0x01,                // äºŒä»£è‡ªç„è¯†åˆ«è£…ç”²æ¿
+    VISUAL_MODE_AIMBUFF_CONST_SPEED = 0x02,      // å‡»æ‰“åŒ€é€Ÿå¤§é£è½¦
+    VISUAL_MODE_AIMBUFF_VARY_SPEED = 0x03,       // å‡»æ‰“å˜é€Ÿå¤§é£è½¦
+    VISUAL_MODE_AIMBUFF_ROTATING_OUTPOST = 0x04, // åŠ¨æ€å‡»æ‰“å‰å“¨ç«™
+    VISUAL_MODE_AIMBUFF_STATIC_OUTPOST = 0x05,   // é™æ€å‡»æ‰“å‰å“¨ç«™
+    VISUAL_MODE_AIMBUFF_OUTPOST_F = 0x06,        // ç¬¬ä¸‰ç§å‡»æ‰“å‰å“¨æˆ˜çš„æ¨¡å¼
 } drv_VisualMode_e;
 
 typedef struct
@@ -53,29 +53,29 @@ typedef struct
     rt_err_t State;
 } Gimbal_SetReceive_Type;
 
-extern drv_VisualMode_e Visual_Mode_Set; // ÓÃÓÚ¼ÇÂ¼µ±Ç°³ÌĞòÉè¶¨µÄÊÓ¾õ¹¤×÷Ä£Ê½£¬Èç¹û³öÏÖÄ£Ê½²»·û£¬³ÌĞò»á×Ô¶¯Í¨¹ıÍ¨ĞÅµ÷ÕûÊÓ¾õ¹¤×÷Ä£Ê½
+extern drv_VisualMode_e Visual_Mode_Set; // ç”¨äºè®°å½•å½“å‰ç¨‹åºè®¾å®šçš„è§†è§‰å·¥ä½œæ¨¡å¼ï¼Œå¦‚æœå‡ºç°æ¨¡å¼ä¸ç¬¦ï¼Œç¨‹åºä¼šè‡ªåŠ¨é€šè¿‡é€šä¿¡è°ƒæ•´è§†è§‰å·¥ä½œæ¨¡å¼
 
-extern char GunSet_AimbotShootFlag; // ÓÉ×ÔÃéÎÄ¼şË¢ĞÂµÄ×ÔÃé·¢ÉäÏŞÖÆÊı¾İ£¬¿ÉÔÚ×ÔÃéÊ±¿ØÖÆÊÇ·ñ·¢µ¯£¬ÔÚFuncGunÖĞÊ¹ÓÃ
+extern char GunSet_AimbotShootFlag; // ç”±è‡ªç„æ–‡ä»¶åˆ·æ–°çš„è‡ªç„å‘å°„é™åˆ¶æ•°æ®ï¼Œå¯åœ¨è‡ªç„æ—¶æ§åˆ¶æ˜¯å¦å‘å¼¹ï¼Œåœ¨FuncGunä¸­ä½¿ç”¨
 
-extern float Muzzle_V_REM; // ¼ÇÂ¼µ±Ç°µ¯ËÙ
-extern char Color_Myself;  // ¼º·½ÑÕÉ« 0ºì£¬1À¶
+extern float Muzzle_V_REM; // è®°å½•å½“å‰å¼¹é€Ÿ
+extern char Color_Myself;  // å·±æ–¹é¢œè‰² 0çº¢ï¼Œ1è“
 
-extern char VisualSend_Flags; // 8¸öÏòÊÓ¾õ·¢ËÍµÄ±êÖ¾Î»£¬Óë¶ÔÊ±Ò»Æğ·¢ËÍ£¬10Hz
+extern char VisualSend_Flags; // 8ä¸ªå‘è§†è§‰å‘é€çš„æ ‡å¿—ä½ï¼Œä¸å¯¹æ—¶ä¸€èµ·å‘é€ï¼Œ10Hz
 
-extern char VisualFlag_TargetFound;    // ÊÓ¾õËø¶¨Ä¿±ê±êÖ¾
-extern char VisualFlag_Fire;           // ÔË¶¯Ô¤²â×¼È·±êÖ¾
-extern char VisualFlag_BurstShoot;     // ±¬·¢¹¥»÷±êÖ¾
-extern char VisualFlag_RuneFire;       // ÊÓ¾õµÄ¾«Ñ¡·¢µ¯¿ØÖÆ, ½öÔÚÄÜÁ¿»ú¹ØÏÂÊ¹ÓÃ
-extern char VisualFlag_RuneBurstShoot; // ÄÜÁ¿»ú¹ØÏÂ½øÈë 5 Á¬·¢Ä£Ê½
-extern char VisualFlag_ExitRune;       // ÄÜÁ¿»ú¹ØÍË³öµÄ±êÖ¾Î»
-extern char VisualFlag_WorkingCorrect; // µ±Ç°ÊÓ¾õ³ÌĞòÕıÔÚÕı³£ÔËĞĞ
+extern char VisualFlag_TargetFound;    // è§†è§‰é”å®šç›®æ ‡æ ‡å¿—
+extern char VisualFlag_Fire;           // è¿åŠ¨é¢„æµ‹å‡†ç¡®æ ‡å¿—
+extern char VisualFlag_BurstShoot;     // çˆ†å‘æ”»å‡»æ ‡å¿—
+extern char VisualFlag_RuneFire;       // è§†è§‰çš„ç²¾é€‰å‘å¼¹æ§åˆ¶, ä»…åœ¨èƒ½é‡æœºå…³ä¸‹ä½¿ç”¨
+extern char VisualFlag_RuneBurstShoot; // èƒ½é‡æœºå…³ä¸‹è¿›å…¥ 5 è¿å‘æ¨¡å¼
+extern char VisualFlag_ExitRune;       // èƒ½é‡æœºå…³é€€å‡ºçš„æ ‡å¿—ä½
+extern char VisualFlag_WorkingCorrect; // å½“å‰è§†è§‰ç¨‹åºæ­£åœ¨æ­£å¸¸è¿è¡Œ
 
-extern rt_tick_t Visual_LastFresh_Tick; // ÉÏÒ»´ÎÊÕµ½ÊÓ¾õÊı¾İµÄÊ±¼ä
+extern rt_tick_t Visual_LastFresh_Tick; // ä¸Šä¸€æ¬¡æ”¶åˆ°è§†è§‰æ•°æ®çš„æ—¶é—´
 
-extern char VisualMode_FB;                               // ÊÓ¾õ·´À¡µÄµ±Ç°×ÔÃéÄ£Ê½
-extern float GimbalTolerance_Pitch, GimbalTolerance_Yaw; // ÊÓ¾õ·´À¡µÄ×ÔÃé¾«¶ÈÒªÇó
+extern char VisualMode_FB;                               // è§†è§‰åé¦ˆçš„å½“å‰è‡ªç„æ¨¡å¼
+extern float GimbalTolerance_Pitch, GimbalTolerance_Yaw; // è§†è§‰åé¦ˆçš„è‡ªç„ç²¾åº¦è¦æ±‚
 
-extern Gimbal_SetReceive_Type GimbalSet_Receive[2]; // Ê¹ÓÃË«»º³å
-extern char Gimbal_Set_Cal_READ_Valid;              // Ë«»º³å¶ÓÁĞ¿É¶Á¶ÓÁĞºÅ
+extern Gimbal_SetReceive_Type GimbalSet_Receive[2]; // ä½¿ç”¨åŒç¼“å†²
+extern char Gimbal_Set_Cal_READ_Valid;              // åŒç¼“å†²é˜Ÿåˆ—å¯è¯»é˜Ÿåˆ—å·
 
 #endif

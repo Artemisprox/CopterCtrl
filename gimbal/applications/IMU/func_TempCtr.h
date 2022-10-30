@@ -1,7 +1,7 @@
 #ifndef __FUNC_TEMPCTR_H__
 #define __FUNC_TEMPCTR_H__
 /*
-        IMUÎÂ¶È¿ØÖÆ
+        IMUæ¸©åº¦æŽ§åˆ¶
 */
 #include <rtthread.h>
 #include "pid.h"
@@ -10,7 +10,7 @@ typedef struct
 {
     pid_t TempCTR_pid;
 }TempCTR_t;
-//µç»úPID±Õ»·½á¹¹Ìå
+//ç”µæœºPIDé—­çŽ¯ç»“æž„ä½“
 
 extern TempCTR_t HERO_TPctr;
 extern struct rt_semaphore temp_pid_sem;

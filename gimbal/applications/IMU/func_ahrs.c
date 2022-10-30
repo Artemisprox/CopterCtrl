@@ -1,5 +1,5 @@
 /*
-        ×ËÌ¬½âËã-¿ªÔ´µÄAHRSËã·¨
+        å§¿æ€è§£ç®—-å¼€æºçš„AHRSç®—æ³•
 */
 #include "func_ahrs.h"
 #include <rtdef.h>
@@ -13,7 +13,7 @@ AHRS_Eulr_t HERO_Eulr;
 AHRS_Eulr_t HERO_Eulr_Gyro;
 
 /***
- * @brief ËÄ½×Áú¸ñ¿âËş·¨Çó½âËÄÔªÊıÎ¢·Ö·½³Ì
+ * @brief å››é˜¶é¾™æ ¼åº“å¡”æ³•æ±‚è§£å››å…ƒæ•°å¾®åˆ†æ–¹ç¨‹
  * @param
  * @retval none
  * @author dxy
@@ -83,13 +83,13 @@ static int8_t Set_FromQuaternion(const AHRS_t *ahrs, AHRS_t *ahrs_gyro)
 }
 
 /**
- * @brief ´¿ÍÓÂİÒÇÊı¾İ½âËã×ËÌ¬½Ç
+ * @brief çº¯é™€èºä»ªæ•°æ®è§£ç®—å§¿æ€è§’
 
- * @param ahrs_gyro ÍÓÂİÒÇÊı¾İµÃµ½µÄËÄÔªÊı
- * @param ahrs ÈÚºÏËã·¨µÃµ½µÄËÄÔªÊı
- * @param gyro ÍÓÂİÒÇÊı¾İ
- * @param ifClear ÊÇ·ñÇå³ıÍÓÂİÒÇËÄÔªÊı
- * @return int8_t 0¶ÔÓ¦Ã»ÓĞ´íÎó
+ * @param ahrs_gyro é™€èºä»ªæ•°æ®å¾—åˆ°çš„å››å…ƒæ•°
+ * @param ahrs èåˆç®—æ³•å¾—åˆ°çš„å››å…ƒæ•°
+ * @param gyro é™€èºä»ªæ•°æ®
+ * @param ifClear æ˜¯å¦æ¸…é™¤é™€èºä»ªå››å…ƒæ•°
+ * @return int8_t 0å¯¹åº”æ²¡æœ‰é”™è¯¯
 */
 int8_t AHRS_UpdateGyro(AHRS_t *ahrs_gyro, AHRS_t *ahrs,
                        const AHRS_Gyro_t *gyro, int ifClear)
@@ -145,12 +145,12 @@ void AHRS_SetBeta(float beta_set)
 }
 
 /**
- * @brief ²»Ê¹ÓÃ´ÅÁ¦¼Æ¼ÆËã×ËÌ¬
+ * @brief ä¸ä½¿ç”¨ç£åŠ›è®¡è®¡ç®—å§¿æ€
  *
- * @param ahrs ×ËÌ¬½âËãÖ÷½á¹¹Ìå
- * @param accl ¼ÓËÙ¶È¼ÆÊı¾İ
- * @param gyro ÍÓÂİÒÇÊı¾İ
- * @return int8_t 0¶ÔÓ¦Ã»ÓĞ´íÎó
+ * @param ahrs å§¿æ€è§£ç®—ä¸»ç»“æ„ä½“
+ * @param accl åŠ é€Ÿåº¦è®¡æ•°æ®
+ * @param gyro é™€èºä»ªæ•°æ®
+ * @return int8_t 0å¯¹åº”æ²¡æœ‰é”™è¯¯
  */
 static int8_t AHRS_UpdateIMU(AHRS_t *ahrs, const AHRS_Accl_t *accl,
                              const AHRS_Gyro_t *gyro)
@@ -252,12 +252,12 @@ static int8_t AHRS_UpdateIMU(AHRS_t *ahrs, const AHRS_Accl_t *accl,
 }
 
 /**
- * @brief ³õÊ¼»¯×ËÌ¬½âËã
+ * @brief åˆå§‹åŒ–å§¿æ€è§£ç®—
  *
- * @param ahrs ×ËÌ¬½âËãÖ÷½á¹¹Ìå
- * @param magn ´ÅÁ¦¼ÆÊı¾İ
- * @param sample_freq ²ÉÑùÆµÂÊ
- * @return int8_t 0¶ÔÓ¦Ã»ÓĞ´íÎó
+ * @param ahrs å§¿æ€è§£ç®—ä¸»ç»“æ„ä½“
+ * @param magn ç£åŠ›è®¡æ•°æ®
+ * @param sample_freq é‡‡æ ·é¢‘ç‡
+ * @return int8_t 0å¯¹åº”æ²¡æœ‰é”™è¯¯
  */
 int8_t AHRS_Init(AHRS_t *ahrs, const AHRS_Magn_t *magn, float sample_freq)
 {
@@ -315,14 +315,14 @@ int8_t AHRS_Init(AHRS_t *ahrs, const AHRS_Magn_t *magn, float sample_freq)
 }
 
 /**
- * @brief ×ËÌ¬ÔËËã¸üĞÂÒ»´Î
- * @note ÊäÈëÊı¾İ±ØĞëÊÇNED(North East Down) ²Î¿¼×ø±êÏµ
+ * @brief å§¿æ€è¿ç®—æ›´æ–°ä¸€æ¬¡
+ * @note è¾“å…¥æ•°æ®å¿…é¡»æ˜¯NED(North East Down) å‚è€ƒåæ ‡ç³»
  *
- * @param ahrs ×ËÌ¬½âËãÖ÷½á¹¹Ìå
- * @param accl ¼ÓËÙ¶È¼ÆÊı¾İ
- * @param gyro ÍÓÂİÒÇÊı¾İ
- * @param magn ´ÅÁ¦¼ÆÊı¾İ
- * @return int8_t 0¶ÔÓ¦Ã»ÓĞ´íÎó
+ * @param ahrs å§¿æ€è§£ç®—ä¸»ç»“æ„ä½“
+ * @param accl åŠ é€Ÿåº¦è®¡æ•°æ®
+ * @param gyro é™€èºä»ªæ•°æ®
+ * @param magn ç£åŠ›è®¡æ•°æ®
+ * @return int8_t 0å¯¹åº”æ²¡æœ‰é”™è¯¯
  */
 int8_t AHRS_Update(AHRS_t *ahrs, const AHRS_Accl_t *accl,
                    const AHRS_Gyro_t *gyro, const AHRS_Magn_t *magn)
@@ -493,11 +493,11 @@ int8_t AHRS_Update(AHRS_t *ahrs, const AHRS_Accl_t *accl,
 }
 
 /**
- * @brief Í¨¹ı×ËÌ¬½âËãÖ÷½á¹¹ÌåÖĞµÄËÄÔªÊı¼ÆËãÅ·À­½Ç
+ * @brief é€šè¿‡å§¿æ€è§£ç®—ä¸»ç»“æ„ä½“ä¸­çš„å››å…ƒæ•°è®¡ç®—æ¬§æ‹‰è§’
  *
- * @param eulr Å·À­½Ç
- * @param ahrs ×ËÌ¬½âËãÖ÷½á¹¹Ìå
- * @return int8_t 0¶ÔÓ¦Ã»ÓĞ´íÎó
+ * @param eulr æ¬§æ‹‰è§’
+ * @param ahrs å§¿æ€è§£ç®—ä¸»ç»“æ„ä½“
+ * @return int8_t 0å¯¹åº”æ²¡æœ‰é”™è¯¯
  */
 float euler_test[3];
 int8_t AHRS_GetEulr(AHRS_Eulr_t *eulr, const AHRS_t *ahrs)
@@ -543,8 +543,8 @@ int8_t AHRS_GetEulr(AHRS_Eulr_t *eulr, const AHRS_t *ahrs)
 
 /***
  * @brief
- * @param eulr: Å·À­½Ç½á¹¹Ìå
- * @param ahrs: ËÄÔªÊı½á¹¹Ìå
+ * @param eulr: æ¬§æ‹‰è§’ç»“æ„ä½“
+ * @param ahrs: å››å…ƒæ•°ç»“æ„ä½“
  * @retval none
  * @author dxy
  ***/
@@ -566,9 +566,9 @@ void AHRS_Euler2Quarternion(const AHRS_Eulr_t *eulr, AHRS_t *ahrs)
 }
 
 /***
- * @brief ½«yawÖáÊı¾İÇåÁã
- * @param eulr:Å·À­½Ç
- * @param ahrs:ËÄÔªÊı
+ * @brief å°†yawè½´æ•°æ®æ¸…é›¶
+ * @param eulr:æ¬§æ‹‰è§’
+ * @param ahrs:å››å…ƒæ•°
  * @retval none
  * @author dxy
  ***/

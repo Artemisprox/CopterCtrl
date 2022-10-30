@@ -1,17 +1,17 @@
 /**
  * @file drv_Aimbot_UARTCom.c
- * @brief ±¾ÎÄ¼şÓÃÓÚ´¦ÀíÓëÊÓ¾õÍ¨ĞÅµÄ´®¿Ú·¢ËÍºÍ½ÓÊÕÊı¾İ
- * (ÕâÀïÔÚÔ­¶ş´ú×ÔÃéµÄ»ù´¡ÉÏÖØĞÂ¹æ¶¨ÁËÒ»Ì×´®¿Ú×¨ÓÃµÄÍ¨ĞÅĞ­Òé)
- * ´®¿ÚµÄÍ¨ĞÅ²¨ÌØÂÊ 115200 Ã¿Ò»Ö¡Êı¾İ·ÖÎªÈı¸ö²¿·Ö£º
- * µÚÒ»×Ö½Ú¹Ì¶¨Îª 0xFC ×÷ÎªÊı¾İÖ¡Í·
- * µÚ¶ş×Ö½ÚµÄ¸ßµÚÒ»Î»×÷ÎªÇø·ÖÊı¾İÀàĞÍµÄ±êÖ¾Î»(1 ´ú±í×ËÌ¬Êı¾İ, 0 ´ú±í±êÖ¾Î»/¶ÔÊ±Êı¾İ)
- * µÚ¶ş×Ö½ÚÆäÓà²¿·Ö×÷ÎªÊı¾İÕæÊµ³¤¶È(¼´²»°üº¬±¾Á½¸ö×Ö½Ú)
- * ÆäÓàÄÚÈİ±£³ÖÎª CAN µÄÍ¨ĞÅ±¨ÎÄµÄÊı¾İ¶Î, µ«ÊÇÎªÁËÓëÖ¡Í·Ïà»¥Çø·Ö, Óöµ½Êı¾İ 0xFC ±ØĞëÁ¬Ğø·¢ËÍÁ½±é
+ * @brief æœ¬æ–‡ä»¶ç”¨äºå¤„ç†ä¸è§†è§‰é€šä¿¡çš„ä¸²å£å‘é€å’Œæ¥æ”¶æ•°æ®
+ * (è¿™é‡Œåœ¨åŸäºŒä»£è‡ªç„çš„åŸºç¡€ä¸Šé‡æ–°è§„å®šäº†ä¸€å¥—ä¸²å£ä¸“ç”¨çš„é€šä¿¡åè®®)
+ * ä¸²å£çš„é€šä¿¡æ³¢ç‰¹ç‡ 115200 æ¯ä¸€å¸§æ•°æ®åˆ†ä¸ºä¸‰ä¸ªéƒ¨åˆ†ï¼š
+ * ç¬¬ä¸€å­—èŠ‚å›ºå®šä¸º 0xFC ä½œä¸ºæ•°æ®å¸§å¤´
+ * ç¬¬äºŒå­—èŠ‚çš„é«˜ç¬¬ä¸€ä½ä½œä¸ºåŒºåˆ†æ•°æ®ç±»å‹çš„æ ‡å¿—ä½(1 ä»£è¡¨å§¿æ€æ•°æ®, 0 ä»£è¡¨æ ‡å¿—ä½/å¯¹æ—¶æ•°æ®)
+ * ç¬¬äºŒå­—èŠ‚å…¶ä½™éƒ¨åˆ†ä½œä¸ºæ•°æ®çœŸå®é•¿åº¦(å³ä¸åŒ…å«æœ¬ä¸¤ä¸ªå­—èŠ‚)
+ * å…¶ä½™å†…å®¹ä¿æŒä¸º CAN çš„é€šä¿¡æŠ¥æ–‡çš„æ•°æ®æ®µ, ä½†æ˜¯ä¸ºäº†ä¸å¸§å¤´ç›¸äº’åŒºåˆ†, é‡åˆ°æ•°æ® 0xFC å¿…é¡»è¿ç»­å‘é€ä¸¤é
  * @author fwlh
  * @version 1.1
  * @date 2022-06-21
  *
- * @copyright Copyright (c) 2022  ¹ş¶û±õ¹¤Òµ´óÑ§(Íşº£)HEROÕ½¶Ó
+ * @copyright Copyright (c) 2022  å“ˆå°”æ»¨å·¥ä¸šå¤§å­¦(å¨æµ·)HEROæˆ˜é˜Ÿ
  */
 
 #include "drv_Aimbot_UARTCom.h"
@@ -22,54 +22,54 @@
 
 #ifndef AIMBOT_CIMMUNICATION_USING_CAN
 
-#define AIMBOT_RX_READ_SIZE RT_SERIAL_RB_BUFSZ // ½ÓÊÕ»º³åÇø´óĞ¡
-#define AIMBOT_TX_BUFFER_SIZE 15               // ·¢ËÍ»º³åÇø´óĞ¡(Ë«¶Î»º³å)
-#define AIMBOT_RX_REAL_DATA_SIZEMAX 20         // ÊÕµ½Ò»Ö¡Êı¾İµÄ×î´ó´óĞ¡
+#define AIMBOT_RX_READ_SIZE RT_SERIAL_RB_BUFSZ // æ¥æ”¶ç¼“å†²åŒºå¤§å°
+#define AIMBOT_TX_BUFFER_SIZE 15               // å‘é€ç¼“å†²åŒºå¤§å°(åŒæ®µç¼“å†²)
+#define AIMBOT_RX_REAL_DATA_SIZEMAX 20         // æ”¶åˆ°ä¸€å¸§æ•°æ®çš„æœ€å¤§å¤§å°
 
 struct UART_Msg
 {
-    rt_device_t *device;          // ±¾ÎÄ¼şÊ¹ÓÃµÄ´®¿ÚÉè±¸
-    rt_thread_t rx_handle_thread; // ÓÃÓÚ´¦Àí½ÓÊÕµ½Êı¾İµÄÏß³Ì¾ä±ú
-    rt_sem_t rx_sem;              // ÓÃÓÚ¼ÇÂ¼Êı¾İÒÑ¾­±»½ÓÊÕµÄĞÅºÅÁ¿
+    rt_device_t *device;          // æœ¬æ–‡ä»¶ä½¿ç”¨çš„ä¸²å£è®¾å¤‡
+    rt_thread_t rx_handle_thread; // ç”¨äºå¤„ç†æ¥æ”¶åˆ°æ•°æ®çš„çº¿ç¨‹å¥æŸ„
+    rt_sem_t rx_sem;              // ç”¨äºè®°å½•æ•°æ®å·²ç»è¢«æ¥æ”¶çš„ä¿¡å·é‡
 
-    rt_size_t current_receive_size;                          // µ±Ç°½ÓÊÕµ½Êı¾İµÄ´óĞ¡
-    rt_int8_t current_left_size;                             // µ±Ç°Ê£ÏÂµÄÈÔ´ı´¦ÀíµÄÊı¾İ
-    rt_size_t current_used_size;                             // ±¾´ÎÊ¹ÓÃÍê±ÏµÄÊı¾İÁ¿
-    rt_uint8_t rx_msg[AIMBOT_RX_READ_SIZE];                  // Ö±½Ó½ÓÊÕµÄÊı¾İÎ»ÖÃ
-    rt_uint8_t rx_msg_unpacked[AIMBOT_RX_REAL_DATA_SIZEMAX]; // ½â°ü(Ö¸´®¿ÚĞ­Òé°ü)ºóµÄÍ¨ĞÅÊı¾İ
-    rt_uint8_t tx_msg[2][AIMBOT_TX_BUFFER_SIZE];             // ´ı·¢ËÍµÄÊµ¼ÊÊı¾İ, ¿ª±ÙÁ½¶Ë»º³å·ÀÖ¹Ğ´ÈëÊ±Êı¾İ¸²¸Ç
+    rt_size_t current_receive_size;                          // å½“å‰æ¥æ”¶åˆ°æ•°æ®çš„å¤§å°
+    rt_int8_t current_left_size;                             // å½“å‰å‰©ä¸‹çš„ä»å¾…å¤„ç†çš„æ•°æ®
+    rt_size_t current_used_size;                             // æœ¬æ¬¡ä½¿ç”¨å®Œæ¯•çš„æ•°æ®é‡
+    rt_uint8_t rx_msg[AIMBOT_RX_READ_SIZE];                  // ç›´æ¥æ¥æ”¶çš„æ•°æ®ä½ç½®
+    rt_uint8_t rx_msg_unpacked[AIMBOT_RX_REAL_DATA_SIZEMAX]; // è§£åŒ…(æŒ‡ä¸²å£åè®®åŒ…)åçš„é€šä¿¡æ•°æ®
+    rt_uint8_t tx_msg[2][AIMBOT_TX_BUFFER_SIZE];             // å¾…å‘é€çš„å®é™…æ•°æ®, å¼€è¾Ÿä¸¤ç«¯ç¼“å†²é˜²æ­¢å†™å…¥æ—¶æ•°æ®è¦†ç›–
 
-    rt_uint8_t tx_data_to_write; // µ±Ç°¸ÃĞ´Èëµ½ÄÄ¸ö´®¿Ú·¢ËÍ»º³åÇø(tx_msg[0/1])
-    rt_uint8_t tx_complete_flag; // ´®¿Ú·¢ËÍÍê³É±êÖ¾
+    rt_uint8_t tx_data_to_write; // å½“å‰è¯¥å†™å…¥åˆ°å“ªä¸ªä¸²å£å‘é€ç¼“å†²åŒº(tx_msg[0/1])
+    rt_uint8_t tx_complete_flag; // ä¸²å£å‘é€å®Œæˆæ ‡å¿—
 
-    rt_err_t (*flag_get)(rt_uint8_t rxmsg[]); // ±êÖ¾Î»±¨ÎÄµÄ´¦Àíº¯Êı
-    rt_err_t (*atti_get)(rt_uint8_t rxmsg[]); // ÔÆÌ¨×ËÌ¬±¨ÎÄµÄ´¦Àíº¯Êı
+    rt_err_t (*flag_get)(rt_uint8_t rxmsg[]); // æ ‡å¿—ä½æŠ¥æ–‡çš„å¤„ç†å‡½æ•°
+    rt_err_t (*atti_get)(rt_uint8_t rxmsg[]); // äº‘å°å§¿æ€æŠ¥æ–‡çš„å¤„ç†å‡½æ•°
 } Aimbot_UART_Msg = {0};
 
 /**
- * @brief ÓÃÓÚ½«´ı·¢ËÍµÄÊı¾İÒÔ·ûºÏÍ¨ĞÅĞ­ÒéµÄ·½Ê½·¢ËÍ³öÈ¥
+ * @brief ç”¨äºå°†å¾…å‘é€çš„æ•°æ®ä»¥ç¬¦åˆé€šä¿¡åè®®çš„æ–¹å¼å‘é€å‡ºå»
  * @author fwlh
- * @param  dev              ´®¿ÚÉè±¸
- * @param  ID               ĞÅÏ¢ ID, 1 ´ú±í×ËÌ¬, 0 ´ú±í±êÖ¾Î»
- * @param  msg              ÕæÊµÊı¾İ(Êı×éÃû)
- * @param  size             Êı×éÖĞÊı¾İµÄÊıÁ¿
- * @return rt_size_t        ·µ»ØĞ´ÈëÊı¾İµÄÊıÁ¿
+ * @param  dev              ä¸²å£è®¾å¤‡
+ * @param  ID               ä¿¡æ¯ ID, 1 ä»£è¡¨å§¿æ€, 0 ä»£è¡¨æ ‡å¿—ä½
+ * @param  msg              çœŸå®æ•°æ®(æ•°ç»„å)
+ * @param  size             æ•°ç»„ä¸­æ•°æ®çš„æ•°é‡
+ * @return rt_size_t        è¿”å›å†™å…¥æ•°æ®çš„æ•°é‡
  */
 rt_size_t Aimbot_Write_UART_Data(rt_device_t *dev, rt_uint8_t ID, rt_uint8_t msg[], rt_size_t size)
 {
-    // ÓÃÓÚ¼ÇÂ¼µ±Ç°Ğ´µ½»º´æÇøµÄÄÄ¸öÎ»ÖÃÁË, ÕâÀïÄ¬ÈÏ´Ó 2 ¿ªÊ¼ÊÇÒòÎªÇ°Á½×Ö½ÚÊÇ´®¿ÚÍ¨ĞÅĞ­Òé¹Ì¶¨µÄÄÚÈİ
+    // ç”¨äºè®°å½•å½“å‰å†™åˆ°ç¼“å­˜åŒºçš„å“ªä¸ªä½ç½®äº†, è¿™é‡Œé»˜è®¤ä» 2 å¼€å§‹æ˜¯å› ä¸ºå‰ä¸¤å­—èŠ‚æ˜¯ä¸²å£é€šä¿¡åè®®å›ºå®šçš„å†…å®¹
     rt_uint8_t write_pos = 2;
-    // ÓÃÓÚÖ¸¶¨µ±Ç°¸ÃĞ´ÈëÄÄÒ»¶Î»º³åÊı¾İ, Èç¹ûµ±Ç°Êı¾İ»¹Ã»·¢ËÍÍê¾ÍÊ¹ÓÃÁíÒ»¶Î»º³åÇø
+    // ç”¨äºæŒ‡å®šå½“å‰è¯¥å†™å…¥å“ªä¸€æ®µç¼“å†²æ•°æ®, å¦‚æœå½“å‰æ•°æ®è¿˜æ²¡å‘é€å®Œå°±ä½¿ç”¨å¦ä¸€æ®µç¼“å†²åŒº
     if (!Aimbot_UART_Msg.tx_complete_flag)
         Aimbot_UART_Msg.tx_data_to_write = 1 - Aimbot_UART_Msg.tx_data_to_write;
     rt_uint8_t *write_msg = Aimbot_UART_Msg.tx_msg[Aimbot_UART_Msg.tx_data_to_write];
 
-    // Ğ´ÈëÖ¡Í·
+    // å†™å…¥å¸§å¤´
     write_msg[0] = 0xFC;
-    // ±éÀú·¢ËÍ»º´æÇøĞ´Èë´ı·¢ËÍÊı¾İ
+    // éå†å‘é€ç¼“å­˜åŒºå†™å…¥å¾…å‘é€æ•°æ®
     for (int i = 0; i < size; ++i)
     {
-        // Èç¹ûÓöµ½ 0xFC ¾ÍĞèÒª·¢Á½±é
+        // å¦‚æœé‡åˆ° 0xFC å°±éœ€è¦å‘ä¸¤é
         if (0xFC == msg[i])
         {
             write_msg[write_pos++] = 0xFC;
@@ -78,13 +78,13 @@ rt_size_t Aimbot_Write_UART_Data(rt_device_t *dev, rt_uint8_t ID, rt_uint8_t msg
         else
             write_msg[write_pos++] = msg[i];
     }
-    // Ğ´ÈëÊı¾İÊµ¼Ê³¤¶È(²»°üÀ¨Ç°Á½×Ö½Ú)ÓëÊı¾İÀàĞÍ
+    // å†™å…¥æ•°æ®å®é™…é•¿åº¦(ä¸åŒ…æ‹¬å‰ä¸¤å­—èŠ‚)ä¸æ•°æ®ç±»å‹
     if (1 == ID)
         write_msg[1] = ((write_pos - 2) & 0x7F) | (ID << 7);
     else
         write_msg[1] = ((write_pos - 3) & 0x7F) | (ID << 7);
 
-    // ·¢ËÍÊı¾İ
+    // å‘é€æ•°æ®
     Aimbot_UART_Msg.tx_complete_flag = 0;
     if (!dev)
         return 0;
@@ -93,34 +93,34 @@ rt_size_t Aimbot_Write_UART_Data(rt_device_t *dev, rt_uint8_t ID, rt_uint8_t msg
 }
 
 /**
- * @brief ÔÚÊı×éÖĞÑ°ÕÒµÚÒ»¸ö¶ÀÁ¢(ËüµÄÇ°ºó¾ù²»ºÍËûÏàµÈ)µÄ±»Ö¸¶¨Êı¾İ
+ * @brief åœ¨æ•°ç»„ä¸­å¯»æ‰¾ç¬¬ä¸€ä¸ªç‹¬ç«‹(å®ƒçš„å‰åå‡ä¸å’Œä»–ç›¸ç­‰)çš„è¢«æŒ‡å®šæ•°æ®
  * @author fwlh
- * @param  data             ´ı²éÕÒÊı¾İµÄÊı×é
- * @param  start            ´ı²éÕÒÄ¿±êÔÚÊı×éÖĞµÄÆğÊ¼Î»ÖÃ(°üº¬)
- * @param  end              ´ı²éÕÒÄ¿±êÔÚÊı×éÖĞµÄ½áÊøÎ»ÖÃ(²»°üº¬)
- * @param  target           Ñ°ÕÒµÄÄ¿±ê
- * @return int              ·µ»ØÖµÎª·Ç¸ºÊı´ú±íÕÒµ½µÄÄ¿±êÊı¾İÏÂ±ê, ·µ»Ø -1 ´ú±íÎ´ÕÒµ½
+ * @param  data             å¾…æŸ¥æ‰¾æ•°æ®çš„æ•°ç»„
+ * @param  start            å¾…æŸ¥æ‰¾ç›®æ ‡åœ¨æ•°ç»„ä¸­çš„èµ·å§‹ä½ç½®(åŒ…å«)
+ * @param  end              å¾…æŸ¥æ‰¾ç›®æ ‡åœ¨æ•°ç»„ä¸­çš„ç»“æŸä½ç½®(ä¸åŒ…å«)
+ * @param  target           å¯»æ‰¾çš„ç›®æ ‡
+ * @return int              è¿”å›å€¼ä¸ºéè´Ÿæ•°ä»£è¡¨æ‰¾åˆ°çš„ç›®æ ‡æ•°æ®ä¸‹æ ‡, è¿”å› -1 ä»£è¡¨æœªæ‰¾åˆ°
  */
 static int Find_First_Indenpendent(const uint8_t data[], const uint8_t start, const uint8_t end, const uint8_t target)
 {
     int index = start;
-    // ¿ªÊ¼±éÀú²éÕÒ
+    // å¼€å§‹éå†æŸ¥æ‰¾
     for (; index < end; ++index)
     {
-        // Èç¹ûËüÊÇ¿ªÍ·¾ÍÖ»ĞèÒª¹Ø×¢ÓÒ²à
+        // å¦‚æœå®ƒæ˜¯å¼€å¤´å°±åªéœ€è¦å…³æ³¨å³ä¾§
         if ((!index) || (start == index))
         {
             if ((target == data[index]) && (target != data[index + 1]))
                 break;
         }
         else if (index + 1 != end)
-        { // ÏŞÖÆÌõ¼ş·ÀÖ¹Êı×éÔ½½ç
+        { // é™åˆ¶æ¡ä»¶é˜²æ­¢æ•°ç»„è¶Šç•Œ
             if ((target != data[index - 1]) && (target == data[index]) && (target != data[index + 1]))
                 break;
         }
     }
 
-    // ·µ»Ø½á¹û
+    // è¿”å›ç»“æœ
     if (index < end)
         return index;
     else
@@ -128,19 +128,19 @@ static int Find_First_Indenpendent(const uint8_t data[], const uint8_t start, co
 }
 
 /**
- * @brief ½«Êı×éÖĞÁ¬ĞøÖØ¸´³öÏÖµÄÊı×ÖÉ¾µô·Åµ½ÁíÒ»¸öÊı×éÖĞ
+ * @brief å°†æ•°ç»„ä¸­è¿ç»­é‡å¤å‡ºç°çš„æ•°å­—åˆ æ‰æ”¾åˆ°å¦ä¸€ä¸ªæ•°ç»„ä¸­
  * @author fwlh
- * @param  dst              Ä¿±êÎ»ÖÃ
- * @param  src              Ô´Êı¾İÑ­»·¶ÓÁĞÊı×é(²»»á±»ĞŞ¸Ä)
- * @param  start            ¼ì²éÊı×éµÄÆğÊ¼Î»ÖÃ
- * @param  end              ¼ì²éÊı×éµÄ½áÊøÎ»ÖÃ
- * @param  target           ¼ì²éµÄÊı×Ö
+ * @param  dst              ç›®æ ‡ä½ç½®
+ * @param  src              æºæ•°æ®å¾ªç¯é˜Ÿåˆ—æ•°ç»„(ä¸ä¼šè¢«ä¿®æ”¹)
+ * @param  start            æ£€æŸ¥æ•°ç»„çš„èµ·å§‹ä½ç½®
+ * @param  end              æ£€æŸ¥æ•°ç»„çš„ç»“æŸä½ç½®
+ * @param  target           æ£€æŸ¥çš„æ•°å­—
  */
 static void Remove_Continuous_Identical_Data(uint8_t dst[], const uint8_t src[], const uint8_t start, const uint8_t end, const uint8_t target)
 {
-    // ¶¨Òåµ±Ç°²Ù×÷µ½ÄÄ¸öÎ»ÖÃÁË
+    // å®šä¹‰å½“å‰æ“ä½œåˆ°å“ªä¸ªä½ç½®äº†
     int dst_i = 0, src_i = start;
-    // ±éÀúĞ´ÈëÊı¾İ
+    // éå†å†™å…¥æ•°æ®
     for (; src_i < end; ++src_i)
     {
         if ((target == src[src_i]) && (target == src[src_i + 1]))
@@ -154,41 +154,41 @@ static void Remove_Continuous_Identical_Data(uint8_t dst[], const uint8_t src[],
 }
 
 /**
- * @brief ½«ÊÕµ½µÄÊı¾İ½â°ü³ÉÔ­Ê¼Í¨ĞÅĞ­ÒéÊı¾İ
+ * @brief å°†æ”¶åˆ°çš„æ•°æ®è§£åŒ…æˆåŸå§‹é€šä¿¡åè®®æ•°æ®
  * @author fwlh
- * @param  rx_msg           ÊÕµ½µÄÔ­Ê¼Êı¾İ
- * @param  unpacked         ´®¿Ú°ü½â¿ªÒÔºóµÄÊı¾İ´æ·ÅµÄÎ»ÖÃ
- * @param  size             ¼ì²éÊı×éµÄ´óĞ¡
- * @return int              ±¾´Î±»´¦ÀíÎªÕı³£Êı¾İµÄ×Ö½ÚÊı
+ * @param  rx_msg           æ”¶åˆ°çš„åŸå§‹æ•°æ®
+ * @param  unpacked         ä¸²å£åŒ…è§£å¼€ä»¥åçš„æ•°æ®å­˜æ”¾çš„ä½ç½®
+ * @param  size             æ£€æŸ¥æ•°ç»„çš„å¤§å°
+ * @return int              æœ¬æ¬¡è¢«å¤„ç†ä¸ºæ­£å¸¸æ•°æ®çš„å­—èŠ‚æ•°
  */
 static int Aimbot_Read_UART_Data(const rt_uint8_t rx_msg[], rt_uint8_t unpacked[], const uint8_t size)
 {
-    int fori = 0;            // ÓÃÓÚ¼ÇÂ¼ÊÕµ½µÄÊı¾İÖĞÊµ¼ÊÊı¾İµÄÆğÊ¼Î»ÖÃ(¶ÀÁ¢ 0xFC ËùÔÚµÄÎ»ÖÃ)
-    int last_frame_end = 0;  // ÓÃÓÚ¼ÇÂ¼ÉÏÒ»Ö¡Êı¾İ½áÊøµÄÏÂ±êÎ»ÖÃ
-    rt_err_t err = RT_ERROR; // ÓÃÓÚ¼ÇÂ¼±¾´Î½â°üÊÇ·ñ³É¹¦
+    int fori = 0;            // ç”¨äºè®°å½•æ”¶åˆ°çš„æ•°æ®ä¸­å®é™…æ•°æ®çš„èµ·å§‹ä½ç½®(ç‹¬ç«‹ 0xFC æ‰€åœ¨çš„ä½ç½®)
+    int last_frame_end = 0;  // ç”¨äºè®°å½•ä¸Šä¸€å¸§æ•°æ®ç»“æŸçš„ä¸‹æ ‡ä½ç½®
+    rt_err_t err = RT_ERROR; // ç”¨äºè®°å½•æœ¬æ¬¡è§£åŒ…æ˜¯å¦æˆåŠŸ
 
-    // ²»¶ÏÑ°ÕÒ¶ÀÁ¢ 0xFC Ö±ÖÁÎŞ·¨ÕÒµ½
+    // ä¸æ–­å¯»æ‰¾ç‹¬ç«‹ 0xFC ç›´è‡³æ— æ³•æ‰¾åˆ°
     while (-1 != (fori = Find_First_Indenpendent(rx_msg, fori, size, 0xFC)))
     {
         err = RT_ERROR;
-        // ½«Êı¾İĞ´µ½»º´æÇø
+        // å°†æ•°æ®å†™åˆ°ç¼“å­˜åŒº
         Remove_Continuous_Identical_Data(
             unpacked, rx_msg + fori + 2, 0, utils_min_2_int((rx_msg[fori + 1] & 0x7F), AIMBOT_RX_REAL_DATA_SIZEMAX), 0xFC);
-        // ÅĞ¶ÏÊı¾İÀàĞÍ, µÚ¶ş×Ö½ÚµÚÒ»Î»Îª 1 ´ú±í×ËÌ¬Êı¾İ
+        // åˆ¤æ–­æ•°æ®ç±»å‹, ç¬¬äºŒå­—èŠ‚ç¬¬ä¸€ä½ä¸º 1 ä»£è¡¨å§¿æ€æ•°æ®
         if ((rx_msg[fori + 1] & 0x80) >> 7)
             err = Aimbot_UART_Msg.atti_get(unpacked);
         else
             err = Aimbot_UART_Msg.flag_get(unpacked);
-        // ÅĞ¶Ï±¾´Î½â°üÊÇ·ñ³É¹¦
+        // åˆ¤æ–­æœ¬æ¬¡è§£åŒ…æ˜¯å¦æˆåŠŸ
         if (RT_EOK == err)
         {
-            // ¼ÌĞø¼ì²éÊ£ÓàµÄÊı¾İÄÚÊÇ·ñ´æÔÚĞÂµÄ±¨ÎÄ
+            // ç»§ç»­æ£€æŸ¥å‰©ä½™çš„æ•°æ®å†…æ˜¯å¦å­˜åœ¨æ–°çš„æŠ¥æ–‡
             fori += ((rx_msg[fori + 1] & 0x7F) + 1);
-            // ¸üĞÂÒ»Ö¡Êı¾İ½áÊøµÄÎ»ÖÃ
+            // æ›´æ–°ä¸€å¸§æ•°æ®ç»“æŸçš„ä½ç½®
             last_frame_end = fori;
         }
         else
-            // Ã»ÓĞ³É¹¦½â°ü¾ÍÖ±½Ó´ÓÏÂÒ»×Ö½Ú¿ªÊ¼¼ÌĞøÑ°ÕÒ
+            // æ²¡æœ‰æˆåŠŸè§£åŒ…å°±ç›´æ¥ä»ä¸‹ä¸€å­—èŠ‚å¼€å§‹ç»§ç»­å¯»æ‰¾
             ++fori;
         if (fori >= size)
             break;
@@ -197,11 +197,11 @@ static int Aimbot_Read_UART_Data(const rt_uint8_t rx_msg[], rt_uint8_t unpacked[
 }
 
 /**
- * @brief ´®¿ÚµÄ½ÓÊÕÖĞ¶Ï»Øµ÷º¯Êı
+ * @brief ä¸²å£çš„æ¥æ”¶ä¸­æ–­å›è°ƒå‡½æ•°
  * @author fwlh
- * @param  dev              Éè±¸Ãû
- * @param  size             Êı¾İ´óĞ¡
- * @return rt_err_t         ²»»á±»ÓÃ»§Ê¹ÓÃ
+ * @param  dev              è®¾å¤‡å
+ * @param  size             æ•°æ®å¤§å°
+ * @return rt_err_t         ä¸ä¼šè¢«ç”¨æˆ·ä½¿ç”¨
  */
 static rt_err_t Aimbot_RX_Callback(rt_device_t dev, rt_size_t size)
 {
@@ -210,11 +210,11 @@ static rt_err_t Aimbot_RX_Callback(rt_device_t dev, rt_size_t size)
 }
 
 /**
- * @brief ´®¿Ú·¢ËÍÍê³ÉÖĞ¶Ï»Øµ÷º¯Êı
+ * @brief ä¸²å£å‘é€å®Œæˆä¸­æ–­å›è°ƒå‡½æ•°
  * @author fwlh
- * @param  dev              ·¢ËÍÍê³ÉµÄÉè±¸
- * @param  buffer           »º³åÇø
- * @return rt_err_t         ÔİÊ±²»»á±»Ê¹ÓÃ
+ * @param  dev              å‘é€å®Œæˆçš„è®¾å¤‡
+ * @param  buffer           ç¼“å†²åŒº
+ * @return rt_err_t         æš‚æ—¶ä¸ä¼šè¢«ä½¿ç”¨
  */
 static rt_err_t Aimbot_TXComplete_Callback(rt_device_t dev, void *buffer)
 {
@@ -223,107 +223,107 @@ static rt_err_t Aimbot_TXComplete_Callback(rt_device_t dev, void *buffer)
 }
 
 /**
- * @brief ÓÃÓÚ´¦ÀíÀ´×ÔÊÓ¾õµÄ´®¿ÚÊı¾İµÄÏß³Ì
+ * @brief ç”¨äºå¤„ç†æ¥è‡ªè§†è§‰çš„ä¸²å£æ•°æ®çš„çº¿ç¨‹
  * @author fwlh
- * @param  param            Ïß³ÌµÄÈë¿Ú²ÎÊı, ÔİÊ±Î´±»Ê¹ÓÃ
+ * @param  param            çº¿ç¨‹çš„å…¥å£å‚æ•°, æš‚æ—¶æœªè¢«ä½¿ç”¨
  */
 static void Aimbot_RX_Thread(void *param)
 {
-    // ³õÊ¼»¯Ïà¹ØµÄ±êÖ¾Î»µÈ
+    // åˆå§‹åŒ–ç›¸å…³çš„æ ‡å¿—ä½ç­‰
     Aimbot_UART_Msg.current_left_size = 0;
     Aimbot_UART_Msg.tx_complete_flag = 0;
     Aimbot_UART_Msg.current_used_size = 0;
     Aimbot_UART_Msg.current_left_size = 0;
     Aimbot_UART_Msg.current_receive_size = 0;
     int temp_left_size = 0;
-    // µÈ´ıĞÅºÅÁ¿±»³õÊ¼»¯
+    // ç­‰å¾…ä¿¡å·é‡è¢«åˆå§‹åŒ–
     while (Aimbot_UART_Msg.rx_sem == RT_NULL)
     {
         rt_thread_mdelay(1);
         continue;
     }
-    // Ïß³ÌÕı³£ÔËĞĞ
+    // çº¿ç¨‹æ­£å¸¸è¿è¡Œ
     while (1)
     {
-        // µÈ´ı½ÓÊÕµ½Êı¾İµÄĞÅºÅÁ¿
+        // ç­‰å¾…æ¥æ”¶åˆ°æ•°æ®çš„ä¿¡å·é‡
         rt_sem_take(Aimbot_UART_Msg.rx_sem, RT_WAITING_FOREVER);
-        // ³¢ÊÔ»ñÈ¡´®¿ÚÊı¾İ, Í¬Ê±¼ÇÂ¼±¾´Î»ñµ½µÄÊı¾İÁ¿
+        // å°è¯•è·å–ä¸²å£æ•°æ®, åŒæ—¶è®°å½•æœ¬æ¬¡è·åˆ°çš„æ•°æ®é‡
         Aimbot_UART_Msg.current_receive_size = rt_device_read(
             *Aimbot_UART_Msg.device, 0, Aimbot_UART_Msg.rx_msg + Aimbot_UART_Msg.current_left_size,
             AIMBOT_RX_READ_SIZE - Aimbot_UART_Msg.current_left_size);
-        // ´¦ÀíÍ¨ĞÅÊı¾İ, ²¢¼ÇÂ¼±¾´ÎÊ¹ÓÃÍê±ÏµÄÊı¾İÁ¿
+        // å¤„ç†é€šä¿¡æ•°æ®, å¹¶è®°å½•æœ¬æ¬¡ä½¿ç”¨å®Œæ¯•çš„æ•°æ®é‡
         Aimbot_UART_Msg.current_used_size = Aimbot_Read_UART_Data(
             Aimbot_UART_Msg.rx_msg, Aimbot_UART_Msg.rx_msg_unpacked,
             Aimbot_UART_Msg.current_receive_size + Aimbot_UART_Msg.current_left_size);
-        // ½«Ê£ÓàÊı¾İ°áÔËµ½Êı×éÆğÊ¼Î»ÖÃ
+        // å°†å‰©ä½™æ•°æ®æ¬è¿åˆ°æ•°ç»„èµ·å§‹ä½ç½®
         temp_left_size = Aimbot_UART_Msg.current_receive_size - Aimbot_UART_Msg.current_used_size + Aimbot_UART_Msg.current_left_size;
         temp_left_size = (temp_left_size > 0) ? temp_left_size : 0;
         for (int pos = 0; pos < temp_left_size; ++pos)
             Aimbot_UART_Msg.rx_msg[pos] = Aimbot_UART_Msg.rx_msg[Aimbot_UART_Msg.current_used_size + pos];
         Aimbot_UART_Msg.current_left_size = temp_left_size;
-        // Ê£ÓàµÄ´ı´¦ÀíµÄÊı¾İ¹ı¶à¾ÍÖ±½ÓÈÓµô
+        // å‰©ä½™çš„å¾…å¤„ç†çš„æ•°æ®è¿‡å¤šå°±ç›´æ¥æ‰”æ‰
         if (Aimbot_UART_Msg.current_left_size > AIMBOT_RX_REAL_DATA_SIZEMAX * 1.5)
             Aimbot_UART_Msg.current_left_size -= AIMBOT_RX_REAL_DATA_SIZEMAX;
     }
 }
 
 /**
- * @brief ³õÊ¼»¯ÓëÊÓ¾õÍ¨ĞÅµÄ´®¿Ú
+ * @brief åˆå§‹åŒ–ä¸è§†è§‰é€šä¿¡çš„ä¸²å£
  * @author fwlh
- * @param  aimbot_device    Éè±¸Ö¸Õë
- * @param  flag_get         ´¦Àí±êÖ¾Î»±¨ÎÄµÄº¯Êı
- * @param  atti_get         ´¦ÀíÔÆÌ¨×ËÌ¬±¨ÎÄµÄº¯Êı
- * @return rt_err_t         ³õÊ¼»¯½á¹û
+ * @param  aimbot_device    è®¾å¤‡æŒ‡é’ˆ
+ * @param  flag_get         å¤„ç†æ ‡å¿—ä½æŠ¥æ–‡çš„å‡½æ•°
+ * @param  atti_get         å¤„ç†äº‘å°å§¿æ€æŠ¥æ–‡çš„å‡½æ•°
+ * @return rt_err_t         åˆå§‹åŒ–ç»“æœ
  */
 rt_err_t Aimbot_UART_Init(rt_device_t *aimbot_device, rt_err_t (*flag_get)(rt_uint8_t rxmsg[]), rt_err_t (*atti_get)(rt_uint8_t rxmsg[]))
 {
 #ifndef BSP_USING_UART6
 #error "aimbot com: uart6 not opened!"
 #endif
-    // Ê¹ÓÃ NUC Ê±ĞèÒª³õÊ¼»¯´®¿Ú6
-    *aimbot_device = rt_device_find("uart6"); //Ê¹ÓÃÄ¬ÈÏµÄ´®¿ÚÅäÖÃ£¬ÅäÖÃÎª²¨ÌØÂÊ 115200,8Î»Êı¾İÎ»,1Î»Í£Ö¹Î»,ÎŞĞ£ÑéÎ»
+    // ä½¿ç”¨ NUC æ—¶éœ€è¦åˆå§‹åŒ–ä¸²å£6
+    *aimbot_device = rt_device_find("uart6"); //ä½¿ç”¨é»˜è®¤çš„ä¸²å£é…ç½®ï¼Œé…ç½®ä¸ºæ³¢ç‰¹ç‡ 115200,8ä½æ•°æ®ä½,1ä½åœæ­¢ä½,æ— æ ¡éªŒä½
     if (!(*aimbot_device))
     {
         rt_kprintf("find aimbot uart device failed !\n");
         return RT_ERROR;
     }
-    // ĞŞ¸Ä´®¿ÚÅäÖÃ²ÎÊı
+    // ä¿®æ”¹ä¸²å£é…ç½®å‚æ•°
     struct serial_configure config = {0};
-    config.baud_rate = BAUD_RATE_115200; //ĞŞ¸Ä²¨ÌØÂÊÎª 115200
-    config.data_bits = DATA_BITS_8;      //Êı¾İÎ» 8
-    config.stop_bits = STOP_BITS_1;      //Í£Ö¹Î» 1
-    config.bufsz = AIMBOT_RX_READ_SIZE;  //ĞŞ¸Ä»º³åÇø buff size Îª 120
-    config.parity = PARITY_NONE;         //ÎŞÆæÅ¼Ğ£ÑéÎ»
-    // ¿ØÖÆ´®¿ÚÉè±¸ Í¨¹ı¿ØÖÆ½Ó¿Ú´«ÈëÃüÁî¿ØÖÆ×Ö£¬Óë¿ØÖÆ²ÎÊı
+    config.baud_rate = BAUD_RATE_115200; //ä¿®æ”¹æ³¢ç‰¹ç‡ä¸º 115200
+    config.data_bits = DATA_BITS_8;      //æ•°æ®ä½ 8
+    config.stop_bits = STOP_BITS_1;      //åœæ­¢ä½ 1
+    config.bufsz = AIMBOT_RX_READ_SIZE;  //ä¿®æ”¹ç¼“å†²åŒº buff size ä¸º 120
+    config.parity = PARITY_NONE;         //æ— å¥‡å¶æ ¡éªŒä½
+    // æ§åˆ¶ä¸²å£è®¾å¤‡ é€šè¿‡æ§åˆ¶æ¥å£ä¼ å…¥å‘½ä»¤æ§åˆ¶å­—ï¼Œä¸æ§åˆ¶å‚æ•°
     if (rt_device_control(*aimbot_device, RT_DEVICE_CTRL_CONFIG, &config) != RT_EOK)
         return RT_ERROR;
 #if ((!defined(AIMBOT_CIMMUNICATION_USING_CAN)) && (!((defined(BSP_UART6_RX_USING_DMA)) && (defined(BSP_UART6_TX_USING_DMA)))))
 #error "aimbot com: uart6 DMA not opened!"
 #endif
-    // Ê¹ÓÃ DMA ·¢ËÍÓë DMA ½ÓÊÕÄ£Ê½
+    // ä½¿ç”¨ DMA å‘é€ä¸ DMA æ¥æ”¶æ¨¡å¼
     if (rt_device_open(*aimbot_device, RT_DEVICE_FLAG_DMA_TX | RT_DEVICE_FLAG_DMA_RX) != RT_EOK)
         return RT_ERROR;
-    // ¶¨Òå´®¿Ú½ÓÊÕÖĞ¶Ï»Øµ÷º¯Êı
+    // å®šä¹‰ä¸²å£æ¥æ”¶ä¸­æ–­å›è°ƒå‡½æ•°
     if (rt_device_set_rx_indicate(*aimbot_device, Aimbot_RX_Callback) != RT_EOK)
         return RT_ERROR;
-    // ¶¨Òå´®¿Ú·¢ËÍÍê³É»Øµ÷º¯Êı
+    // å®šä¹‰ä¸²å£å‘é€å®Œæˆå›è°ƒå‡½æ•°
     if (rt_device_set_tx_complete(*aimbot_device, Aimbot_TXComplete_Callback) != RT_EOK)
         return RT_ERROR;
-    // ¼ÇÂ¼´®¿ÚÉè±¸¾ä±ú
+    // è®°å½•ä¸²å£è®¾å¤‡å¥æŸ„
     Aimbot_UART_Msg.device = aimbot_device;
 
-    // ³õÊ¼»¯½ÓÊÕÊı¾İ´¦ÀíĞÅºÅÁ¿
+    // åˆå§‹åŒ–æ¥æ”¶æ•°æ®å¤„ç†ä¿¡å·é‡
     Aimbot_UART_Msg.rx_sem = rt_sem_create("uart rx sem", 0, RT_IPC_FLAG_FIFO);
     if (Aimbot_UART_Msg.rx_sem == RT_NULL)
         return RT_ERROR;
-    // ³õÊ¼»¯½ÓÊÕ´¦ÀíÏß³Ì
+    // åˆå§‹åŒ–æ¥æ”¶å¤„ç†çº¿ç¨‹
     Aimbot_UART_Msg.rx_handle_thread = rt_thread_create("uart rx thread", Aimbot_RX_Thread, RT_NULL, 1024, THREAD_PRIO_AIMBOT_UART_RX, 1);
     if (Aimbot_UART_Msg.rx_handle_thread != RT_NULL)
         rt_thread_startup(Aimbot_UART_Msg.rx_handle_thread);
     else
         return RT_ERROR;
 
-    // Ğ´ÈëÏà¹Øº¯ÊıÖ¸Õë
+    // å†™å…¥ç›¸å…³å‡½æ•°æŒ‡é’ˆ
     Aimbot_UART_Msg.flag_get = flag_get;
     Aimbot_UART_Msg.atti_get = atti_get;
 

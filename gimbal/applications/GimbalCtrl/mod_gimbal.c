@@ -17,52 +17,52 @@
 #include "drv_Aimbot_Public.h"
 #include <stdbool.h>
 
-//ÔÆÌ¨µç»úPIDÏß³Ì¾ä±ú
+//äº‘å°ç”µæœºPIDçº¿ç¨‹å¥æŸ„
 static rt_thread_t gimbal_control = RT_NULL;
 
-// µç»úÊı¾İ½á¹¹Ìå
+// ç”µæœºæ•°æ®ç»“æ„ä½“
 Motor_t Yaw;
 Motor_t Pitch;
 
-float CtrlErr_Pitch = 0, CtrlErr_Yaw = 0; // Pitch ºÍ Yaw µÄ¿ØÖÆÎó²î
+float CtrlErr_Pitch = 0, CtrlErr_Yaw = 0; // Pitch å’Œ Yaw çš„æ§åˆ¶è¯¯å·®
 
 #if defined CAR_USING_LINK
-float Connect_Alpha;  // ÓÃÓÚÁ¬¸Ë¼ÆËãµÄ½Ç¶È
-float Pitch_F0_Use;   // PitchÖØĞÄÔÚ×ªÖáÕıÇ°·½Ê±²úÉúµÄÅ¤¾Ø
-float Pitch_ANG0_Use; // PitchÖØĞÄÔÚ×ªÖáÕıÉÏ·½Ê±ÔÆÌ¨×ËÌ¬½Ç
+float Connect_Alpha;  // ç”¨äºè¿æ†è®¡ç®—çš„è§’åº¦
+float Pitch_F0_Use;   // Pitché‡å¿ƒåœ¨è½¬è½´æ­£å‰æ–¹æ—¶äº§ç”Ÿçš„æ‰­çŸ©
+float Pitch_ANG0_Use; // Pitché‡å¿ƒåœ¨è½¬è½´æ­£ä¸Šæ–¹æ—¶äº‘å°å§¿æ€è§’
 float DeltaEncoderAngle;
 float CompenOutGain;
 float pitch_gain;
 #endif
 
-GimbalCTRL_Set_Type SetAng;                      // ´óµØ×ø±êÏµÏÂµÄÔÆÌ¨×ËÌ¬Éè¶¨Öµ
-static AttitudeData_Type GroundFrame_GimbalAtti; // ´óµØ×ø±êÏµÏÂµÄÔÆÌ¨×ËÌ¬
-static AttitudeData_Type MotorFrame_GimbalAtti;  // µç»ú×ø±êÏµÏÂµÄÔÆÌ¨×ËÌ¬
-static AttitudeData_Type MotorFrame_GimbalErr;   // µç»ú×ø±êÏµÏÂµÄÔÆÌ¨×ËÌ¬Îó²î
+GimbalCTRL_Set_Type SetAng;                      // å¤§åœ°åæ ‡ç³»ä¸‹çš„äº‘å°å§¿æ€è®¾å®šå€¼
+static AttitudeData_Type GroundFrame_GimbalAtti; // å¤§åœ°åæ ‡ç³»ä¸‹çš„äº‘å°å§¿æ€
+static AttitudeData_Type MotorFrame_GimbalAtti;  // ç”µæœºåæ ‡ç³»ä¸‹çš„äº‘å°å§¿æ€
+static AttitudeData_Type MotorFrame_GimbalErr;   // ç”µæœºåæ ‡ç³»ä¸‹çš„äº‘å°å§¿æ€è¯¯å·®
 /**
- * @brief ½«´óµØ×ø±êÏµÏÂµÄÔÆÌ¨½Ç¶ÈÉè¶¨ÖµÓë·´À¡Öµ»»ËãÎªµç»ú×ø±êÏµÏÂµÄÏà¹ØÊı¾İ
+ * @brief å°†å¤§åœ°åæ ‡ç³»ä¸‹çš„äº‘å°è§’åº¦è®¾å®šå€¼ä¸åé¦ˆå€¼æ¢ç®—ä¸ºç”µæœºåæ ‡ç³»ä¸‹çš„ç›¸å…³æ•°æ®
  * @author fwlh
- * @param  SetAng                ´óµØ×ø±êÏµÏÂµÄÔÆÌ¨½Ç¶ÈÉè¶¨Öµ
- * @param  GroundAtti            ´óµØ×ø±êÏµÏÂµÄÔÆÌ¨µ±Ç°×ËÌ¬
- * @param  MotorAtti             µç»ú×ø±êÏµÏÂµÄÔÆÌ¨µ±Ç°×ËÌ¬
- * @param  MotorFrame_GimbalErr  µç»ú×ø±êÏµÏÂµÄ½Ç¶ÈÎó²î
+ * @param  SetAng                å¤§åœ°åæ ‡ç³»ä¸‹çš„äº‘å°è§’åº¦è®¾å®šå€¼
+ * @param  GroundAtti            å¤§åœ°åæ ‡ç³»ä¸‹çš„äº‘å°å½“å‰å§¿æ€
+ * @param  MotorAtti             ç”µæœºåæ ‡ç³»ä¸‹çš„äº‘å°å½“å‰å§¿æ€
+ * @param  MotorFrame_GimbalErr  ç”µæœºåæ ‡ç³»ä¸‹çš„è§’åº¦è¯¯å·®
  */
 static void GimbalSet_Gound_To_Motor(GimbalCTRL_Set_Type *const *SetAng,
                                      AttitudeData_Type *const *GroundAtti,
                                      AttitudeData_Type *const *MotorAtti,
                                      AttitudeData_Type *MotorFrame_GimbalErr)
 {
-    // ×¢Òâ HERO Õ½¶Ó»úÆ÷ÈËÆÕ±é²ÉÓÃ×óÊÖÏµÃèÊöÎ»×Ë(x ÖáÕı·½ÏòÏòÓÒ, y ÖáÕı·½ÏòÏòºó, z ÖáÕı·½ÏòÏòÉÏ)
+    // æ³¨æ„ HERO æˆ˜é˜Ÿæœºå™¨äººæ™®éé‡‡ç”¨å·¦æ‰‹ç³»æè¿°ä½å§¿(x è½´æ­£æ–¹å‘å‘å³, y è½´æ­£æ–¹å‘å‘å, z è½´æ­£æ–¹å‘å‘ä¸Š)
 }
 
 static struct rt_timer task_1ms;
-static struct rt_semaphore gimbal_1ms_sem; //¶¨Ê±Æ÷³¬Ê±º¯Êı·¢ËÍµÄ1msĞÅºÅÁ¿
+static struct rt_semaphore gimbal_1ms_sem; //å®šæ—¶å™¨è¶…æ—¶å‡½æ•°å‘é€çš„1msä¿¡å·é‡
 
-static rt_uint8_t GimbalMotor_Valid = 1;    // ÓÃÓÚÅĞ¶Ï¸ÃÊ±¿ÌÊÇ·ñ¸Ã¸øÔÆÌ¨µç»ú·¢ËÍµçÁ÷, ÖÃ 0 »áÍ£Ö¹·¢ËÍ
-static rt_sem_t CtrlErr_Calc_Sem = RT_NULL; //  ÓÃÓÚ·ÀÖ¹¿ØÖÆÎó²î¼ÆËãÊ±º¯Êı±»ÖØÈë
+static rt_uint8_t GimbalMotor_Valid = 1;    // ç”¨äºåˆ¤æ–­è¯¥æ—¶åˆ»æ˜¯å¦è¯¥ç»™äº‘å°ç”µæœºå‘é€ç”µæµ, ç½® 0 ä¼šåœæ­¢å‘é€
+static rt_sem_t CtrlErr_Calc_Sem = RT_NULL; //  ç”¨äºé˜²æ­¢æ§åˆ¶è¯¯å·®è®¡ç®—æ—¶å‡½æ•°è¢«é‡å…¥
 
 volatile float JSCOPE_GIMBALTimeLag;
-// ÓÃÓÚ¼ÇÂ¼µ÷ÓÃµÄÊ±¼ä¼ä¸ô
+// ç”¨äºè®°å½•è°ƒç”¨çš„æ—¶é—´é—´éš”
 static void Frq_Rec(void)
 {
     static int LastTime = 0;
@@ -70,7 +70,7 @@ static void Frq_Rec(void)
     int TimeNow;
     count++;
     if (count >= 10)
-    { // 10´Îµ÷ÓÃºó½áËãÒ»´ÎÆ½¾ùÊ±ÑÓ
+    { // 10æ¬¡è°ƒç”¨åç»“ç®—ä¸€æ¬¡å¹³å‡æ—¶å»¶
         TimeNow = rt_tick_get();
         JSCOPE_GIMBALTimeLag = (TimeNow - LastTime) / 10.0f;
         LastTime = TimeNow;
@@ -78,63 +78,63 @@ static void Frq_Rec(void)
     }
 }
 
-static float LastPitchFB, LastYawFB;   // ÉÏÒ»´ÎµÄ½Ç¶È·´À¡ÊıÖµ
-static float TempPitchErr, TempYawErr; // ¼ÆËã¿ØÖÆÎó²îµÄÖĞ¼ä±äÁ¿
-static float AngleExtended;            // Õ¹¿ªÒÔºóµÄ½Ç¶È
-static bool LastErr_Nan_Flag = false;  // ÓÃÓÚ±ê¼ÇÉÏ´Î¿ØÖÆÎó²î¼ÆËã³öÁË Nan, ÏÂ´Î¼ÆËãÊ±Ä¬ÈÏÉÏ´ÎÊı¾İÈ¡ 0
-// ¸üĞÂ¿ØÖÆÎó²îÊı¾İ
+static float LastPitchFB, LastYawFB;   // ä¸Šä¸€æ¬¡çš„è§’åº¦åé¦ˆæ•°å€¼
+static float TempPitchErr, TempYawErr; // è®¡ç®—æ§åˆ¶è¯¯å·®çš„ä¸­é—´å˜é‡
+static float AngleExtended;            // å±•å¼€ä»¥åçš„è§’åº¦
+static bool LastErr_Nan_Flag = false;  // ç”¨äºæ ‡è®°ä¸Šæ¬¡æ§åˆ¶è¯¯å·®è®¡ç®—å‡ºäº† Nan, ä¸‹æ¬¡è®¡ç®—æ—¶é»˜è®¤ä¸Šæ¬¡æ•°æ®å– 0
+// æ›´æ–°æ§åˆ¶è¯¯å·®æ•°æ®
 void Ctrl_Err_Cal(float SetPitchAng, float SetYawAng)
 {
-    // ¼ì²éĞÅºÅÁ¿ÊÇ·ñ±»³õÊ¼»¯
+    // æ£€æŸ¥ä¿¡å·é‡æ˜¯å¦è¢«åˆå§‹åŒ–
     if (CtrlErr_Calc_Sem)
     {
-        // ·ÀÖ¹º¯Êı±»ÖØÈë
+        // é˜²æ­¢å‡½æ•°è¢«é‡å…¥
         if (rt_sem_trytake(CtrlErr_Calc_Sem) != RT_EOK)
             return;
         while (rt_sem_trytake(CtrlErr_Calc_Sem) == RT_EOK)
             continue;
-        // ÊäÈëÊı¾İºÏ·¨ĞÔ¼ì²é
+        // è¾“å…¥æ•°æ®åˆæ³•æ€§æ£€æŸ¥
         if (isnan(SetPitchAng) || isnan(SetYawAng))
         {
-            CtrlErr_Pitch = 1800.f; // ³ö´íÊ±Êä³ö Îó²î=1800
-            CtrlErr_Yaw = 1800.f;   // ³ö´íÊ±Êä³ö Îó²î=1800
+            CtrlErr_Pitch = 1800.f; // å‡ºé”™æ—¶è¾“å‡º è¯¯å·®=1800
+            CtrlErr_Yaw = 1800.f;   // å‡ºé”™æ—¶è¾“å‡º è¯¯å·®=1800
             LastErr_Nan_Flag = true;
             rt_sem_release(CtrlErr_Calc_Sem);
             return;
         }
-        // ÕæÊµ½Ç¶ÈÏÈÕ¹¿ªÔÙÖÍºóÂË²¨
+        // çœŸå®è§’åº¦å…ˆå±•å¼€å†æ»åæ»¤æ³¢
         AngleExtended = utils_angle_difference(GimbalFB.FB_This.Pitch, LastPitchFB) + LastPitchFB;
         LastPitchFB = UTILS_LP_FAST(GimbalFB.FB_This.Pitch, LastPitchFB, 0.5f);
         AngleExtended = utils_angle_difference(GimbalFB.FB_This.Yaw, LastYawFB) + LastYawFB;
         LastYawFB = UTILS_LP_FAST(GimbalFB.FB_This.Yaw, LastYawFB, 0.5f);
-        // Îó²î¼ÆËã
+        // è¯¯å·®è®¡ç®—
         TempPitchErr = utils_angle_difference(SetPitchAng, LastPitchFB);
         TempYawErr = utils_angle_difference(SetYawAng, LastYawFB);
-        // // Á½´Î¼ÆËã¹ı³ÌÎó²îµÄ±ä»¯²»ÄÜ³¬¹ı 180 ¶È, ×¢ÒâÒªÅĞ¶ÏÉÏ´ÎµÄÊı¾İÒì³£±êÖ¾Î»
+        // // ä¸¤æ¬¡è®¡ç®—è¿‡ç¨‹è¯¯å·®çš„å˜åŒ–ä¸èƒ½è¶…è¿‡ 180 åº¦, æ³¨æ„è¦åˆ¤æ–­ä¸Šæ¬¡çš„æ•°æ®å¼‚å¸¸æ ‡å¿—ä½
         // if (LastErr_Nan_Flag)
         // {
-        //     // ÉÏ´ÎÊı¾İÒì³£Ê±ÈÏÎªÉÏ´ÎµÄÊı¾İÊÇ 0, Ö÷ÒªÊÇ¿¼ÂÇÎó²î±ä»¯ÏŞ·ù
+        //     // ä¸Šæ¬¡æ•°æ®å¼‚å¸¸æ—¶è®¤ä¸ºä¸Šæ¬¡çš„æ•°æ®æ˜¯ 0, ä¸»è¦æ˜¯è€ƒè™‘è¯¯å·®å˜åŒ–é™å¹…
         //     CtrlErr_Pitch = 0.f;
         //     CtrlErr_Yaw = 0.f;
-        //     LastErr_Nan_Flag = false; // Çå¿Õ±êÖ¾Î»
+        //     LastErr_Nan_Flag = false; // æ¸…ç©ºæ ‡å¿—ä½
         // }
         // utils_norm_circle_number(&TempPitchErr, CtrlErr_Pitch - 180.f, 360.f);
         // utils_norm_circle_number(&TempYawErr, CtrlErr_Yaw - 180.f, 360.f);
-        // ¿ØÖÆÎó²î²»ÄÜ³¬¹ı -180 »òÕß 180
+        // æ§åˆ¶è¯¯å·®ä¸èƒ½è¶…è¿‡ -180 æˆ–è€… 180
         utils_norm_circle_number(&TempPitchErr, -180.f, 360.f);
         utils_norm_circle_number(&TempYawErr, -180.f, 360.f);
-        // ½«¼ÆËãµÄÎó²î¸³ÖµÎª¶ÔÍâÊä³öµÄ¿ØÖÆÎó²î
+        // å°†è®¡ç®—çš„è¯¯å·®èµ‹å€¼ä¸ºå¯¹å¤–è¾“å‡ºçš„æ§åˆ¶è¯¯å·®
         CtrlErr_Pitch = TempPitchErr;
         CtrlErr_Yaw = CtrlErr_Yaw;
-        // ÊÍ·ÅĞÅºÅÁ¿ÔÊĞíÏÂÒ»´ÎÔËĞĞ
+        // é‡Šæ”¾ä¿¡å·é‡å…è®¸ä¸‹ä¸€æ¬¡è¿è¡Œ
         rt_sem_release(CtrlErr_Calc_Sem);
     }
-    // ·ÀÖ¹±àÒëÆ÷±¨ warning
+    // é˜²æ­¢ç¼–è¯‘å™¨æŠ¥ warning
     (void)LastErr_Nan_Flag;
     (void)AngleExtended;
 }
 
-// Ä¬ÈÏ¿ªÆôÔÆÌ¨µç»ú¶Â×ª±£»¤
+// é»˜è®¤å¼€å¯äº‘å°ç”µæœºå µè½¬ä¿æŠ¤
 #define GIMBALSTUCK_PROTECT 1
 
 #if (GIMBALSTUCK_PROTECT)
@@ -147,22 +147,22 @@ static float PitchSpeedFB, YawSpeedFB;
 StrikeMotor_CtrlData_s StrikeMotor_CtrlData;
 #endif
 
-// ¿ØÖÆÔÆÌ¨µç»úµÄ CAN ±¨ÎÄ½á¹¹Ìå
+// æ§åˆ¶äº‘å°ç”µæœºçš„ CAN æŠ¥æ–‡ç»“æ„ä½“
 #if defined CORE_USING_INFANTRY
 static struct rt_can_msg gimctl_msg;
 #elif defined CORE_USING_HERO
 static struct rt_can_msg gimctl_msg[2];
 #endif
-// ÔÆÌ¨¿ØÖÆ¼ÆËã
+// äº‘å°æ§åˆ¶è®¡ç®—
 static void Gimbal_Controller_Run(void)
 {
-    // Èç¹ûÔÆÌ¨µç»úÊ§ÄÜ»áÖ±½ÓÍ£Ö¹¿ØÖÆÆ÷µÄ¼ÆËã
+    // å¦‚æœäº‘å°ç”µæœºå¤±èƒ½ä¼šç›´æ¥åœæ­¢æ§åˆ¶å™¨çš„è®¡ç®—
     if (GimbalMotor_Valid)
     {
         /* PID */
         if (GimbalFB.FBS_Now_Pitch == FB_ENCD)
         {
-            // PitchSpeedFB = PitchMotorSymbol * Pitch.dji.speed * 6.0f; // ×¢Òâ»»Ëãµ¥Î»
+            // PitchSpeedFB = PitchMotorSymbol * Pitch.dji.speed * 6.0f; // æ³¨æ„æ¢ç®—å•ä½
             PitchSpeedFB = gimbal_atti.pitch_speed * 0.5f + PitchSpeedFB * 0.5f;
             // PitchSpeedFB = 0;
             Gimbal_Pitch_PID_RUN(&Pitch, PitchSpeedFB, GimbalFB.FB_This.Pitch, 0.1f);
@@ -179,7 +179,7 @@ static void Gimbal_Controller_Run(void)
 
         if (GimbalFB.FBS_Now_Yaw == FB_ENCD)
         {
-            // YawSpeedFB = YawMotorSymbol * Yaw.dji.speed * 6.0f; // ×¢Òâ»»Ëãµ¥Î»
+            // YawSpeedFB = YawMotorSymbol * Yaw.dji.speed * 6.0f; // æ³¨æ„æ¢ç®—å•ä½
             YawSpeedFB = gimbal_atti.yaw_speed * 0.05f + YawSpeedFB * 0.95f;
             // YawSpeedFB = 0;
             Gimbal_Yaw_PID_RUN(&Yaw, YawSpeedFB, GimbalFB.FB_This.Yaw, 0.f);
@@ -212,10 +212,10 @@ static void Gimbal_Controller_Run(void)
         Pitch.spe.out += GIMBAL_BIAS_SET * cosf(gimbal_atti.pitch);
 #endif
 
-        // 6020 µç»úµçÁ÷²¹³¥
+        // 6020 ç”µæœºç”µæµè¡¥å¿
         Pitch.spe.out += Pitch.dji.speed * 70;
 
-        //Êä³öÏŞ·ù
+        //è¾“å‡ºé™å¹…
         if (Pitch.spe.out > Pitch.spe.out_limit_up)
             Pitch.spe.out = Pitch.spe.out_limit_up;
         else if (Pitch.spe.out < Pitch.spe.out_limit_down)
@@ -226,33 +226,33 @@ static void Gimbal_Controller_Run(void)
         {
             if ((fabsf(Pitch.spe.out) > 19000 && abs(Pitch.dji.speed) < 2) ||
                 (fabsf(Yaw.spe.out) > 19000 && abs(Yaw.dji.speed) < 2))
-            { // ÒÉËÆÔÆÌ¨¶Â×ª
+            { // ç–‘ä¼¼äº‘å°å µè½¬
                 if (RC_data.Mouse_Data.x_speed == 0 && RC_data.Mouse_Data.y_speed == 0)
                     GimbalStuckCount++;
                 else
-                    // Èç¹û²Ù×÷ÊÖÔÚ²Ù×÷
+                    // å¦‚æœæ“ä½œæ‰‹åœ¨æ“ä½œ
                     GimbalStuckCount = 0;
             }
             else
                 GimbalStuckCount = 0;
             if (GimbalStuckCount > 1500)
             {
-                // Á¬Ğø1S¶Â×ª´¥·¢±£»¤
+                // è¿ç»­1Så µè½¬è§¦å‘ä¿æŠ¤
                 GimbalStuckFlag = 1;
                 GimbalStuckCount = 0;
             }
         }
         else
-        { // Ê¶±ğµ½ÔÆÌ¨¶Â×ª
+        { // è¯†åˆ«åˆ°äº‘å°å µè½¬
             if (GimbalStuckCount < 5000 && RC_data.Mouse_Data.x_speed == 0 && RC_data.Mouse_Data.y_speed == 0)
             {
-                // ¶Â×ª±£»¤Ê±¼ä
+                // å µè½¬ä¿æŠ¤æ—¶é—´
                 GimbalStuckCount++;
                 Pitch.spe.out = 0;
                 Yaw.spe.out = 0;
             }
             else
-            { // ±£»¤ÍË³ö
+            { // ä¿æŠ¤é€€å‡º
                 GimbalStuckCount = 0;
                 GimbalStuckFlag = 0;
             }
@@ -260,7 +260,7 @@ static void Gimbal_Controller_Run(void)
 #endif
 
 #if defined CORE_USING_INFANTRY
-        /* Ğ´µçÁ÷Öµ */
+        /* å†™ç”µæµå€¼ */
         if ((rt_tick_get() - Pitch.dji.FreshTick < 100) && (Pitch.dji.FreshTick))
         {
             gimctl_msg.data[(rt_uint16_t)(PITCH_ID - 0x205) * 2] = (int)(Pitch.spe.out) >> 8;
@@ -281,18 +281,18 @@ static void Gimbal_Controller_Run(void)
             gimctl_msg.data[(rt_uint16_t)(YAW_ID - 0x205) * 2] = 0;
             gimctl_msg.data[(rt_uint16_t)(YAW_ID - 0x205) * 2 + 1] = 0;
         }
-// Èç¹û´æÔÚµÚ¶ş¸öÔÆÌ¨µç»ú
+// å¦‚æœå­˜åœ¨ç¬¬äºŒä¸ªäº‘å°ç”µæœº
 #ifdef DUAL_PITCH_MOTOR
         gimctl_msg.data[(rt_uint16_t)(DUAL_PITCH_ID - 0x205) * 2] = (int)(-Pitch.spe.out) >> 8;
         gimctl_msg.data[(rt_uint16_t)(DUAL_PITCH_ID - 0x205) * 2 + 1] = (int)(-Pitch.spe.out);
 #endif
-        /* ·¢ËÍµçÁ÷Öµ */
+        /* å‘é€ç”µæµå€¼ */
         rt_device_write(can1_dev, 0, &gimctl_msg, sizeof(gimctl_msg));
         Ctrl_Err_Cal(Read_Real_Set(Pitch_Set), Read_Real_Set(Yaw_Set));
     }
     else
     {
-        // µç»úÊ§ÄÜÊ±È«²¿·¢ËÍ 0
+        // ç”µæœºå¤±èƒ½æ—¶å…¨éƒ¨å‘é€ 0
         gimctl_msg.data[(rt_uint16_t)(PITCH_ID - 0x205) * 2] = 0;
         gimctl_msg.data[(rt_uint16_t)(PITCH_ID - 0x205) * 2 + 1] = 0;
         gimctl_msg.data[(rt_uint16_t)(YAW_ID - 0x205) * 2] = 0;
@@ -300,17 +300,17 @@ static void Gimbal_Controller_Run(void)
         rt_device_write(can1_dev, 0, &gimctl_msg, sizeof(gimctl_msg));
     }
 #elif defined CORE_USING_HERO
-        // ·¢Éä»ú¹¹¿ØÖÆÏà¹Ø¼ÆËã
+        // å‘å°„æœºæ„æ§åˆ¶ç›¸å…³è®¡ç®—
         StrikeMotor_CtrlRoutine(&StrikeMotor_CtrlData);
 
-        /* Ğ´µçÁ÷Öµ */
+        /* å†™ç”µæµå€¼ */
         gimctl_msg[0].data[(rt_uint16_t)(PITCH_ID - 0x205) * 2] = (rt_int16_t)(Pitch.spe.out) >> 8;
         gimctl_msg[0].data[(rt_uint16_t)(PITCH_ID - 0x205) * 2 + 1] = (rt_int16_t)(Pitch.spe.out);
         gimctl_msg[0].data[(rt_uint16_t)(YAW_ID - 0x205) * 2] = (rt_int16_t)(Yaw.spe.out) >> 8;
         gimctl_msg[0].data[(rt_uint16_t)(YAW_ID - 0x205) * 2 + 1] = (rt_int16_t)(Yaw.spe.out);
         gimctl_msg[0].data[(rt_uint16_t)(LAUNCH_ID - 0x205) * 2] = ((rt_int16_t)(StrikeMotor_CtrlData.DataOut[LaunchMotor])) >> 8;
         gimctl_msg[0].data[(rt_uint16_t)(LAUNCH_ID - 0x205) * 2 + 1] = ((rt_int16_t)(StrikeMotor_CtrlData.DataOut[LaunchMotor]));
-// Èç¹û´æÔÚµÚ¶ş¸öÔÆÌ¨µç»ú
+// å¦‚æœå­˜åœ¨ç¬¬äºŒä¸ªäº‘å°ç”µæœº
 #ifdef DUAL_PITCH_MOTOR
         gimctl_msg.data[(rt_uint16_t)(DUAL_PITCH_ID - 0x205) * 2] = (rt_int16_t)(-Pitch.spe.out) >> 8;
         gimctl_msg.data[(rt_uint16_t)(DUAL_PITCH_ID - 0x205) * 2 + 1] = (rt_int16_t)(-Pitch.spe.out);
@@ -319,28 +319,28 @@ static void Gimbal_Controller_Run(void)
         gimctl_msg[1].data[(rt_uint16_t)(ID_RUB_LEFT - 0x201) * 2 + 1] = ((rt_int16_t)(StrikeMotor_CtrlData.DataOut[RubMotorLeft]));
         gimctl_msg[1].data[(rt_uint16_t)(ID_RUB_RIGHT - 0x201) * 2] = ((rt_int16_t)(StrikeMotor_CtrlData.DataOut[RubMotorRight])) >> 8;
         gimctl_msg[1].data[(rt_uint16_t)(ID_RUB_RIGHT - 0x201) * 2 + 1] = ((rt_int16_t)(StrikeMotor_CtrlData.DataOut[RubMotorRight]));
-        /* ·¢ËÍµçÁ÷Öµ */
+        /* å‘é€ç”µæµå€¼ */
 #if (TEST_CLEAR_PID == 0)
         rt_device_write(can1_dev, 0, &gimctl_msg[0], sizeof(gimctl_msg[0]));
         rt_device_write(can2_dev, 0, &gimctl_msg[1], sizeof(gimctl_msg[1]));
 #endif
 
-        Ctrl_Err_Cal(Read_Real_Set(Pitch_Set), Read_Real_Set(Yaw_Set)); // ½áËãµ±Ç°ÔÆÌ¨¿ØÖÆÎó²î
+        Ctrl_Err_Cal(Read_Real_Set(Pitch_Set), Read_Real_Set(Yaw_Set)); // ç»“ç®—å½“å‰äº‘å°æ§åˆ¶è¯¯å·®
     }
     else
     {
-        // µç»úÊ§ÄÜÊ±È«²¿·¢ËÍ 0
-        // ²¥µ¯²æÏà¹Ø¼ÆËã
+        // ç”µæœºå¤±èƒ½æ—¶å…¨éƒ¨å‘é€ 0
+        // æ’­å¼¹å‰ç›¸å…³è®¡ç®—
         StrikeMotor_CtrlRoutine(&StrikeMotor_CtrlData);
 
-        /* Ğ´µçÁ÷Öµ */
+        /* å†™ç”µæµå€¼ */
         gimctl_msg[0].data[(rt_uint16_t)(PITCH_ID - 0x205) * 2] = 0;
         gimctl_msg[0].data[(rt_uint16_t)(PITCH_ID - 0x205) * 2 + 1] = 0;
         gimctl_msg[0].data[(rt_uint16_t)(YAW_ID - 0x205) * 2] = 0;
         gimctl_msg[0].data[(rt_uint16_t)(YAW_ID - 0x205) * 2 + 1] = 0;
         gimctl_msg[0].data[(rt_uint16_t)(LAUNCH_ID - 0x205) * 2] = ((rt_int16_t)(StrikeMotor_CtrlData.DataOut[LaunchMotor])) >> 8;
         gimctl_msg[0].data[(rt_uint16_t)(LAUNCH_ID - 0x205) * 2 + 1] = ((rt_int16_t)(StrikeMotor_CtrlData.DataOut[LaunchMotor]));
-        // Èç¹û´æÔÚµÚ¶ş¸öÔÆÌ¨µç»ú
+        // å¦‚æœå­˜åœ¨ç¬¬äºŒä¸ªäº‘å°ç”µæœº
 #ifdef DUAL_PITCH_MOTOR
         gimctl_msg.data[(rt_uint16_t)(DUAL_PITCH_ID - 0x205) * 2] = 0;
         gimctl_msg.data[(rt_uint16_t)(DUAL_PITCH_ID - 0x205) * 2 + 1] = 0;
@@ -350,7 +350,7 @@ static void Gimbal_Controller_Run(void)
         gimctl_msg[1].data[(rt_uint16_t)(ID_RUB_RIGHT - 0x201) * 2] = ((rt_int16_t)(StrikeMotor_CtrlData.DataOut[RubMotorRight])) >> 8;
         gimctl_msg[1].data[(rt_uint16_t)(ID_RUB_RIGHT - 0x201) * 2 + 1] = ((rt_int16_t)(StrikeMotor_CtrlData.DataOut[RubMotorRight]));
 
-        /* ·¢ËÍµçÁ÷Öµ */
+        /* å‘é€ç”µæµå€¼ */
 #if (TEST_CLEAR_PID == 0)
         rt_device_write(can1_dev, 0, &gimctl_msg[0], sizeof(gimctl_msg[0]));
         rt_device_write(can2_dev, 0, &gimctl_msg[1], sizeof(gimctl_msg[1]));
@@ -360,39 +360,39 @@ static void Gimbal_Controller_Run(void)
 }
 
 /**
- * @brief£ºÔÆÌ¨Ïß³Ì
- * @param [in]	parameter:¸Ã²ÎÊı²»»á±»Ê¹ÓÃ
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šäº‘å°çº¿ç¨‹
+ * @param [in]	parameter:è¯¥å‚æ•°ä¸ä¼šè¢«ä½¿ç”¨
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 static void Gimbal_control_thread(void *parameter)
 {
 #if defined CORE_USING_INFANTRY
-    //³õÊ¼»¯CAN¿ØÖÆÖ¡
-    gimctl_msg.id = GIMBAL_CTL;    //ÉèÖÃID
-    gimctl_msg.ide = RT_CAN_STDID; //±ê×¼Ö¡
-    gimctl_msg.rtr = RT_CAN_DTR;   //Êı¾İÖ¡
-    gimctl_msg.priv = 0;           //±¨ÎÄÓÅÏÈ¼¶×î¸ß
-    gimctl_msg.len = 8;            //³¤¶È8
+    //åˆå§‹åŒ–CANæ§åˆ¶å¸§
+    gimctl_msg.id = GIMBAL_CTL;    //è®¾ç½®ID
+    gimctl_msg.ide = RT_CAN_STDID; //æ ‡å‡†å¸§
+    gimctl_msg.rtr = RT_CAN_DTR;   //æ•°æ®å¸§
+    gimctl_msg.priv = 0;           //æŠ¥æ–‡ä¼˜å…ˆçº§æœ€é«˜
+    gimctl_msg.len = 8;            //é•¿åº¦8
 
-    //¿ØÖÆÊı¾İÇåÁã
+    //æ§åˆ¶æ•°æ®æ¸…é›¶
     for (int a = 0; a < 8; a++)
         gimctl_msg.data[a] = 0;
 #elif defined CORE_USING_HERO
-    //³õÊ¼»¯CAN¿ØÖÆÖ¡
-    gimctl_msg[0].id = GIMBAL_CTL;    //ÉèÖÃID
-    gimctl_msg[0].ide = RT_CAN_STDID; //±ê×¼Ö¡
-    gimctl_msg[0].rtr = RT_CAN_DTR;   //Êı¾İÖ¡
-    gimctl_msg[0].priv = 0;           //±¨ÎÄÓÅÏÈ¼¶×î¸ß
-    gimctl_msg[0].len = 8;            //³¤¶È8
+    //åˆå§‹åŒ–CANæ§åˆ¶å¸§
+    gimctl_msg[0].id = GIMBAL_CTL;    //è®¾ç½®ID
+    gimctl_msg[0].ide = RT_CAN_STDID; //æ ‡å‡†å¸§
+    gimctl_msg[0].rtr = RT_CAN_DTR;   //æ•°æ®å¸§
+    gimctl_msg[0].priv = 0;           //æŠ¥æ–‡ä¼˜å…ˆçº§æœ€é«˜
+    gimctl_msg[0].len = 8;            //é•¿åº¦8
 
-    gimctl_msg[1].id = STRIKE_ID;     //ÉèÖÃID
-    gimctl_msg[1].ide = RT_CAN_STDID; //±ê×¼Ö¡
-    gimctl_msg[1].rtr = RT_CAN_DTR;   //Êı¾İÖ¡
-    gimctl_msg[1].priv = 0;           //±¨ÎÄÓÅÏÈ¼¶×î¸ß
-    gimctl_msg[1].len = 8;            //³¤¶È8
+    gimctl_msg[1].id = STRIKE_ID;     //è®¾ç½®ID
+    gimctl_msg[1].ide = RT_CAN_STDID; //æ ‡å‡†å¸§
+    gimctl_msg[1].rtr = RT_CAN_DTR;   //æ•°æ®å¸§
+    gimctl_msg[1].priv = 0;           //æŠ¥æ–‡ä¼˜å…ˆçº§æœ€é«˜
+    gimctl_msg[1].len = 8;            //é•¿åº¦8
 
-    //¿ØÖÆÊı¾İÇåÁã
+    //æ§åˆ¶æ•°æ®æ¸…é›¶
     for (int a = 0; a < 8; a++)
     {
         gimctl_msg[0].data[a] = 0;
@@ -403,22 +403,22 @@ static void Gimbal_control_thread(void *parameter)
 
     while (1)
     {
-        /* µÈ´ı1msÑÓÊ±½áÊø */
+        /* ç­‰å¾…1mså»¶æ—¶ç»“æŸ */
         rt_sem_take(&gimbal_1ms_sem, RT_WAITING_FOREVER);
 
-        Frq_Rec(); // ¶ÔÔÆÌ¨±Õ»·µÄÆµÂÊ½øĞĞ¼ì²â£¬Í¨¹ıJscopeÏà¹Ø±äÁ¿½øĞĞ¼ÇÂ¼
+        Frq_Rec(); // å¯¹äº‘å°é—­ç¯çš„é¢‘ç‡è¿›è¡Œæ£€æµ‹ï¼Œé€šè¿‡Jscopeç›¸å…³å˜é‡è¿›è¡Œè®°å½•
 
-        /* Éè¶¨Öµ»ñÈ¡ */
+        /* è®¾å®šå€¼è·å– */
         Gimbal_getset(&SetAng);
-        // ½«´óµØ×ø±êÏµÏÂµÄÔÆÌ¨½Ç¶ÈÉè¶¨Öµ/·´À¡Öµ×ª»¯Îª¿ØÖÆËùĞèµÄÔÆÌ¨×ø±êÏµÏÂµÄ½Ç¶ÈÉè¶¨Öµ/·´À¡Öµ
+        // å°†å¤§åœ°åæ ‡ç³»ä¸‹çš„äº‘å°è§’åº¦è®¾å®šå€¼/åé¦ˆå€¼è½¬åŒ–ä¸ºæ§åˆ¶æ‰€éœ€çš„äº‘å°åæ ‡ç³»ä¸‹çš„è§’åº¦è®¾å®šå€¼/åé¦ˆå€¼
         GimbalSet_Gound_To_Motor((GimbalCTRL_Set_Type *const *)&SetAng, (AttitudeData_Type *const *)&GroundFrame_GimbalAtti,
                                  (AttitudeData_Type *const *)&MotorFrame_GimbalAtti, &MotorFrame_GimbalErr);
 
-        /* ĞŞ¸Ä½Ç¶ÈÉè¶¨Öµ */
+        /* ä¿®æ”¹è§’åº¦è®¾å®šå€¼ */
         Motor_Write_SetAngle_ABS(&Pitch, SetAng.Pitch);
         Motor_Write_SetAngle_ABS(&Yaw, SetAng.Yaw);
 
-        /* ÔÆÌ¨µç»ú¿ØÖÆÓëµçÁ÷·¢ËÍ */
+        /* äº‘å°ç”µæœºæ§åˆ¶ä¸ç”µæµå‘é€ */
         Gimbal_Controller_Run();
 
         SWDG_FEED(SWDG_GIMBAL_ID);
@@ -426,73 +426,73 @@ static void Gimbal_control_thread(void *parameter)
 }
 
 /**
- * @brief£º¶¨Ê±Æ÷³¬Ê±º¯Êı£¬·¢ËÍĞÅºÅÁ¿£¬ÓÃÓÚ¿ØÖÆpidÔËĞĞÖÜÆÚ1ms
- * @param [in]	parameter:¸Ã²ÎÊı²»»á±»Ê¹ÓÃ
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šå®šæ—¶å™¨è¶…æ—¶å‡½æ•°ï¼Œå‘é€ä¿¡å·é‡ï¼Œç”¨äºæ§åˆ¶pidè¿è¡Œå‘¨æœŸ1ms
+ * @param [in]	parameter:è¯¥å‚æ•°ä¸ä¼šè¢«ä½¿ç”¨
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 static void task_1ms_IRQHandler(void *parameter)
 {
     while (rt_sem_trytake(&gimbal_1ms_sem) == RT_EOK)
-        continue;                    // Çå¿Õ¶àÓàµÄĞÅºÅÁ¿
-    rt_sem_release(&gimbal_1ms_sem); // ÖØĞÂÊÍ·ÅĞÅºÅÁ¿
+        continue;                    // æ¸…ç©ºå¤šä½™çš„ä¿¡å·é‡
+    rt_sem_release(&gimbal_1ms_sem); // é‡æ–°é‡Šæ”¾ä¿¡å·é‡
 }
 
 /**
-* @brief£º³õÊ¼»¯ÔÆÌ¨Ïß³Ì
-* @param [in]	ÎŞ
-* @return£º		1:³õÊ¼»¯³É¹¦
-                0:³õÊ¼»¯Ê§°Ü
-* @author£ºzzj
+* @briefï¼šåˆå§‹åŒ–äº‘å°çº¿ç¨‹
+* @param [in]	æ— 
+* @returnï¼š		1:åˆå§‹åŒ–æˆåŠŸ
+                0:åˆå§‹åŒ–å¤±è´¥
+* @authorï¼šzzj
 */
 int gimbal_init(void)
-{ //×¢Òâµç»úºÍIMU³õÊ¼»¯ĞèÒªÔÚÕâ¸ö³õÊ¼»¯Ö®Ç°
+{ //æ³¨æ„ç”µæœºå’ŒIMUåˆå§‹åŒ–éœ€è¦åœ¨è¿™ä¸ªåˆå§‹åŒ–ä¹‹å‰
 
 #if defined CAR_USING_LINK
     Pitch_F0_Use = PTICH_F0_CURRENT;
     Pitch_ANG0_Use = PITCH_ZEROCURRENT_ANG;
 #endif
 
-    /* ³õÊ¼»¯½á¹¹ÌåÊı¾İ */
-    //³õÊ¼»¯µç»ú½á¹¹Ìå
+    /* åˆå§‹åŒ–ç»“æ„ä½“æ•°æ® */
+    //åˆå§‹åŒ–ç”µæœºç»“æ„ä½“
     motor_init(&Yaw, YAW_ID, 1, ANGLE_CTRL_ABS, 360, 180, -180, YAW_MOTOR_MIRROR);
     motor_init(&Pitch, PITCH_ID, 1, ANGLE_CTRL_ABS, 360, 180, -180, PITCH_MOTOR_MIRROR);
 
     while (Yaw.dji.oldangle_state == RT_ERROR || Pitch.dji.oldangle_state == RT_ERROR)
         rt_thread_delay(50);
 
-        /* ³õÊ¼»¯PID */
+        /* åˆå§‹åŒ–PID */
 #if (TEST_CLEAR_PID)
     // Yaw
-    pid_init(&Yaw.spe, 0, 0, 0, 1000, 15000, -15000); //½ÇËÙ¶È»·
-    pid_init(&Yaw.ang, 0, 0, 0, 0.5, 180, -180);      //½Ç¶È»·//ÂÌÉ«²½±ø£º10,0,6//ºÚÉ«²½±ø£º14,0,4
+    pid_init(&Yaw.spe, 0, 0, 0, 1000, 15000, -15000); //è§’é€Ÿåº¦ç¯
+    pid_init(&Yaw.ang, 0, 0, 0, 0.5, 180, -180);      //è§’åº¦ç¯//ç»¿è‰²æ­¥å…µï¼š10,0,6//é»‘è‰²æ­¥å…µï¼š14,0,4
 
     // Pitch
-    pid_init(&Pitch.spe, 0, 0, 0, 2000, 15000, -15000); //½ÇËÙ¶È»·
-    pid_init(&Pitch.ang, 0, 0, 0, 0.5, 100, -100);      //½Ç¶È»·//ÂÌÉ«²½±ø£º10,0,6//ºÚÉ«²½±ø£º14,0,4
+    pid_init(&Pitch.spe, 0, 0, 0, 2000, 15000, -15000); //è§’é€Ÿåº¦ç¯
+    pid_init(&Pitch.ang, 0, 0, 0, 0.5, 100, -100);      //è§’åº¦ç¯//ç»¿è‰²æ­¥å…µï¼š10,0,6//é»‘è‰²æ­¥å…µï¼š14,0,4
 #else
     // Yaw
-    pid_init(&Yaw.spe, YAWSPE_PID); //½ÇËÙ¶È»·
-    pid_init(&Yaw.ang, YAWANG_PID); //½Ç¶È»·//ÂÌÉ«²½±ø£º10,0,6//ºÚÉ«²½±ø£º14,0,4
+    pid_init(&Yaw.spe, YAWSPE_PID); //è§’é€Ÿåº¦ç¯
+    pid_init(&Yaw.ang, YAWANG_PID); //è§’åº¦ç¯//ç»¿è‰²æ­¥å…µï¼š10,0,6//é»‘è‰²æ­¥å…µï¼š14,0,4
     // Pitch
-    pid_init(&Pitch.spe, PITSPE_PID); //½ÇËÙ¶È»·
-    pid_init(&Pitch.ang, PITANG_PID); //½Ç¶È»·//ÂÌÉ«²½±ø£º10,0,6//ºÚÉ«²½±ø£º14,0,4
+    pid_init(&Pitch.spe, PITSPE_PID); //è§’é€Ÿåº¦ç¯
+    pid_init(&Pitch.ang, PITANG_PID); //è§’åº¦ç¯//ç»¿è‰²æ­¥å…µï¼š10,0,6//é»‘è‰²æ­¥å…µï¼š14,0,4
 
 #endif
 
     CtrlErr_Calc_Sem = rt_sem_create("CtrlErr", 1, RT_IPC_FLAG_FIFO);
 
-    // ³õÊ¼»¯³õÊ¼Î»ÖÃ
+    // åˆå§‹åŒ–åˆå§‹ä½ç½®
     GimbalSet_Init(&SetAng, PITCH_START_ANGLE, gimbal_atti.yaw);
 
     rt_sem_init(&gimbal_1ms_sem, "GM_Sem", 0, RT_IPC_FLAG_FIFO);
 
-    // ³õÊ¼»¯ÔÆÌ¨PIDÏß³Ì
+    // åˆå§‹åŒ–äº‘å°PIDçº¿ç¨‹
     gimbal_control = rt_thread_create("GM_CTRL", Gimbal_control_thread, RT_NULL, 4096, THREAD_PRIO_GIMBALPID, 1);
     if (gimbal_control == RT_NULL)
         return RT_ERROR;
 
-    // ´´½¨Ïß³Ì¶¨Ê±Æ÷
+    // åˆ›å»ºçº¿ç¨‹å®šæ—¶å™¨
     rt_timer_init(&task_1ms,
                   "GM_Tim",
                   task_1ms_IRQHandler,
@@ -500,11 +500,11 @@ int gimbal_init(void)
                   1,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 
-    //Ïß³ÌÆô¶¯Ê§°Ü·µ»Øfalse
+    //çº¿ç¨‹å¯åŠ¨å¤±è´¥è¿”å›false
     if (rt_thread_startup(gimbal_control) != RT_EOK)
         return RT_ERROR;
 
-    //Æô¶¯¶¨Ê±Æ÷
+    //å¯åŠ¨å®šæ—¶å™¨
     if (rt_timer_start(&task_1ms) != RT_EOK)
         return RT_ERROR;
 
@@ -512,10 +512,10 @@ int gimbal_init(void)
 }
 
 /**
- * @brief£º¶ÁÈ¡YawÉè¶¨Öµ
- * @param [in]	ÎŞ
- * @return£º		YawÉè¶¨Öµ
- * @author£ºzzj
+ * @briefï¼šè¯»å–Yawè®¾å®šå€¼
+ * @param [in]	æ— 
+ * @returnï¼š		Yawè®¾å®šå€¼
+ * @authorï¼šzzj
  */
 float Read_YawSet()
 {
@@ -523,10 +523,10 @@ float Read_YawSet()
 }
 
 /**
- * @brief£º¶ÁÈ¡PitchÉè¶¨Öµ
- * @param [in]	ÎŞ
- * @return£º		PitchÉè¶¨Öµ
- * @author£ºzzj
+ * @briefï¼šè¯»å–Pitchè®¾å®šå€¼
+ * @param [in]	æ— 
+ * @returnï¼š		Pitchè®¾å®šå€¼
+ * @authorï¼šzzj
  */
 float Read_PitchSet()
 {
@@ -534,10 +534,10 @@ float Read_PitchSet()
 }
 
 /**
- * @brief£º¶ÁÈ¡Yawµ±Ç°Öµ
- * @param [in]	ÎŞ
- * @return£º		Yawµ±Ç°Öµ
- * @author£ºzzj
+ * @briefï¼šè¯»å–Yawå½“å‰å€¼
+ * @param [in]	æ— 
+ * @returnï¼š		Yawå½“å‰å€¼
+ * @authorï¼šzzj
  */
 float Read_YawNow()
 {
@@ -545,10 +545,10 @@ float Read_YawNow()
 }
 
 /**
- * @brief£º¶ÁÈ¡Pitchµ±Ç°Öµ
- * @param [in]	ÎŞ
- * @return£º		Pitchµ±Ç°Öµ
- * @author£ºzzj
+ * @briefï¼šè¯»å–Pitchå½“å‰å€¼
+ * @param [in]	æ— 
+ * @returnï¼š		Pitchå½“å‰å€¼
+ * @authorï¼šzzj
  */
 float Read_PitchNow()
 {
@@ -556,17 +556,17 @@ float Read_PitchNow()
 }
 
 /**
- * @brief£º¶ÁÈ¡Yaw½ÇËÙ¶Èµ±Ç°Öµ
- * @param [in]	ÎŞ
- * @return£º		Yaw½ÇËÙ¶Èµ±Ç°Öµ
- * @author£ºzzj
+ * @briefï¼šè¯»å–Yawè§’é€Ÿåº¦å½“å‰å€¼
+ * @param [in]	æ— 
+ * @returnï¼š		Yawè§’é€Ÿåº¦å½“å‰å€¼
+ * @authorï¼šzzj
  */
 float Read_YawSpeedNow()
 {
     return gimbal_atti.yaw_speed;
 }
 
-// ´«Èë 0 ¿ÉÍ£Ö¹¶ÔÔÆÌ¨µç»úµÄ¿ØÖÆ
+// ä¼ å…¥ 0 å¯åœæ­¢å¯¹äº‘å°ç”µæœºçš„æ§åˆ¶
 void Gimbal_Motor_EN(rt_uint8_t GimbalMotor_Enable)
 {
     GimbalMotor_Valid = GimbalMotor_Enable;

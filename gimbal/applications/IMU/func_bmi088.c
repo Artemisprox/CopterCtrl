@@ -1,5 +1,5 @@
 /*
-        BMI088 ÍÓÂİÒÇ+¼ÓËÙ¶È¼Æ´«¸ĞÆ÷¡£
+        BMI088 é™€èºä»ª+åŠ é€Ÿåº¦è®¡ä¼ æ„Ÿå™¨ã€‚
 */
 #include "func_bmi088.h"
 #include "func_TempCtr.h"
@@ -78,13 +78,13 @@ static uint8_t bmi088_rxbuf[BMI088_LEN_RX_BUFF];
 
 BMI088_t HERO_BMI088_DEV = {0};
 
-/********** »ù´¡Í¨ĞÅ²¿·Ö **********/
+/********** åŸºç¡€é€šä¿¡éƒ¨åˆ† **********/
 
 /**
-* @brief BMI088µ¥¸öÊı¾İ¶ÁÈ¡º¯Êı
-* @param [uint8_t] reg£º¶ÁĞ´ÃüÁî
-* @param [uint8_t] data£º¶Á/Ğ´µÄÊı¾İ
-* @return ÎŞ
+* @brief BMI088å•ä¸ªæ•°æ®è¯»å–å‡½æ•°
+* @param [uint8_t] regï¼šè¯»å†™å‘½ä»¤
+* @param [uint8_t] dataï¼šè¯»/å†™çš„æ•°æ®
+* @return æ— 
 * @author zzj
 */
 static void GYRO_WriteSingle(uint8_t reg, uint8_t data)
@@ -140,9 +140,9 @@ static uint8_t ACCL_ReadSingle(uint8_t reg)
 }
 
 /**
-* @brief BMI088µÄ½ÇËÙ¶È¼ÓËÙ¶ÈÓëÎÂ¶È¶ÁÈ¡
-* @param ÎŞ
-* @return ÎŞ
+* @brief BMI088çš„è§’é€Ÿåº¦åŠ é€Ÿåº¦ä¸æ¸©åº¦è¯»å–
+* @param æ— 
+* @return æ— 
 * @author zzj
 */
 static void BMI_Read_Gyro()
@@ -174,7 +174,7 @@ static void BMI_Read_Temp()
     bmi088_rxbuf[13] = ACCL_ReadSingle(BMI088_REG_ACCL_TEMP_MSB);
 }
 
-// Í¨ĞÅ¶ÁÈ¡¼ÓËÙ¶ÈÊı¾İ
+// é€šä¿¡è¯»å–åŠ é€Ÿåº¦æ•°æ®
 static int8_t BMI088_ParseAccl()
 {
     BMI_Read_Accl();
@@ -193,7 +193,7 @@ static int8_t BMI088_ParseAccl()
 }
 
 static const double Gyro_UnitFix = 1 / 32.768 / 360 * 2 * 3.14159265;
-// Í¨ĞÅ¶ÁÈ¡½ÇËÙ¶ÈÊı¾İ
+// é€šä¿¡è¯»å–è§’é€Ÿåº¦æ•°æ®
 static int8_t BMI088_ParseGyro()
 {
     BMI_Read_Gyro();
@@ -206,7 +206,7 @@ static int8_t BMI088_ParseGyro()
 
     /* FS125: 262.144. FS250: 131.072. FS500: 65.536. FS1000: 32.768.
     * FS2000: 16.384.*/
-    // µ¥Î»£º»¡¶È/s
+    // å•ä½ï¼šå¼§åº¦/s
     HERO_BMI088_DEV.Gyro_Raw.x = (float)raw_x * Gyro_UnitFix;
     HERO_BMI088_DEV.Gyro_Raw.y = (float)raw_y * Gyro_UnitFix;
     HERO_BMI088_DEV.Gyro_Raw.z = (float)raw_z * Gyro_UnitFix;
@@ -214,7 +214,7 @@ static int8_t BMI088_ParseGyro()
     return RT_EOK;
 }
 
-// Í¨ĞÅ¶ÁÈ¡ÎÂ¶ÈÊı¾İ
+// é€šä¿¡è¯»å–æ¸©åº¦æ•°æ®
 static int8_t BMI088_ParseTemp()
 {
     static float last_temp = 0;
@@ -229,10 +229,10 @@ static int8_t BMI088_ParseTemp()
     HERO_BMI088_DEV.Temperature = (float)raw_temp * 0.125f + 23.0f;
 
     if (HERO_BMI088_DEV.Temperature != last_temp)
-    { // ¼ì²âµ½ÎÂ¶ÈÊı¾İ¸üĞÂ
+    { // æ£€æµ‹åˆ°æ¸©åº¦æ•°æ®æ›´æ–°
         while (rt_sem_trytake(&temp_pid_sem) == RT_EOK)
-            ;                          // Çå¿Õ¶àÓàµÄĞÅºÅÁ¿
-        rt_sem_release(&temp_pid_sem); // ÖØĞÂÊÍ·ÅĞÅºÅÁ¿
+            ;                          // æ¸…ç©ºå¤šä½™çš„ä¿¡å·é‡
+        rt_sem_release(&temp_pid_sem); // é‡æ–°é‡Šæ”¾ä¿¡å·é‡
     }
 
     last_temp = HERO_BMI088_DEV.Temperature;
@@ -241,7 +241,7 @@ static int8_t BMI088_ParseTemp()
 }
 
 static int TempReadScale = 100;
-// Ë¢ĞÂ½ÇËÙ¶È¡¢¼ÓËÙ¶È¡¢ÎÂ¶È
+// åˆ·æ–°è§’é€Ÿåº¦ã€åŠ é€Ÿåº¦ã€æ¸©åº¦
 static void BMI088_FreshData()
 {
     BMI088_ParseGyro();
@@ -256,23 +256,23 @@ static void BMI088_FreshData()
     HERO_BMI088_DEV.RawDataReady = 1;
 }
 
-/********** ÖĞ¶Ï¶ÁÈ¡²¿·Ö **********/
+/********** ä¸­æ–­è¯»å–éƒ¨åˆ† **********/
 
 static rt_thread_t IMU_SpiTrans = RT_NULL;
 
-static struct rt_event IMU_Event;           // Ê¹ÓÃÊÂ¼ş¼¯¶ÔIMUÖĞ¶Ï½øĞĞÏìÓ¦
-static struct rt_semaphore IMU_CALTrig_Sem; // Í¨ĞÅ½áÊøºóÍ¨ÖªÊı¾İ´¦ÀíÏß³Ì´¦ÀíÊı¾İ
+static struct rt_event IMU_Event;           // ä½¿ç”¨äº‹ä»¶é›†å¯¹IMUä¸­æ–­è¿›è¡Œå“åº”
+static struct rt_semaphore IMU_CALTrig_Sem; // é€šä¿¡ç»“æŸåé€šçŸ¥æ•°æ®å¤„ç†çº¿ç¨‹å¤„ç†æ•°æ®
 
-// ÓÃÓÚ¼ÆËãÖĞ¶Ï´¥·¢ÆµÂÊµÄÏà¹Ø±äÁ¿
+// ç”¨äºè®¡ç®—ä¸­æ–­è§¦å‘é¢‘ç‡çš„ç›¸å…³å˜é‡
 static int LastCount, NowCount, FirstRecFlag, FirstFilterFlag;
 static float IMUFrqNow, IMUFrqFilter;
 
-// ÖĞ¶ÏÓëÊÂ¼şµÄ¶ÔÓ¦¹ØÏµ
-//£¨ÔİÊ±Ö»Ê¹ÓÃEVT_GYRO£¬ÒòÎªµ±Ç°½öÊ¹ÓÃÍÓÂİÒÇ½øĞĞ´¥·¢¶ÁÈ¡£©
+// ä¸­æ–­ä¸äº‹ä»¶çš„å¯¹åº”å…³ç³»
+//ï¼ˆæš‚æ—¶åªä½¿ç”¨EVT_GYROï¼Œå› ä¸ºå½“å‰ä»…ä½¿ç”¨é™€èºä»ªè¿›è¡Œè§¦å‘è¯»å–ï¼‰
 #define EVT_ACCL 1 << 1
 #define EVT_GYRO 1 << 2
 
-// IOÖĞ¶ÏÖĞ½øĞĞÆµÂÊ¼ÆËãºÍÊÂ¼ş¼¯µÄ·¢ËÍ£¬ÆäËüÏß³ÌÖĞ½øĞĞSPI¶ÁÈ¡
+// IOä¸­æ–­ä¸­è¿›è¡Œé¢‘ç‡è®¡ç®—å’Œäº‹ä»¶é›†çš„å‘é€ï¼Œå…¶å®ƒçº¿ç¨‹ä¸­è¿›è¡ŒSPIè¯»å–
 static void Gyro_irq(void *Para)
 {
     int DeltaCount;
@@ -287,7 +287,7 @@ static void Gyro_irq(void *Para)
 
     DeltaCount = NowCount - LastCount;
     if (DeltaCount < 0)
-    { // ¼ÆÊıÖµ¿çÈ¦´¦Àí
+    { // è®¡æ•°å€¼è·¨åœˆå¤„ç†
         DeltaCount += 65536;
     }
     IMUFrqFilter = 21000000.f / DeltaCount;
@@ -301,91 +301,91 @@ static void Gyro_irq(void *Para)
     }
     else
     {
-        IMUFrqNow = IMUFrqNow * 0.99f + IMUFrqFilter * 0.01f; // ÖÍºóÂË²¨
+        IMUFrqNow = IMUFrqNow * 0.99f + IMUFrqFilter * 0.01f; // æ»åæ»¤æ³¢
         HERO_BMI088_DEV.DataRate = IMUFrqNow;
         rt_event_send(&IMU_Event, EVT_GYRO);
     }
 }
 
-// IMU´¥·¢Ê½Êı¾İ½ÓÊÕÏß³Ì
+// IMUè§¦å‘å¼æ•°æ®æ¥æ”¶çº¿ç¨‹
 static void IMU_DataCollect_thread(void *Para)
 {
     rt_uint32_t EVT_recv;
 
     while (1)
     {
-        // µÈ´ıÊı¾İ²úÉú
+        // ç­‰å¾…æ•°æ®äº§ç”Ÿ
         rt_event_recv(&IMU_Event, EVT_GYRO,
                       RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, 2, &EVT_recv);
 
         if (EVT_recv == 0)
         {
-            rt_thread_delay(1); // ³öÎÊÌâÁË
+            rt_thread_delay(1); // å‡ºé—®é¢˜äº†
             continue;
         }
 
         BMI088_FreshData();
 
-        // È¡Íê¿ÉÄÜ´æÔÚµÄ¶Ñ»ıµÄĞÅºÅÁ¿
+        // å–å®Œå¯èƒ½å­˜åœ¨çš„å †ç§¯çš„ä¿¡å·é‡
         while (rt_sem_trytake(&IMU_CALTrig_Sem) == RT_EOK)
             ;
-        // ·¢ËÍĞÅºÅÁ¿£¬´¥·¢×ËÌ¬ÈÚºÏËã·¨
+        // å‘é€ä¿¡å·é‡ï¼Œè§¦å‘å§¿æ€èåˆç®—æ³•
         rt_sem_release(&IMU_CALTrig_Sem);
     }
 }
 
-// ¹ÒÆğÔÚĞÅºÅÁ¿ÉÏ£¬µÈ´ıĞÂÊı¾İ½ÓÊÕÍê±Ï
+// æŒ‚èµ·åœ¨ä¿¡å·é‡ä¸Šï¼Œç­‰å¾…æ–°æ•°æ®æ¥æ”¶å®Œæ¯•
 void BMI088_WaitForRawData()
 {
-    /* µÈ´ıÓ²´¥·¢ */
+    /* ç­‰å¾…ç¡¬è§¦å‘ */
     rt_sem_take(&IMU_CALTrig_Sem, RT_WAITING_FOREVER);
 }
 
-/********** ³õÊ¼»¯ÓëÆô¶¯²¿·Ö **********/
+/********** åˆå§‹åŒ–ä¸å¯åŠ¨éƒ¨åˆ† **********/
 
-// IMUÓ²´¥·¢Êı¾İ½ÓÊÕµÄ³õÊ¼»¯
+// IMUç¡¬è§¦å‘æ•°æ®æ¥æ”¶çš„åˆå§‹åŒ–
 static void HWTrig_init(void)
 {
-    // ³õÊ¼»¯ÓÃÓÚ¼ÆËãÖĞ¶ÏÆµÂÊµÄ¶¨Ê±Æ÷
+    // åˆå§‹åŒ–ç”¨äºè®¡ç®—ä¸­æ–­é¢‘ç‡çš„å®šæ—¶å™¨
     MX_TIM11_Init();
     FirstFilterFlag = 1;
     FirstRecFlag = 1;
     LastCount = 0;
 
-    // ³õÊ¼»¯ÖĞ¶Ï¶ÁÈ¡ÓÃµÄÊÂ¼ş¼¯
+    // åˆå§‹åŒ–ä¸­æ–­è¯»å–ç”¨çš„äº‹ä»¶é›†
     rt_event_init(&IMU_Event, "IMU_EVT", RT_IPC_FLAG_PRIO);
-    // ³õÊ¼»¯ÓÃÓÚ´¥·¢IMUÊı¾İ¶ÁÈ¡µÄĞÅºÅÁ¿
+    // åˆå§‹åŒ–ç”¨äºè§¦å‘IMUæ•°æ®è¯»å–çš„ä¿¡å·é‡
     rt_sem_init(&IMU_CALTrig_Sem, "IMUTriS", 0, RT_IPC_FLAG_PRIO);
 
-    //³õÊ¼»¯ÖĞ¶ÏÊı¾İ½ÓÊÕÏß³Ì
+    //åˆå§‹åŒ–ä¸­æ–­æ•°æ®æ¥æ”¶çº¿ç¨‹
     IMU_SpiTrans = rt_thread_create(
-        "INTSPI",                     //Ïß³ÌÃû
-        IMU_DataCollect_thread,       //Ïß³ÌÈë¿Ú
-        RT_NULL,                      //Èë¿Ú²ÎÊıÎŞ
-        1024,                         //Ïß³ÌÕ»
-        THREAD_PRIO_IMU_DATA_COLLECT, //Ïß³ÌÓÅÏÈ¼¶
-        1);                           //Ïß³ÌÊ±¼äÆ¬´óĞ¡
+        "INTSPI",                     //çº¿ç¨‹å
+        IMU_DataCollect_thread,       //çº¿ç¨‹å…¥å£
+        RT_NULL,                      //å…¥å£å‚æ•°æ— 
+        1024,                         //çº¿ç¨‹æ ˆ
+        THREAD_PRIO_IMU_DATA_COLLECT, //çº¿ç¨‹ä¼˜å…ˆçº§
+        1);                           //çº¿ç¨‹æ—¶é—´ç‰‡å¤§å°
 
-    //Ïß³Ì´´½¨Ê§°Ü·µ»Øfalse
+    //çº¿ç¨‹åˆ›å»ºå¤±è´¥è¿”å›false
     if (IMU_SpiTrans == RT_NULL)
     {
         return;
     }
 
-    //Ïß³ÌÆô¶¯Ê§°Ü·µ»Øfalse
+    //çº¿ç¨‹å¯åŠ¨å¤±è´¥è¿”å›false
     if (rt_thread_startup(IMU_SpiTrans) != RT_EOK)
     {
         return;
     }
 
-    // ³õÊ¼»¯ÖĞ¶ÏIO¼°Æä»Øµ÷
+    // åˆå§‹åŒ–ä¸­æ–­IOåŠå…¶å›è°ƒ
     rt_pin_mode(GYRO_INT_PIN, PIN_MODE_INPUT_PULLDOWN);
     rt_pin_attach_irq(GYRO_INT_PIN, PIN_IRQ_MODE_FALLING, Gyro_irq, RT_NULL);
     rt_pin_irq_enable(GYRO_INT_PIN, PIN_IRQ_ENABLE);
 }
 
 volatile int BMI088_Accl_ID_Read = 0;
-// BMI088ÖĞµÄ¼Ä´æÆ÷Êı¾İ³õÊ¼»¯£¬¼´Ğ¾Æ¬ÄÚ²¿ÉèÖÃ³õÊ¼»¯
+// BMI088ä¸­çš„å¯„å­˜å™¨æ•°æ®åˆå§‹åŒ–ï¼Œå³èŠ¯ç‰‡å†…éƒ¨è®¾ç½®åˆå§‹åŒ–
 static void bmi088_RegInit()
 {
     rt_thread_delay(30);
@@ -441,21 +441,21 @@ static void bmi088_RegInit()
     rt_thread_delay(5);
 }
 
-// BMI088Éè±¸³õÊ¼»¯ ³õÊ¼»¯ºó¿ÉÍ¨¹ı½Ó¿Ú¶ÁÈ¡ÒÑÓĞ×îĞÂÊı¾İ£¬Í¨¹ı½Ó¿Ú¿ÉÒÔ¹ÒÆğµÈ´ıĞÂÊı¾İ²úÉú
+// BMI088è®¾å¤‡åˆå§‹åŒ– åˆå§‹åŒ–åå¯é€šè¿‡æ¥å£è¯»å–å·²æœ‰æœ€æ–°æ•°æ®ï¼Œé€šè¿‡æ¥å£å¯ä»¥æŒ‚èµ·ç­‰å¾…æ–°æ•°æ®äº§ç”Ÿ
 rt_err_t BMI088_Init(void)
 {
     HERO_BMI088_DEV.RawDataReady = 0;
 
-    // ³õÊ¼»¯ÓÃÓÚ¿ØÎÂµÄĞÅºÅÁ¿£¬ĞÅºÅÁ¿ÔÚÃ¿´Î¼ì²âµ½ÎÂ¶ÈÊı¾İ±ä»¯ºóÊÍ·ÅÒ»¸ö
+    // åˆå§‹åŒ–ç”¨äºæ§æ¸©çš„ä¿¡å·é‡ï¼Œä¿¡å·é‡åœ¨æ¯æ¬¡æ£€æµ‹åˆ°æ¸©åº¦æ•°æ®å˜åŒ–åé‡Šæ”¾ä¸€ä¸ª
 	rt_sem_init(&temp_pid_sem, "TP_Sem", 0, RT_IPC_FLAG_FIFO);
 
-    // ³õÊ¼»¯SPIÍ¨ĞÅ
+    // åˆå§‹åŒ–SPIé€šä¿¡
     spi_BMI088_init();
 
-    // ³õÊ¼»¯BMI088µÄÄÚ²¿ÉèÖÃ
+    // åˆå§‹åŒ–BMI088çš„å†…éƒ¨è®¾ç½®
     bmi088_RegInit();
 
-    // Æô¶¯Ó²´¥·¢Êı¾İ½ÓÊÕ
+    // å¯åŠ¨ç¡¬è§¦å‘æ•°æ®æ¥æ”¶
     HWTrig_init();
 
     return RT_EOK;

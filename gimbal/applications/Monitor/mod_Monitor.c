@@ -10,21 +10,21 @@
  * Version    : v3.2
  * Author     : mqy,LvFp
  * Date       : 2020-02-14
- * Instructions£º1.ÔÚdrv_Monitor.hÎÄ¼þÄÚÃ¶¾Ùswdg_deviceIDÀïÌí¼ÓÐÂµÄIDÖµ¡£
- *               2.ÔÚAll_Swdg_Create(void)º¯ÊýÀï£¬ÓÃSwdg_CreateÌí¼ÓÐÂµÄÈí¼þ¿´ÃÅ¹·¶ÔÏó
- *				  3.ÔÚfunc_MonCallback.cÄÚÌí¼ÓÐÂµÄÒì³£´¦Àíº¯Êý¡£
- *	              4.ÔÚÐèÒª¼àÊÓµÄµØ·½Ê¹ÓÃSwdg_FeedÀ´Î¹¹·£¬×¢ÒâÎ¹¹·µØ·½ÒªÓÐÖÜÆÚÐÔ£¬ÇÒµ±¼àÊÓµÄÉè±¸ÀëÏßÊ±Õâ¸öµØ·½²»ÄÜ±»Ö´ÐÐµ½
- *				  5.²¦¶¯ºËÐÄ°å×ó²¦Âë¿ª¹Ø£¬¿É¹Ø±Õ±¨¾¯ÖÐµÄ·äÃùÆ÷
- *				  6.ÍÆ¼öÎ¹¹·Ð´·¨
+ * Instructionsï¼š1.åœ¨drv_Monitor.hæ–‡ä»¶å†…æžšä¸¾swdg_deviceIDé‡Œæ·»åŠ æ–°çš„IDå€¼ã€‚
+ *               2.åœ¨All_Swdg_Create(void)å‡½æ•°é‡Œï¼Œç”¨Swdg_Createæ·»åŠ æ–°çš„è½¯ä»¶çœ‹é—¨ç‹—å¯¹è±¡
+ *				  3.åœ¨func_MonCallback.cå†…æ·»åŠ æ–°çš„å¼‚å¸¸å¤„ç†å‡½æ•°ã€‚
+ *	              4.åœ¨éœ€è¦ç›‘è§†çš„åœ°æ–¹ä½¿ç”¨Swdg_Feedæ¥å–‚ç‹—ï¼Œæ³¨æ„å–‚ç‹—åœ°æ–¹è¦æœ‰å‘¨æœŸæ€§ï¼Œä¸”å½“ç›‘è§†çš„è®¾å¤‡ç¦»çº¿æ—¶è¿™ä¸ªåœ°æ–¹ä¸èƒ½è¢«æ‰§è¡Œåˆ°
+ *				  5.æ‹¨åŠ¨æ ¸å¿ƒæ¿å·¦æ‹¨ç å¼€å…³ï¼Œå¯å…³é—­æŠ¥è­¦ä¸­çš„èœ‚é¸£å™¨
+ *				  6.æŽ¨èå–‚ç‹—å†™æ³•
  *					#ifdef  CORE_USING_MONITOR
  *						Swdg_Feed(F_Left_ID);
  *					#endif
- *				  7.Ó²¼þ¿´ÃÅ¹·£¬µ±Ê¹ÄÜºêBSP_USING_WDTÊ±£¬Èç¹û¼àÊÓÆ÷Ïß³Ì±»×èÈû³¬¹ý1s£¬
- *					Ôò³ÌÐò»áÒ»Ö±¸´Î»¡£Í¨¹ýÔÚmainº¯Êý¿ªÍ·Ð´±¨¾¯º¯ÊýÌáÊ¾³ÌÐò±ÀÁË¡£
- *					¶ømain.cÀïµÄÔ¤¶¨ÒåÀïµÄÄÚÈÝÊÇ¼àÊÓÆ÷³ýÁËSwdg_FeedÖ®ÍâÎ¨Ò»±©Â¶ÔÚ¼àÊÓÆ÷ÎÄ¼þÍâµÄ´úÂë¡£
- *					ÍÆ¼öÐ´·¨£º×óÐ´ÔÚmain.c°üº¬µÄÍ·ÎÄ¼þÀï£¬ÓÒ°üº¬ÔÚmainº¯Êý¿ªÍ·
+ *				  7.ç¡¬ä»¶çœ‹é—¨ç‹—ï¼Œå½“ä½¿èƒ½å®BSP_USING_WDTæ—¶ï¼Œå¦‚æžœç›‘è§†å™¨çº¿ç¨‹è¢«é˜»å¡žè¶…è¿‡1sï¼Œ
+ *					åˆ™ç¨‹åºä¼šä¸€ç›´å¤ä½ã€‚é€šè¿‡åœ¨mainå‡½æ•°å¼€å¤´å†™æŠ¥è­¦å‡½æ•°æç¤ºç¨‹åºå´©äº†ã€‚
+ *					è€Œmain.cé‡Œçš„é¢„å®šä¹‰é‡Œçš„å†…å®¹æ˜¯ç›‘è§†å™¨é™¤äº†Swdg_Feedä¹‹å¤–å”¯ä¸€æš´éœ²åœ¨ç›‘è§†å™¨æ–‡ä»¶å¤–çš„ä»£ç ã€‚
+ *					æŽ¨èå†™æ³•ï¼šå·¦å†™åœ¨main.cåŒ…å«çš„å¤´æ–‡ä»¶é‡Œï¼Œå³åŒ…å«åœ¨mainå‡½æ•°å¼€å¤´
  *					#ifdef BSP_USING_WDT			| #ifdef BSP_USING_WDT
- *						#include "func_Monitor.h"	|   PROGRAM_RESET    //³ÌÐòÒ»Ö±¸´Î»ÌáÐÑ³ÌÐò
+ *						#include "func_Monitor.h"	|   PROGRAM_RESET    //ç¨‹åºä¸€ç›´å¤ä½æé†’ç¨‹åº
  *					#endif							| #endif
  ********************************************************************************/
 #include "drv_thread.h"
@@ -33,9 +33,9 @@
 
 extern swdg_dev_t *monitor_hp;
 
-static rt_thread_t Monitor_Thread = RT_NULL; // ¼àÊÓÆ÷Ïß³Ì
-static rt_timer_t Monitor_Timer = RT_NULL;   // ¼àÊÓÆ÷¶¨Ê±Æ÷
-static rt_sem_t Monitor_Sem = RT_NULL;       // ¼àÊÓÆ÷ÐÅºÅÁ¿
+static rt_thread_t Monitor_Thread = RT_NULL; // ç›‘è§†å™¨çº¿ç¨‹
+static rt_timer_t Monitor_Timer = RT_NULL;   // ç›‘è§†å™¨å®šæ—¶å™¨
+static rt_sem_t Monitor_Sem = RT_NULL;       // ç›‘è§†å™¨ä¿¡å·é‡
 
 static void Monitor_Timer_Timeout_Handler(void *parameter)
 {
@@ -48,7 +48,7 @@ static void Monitor_Timer_Timeout_Handler(void *parameter)
 }
 
 /**
- * @brief    ¼àÊÓÆ÷Ïß³Ì
+ * @brief    ç›‘è§†å™¨çº¿ç¨‹
  * @param    None
  * @return   None
  * @author   mqy
@@ -60,36 +60,36 @@ static void Monitor_Thread_Entry(void *parameter)
         swdg_dev_t *swdg_dev_tem = monitor_hp;
         while (swdg_dev_tem != RT_NULL)
         {
-            // ÐèÒªÅÐ¶ÏÊÇ·ñ³õÊ¼»¯, ·ñÔò»á²Ù×÷Î´ÖªÄÚ´æ¿Õ¼ä
+            // éœ€è¦åˆ¤æ–­æ˜¯å¦åˆå§‹åŒ–, å¦åˆ™ä¼šæ“ä½œæœªçŸ¥å†…å­˜ç©ºé—´
             if ((SWDG_INITED_FLAG == swdg_dev_tem->flag_inited) && (RT_TRUE == swdg_dev_tem->if_start))
             {
-                //²»ÓÃswdg_dev_tem->if_error == RT_FALSEÅÐ¶Ï,»áºÄÊ±¹ý³¤
+                //ä¸ç”¨swdg_dev_tem->if_error == RT_FALSEåˆ¤æ–­,ä¼šè€—æ—¶è¿‡é•¿
                 if ((swdg_dev_tem->if_error == RT_FALSE) && (swdg_dev_tem->time_deadline < rt_tick_get()))
                 {
                     swdg_dev_tem->if_error = RT_TRUE;
 #if defined(BSP_USING_RGB_LIGHT) || defined(BSP_USING_BUZZER)
-                    Mlist_Insert(swdg_dev_tem); //¹ÒÔØÒì³£¼àÊÓÆ÷
+                    Mlist_Insert(swdg_dev_tem); //æŒ‚è½½å¼‚å¸¸ç›‘è§†å™¨
 #endif
                     if (swdg_dev_tem->handle != RT_NULL)
-                        //Ã»ÓÐ´¦Àíº¯ÊýÔò²»µ÷ÓÃ
-                        (*swdg_dev_tem->handle)(swdg_dev_tem->if_error); //´¦Àíº¯Êý
+                        //æ²¡æœ‰å¤„ç†å‡½æ•°åˆ™ä¸è°ƒç”¨
+                        (*swdg_dev_tem->handle)(swdg_dev_tem->if_error); //å¤„ç†å‡½æ•°
                 }
             }
             swdg_dev_tem = swdg_dev_tem->next;
         }
 
-//Î¹Ó²¼þ¿´ÃÅ¹·
+//å–‚ç¡¬ä»¶çœ‹é—¨ç‹—
 #ifdef BSP_USING_WDT
         Hwdt_Feed();
 #endif
 
-        //ÑÓÊ±
+        //å»¶æ—¶
         rt_sem_take(Monitor_Sem, RT_WAITING_FOREVER);
     }
 }
 
 /***
- * @brief  ËùÓÐÈí¼þ¿´ÃÅ¹·µÄÍ³Ò»´´½¨
+ * @brief  æ‰€æœ‰è½¯ä»¶çœ‹é—¨ç‹—çš„ç»Ÿä¸€åˆ›å»º
  * @param  None
  * @return None
  * @author Lvfp
@@ -116,29 +116,29 @@ static rt_err_t All_Swdg_Create(void)
 }
 
 /**
- * @brief    ¸Ãº¯Êý³õÊ¼»¯¼àÊÓÆ÷
+ * @brief    è¯¥å‡½æ•°åˆå§‹åŒ–ç›‘è§†å™¨
  * @param    None
- * @return   RT_ERROR£º³õÊ¼»¯Ê§°Ü
+ * @return   RT_ERRORï¼šåˆå§‹åŒ–å¤±è´¥
  * @author   mqy,lfp
  */
 rt_err_t Monitor_Init(void)
 {
-/*±¨¾¯Ïß³Ì³õÊ¼»¯*/
+/*æŠ¥è­¦çº¿ç¨‹åˆå§‹åŒ–*/
 #if (defined(BSP_USING_RGB_LIGHT) || defined(BSP_USING_BUZZER)) && (defined(MONITOR_NEED_ALARM))
     if (Alarm_Init() != RT_EOK)
         return RT_ERROR;
 #endif
 
-    //Èí¼þ¿´ÃÅ¹·½á¹¹Ìå´´½¨
+    //è½¯ä»¶çœ‹é—¨ç‹—ç»“æž„ä½“åˆ›å»º
     if (All_Swdg_Create() != RT_EOK)
         return RT_ERROR;
 
-    // ¼àÊÓÆ÷ÐÅºÅÁ¿´´½¨
+    // ç›‘è§†å™¨ä¿¡å·é‡åˆ›å»º
     Monitor_Sem = rt_sem_create("monitor sem", 0, RT_IPC_FLAG_FIFO);
     if (!Monitor_Sem)
         return RT_ERROR;
     rt_sem_trytake(Monitor_Sem);
-    // ¼àÊÓÆ÷¶¨Ê±Æ÷´´½¨
+    // ç›‘è§†å™¨å®šæ—¶å™¨åˆ›å»º
     Monitor_Timer = rt_timer_create(
         "monitor timer", Monitor_Timer_Timeout_Handler,
         RT_NULL, MONITOR_PERIOD, RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
@@ -149,12 +149,12 @@ rt_err_t Monitor_Init(void)
     }
     else
         return RT_ERROR;
-    //¼àÊÓÆ÷Ïß³Ì´´½¨
+    //ç›‘è§†å™¨çº¿ç¨‹åˆ›å»º
     Monitor_Thread = rt_thread_create(
         "monitor", Monitor_Thread_Entry, RT_NULL,
         1024, 1, THREAD_PRIO_MONITOR);
 
-    // ²é¿´ÊÇ·ñ´´½¨³É¹¦
+    // æŸ¥çœ‹æ˜¯å¦åˆ›å»ºæˆåŠŸ
     if (Monitor_Thread != RT_NULL)
     {
         if (rt_thread_startup(Monitor_Thread) != RT_EOK)
@@ -163,11 +163,11 @@ rt_err_t Monitor_Init(void)
     else
         return RT_ERROR;
 
-        /*Ó²¼þ¿´ÃÅ¹·³õÊ¼»¯*/
+        /*ç¡¬ä»¶çœ‹é—¨ç‹—åˆå§‹åŒ–*/
 #ifdef BSP_USING_WDT
     if (Hwdt_Init() != RT_EOK)
         return RT_ERROR;
-    // ³õÊ¼»¯¿´ÃÅ¹·ÒÔºó½øÐÐÒ»´ÎÎ¹¹·
+    // åˆå§‹åŒ–çœ‹é—¨ç‹—ä»¥åŽè¿›è¡Œä¸€æ¬¡å–‚ç‹—
     Hwdt_Feed();
 #endif
 
@@ -175,8 +175,8 @@ rt_err_t Monitor_Init(void)
 }
 
 /**
- * @brief    ¸ø¿´ÃÅ¹·Î¹Ê³(ÒÆ³öID¶ÔÓ¦µÄ±¨¾¯½Úµã,¸´Î»Ê£ÓàÊ±¼ä)
- * @param    mID ¿´ÃÅ¹·id
+ * @brief    ç»™çœ‹é—¨ç‹—å–‚é£Ÿ(ç§»å‡ºIDå¯¹åº”çš„æŠ¥è­¦èŠ‚ç‚¹,å¤ä½å‰©ä½™æ—¶é—´)
+ * @param    mID çœ‹é—¨ç‹—id
  * @return   None
  * @author   mqy
  */
@@ -184,20 +184,20 @@ void Swdg_Feed(swdg_deviceID mID)
 {
     swdg_dev_t *swdg_dev_tem = monitor_hp;
 
-    while (swdg_dev_tem != RT_NULL) //Ë÷Òý
+    while (swdg_dev_tem != RT_NULL) //ç´¢å¼•
     {
-        // ÐèÒªÅÐ¶Ï¸ÃÄ£¿éÊÇ·ñÕæµÄÒÑ¾­±»³õÊ¼»¯ÁË
+        // éœ€è¦åˆ¤æ–­è¯¥æ¨¡å—æ˜¯å¦çœŸçš„å·²ç»è¢«åˆå§‹åŒ–äº†
         if ((SWDG_INITED_FLAG == swdg_dev_tem->flag_inited) && (mID == swdg_dev_tem->ID))
         {
             swdg_dev_tem->time_deadline = rt_tick_get() + swdg_dev_tem->time_threshold;
-            if (swdg_dev_tem->if_error == RT_TRUE) //¶ÔÒì³£¿´ÃÅ¹·½Úµã½øÐÐ»Ö¸´
+            if (swdg_dev_tem->if_error == RT_TRUE) //å¯¹å¼‚å¸¸çœ‹é—¨ç‹—èŠ‚ç‚¹è¿›è¡Œæ¢å¤
             {
                 swdg_dev_tem->if_error = RT_FALSE;
                 if (swdg_dev_tem->handle != RT_NULL)
-                    //Ã»ÓÐ´¦Àíº¯ÊýÔò²»µ÷ÓÃ
-                    (*swdg_dev_tem->handle)(swdg_dev_tem->if_error); //»Ö¸´º¯Êý
+                    //æ²¡æœ‰å¤„ç†å‡½æ•°åˆ™ä¸è°ƒç”¨
+                    (*swdg_dev_tem->handle)(swdg_dev_tem->if_error); //æ¢å¤å‡½æ•°
 #if defined(BSP_USING_RGB_LIGHT) || defined(BSP_USING_BUZZER)
-                Mlist_Remove(mID); //ÒÆ³ö¶ÔÓ¦µÄ±¨¾¯Á´±í
+                Mlist_Remove(mID); //ç§»å‡ºå¯¹åº”çš„æŠ¥è­¦é“¾è¡¨
 #endif
             }
             return;
@@ -207,21 +207,21 @@ void Swdg_Feed(swdg_deviceID mID)
 }
 
 /**
- * @brief Æô¶¯Ò»¸ö¼àÊÓÆ÷
+ * @brief å¯åŠ¨ä¸€ä¸ªç›‘è§†å™¨
  * @author fwlh
- * @param  mID              ´ýÆô¶¯¼àÊÓÆ÷µÄ ID
+ * @param  mID              å¾…å¯åŠ¨ç›‘è§†å™¨çš„ ID
  */
 void Swdg_Start(swdg_deviceID mID)
 {
     swdg_dev_t *swdg_dev_tem = monitor_hp;
 
-    while (swdg_dev_tem != RT_NULL) //Ë÷Òý
+    while (swdg_dev_tem != RT_NULL) //ç´¢å¼•
     {
-        // ÐèÒªÅÐ¶Ï¸ÃÄ£¿éÊÇ·ñÕæµÄÒÑ¾­±»³õÊ¼»¯ÁË
+        // éœ€è¦åˆ¤æ–­è¯¥æ¨¡å—æ˜¯å¦çœŸçš„å·²ç»è¢«åˆå§‹åŒ–äº†
         if ((SWDG_INITED_FLAG == swdg_dev_tem->flag_inited) && (mID == swdg_dev_tem->ID))
         {
             swdg_dev_tem->if_start = RT_TRUE;
-            // ¸üÐÂ±êÖ¾Î»µÄÊ±ºòÒ»¶¨Òª×¢Òâ¸üÐÂÊ±¿Ì
+            // æ›´æ–°æ ‡å¿—ä½çš„æ—¶å€™ä¸€å®šè¦æ³¨æ„æ›´æ–°æ—¶åˆ»
             swdg_dev_tem->time_deadline = rt_tick_get() + swdg_dev_tem->time_threshold;
             return;
         }
@@ -230,23 +230,23 @@ void Swdg_Start(swdg_deviceID mID)
 }
 
 /**
- * @brief    ²éÑ¯¿´ÃÅ¹·¶ÔÏóÊÇ·ñÒì³£
- * @param    mID ¿´ÃÅ¹·id
- * @return   RT_FALSE£ºÕý³££¬RT_TRUE£ºÒì³£
+ * @brief    æŸ¥è¯¢çœ‹é—¨ç‹—å¯¹è±¡æ˜¯å¦å¼‚å¸¸
+ * @param    mID çœ‹é—¨ç‹—id
+ * @return   RT_FALSEï¼šæ­£å¸¸ï¼ŒRT_TRUEï¼šå¼‚å¸¸
  * @author   lfp
  */
 rt_bool_t Swdg_If_Error(swdg_deviceID mID)
 {
     swdg_dev_t *swdg_dev_tem = monitor_hp;
 
-    while (swdg_dev_tem != RT_NULL) //Ë÷Òý
+    while (swdg_dev_tem != RT_NULL) //ç´¢å¼•
     {
-        // ÐèÒªÅÐ¶Ï¸ÃÄ£¿éÊÇ·ñÕæµÄÒÑ¾­±»³õÊ¼»¯ÁË
+        // éœ€è¦åˆ¤æ–­è¯¥æ¨¡å—æ˜¯å¦çœŸçš„å·²ç»è¢«åˆå§‹åŒ–äº†
         if ((SWDG_INITED_FLAG == swdg_dev_tem->flag_inited) && (mID == swdg_dev_tem->ID))
             return swdg_dev_tem->if_error;
 
         swdg_dev_tem = swdg_dev_tem->next;
     }
 
-    return RT_FALSE; // IDÃ»ÕÒµ½£¬·µ»Øfalse
+    return RT_FALSE; // IDæ²¡æ‰¾åˆ°ï¼Œè¿”å›žfalse
 }

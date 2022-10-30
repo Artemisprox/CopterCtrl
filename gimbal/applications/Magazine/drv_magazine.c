@@ -5,54 +5,54 @@
 #include <rtdevice.h>
 
 #if (SERVO_CTRL_EN)
-// Ä¬ÈÏ¶æ»ú×´Ì¬
+// é»˜è®¤èˆµæœºçŠ¶æ€
 #define MAGAZINE_DEFUALT_SET SERVO_CLOSE
 
-// ¶æ»úPWMÓ²¼þ²ÎÊýÉèÖÃ
-#define MAG_PWMDEV_SET "pwm1" // PWMÉè±¸Ãû³Æ
-#define MAG_PWMCHANNEL 1 // ¶¨Ê±Æ÷PWMÍ¨µÀÉèÖÃ
+// èˆµæœºPWMç¡¬ä»¶å‚æ•°è®¾ç½®
+#define MAG_PWMDEV_SET "pwm1" // PWMè®¾å¤‡åç§°
+#define MAG_PWMCHANNEL 1 // å®šæ—¶å™¨PWMé€šé“è®¾ç½®
 
 static struct rt_device_pwm *servo_dev;
 
-// ¼ÇÂ¼¶æ»úÀúÊ·Éè¶¨Öµ£¬ÓÃÓÚ¼õÉÙ²»±ØÒªµÄPWMÕ¼¿Õ±ÈÉè¶¨
+// è®°å½•èˆµæœºåŽ†å²è®¾å®šå€¼ï¼Œç”¨äºŽå‡å°‘ä¸å¿…è¦çš„PWMå ç©ºæ¯”è®¾å®š
 static float magazine_PWMSet_REC = -1.0f;
 #endif
 
 /**
- * @brief  ¶æ»ú£¨µ¯²ÖÃÅ¿ª¹Ø£©³õÊ¼»¯
- * @param  duty Õ¼¿Õ±È£¨0-1000¶ÔÓÚ0%-%100£©
+ * @brief  èˆµæœºï¼ˆå¼¹ä»“é—¨å¼€å…³ï¼‰åˆå§‹åŒ–
+ * @param  duty å ç©ºæ¯”ï¼ˆ0-1000å¯¹äºŽ0%-%100ï¼‰
  */
 void Magazine_servo_init(void)
 {
 #if (SERVO_CTRL_EN)
     servo_dev = (struct rt_device_pwm *)rt_device_find(MAG_PWMDEV_SET);
-    /*ÉèÖÃÖÜÆÚºÍÂö³å¿í¶È*/
-    Magazine_servo_set(MAGAZINE_DEFUALT_SET); // Ä¬ÈÏµ¯²Õ¿ª¹Ø×´Ì¬
-    /* Ê¹ÄÜÉè±¸ */
+    /*è®¾ç½®å‘¨æœŸå’Œè„‰å†²å®½åº¦*/
+    Magazine_servo_set(MAGAZINE_DEFUALT_SET); // é»˜è®¤å¼¹èˆ±å¼€å…³çŠ¶æ€
+    /* ä½¿èƒ½è®¾å¤‡ */
     rt_pwm_enable(servo_dev, MAG_PWMCHANNEL);
 #endif
 }
 
 /**
- * @brief  µ¯²Ö¶æ»ú½Ç¶ÈÉè¶¨
- * @param  Set_Percent ¶æ»úÐÅºÅ±ÈÀý£¬0-1¶ÔÓ¦¶æ»úÕû¸ö×ª¶¯·¶Î§
+ * @brief  å¼¹ä»“èˆµæœºè§’åº¦è®¾å®š
+ * @param  Set_Percent èˆµæœºä¿¡å·æ¯”ä¾‹ï¼Œ0-1å¯¹åº”èˆµæœºæ•´ä¸ªè½¬åŠ¨èŒƒå›´
  */
 void Magazine_servo_set(int OpenFlag)
 {
 #if (SERVO_CTRL_EN)
-    rt_int32_t PWM_PulseSet_us; // usµ¥Î»µÄÕýÂö¿íÉè¶¨Öµ
+    rt_int32_t PWM_PulseSet_us; // uså•ä½çš„æ­£è„‰å®½è®¾å®šå€¼
 
     if (OpenFlag != magazine_PWMSet_REC)
     {
-        // ±£»¤ÏÞ·ù
+        // ä¿æŠ¤é™å¹…
         if (OpenFlag > 1)
             OpenFlag = 1;
         else if (OpenFlag < 0)
             OpenFlag = 0;
-        magazine_PWMSet_REC = OpenFlag; // ¼ÇÂ¼µ±Ç°PWMÉè¶¨×´Ì¬
+        magazine_PWMSet_REC = OpenFlag; // è®°å½•å½“å‰PWMè®¾å®šçŠ¶æ€
         PWM_PulseSet_us = (rt_int32_t)(MAGAZINE_SERVO_CLOSE_PULSE + MAGAZINE_SERVO_OPEN_PULSE * OpenFlag);
-        /*ÉèÖÃÖÜÆÚºÍÂö³å¿í¶È*/
-        rt_pwm_set(servo_dev, MAG_PWMCHANNEL, 40000000, 2000 * PWM_PulseSet_us); // 20msÖÜÆÚ£¬°´ÕÕ¶æ»ú0.5-2.5ms½øÐÐ½Ç¶È°Ù·Ö±ÈÉè¶¨
+        /*è®¾ç½®å‘¨æœŸå’Œè„‰å†²å®½åº¦*/
+        rt_pwm_set(servo_dev, MAG_PWMCHANNEL, 40000000, 2000 * PWM_PulseSet_us); // 20mså‘¨æœŸï¼ŒæŒ‰ç…§èˆµæœº0.5-2.5msè¿›è¡Œè§’åº¦ç™¾åˆ†æ¯”è®¾å®š
     }
 #endif
 }

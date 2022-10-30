@@ -3,7 +3,7 @@
 
 TIM_HandleTypeDef htim11;
 
-// »ñÈ¡µ±Ç°¼ÆÊýÖµ
+// èŽ·å–å½“å‰è®¡æ•°å€¼
 int TIM11_GetCNT(void)
 {
     return TIM11->CNT;

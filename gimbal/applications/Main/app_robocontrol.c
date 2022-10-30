@@ -12,45 +12,45 @@
 #include "func_GimbalSet.h"
 #include "func_MonHandling.h"
 
-char ComputerCTRL_EN = 0; // ÊÇ·ñÎª¿Í»§¶ËÄ£Ê½
+char ComputerCTRL_EN = 0; // æ˜¯å¦ä¸ºå®¢æˆ·ç«¯æ¨¡å¼
 
-int gunspeed = 0; // µ¯ËÙÉè¶¨Öµ
+int gunspeed = 0; // å¼¹é€Ÿè®¾å®šå€¼
 
-#define COMPUTER 0 // ¿Í»§¶ËÄ£Ê½
-#define REMOTE 1   // Ò£¿ØÆ÷Ä£Ê½
-#define GENERAL 2  // Í¨ÓÃ´¦Àí
+#define COMPUTER 0 // å®¢æˆ·ç«¯æ¨¡å¼
+#define REMOTE 1   // é¥æŽ§å™¨æ¨¡å¼
+#define GENERAL 2  // é€šç”¨å¤„ç†
 
 static void General_Key_Action_Process(switch_action_e *s1_action, switch_action_e *s2_action, uint8_t mode)
 {
     switch (mode)
     {
     case GENERAL:
-        /* S1±ßÑØ¶ÁÈ¡ */
+        /* S1è¾¹æ²¿è¯»å– */
         *s1_action = Change_from_middle(S1);
         if (*s1_action == NO_ACTION)
             *s1_action = Change_to_middle(S1);
 
-        /* S2±ßÑØ¶ÁÈ¡ */
+        /* S2è¾¹æ²¿è¯»å– */
         *s2_action = Change_from_middle(S2);
         if (*s2_action == NO_ACTION)
             *s2_action = Change_to_middle(S2);
 
-        /* S2×´Ì¬¶ÁÈ¡ */
+        /* S2çŠ¶æ€è¯»å– */
         if (RC_data.Remote_Data.s2 == 1)
-        { // S2ÔÚÉÏ-Õý³£¶þ´ú×ÔÃé
+        { // S2åœ¨ä¸Š-æ­£å¸¸äºŒä»£è‡ªçž„
             Aimbot_FreshMouseClick(1);
             ComputerCTRL_EN = 0;
         }
         else if (RC_data.Remote_Data.s2 == 3)
-        { // S2ÔÚÖÐ-Ç¿ÐÐ²»×ÔÃé
+        { // S2åœ¨ä¸­-å¼ºè¡Œä¸è‡ªçž„
             ComputerCTRL_EN = 0;
-            Aimbot_LoosenCallback(); // ÍË³ö×ÔÃé
+            Aimbot_LoosenCallback(); // é€€å‡ºè‡ªçž„
         }
         else if (RC_data.Remote_Data.s2 == 2)
-            // S2ÔÚÏÂ-¿Í»§¶Ë¿ØÖÆ
+            // S2åœ¨ä¸‹-å®¢æˆ·ç«¯æŽ§åˆ¶
             ComputerCTRL_EN = 1;
 
-        // ½øÈëºÍÍË³öÒ£¿ØÆ÷Ä£Ê½µÄÊ±ºòÄ¬ÈÏ²»¸úËæ
+        // è¿›å…¥å’Œé€€å‡ºé¥æŽ§å™¨æ¨¡å¼çš„æ—¶å€™é»˜è®¤ä¸è·Ÿéš
         if (*s2_action == middle_to_down)
             MotionModeSet_Callback(CHASSISMODE_KEY_MODE_NO_FOLLOW);
         else if (*s2_action == down_to_middle)
@@ -58,17 +58,17 @@ static void General_Key_Action_Process(switch_action_e *s1_action, switch_action
 
         break;
     case REMOTE:
-        if (*s1_action == middle_to_up) // ÏòÉÏ²¦¶¯
-        {                               // ¿ª¹ØÄ¦²ÁÂÖ
+        if (*s1_action == middle_to_up) // å‘ä¸Šæ‹¨åŠ¨
+        {                               // å¼€å…³æ‘©æ“¦è½®
             if (gunspeed == 0)
                 Gun_RubEnable();
             else
                 Gun_Disable();
         }
-        else if (*s1_action == middle_to_down) //ÏòÏÂ²¦¶¯
+        else if (*s1_action == middle_to_down) //å‘ä¸‹æ‹¨åŠ¨
         {
             if (gunspeed == 0)
-            { // Ã»ÓÐ´ò¿ªÄ¦²ÁÂÖÊ±£¬Í¨¹ý×ó²à²¦¸ËÏòÏÂ²¦¶¯£¬¿ÉÒÔµ÷Õûµ×ÅÌÄ£Ê½
+            { // æ²¡æœ‰æ‰“å¼€æ‘©æ“¦è½®æ—¶ï¼Œé€šè¿‡å·¦ä¾§æ‹¨æ†å‘ä¸‹æ‹¨åŠ¨ï¼Œå¯ä»¥è°ƒæ•´åº•ç›˜æ¨¡å¼
                 if (motion_mode == NO_FOLLOW)
                     MotionModeSet_Callback(CHASSISMODE_KEY_MODE_FOLLOW);
                 else if (motion_mode == FOLLOW_GIMBAL)
@@ -82,9 +82,9 @@ static void General_Key_Action_Process(switch_action_e *s1_action, switch_action
             }
         }
 
-        if (*s2_action == middle_to_up) // ÏòÉÏ²¦¶¯
-        {                               // ÇÐ»»×ÔÃéÄ£Ê½
-            Aimbot_PressCallback();     // ½øÈë×ÔÃé
+        if (*s2_action == middle_to_up) // å‘ä¸Šæ‹¨åŠ¨
+        {                               // åˆ‡æ¢è‡ªçž„æ¨¡å¼
+            Aimbot_PressCallback();     // è¿›å…¥è‡ªçž„
             if (Visual_Mode_Set == VISUAL_MODE_AIMBOT_V2)
 #if defined CORE_USING_INFANTRY
                 AimMode_Set_Callback(AIMMODE_SET_AIMBUFF_CONST_SPEED);
@@ -102,42 +102,42 @@ static void General_Key_Action_Process(switch_action_e *s1_action, switch_action
         }
         break;
     case COMPUTER:
-        // ¿Í»§¶ËÄ£Ê½ÏÂ¿ÉÒÔÐÞ¸Ä×ÔÃéÑÕÉ«
+        // å®¢æˆ·ç«¯æ¨¡å¼ä¸‹å¯ä»¥ä¿®æ”¹è‡ªçž„é¢œè‰²
         if (RC_data.Remote_Data.s1 == 1)
-            // s1 ÔÚÉÏÐÞ¸ÄÎªÀ¶É«
+            // s1 åœ¨ä¸Šä¿®æ”¹ä¸ºè“è‰²
             Color_Myself = My_Color_Blue;
         else if (RC_data.Remote_Data.s1 == 3)
-            // s1 ÔÚÖÐ¼äÐÞ¸ÄÎªºìÉ«
+            // s1 åœ¨ä¸­é—´ä¿®æ”¹ä¸ºçº¢è‰²
             Color_Myself = My_Color_Red;
 #ifndef CORE_USING_HERO
-        if (*s1_action == middle_to_down) // ÏòÏÂ²¦¶¯
-                                          // ¿ªµ¯²Õ
+        if (*s1_action == middle_to_down) // å‘ä¸‹æ‹¨åŠ¨
+                                          // å¼€å¼¹èˆ±
             MiscSet_Callback(MISC_KEY_HATCH_OPEN);
         else if (*s1_action == down_to_middle)
-            // ¹Øµ¯²Õ
+            // å…³å¼¹èˆ±
             MiscSet_Callback(MISC_KEY_HATCH_CLSE);
 #endif
         break;
     default:
         break;
     }
-    Write_Computer_Ctrl_Status(ComputerCTRL_EN); // ÓÃÓÚ¸æÖªÆäËûÄ£¿éµ±Ç°ÊÇ·ñ´¦ÓÚ¿Í»§¶ËÄ£Ê½
+    Write_Computer_Ctrl_Status(ComputerCTRL_EN); // ç”¨äºŽå‘ŠçŸ¥å…¶ä»–æ¨¡å—å½“å‰æ˜¯å¦å¤„äºŽå®¢æˆ·ç«¯æ¨¡å¼
 }
 
-static uint16_t Remote_ResetCmd_Times = 0; // ¸´Î»Ö¸Áî³ÖÐøµÄ´ÎÊý
+static uint16_t Remote_ResetCmd_Times = 0; // å¤ä½æŒ‡ä»¤æŒç»­çš„æ¬¡æ•°
 /**
- * @brief Ò£¿ØÆ÷¸´Î»Ö¸ÁîµÄ¼ì²é
+ * @brief é¥æŽ§å™¨å¤ä½æŒ‡ä»¤çš„æ£€æŸ¥
  * @author fwlh
  */
 static void Remote_Reset_Check(void)
 {
-    // ²»ÔÚ¿Í»§¶ËÄ£Ê½ÏÂÒ£¿ØÆ÷²»ÔÊÐí¸´Î»
+    // ä¸åœ¨å®¢æˆ·ç«¯æ¨¡å¼ä¸‹é¥æŽ§å™¨ä¸å…è®¸å¤ä½
     if (!ComputerCTRL_EN)
     {
         Remote_ResetCmd_Times = 0;
         return;
     }
-    // ÔÚ¿Í»§¶ËÄ£Ê½ÏÂÐèÒªÒ£¿ØÆ÷²¦µ½ Æð½° µÄ×´Ì¬±£³Ö 200 ´Î, ³ÌÐòÉÏÊÇ×öµÄÖÍ»Ø±È½Ï
+    // åœ¨å®¢æˆ·ç«¯æ¨¡å¼ä¸‹éœ€è¦é¥æŽ§å™¨æ‹¨åˆ° èµ·æ¡¨ çš„çŠ¶æ€ä¿æŒ 200 æ¬¡, ç¨‹åºä¸Šæ˜¯åšçš„æ»žå›žæ¯”è¾ƒ
     if ((RC_data.Remote_Data.ch2 > 1550) && (RC_data.Remote_Data.ch3 < 500) &&
         (RC_data.Remote_Data.ch0 < 500) && (RC_data.Remote_Data.ch3 < 500))
     {
@@ -145,9 +145,9 @@ static void Remote_Reset_Check(void)
             Remote_ResetCmd_Times += 1;
         else
         {
-            // ¸´Î»È«³µµ¥Æ¬»ú
+            // å¤ä½å…¨è½¦å•ç‰‡æœº
             ResetCmd_Write(1);
-            chassis_data_send(); // ÓÉÓÚ·¢ËÍÊý¾ÝÊÇÔÚ±¾Ïß³ÌÖÐ½øÐÐµÄ, ËùÒÔÐèÒªÁ¢¼´µ÷ÓÃÒ»´Î·¢ËÍ
+            chassis_data_send(); // ç”±äºŽå‘é€æ•°æ®æ˜¯åœ¨æœ¬çº¿ç¨‹ä¸­è¿›è¡Œçš„, æ‰€ä»¥éœ€è¦ç«‹å³è°ƒç”¨ä¸€æ¬¡å‘é€
             Robot_Reset_Gimbal();
         }
     }
@@ -161,70 +161,70 @@ static void Remote_Reset_Check(void)
 }
 
 #if defined CORE_USING_INFANTRY
-static int Last_Motion_Mode = 0; // ÓÃÓÚ¼ÇÂ¼ÉÏÒ»´ÎµÄµ×ÅÌÄ£Ê½
-static int Last_AimMode_Set = 0; // ÓÃÓÚ¼ÇÂ¼ÉÏÒ»´ÎµÄ×ÔÃéÄ£Ê½
-int8_t Last_RuneExit_Flag = 0;   // ÓÃÓÚ¼ÇÂ¼ÉÏÒ»´Î¼ÇÂ¼ÄÜÁ¿»ú¹ØÍË³öÊ±µÄ±êÖ¾Î»
+static int Last_Motion_Mode = 0; // ç”¨äºŽè®°å½•ä¸Šä¸€æ¬¡çš„åº•ç›˜æ¨¡å¼
+static int Last_AimMode_Set = 0; // ç”¨äºŽè®°å½•ä¸Šä¸€æ¬¡çš„è‡ªçž„æ¨¡å¼
+int8_t Last_RuneExit_Flag = 0;   // ç”¨äºŽè®°å½•ä¸Šä¸€æ¬¡è®°å½•èƒ½é‡æœºå…³é€€å‡ºæ—¶çš„æ ‡å¿—ä½
 #endif
 /**
-* @brief£º´®¿Ú»Øµ÷º¯Êý¿ØÖÆÏß³Ì(14ms)
-                Ê±¼äÆ¬1£¬ÓÅÏÈ¼¶1
-* @param [in]	parameter:¸Ã²ÎÊý²»»á±»Ê¹ÓÃ
-* @return£º		ÎÞ
-* @author£ºzzj
+* @briefï¼šä¸²å£å›žè°ƒå‡½æ•°æŽ§åˆ¶çº¿ç¨‹(14ms)
+                æ—¶é—´ç‰‡1ï¼Œä¼˜å…ˆçº§1
+* @param [in]	parameter:è¯¥å‚æ•°ä¸ä¼šè¢«ä½¿ç”¨
+* @returnï¼š		æ— 
+* @authorï¼šzzj
 */
 static void RoboControl_entry(void *parameter)
 {
-    switch_action_e s1_action, s2_action; //¶¯×÷´¥·¢ÁÙÊ±±äÁ¿
+    switch_action_e s1_action, s2_action; //åŠ¨ä½œè§¦å‘ä¸´æ—¶å˜é‡
     rt_err_t res = RT_ERROR;
     SWDG_START(SWDG_ROBOCONTROL_ID);
     while (1)
     {
-        /* µÈ´ý½ÓÊÕµ½Ò£¿ØÆ÷Êý¾Ý */
+        /* ç­‰å¾…æŽ¥æ”¶åˆ°é¥æŽ§å™¨æ•°æ® */
         res = rt_sem_take(&RoboControl_sem, 50);
-        // ÅÐ¶Ï±¾´ÎÏß³Ì»½ÐÑÊÇÓÉÓÚ ³¬Ê± »ò ÊÕµ½ÐÅºÅÁ¿
+        // åˆ¤æ–­æœ¬æ¬¡çº¿ç¨‹å”¤é†’æ˜¯ç”±äºŽ è¶…æ—¶ æˆ– æ”¶åˆ°ä¿¡å·é‡
         if (res == RT_EOK)
         {
-            /* °´¼ü×´Ì¬¶ÁÈ¡ */
+            /* æŒ‰é”®çŠ¶æ€è¯»å– */
             RC_Key_Process();
 
             gunspeed = Rub_speed_ReadSet();
 
-            /* ´¦Àí s1 ºÍ s2 °´¼üµÄÍ¨ÓÃ¶¯×÷²¢×öÏàÓ¦µÄ¶¯×÷»òÕßÄ£Ê½¸ü¸Ä */
+            /* å¤„ç† s1 å’Œ s2 æŒ‰é”®çš„é€šç”¨åŠ¨ä½œå¹¶åšç›¸åº”çš„åŠ¨ä½œæˆ–è€…æ¨¡å¼æ›´æ”¹ */
             General_Key_Action_Process(&s1_action, &s2_action, GENERAL);
-            // Ò£¿ØÆ÷¸´Î»Ö¸Áî¼ì²é
+            // é¥æŽ§å™¨å¤ä½æŒ‡ä»¤æ£€æŸ¥
             Remote_Reset_Check();
 
             if (ComputerCTRL_EN == 1)
             {
-                // ¿Í»§¶Ë¿ØÖÆÄ£Ê½
+                // å®¢æˆ·ç«¯æŽ§åˆ¶æ¨¡å¼
                 General_Key_Action_Process(&s1_action, &s2_action, COMPUTER);
                 Computer_CTR(&RC_data);
             }
             else
             {
-                FillMode_EN = 0; // Ò£¿ØÆ÷Ä£Ê½£¬Ç¿ÖÆ½ûÓÃÊó±ê¿ØÖÆµ×ÅÌ
+                FillMode_EN = 0; // é¥æŽ§å™¨æ¨¡å¼ï¼Œå¼ºåˆ¶ç¦ç”¨é¼ æ ‡æŽ§åˆ¶åº•ç›˜
 
                 General_Key_Action_Process(&s1_action, &s2_action, REMOTE);
 
-                Refresh_RemoteSet_Gimbal(); //¶ÁÈ¡²¢¸üÐÂÉè¶¨Öµ
-                /* µ×ÅÌ¿ØÖÆ */
+                Refresh_RemoteSet_Gimbal(); //è¯»å–å¹¶æ›´æ–°è®¾å®šå€¼
+                /* åº•ç›˜æŽ§åˆ¶ */
                 Chassis_RemoteCTR(&RC_data);
 
-                /* ¿ª»ðÖ¸Áî */
+                /* å¼€ç«æŒ‡ä»¤ */
                 if ((RC_data.Remote_Data.s1 == 2) && (gunspeed != 0 && RC_data.Remote_Data.s2 != 2))
-                    // µ¯ËÙÉè¶¨Öµ²»Îª 0 ÇÒÃ»ÓÐ¿ªÆô¿Í»§¶ËÄ£Ê½, ¿ª»ð(Ò£¿ØÆ÷×ÔÃéÄ£Ê½ÏÂ¿ÉÒÔÊÓ¾õ×Ô¶¯¿ª»ð, ¸Ã¿ª»ðÖ¸ÁîÓëÒ£¿ØÆ÷¿ª»ðÖ¸Áî²¢ÐÐ)
+                    // å¼¹é€Ÿè®¾å®šå€¼ä¸ä¸º 0 ä¸”æ²¡æœ‰å¼€å¯å®¢æˆ·ç«¯æ¨¡å¼, å¼€ç«(é¥æŽ§å™¨è‡ªçž„æ¨¡å¼ä¸‹å¯ä»¥è§†è§‰è‡ªåŠ¨å¼€ç«, è¯¥å¼€ç«æŒ‡ä»¤ä¸Žé¥æŽ§å™¨å¼€ç«æŒ‡ä»¤å¹¶è¡Œ)
                     Gun_FireSet(FIRE_ON);
                 else
                     Gun_FireSet(FIRE_OFF);
             }
 
 #if defined CORE_USING_INFANTRY
-            // ¼ÇÂ¼ÄÜÁ¿»ú¹ØÍË³öµÄÏà¹Ø±êÖ¾Î»
+            // è®°å½•èƒ½é‡æœºå…³é€€å‡ºçš„ç›¸å…³æ ‡å¿—ä½
             if ((!Exit_AimbotFlag) && ((Visual_Mode_Set == VISUAL_MODE_AIMBUFF_CONST_SPEED) || (Visual_Mode_Set == VISUAL_MODE_AIMBUFF_VARY_SPEED)) &&
                 (Last_RuneExit_Flag != VisualFlag_ExitRune))
                 AimMode_Set_Callback(AIMMODE_SET_AIMBOT);
             Last_RuneExit_Flag = VisualFlag_ExitRune;
-            // ÍË³öÄÜÁ¿»ú¹ØÊ±½«µ×ÅÌÄ£Ê½ÐÞ¸Ä»Ø½øÈëÖ®Ç°µÄÄ£Ê½
+            // é€€å‡ºèƒ½é‡æœºå…³æ—¶å°†åº•ç›˜æ¨¡å¼ä¿®æ”¹å›žè¿›å…¥ä¹‹å‰çš„æ¨¡å¼
             if ((!Exit_AimbotFlag) && (Last_AimMode_Set != Visual_Mode_Set) &&
                 ((Last_AimMode_Set == VISUAL_MODE_AIMBUFF_CONST_SPEED) || (Last_AimMode_Set == VISUAL_MODE_AIMBUFF_VARY_SPEED)))
                 motion_mode = Last_Motion_Mode;
@@ -237,21 +237,21 @@ static void RoboControl_entry(void *parameter)
 }
 
 /**
- * @brief£ºRoboControl³õÊ¼»¯
- * @param [in]	ÎÞ
- * @return£º		ÎÞ
- * @author£ºzzj
+ * @briefï¼šRoboControlåˆå§‹åŒ–
+ * @param [in]	æ— 
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 rt_err_t RoboControl_init(void)
 {
     ModCTR_Init();
-    //½«ÒÆ¶¯ÓÃµÄ°´¼üµÄÈ¥¶¶¶¯ÉèÖÃÎª1´Î£¬Ìá¸ßÒÆ¶¯¹ý³ÌÏìÓ¦ËÙ¶È
+    //å°†ç§»åŠ¨ç”¨çš„æŒ‰é”®çš„åŽ»æŠ–åŠ¨è®¾ç½®ä¸º1æ¬¡ï¼Œæé«˜ç§»åŠ¨è¿‡ç¨‹å“åº”é€Ÿåº¦
     Key_SetPressConfirm(FOREWORD_KEY, 1);
     Key_SetPressConfirm(BACK_KEY, 1);
     Key_SetPressConfirm(LEFT_KEY, 1);
     Key_SetPressConfirm(RIGHT_KEY, 1);
 
-    /* Ò£¿ØÆ÷Êý¾Ý´¦Àíº¯Êý´´½¨ */
+    /* é¥æŽ§å™¨æ•°æ®å¤„ç†å‡½æ•°åˆ›å»º */
     rt_thread_t thread = rt_thread_create("RoboCtrl", RoboControl_entry, RT_NULL, 2048, THREAD_PRIO_ROBOCONTROL, 1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);

@@ -9,16 +9,16 @@
 #include "can_receive.h"
 #include "drv_Aimbot_Public.h"
 
-// Êä³öµ¥Î»£ºrad
-// »ñÈ¡Ö¸¶¨tickÊ±µÄÔÆÌ¨×ËÌ¬
+// è¾“å‡ºå•ä½ï¼šrad
+// è·å–æŒ‡å®štickæ—¶çš„äº‘å°å§¿æ€
 extern void Gimbal_GetAtti_Tick(AttitudeData_Type *Atti_Out, rt_tick_t Tick);
 
 extern int gimbal_init(void);
 
-// ´«Èë 0 ¿ÉÍ£Ö¹¶ÔÔÆÌ¨µç»úµÄ¿ØÖÆ
+// ä¼ å…¥ 0 å¯åœæ­¢å¯¹äº‘å°ç”µæœºçš„æ§åˆ¶
 extern void Gimbal_Motor_EN(rt_uint8_t GimbalMotor_Enable);
 
-// ¸üĞÂ¿ØÖÆÎó²îÊı¾İ
+// æ›´æ–°æ§åˆ¶è¯¯å·®æ•°æ®
 extern void Ctrl_Err_Cal(float SetPitchAng, float SetYawAng);
 
 #endif

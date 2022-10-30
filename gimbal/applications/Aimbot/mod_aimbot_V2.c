@@ -7,67 +7,67 @@
 #include "drv_utils.h"
 #include "drv_ExactSmooth.h"
 
-static float Gimbal_Pitch_UpLim, Gimbal_Pitch_DownLim;       // ¼ÇÂ¼µ±Ç°ÔÆÌ¨ÄÜ´ïµ½µÄ½Ç¶ÈÏŞ·ùÊı¾İ
-ExactSmth_CTRL_S Smooth_VisualPitchSet, Smooth_VisualYawSet; // ÓÃÓÚÊÓ¾õÉè¶¨ÖµµÄÆ½»¬ÂË²¨
+static float Gimbal_Pitch_UpLim, Gimbal_Pitch_DownLim;       // è®°å½•å½“å‰äº‘å°èƒ½è¾¾åˆ°çš„è§’åº¦é™å¹…æ•°æ®
+ExactSmth_CTRL_S Smooth_VisualPitchSet, Smooth_VisualYawSet; // ç”¨äºè§†è§‰è®¾å®šå€¼çš„å¹³æ»‘æ»¤æ³¢
 
 struct Accuracy_Check_Module
 {
-    float PitchTolerance; // Pitch ÖáµÄÈİĞíÎó²î
-    float YawTolerance;   // Yaw ÖáµÄÈİĞíÎó²î
-    float PitchErr;       // Pitch Öá¿ØÖÆÎó²î
-    float YawErr;         // Yaw Öá¿ØÖÆÎó²î
-} Accuracy_Check_s;       // ¾«¶È¼ì²éÄ£¿é
+    float PitchTolerance; // Pitch è½´çš„å®¹è®¸è¯¯å·®
+    float YawTolerance;   // Yaw è½´çš„å®¹è®¸è¯¯å·®
+    float PitchErr;       // Pitch è½´æ§åˆ¶è¯¯å·®
+    float YawErr;         // Yaw è½´æ§åˆ¶è¯¯å·®
+} Accuracy_Check_s;       // ç²¾åº¦æ£€æŸ¥æ¨¡å—
 
-//Ë¢ĞÂÔÆÌ¨ÏŞ·ùÉè¶¨Öµ
-//ÊäÈëµ¥Î»£º¶È
+//åˆ·æ–°äº‘å°é™å¹…è®¾å®šå€¼
+//è¾“å…¥å•ä½ï¼šåº¦
 void Refresh_Gimbal_Lim(float Up, float Down)
 {
     if (Up < Down)
-    {              //¼ì²é½Ç¶ÈÊÇ·ñÕı³£
-        Down = Up; //ÓÅÏÈÌ§Í·
+    {              //æ£€æŸ¥è§’åº¦æ˜¯å¦æ­£å¸¸
+        Down = Up; //ä¼˜å…ˆæŠ¬å¤´
     }
     Gimbal_Pitch_UpLim = Up;
     Gimbal_Pitch_DownLim = Down;
 }
 
-//Ë¢ĞÂµ¯ËÙÉè¶¨Öµ
-//ÊäÈëµ¥Î»£ºm/s
+//åˆ·æ–°å¼¹é€Ÿè®¾å®šå€¼
+//è¾“å…¥å•ä½ï¼šm/s
 void Refresh_Muzzle_V(float V_New)
 {
-    Muzzle_V_REM = V_New; // ĞŞ¸Äµ¯ËÙºó£¬»áÔÚAimbotCANÎÄ¼şÖĞµÄÏÂÒ»´Î¶ÔÊ±Í¨ĞÅÊ±Ó¦ÓÃ¸øÊÓ¾õ¶Ë
+    Muzzle_V_REM = V_New; // ä¿®æ”¹å¼¹é€Ÿåï¼Œä¼šåœ¨AimbotCANæ–‡ä»¶ä¸­çš„ä¸‹ä¸€æ¬¡å¯¹æ—¶é€šä¿¡æ—¶åº”ç”¨ç»™è§†è§‰ç«¯
 }
 
-// ÇĞ»»×ÔÃéÄ£Ê½º¯Êı
+// åˆ‡æ¢è‡ªç„æ¨¡å¼å‡½æ•°
 void Refresh_VisualMode(drv_VisualMode_e Mode_Set)
 {
     Visual_Mode_Set = Mode_Set;
     if ((int)VisualMode_FB != (int)Visual_Mode_Set)
-    { // ÇĞ»»ÖÁ²»Í¬µÄ×ÔÃéÄ£Ê½ºó£¬Çå¿ÕÒÑÓĞµÄÉè¶¨ÖµÊı¾İ
+    { // åˆ‡æ¢è‡³ä¸åŒçš„è‡ªç„æ¨¡å¼åï¼Œæ¸…ç©ºå·²æœ‰çš„è®¾å®šå€¼æ•°æ®
         GimbalSet_Receive[0].State = RT_ERROR;
         GimbalSet_Receive[1].State = RT_ERROR;
     }
 }
 
 static int ShortTime_GunSet_AimbotShoot_Count = 0;
-// ¶ÌÊ±ĞÔ¾«¶È¼ì²é: ÔÚ±È½Ï¶ÌµÄÊ±¼äÄÚ×öÖÍ»Ø±È½Ï, µ«ÊÇ¶Ô¾«¶ÈµÄÒªÇóÏà¶Ô±È½Ï¿Á¿Ì
+// çŸ­æ—¶æ€§ç²¾åº¦æ£€æŸ¥: åœ¨æ¯”è¾ƒçŸ­çš„æ—¶é—´å†…åšæ»å›æ¯”è¾ƒ, ä½†æ˜¯å¯¹ç²¾åº¦çš„è¦æ±‚ç›¸å¯¹æ¯”è¾ƒè‹›åˆ»
 static int ShortTime_Accuracy_Check(struct Accuracy_Check_Module *Accuracy_Check_Struct)
 {
     if ((fabsf(Accuracy_Check_Struct->PitchErr) < Accuracy_Check_Struct->PitchTolerance) &&
         (fabsf(Accuracy_Check_Struct->YawErr) < Accuracy_Check_Struct->YawTolerance))
     {
-        // ±¾´Î¾«¶È¼ì²éÍ¨¹ı
+        // æœ¬æ¬¡ç²¾åº¦æ£€æŸ¥é€šè¿‡
         if (ShortTime_GunSet_AimbotShoot_Count < 40)
             ++ShortTime_GunSet_AimbotShoot_Count;
     }
     else
     {
-        // ±¾´Î¾«¶È¼ì²éÎ´Í¨¹ı
+        // æœ¬æ¬¡ç²¾åº¦æ£€æŸ¥æœªé€šè¿‡
         if (ShortTime_GunSet_AimbotShoot_Count > 5)
             ShortTime_GunSet_AimbotShoot_Count -= 5;
         else
             ShortTime_GunSet_AimbotShoot_Count = 0;
     }
-    // ¼ì²é×îÖÕ¾«¶È½á¹û
+    // æ£€æŸ¥æœ€ç»ˆç²¾åº¦ç»“æœ
     if (ShortTime_GunSet_AimbotShoot_Count < 30)
         return 0;
     else
@@ -77,10 +77,10 @@ static int ShortTime_Accuracy_Check(struct Accuracy_Check_Module *Accuracy_Check
 static int LongTime_GunSet_AimbotShoot_Count = 0;
 static float LongTime_Filted_PitchErr = 0.f;
 static float LongTime_Filted_YawErr = 0.f;
-// ³¤Ê±ĞÔ¾«¶È¼ì²é: ÔÚ±È½Ï³¤µÄÊ±¼äÄÚ¶Ô¿ØÖÆÎó²î×ö´óµÄÖÍ»Ø±È½Ï, µ«ÊÇÔÚÅĞ¶ÏÊ±ĞèÒªÑÏ¸ñÁ¬ĞøÊ±¼äÄÚ¿ØÖÆ¾«¶È´ï±ê
+// é•¿æ—¶æ€§ç²¾åº¦æ£€æŸ¥: åœ¨æ¯”è¾ƒé•¿çš„æ—¶é—´å†…å¯¹æ§åˆ¶è¯¯å·®åšå¤§çš„æ»å›æ¯”è¾ƒ, ä½†æ˜¯åœ¨åˆ¤æ–­æ—¶éœ€è¦ä¸¥æ ¼è¿ç»­æ—¶é—´å†…æ§åˆ¶ç²¾åº¦è¾¾æ ‡
 static int LongTime_Accuracy_Check(struct Accuracy_Check_Module *Accuracy_Check_Struct, const int LastResult)
 {
-    // Èç¹ûÉÏÒ»´Î×Ü¾«¶È¼ì²éÍ¨¹ı, ±¾´Î¼ÆÊıÇåÁã
+    // å¦‚æœä¸Šä¸€æ¬¡æ€»ç²¾åº¦æ£€æŸ¥é€šè¿‡, æœ¬æ¬¡è®¡æ•°æ¸…é›¶
     if (LastResult)
         LongTime_GunSet_AimbotShoot_Count = 0;
     LongTime_Filted_PitchErr = UTILS_LP_FAST(LongTime_Filted_PitchErr, Accuracy_Check_Struct->PitchErr, 0.9f);
@@ -88,16 +88,16 @@ static int LongTime_Accuracy_Check(struct Accuracy_Check_Module *Accuracy_Check_
     if ((fabsf(LongTime_Filted_PitchErr) < Accuracy_Check_Struct->PitchTolerance) &&
         (fabsf(LongTime_Filted_YawErr) < Accuracy_Check_Struct->YawTolerance))
     {
-        // ±¾´Î¾«¶È¼ì²éÍ¨¹ı
+        // æœ¬æ¬¡ç²¾åº¦æ£€æŸ¥é€šè¿‡
         if (LongTime_GunSet_AimbotShoot_Count < 200)
             ++LongTime_GunSet_AimbotShoot_Count;
     }
     else
     {
-        // ±¾´Î¾«¶È¼ì²éÎ´Í¨¹ı
+        // æœ¬æ¬¡ç²¾åº¦æ£€æŸ¥æœªé€šè¿‡
         LongTime_GunSet_AimbotShoot_Count = 0;
     }
-    // ¼ì²é×îÖÕ¾«¶È½á¹û
+    // æ£€æŸ¥æœ€ç»ˆç²¾åº¦ç»“æœ
     if (LongTime_GunSet_AimbotShoot_Count < 150)
         return 0;
     else
@@ -108,26 +108,26 @@ static int LongTime_Accuracy_Check(struct Accuracy_Check_Module *Accuracy_Check_
 }
 
 static Gimbal_SetReceive_Type GimbalSet_GetFromVisual;
-static rt_tick_t Last_Predicted_Tick;           // ÉÏÒ»´ÎÊÕµ½ÓĞĞ§Êı¾İÊ±µÄÔ¤²âÊ±¼äµã
-static drv_VisualMode_e Visual_Mode_Set_Last;   // ÉÏÒ»´ÎµÄÊÓ¾õÉè¶¨¹¤×÷Ä£Ê½
-static uint8_t LongTime_Accuracy_Check_Result;  // ³¤Ê±¼ä¾«¶È¼ì²éµÄ½á¹û
-static uint8_t ShortTime_Accuracy_Check_Result; // ¶ÌÊ±¼ä¾«¶È¼ì²éµÄ½á¹û
+static rt_tick_t Last_Predicted_Tick;           // ä¸Šä¸€æ¬¡æ”¶åˆ°æœ‰æ•ˆæ•°æ®æ—¶çš„é¢„æµ‹æ—¶é—´ç‚¹
+static drv_VisualMode_e Visual_Mode_Set_Last;   // ä¸Šä¸€æ¬¡çš„è§†è§‰è®¾å®šå·¥ä½œæ¨¡å¼
+static uint8_t LongTime_Accuracy_Check_Result;  // é•¿æ—¶é—´ç²¾åº¦æ£€æŸ¥çš„ç»“æœ
+static uint8_t ShortTime_Accuracy_Check_Result; // çŸ­æ—¶é—´ç²¾åº¦æ£€æŸ¥çš„ç»“æœ
 rt_int32_t DeltaTick;
-// ÊäÈëÊä³ö½Ç¶Èµ¥Î»£º¡ã
-// ÊäÈëÊä³öÁãÎ»£ºÓëIMUÊı¾İÁãÎ»Ò»ÖÂ
-// »ñÈ¡ËùĞèµÄÔÆÌ¨½Ç¶ÈÉè¶¨Öµº¯Êı
+// è¾“å…¥è¾“å‡ºè§’åº¦å•ä½ï¼šÂ°
+// è¾“å…¥è¾“å‡ºé›¶ä½ï¼šä¸IMUæ•°æ®é›¶ä½ä¸€è‡´
+// è·å–æ‰€éœ€çš„äº‘å°è§’åº¦è®¾å®šå€¼å‡½æ•°
 void Aimbot_Get_GimbalSet(Gimbal_SetCal_Type *Gimbal_SetData_Out)
 {
     char ReadValid_Rem;
-    rt_tick_t TickNow = rt_tick_get(); // »ñÈ¡²¢±£´æµ±Ç°µÄTick
+    rt_tick_t TickNow = rt_tick_get(); // è·å–å¹¶ä¿å­˜å½“å‰çš„Tick
     
-    AttitudeData_Type GimbalSet_Atti_Temp; // ¸Ã±äÁ¿°üº¬½Ï¶àÖĞ¼ä¹ı³Ì, ²»½¨ÒéÊ¹ÓÃ jscope ¹Û²ì
+    AttitudeData_Type GimbalSet_Atti_Temp; // è¯¥å˜é‡åŒ…å«è¾ƒå¤šä¸­é—´è¿‡ç¨‹, ä¸å»ºè®®ä½¿ç”¨ jscope è§‚å¯Ÿ
 
-    // ¼ì²é×ÔÃéÄ£Ê½ÊÇ·ñÕı³££¬¼ì²éÊÇ·ñÃé×¼µ½ÁËÄ¿±ê
+    // æ£€æŸ¥è‡ªç„æ¨¡å¼æ˜¯å¦æ­£å¸¸ï¼Œæ£€æŸ¥æ˜¯å¦ç„å‡†åˆ°äº†ç›®æ ‡
     if (((int)Visual_Mode_Set != (int)VisualMode_FB) || (VisualFlag_TargetFound == 0))
     {
-        // µ±Ç°ÊÓ¾õÄ£Ê½ÓĞÎÊÌâ£¬»òÃ»ÓĞÊ¶±ğµ½Ä¿±ê£¬Ôò²»Ê¹ÓÃµ±Ç°µÄÉè¶¨Öµ
-        // µ±Ç°»ñÈ¡²»µ½¿ÉÓÃµÄ×ÔÃéÊı¾İ£¬ÔòÖ±½Ó·µ»Ø´íÎóÖµ
+        // å½“å‰è§†è§‰æ¨¡å¼æœ‰é—®é¢˜ï¼Œæˆ–æ²¡æœ‰è¯†åˆ«åˆ°ç›®æ ‡ï¼Œåˆ™ä¸ä½¿ç”¨å½“å‰çš„è®¾å®šå€¼
+        // å½“å‰è·å–ä¸åˆ°å¯ç”¨çš„è‡ªç„æ•°æ®ï¼Œåˆ™ç›´æ¥è¿”å›é”™è¯¯å€¼
         Gimbal_SetData_Out->State = RT_ERROR;
         return;
     }
@@ -141,44 +141,44 @@ ReadAgain:
     GimbalSet_GetFromVisual.PredictedTime = GimbalSet_Receive[ReadValid_Rem].PredictedTime;
     GimbalSet_GetFromVisual.State = GimbalSet_Receive[ReadValid_Rem].State;
     if (ReadValid_Rem != Gimbal_Set_Cal_READ_Valid)
-        /* ÖĞÍ¾³öÏÖÁËÊÓ¾õÊı¾İ¸üĞÂ£¬´ËÊ±ĞèÒªÖØĞÂ¶ÁÈ¡ */
+        /* ä¸­é€”å‡ºç°äº†è§†è§‰æ•°æ®æ›´æ–°ï¼Œæ­¤æ—¶éœ€è¦é‡æ–°è¯»å– */
         goto ReadAgain;
 
-    // Éè¶¨Öµ¶ÁÈ¡Íê³É, ÏÈÅĞ¶ÏÓĞĞ§ĞÔ
-    DeltaTick = TickNow - GimbalSet_GetFromVisual.PredictedTime; // ¼ÆËãÒÑÖªÉè¶¨ÖµµÄÊ±¿Ìµ½ÏÖÔÚµÄÊ±¼ä²î
+    // è®¾å®šå€¼è¯»å–å®Œæˆ, å…ˆåˆ¤æ–­æœ‰æ•ˆæ€§
+    DeltaTick = TickNow - GimbalSet_GetFromVisual.PredictedTime; // è®¡ç®—å·²çŸ¥è®¾å®šå€¼çš„æ—¶åˆ»åˆ°ç°åœ¨çš„æ—¶é—´å·®
     if ((GimbalSet_GetFromVisual.State != RT_EOK) || (DeltaTick > 50))
     {
-        // µ±Ç°»ñÈ¡²»µ½¿ÉÓÃµÄ×ÔÃéÊı¾İ£¬ÔòÖ±½Ó·µ»Ø´íÎóÖµ
+        // å½“å‰è·å–ä¸åˆ°å¯ç”¨çš„è‡ªç„æ•°æ®ï¼Œåˆ™ç›´æ¥è¿”å›é”™è¯¯å€¼
         Gimbal_SetData_Out->State = RT_ERROR;
-        VisualFlag_TargetFound = 0; // Ç¿ĞĞ±ê¼ÇÎª¶ªÊ§Ä¿±ê×´Ì¬
+        VisualFlag_TargetFound = 0; // å¼ºè¡Œæ ‡è®°ä¸ºä¸¢å¤±ç›®æ ‡çŠ¶æ€
         return;
     }
 
-    // Êı¾İÓĞĞ§£¬Õı³£»»ËãÉè¶¨Öµ
+    // æ•°æ®æœ‰æ•ˆï¼Œæ­£å¸¸æ¢ç®—è®¾å®šå€¼
     GimbalSet_Atti_Temp.Pitch = GimbalSet_GetFromVisual.GimbalSet_Angle.Pitch + (GimbalSet_GetFromVisual.GimbalSet_Speed.Pitch / 1000.0f) * DeltaTick;
-    // ÅĞ¶ÏPitchÖáÊÇ·ñÄÜ´ïµ½Ö¸¶¨Éè¶¨Öµ
+    // åˆ¤æ–­Pitchè½´æ˜¯å¦èƒ½è¾¾åˆ°æŒ‡å®šè®¾å®šå€¼
     if ((GimbalSet_Atti_Temp.Pitch > Gimbal_Pitch_UpLim) || (GimbalSet_Atti_Temp.Pitch < Gimbal_Pitch_DownLim))
     {
-        // µ±Ç°»ñÈ¡²»µ½¿ÉÓÃµÄ×ÔÃéÊı¾İ£¬ÔòÖ±½Ó·µ»Ø´íÎóÖµ
+        // å½“å‰è·å–ä¸åˆ°å¯ç”¨çš„è‡ªç„æ•°æ®ï¼Œåˆ™ç›´æ¥è¿”å›é”™è¯¯å€¼
         Gimbal_SetData_Out->State = RT_ERROR;
         return;
     }
 
     GimbalSet_Atti_Temp.Yaw = GimbalSet_GetFromVisual.GimbalSet_Angle.Yaw + (GimbalSet_GetFromVisual.GimbalSet_Speed.Yaw / 1000.0f) * DeltaTick;
 
-    // Yaw¿çÈ¦´¦Àí
+    // Yawè·¨åœˆå¤„ç†
     utils_norm_angle(&GimbalSet_Atti_Temp.Yaw);
-    // ¾«¶È¼ì²é
+    // ç²¾åº¦æ£€æŸ¥
     if (VisualFlag_TargetFound == 1)
     {
-        // ÓĞËø¶¨Ä¿±ê£¬ĞèÒª¼ÆËãÔÆÌ¨¾«¶ÈÊÇ·ñ´ï±ê
+        // æœ‰é”å®šç›®æ ‡ï¼Œéœ€è¦è®¡ç®—äº‘å°ç²¾åº¦æ˜¯å¦è¾¾æ ‡
         if (VisualFlag_Fire || (VisualMode_FB == VISUAL_MODE_AIMBUFF_CONST_SPEED) || (VisualMode_FB == VISUAL_MODE_AIMBUFF_VARY_SPEED))
         {
             Accuracy_Check_s.PitchErr = CtrlErr_Pitch;
             Accuracy_Check_s.YawErr = CtrlErr_Yaw;
             Accuracy_Check_s.PitchTolerance = GimbalTolerance_Pitch;
             Accuracy_Check_s.YawTolerance = GimbalTolerance_Yaw;
-            // Á½ÖÖ¾«¶ÈÅĞ¶ÏÂß¼­È¡½»¼¯
+            // ä¸¤ç§ç²¾åº¦åˆ¤æ–­é€»è¾‘å–äº¤é›†
             LongTime_Accuracy_Check_Result = LongTime_Accuracy_Check(&Accuracy_Check_s, GunSet_AimbotShootFlag);
             ShortTime_Accuracy_Check_Result = ShortTime_Accuracy_Check(&Accuracy_Check_s);
             GunSet_AimbotShootFlag = LongTime_Accuracy_Check_Result || ShortTime_Accuracy_Check_Result;
@@ -186,28 +186,28 @@ ReadAgain:
     }
     else
     {
-        // Ã»ÓĞËø¶¨Ä¿±ê£¬ÏÔÈ»²»Ó¦·¢µ¯
+        // æ²¡æœ‰é”å®šç›®æ ‡ï¼Œæ˜¾ç„¶ä¸åº”å‘å¼¹
         GunSet_AimbotShootFlag = 0;
         ShortTime_GunSet_AimbotShoot_Count = 0;
         LongTime_Accuracy_Check_Result = 0;
     }
 
-    // Êä³öÊı¾İÆ½»¬
+    // è¾“å‡ºæ•°æ®å¹³æ»‘
     if ((GimbalSet_GetFromVisual.PredictedTime - Last_Predicted_Tick > 200) || (Visual_Mode_Set_Last != Visual_Mode_Set))
     {
-        // ÅĞ¶Ï±¾´ÎÄ£Ê½ÓëÉÏ´ÎÄ£Ê½ÊÇ·ñÏàÍ¬, ²»ÏàÍ¬»òÏà¸ôÊ±¼äÌ«³¤Ê±ÖØÖÃÂË²¨Æ÷
+        // åˆ¤æ–­æœ¬æ¬¡æ¨¡å¼ä¸ä¸Šæ¬¡æ¨¡å¼æ˜¯å¦ç›¸åŒ, ä¸ç›¸åŒæˆ–ç›¸éš”æ—¶é—´å¤ªé•¿æ—¶é‡ç½®æ»¤æ³¢å™¨
         Smooth_SetData_Restart(&Smooth_VisualPitchSet, GimbalSet_Atti_Temp.Pitch);
         Smooth_SetData_Restart(&Smooth_VisualYawSet, GimbalSet_Atti_Temp.Yaw);
     }
     else
     {
-        // ·ñÔòÕı³£Ë¢ĞÂÆ½»¬ÂË²¨Æ÷
+        // å¦åˆ™æ­£å¸¸åˆ·æ–°å¹³æ»‘æ»¤æ³¢å™¨
         Smooth_SetDataABS(&Smooth_VisualPitchSet, GimbalSet_Atti_Temp.Pitch);
         Smooth_SetDataABS(&Smooth_VisualYawSet, GimbalSet_Atti_Temp.Yaw);
     }
     Smooth_GetDataABS(&GimbalSet_Atti_Temp.Pitch, &Smooth_VisualPitchSet);
     Smooth_GetDataABS(&GimbalSet_Atti_Temp.Yaw, &Smooth_VisualYawSet);
-    // ¼ÇÂ¼ĞÂµÄÏà¹ØÊı¾İ
+    // è®°å½•æ–°çš„ç›¸å…³æ•°æ®
     Last_Predicted_Tick = GimbalSet_GetFromVisual.PredictedTime;
     Visual_Mode_Set_Last = Visual_Mode_Set;
 
@@ -219,20 +219,20 @@ ReadAgain:
     Gimbal_SetData_Out->State = RT_EOK;
 }
 
-// ¶ş´ú×ÔÃéÆô¶¯³ÌĞò
+// äºŒä»£è‡ªç„å¯åŠ¨ç¨‹åº
 int AimbotV2_Init(void)
 {
-    //Ä¬ÈÏ¸©Ñö½ÇÏŞ·ù+10~-10¶È
+    //é»˜è®¤ä¿¯ä»°è§’é™å¹…+10~-10åº¦
     Gimbal_Pitch_UpLim = 10;
     Gimbal_Pitch_DownLim = -10;
-    Muzzle_V_REM = 14.0f; //Ä¬ÈÏ¼ÆËãµ¯ËÙ14.6m/s
+    Muzzle_V_REM = 14.0f; //é»˜è®¤è®¡ç®—å¼¹é€Ÿ14.6m/s
 
-    // Êı¾İÆ½»¬Ä£¿é, ÓÃÓÚÆ½»¬ÊÓ¾õ¸ø³öµÄÉè¶¨Öµ
+    // æ•°æ®å¹³æ»‘æ¨¡å—, ç”¨äºå¹³æ»‘è§†è§‰ç»™å‡ºçš„è®¾å®šå€¼
     Smooth_Init(&Smooth_VisualPitchSet, 0, 30);
     Smooth_Init(&Smooth_VisualYawSet, 0, 30);
     Smooth_SetDataFix(&Smooth_VisualYawSet, 360, 0, 1);
 
-    // ³õÊ¼»¯ÊÓ¾õÍ¨ĞÅÏà¹Ø
+    // åˆå§‹åŒ–è§†è§‰é€šä¿¡ç›¸å…³
     Visual_Com_Init();
 
     return RT_EOK;

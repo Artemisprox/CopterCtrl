@@ -1,10 +1,9 @@
 /*
-        IMUÎÂ¶È¿ØÖÆ
+        IMUæ¸©åº¦æ§åˆ¶
 */
 #include "func_TempCtr.h"
 #include "rtdevice.h"
 #include "drv_thread.h"
-#include "drv_rgblight.h"
 
 #include <board.h>
 #include "func_bmi088.h"
@@ -16,20 +15,20 @@ static rt_thread_t temp_ctr = RT_NULL;
 struct rt_semaphore temp_pid_sem;
 
 TempCTR_t HERO_TPctr;
-int16_t IMUTempSet = 45; // ÎÂ¶ÈÉè¶¨Öµ
+int16_t IMUTempSet = 45; // æ¸©åº¦è®¾å®šå€¼
 
-// IMU¿ØÎÂPWM
+// IMUæ§æ¸©PWM
 static struct rt_device_pwm *IMUtemp_pwm = RT_NULL;
 #define IMUTEMP_PWMCHANNEL 1
 
-int k_id = 70;           // pidÖĞ ÓÃd²¹³¥i µÄÏµÊı
-float ivalue_init = 350; // ivalueµş¼ÓµÄ³£Öµ
+int k_id = 70;           // pidä¸­ ç”¨dè¡¥å¿i çš„ç³»æ•°
+float ivalue_init = 350; // ivalueå åŠ çš„å¸¸å€¼
 
 /**
- * @brief ¿ØÎÂ×¨ÓÃµÄPID
- * @param [pid_t*] target£ºpid½á¹¹Ìå
- * @param [float] Error£ºÆ«²îÁ¿
- * @return ÎŞ
+ * @brief æ§æ¸©ä¸“ç”¨çš„PID
+ * @param [pid_t*] targetï¼špidç»“æ„ä½“
+ * @param [float] Errorï¼šåå·®é‡
+ * @return æ— 
  * @author zzj
  */
 static void PIDTemp_Calculate(pid_t *target, float Error)
@@ -38,13 +37,13 @@ static void PIDTemp_Calculate(pid_t *target, float Error)
     target->err_old = target->err;
     target->err = Error;
 
-    pid_d = (target->err - target->err_old); // ¼ÆËãd
+    pid_d = (target->err - target->err_old); // è®¡ç®—d
 
     if (target->I_Dis == 0)
     {
         target->i_value += target->ki * Error;
         target->i_value += k_id * pid_d;
-        //»ı·ÖÏŞ·ù
+        //ç§¯åˆ†é™å¹…
         if (target->i_value < 0)
         {
             if (target->i_value < -target->i_limit)
@@ -59,7 +58,7 @@ static void PIDTemp_Calculate(pid_t *target, float Error)
 
     target->out = target->kp * Error + (target->i_value + ivalue_init) + target->kd * pid_d;
 
-    //Êä³öÏŞ·ù
+    //è¾“å‡ºé™å¹…
     if (target->out > target->out_limit_up)
         target->out = target->out_limit_up;
     else if (target->out < target->out_limit_down)
@@ -68,10 +67,10 @@ static void PIDTemp_Calculate(pid_t *target, float Error)
 
 int IfTempOK = RT_ERROR;
 /**
- * @brief£ºIMUÎÂ¶È¿ØÖÆÏß³Ì
- * @param [in]	parameter:¸Ã²ÎÊı²»»á±»Ê¹ÓÃ
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šIMUæ¸©åº¦æ§åˆ¶çº¿ç¨‹
+ * @param [in]	parameter:è¯¥å‚æ•°ä¸ä¼šè¢«ä½¿ç”¨
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 static void TempCTR_thread(void *parameter)
 {
@@ -81,11 +80,11 @@ static void TempCTR_thread(void *parameter)
     SWDG_START(SWDG_TEMPCTRL_ID);
     while (1)
     {
-        /* ¶ÁÈ¡ĞÅºÅÁ¿ */
+        /* è¯»å–ä¿¡å·é‡ */
         SWDG_FEED(SWDG_TEMPCTRL_ID);
         ifsemOK = rt_sem_take(&temp_pid_sem, 1400);
 
-        HERO_TPctr.TempCTR_pid.set = IMUTempSet; // ¸üĞÂÉè¶¨Öµ
+        HERO_TPctr.TempCTR_pid.set = IMUTempSet; // æ›´æ–°è®¾å®šå€¼
 
         Error = HERO_TPctr.TempCTR_pid.set - HERO_BMI088_DEV.Temperature;
         PIDTemp_Calculate(&HERO_TPctr.TempCTR_pid, Error);
@@ -93,7 +92,7 @@ static void TempCTR_thread(void *parameter)
         rt_pwm_set(IMUtemp_pwm, IMUTEMP_PWMCHANNEL, 1 * 1000 * 1000, (rt_uint32_t)HERO_TPctr.TempCTR_pid.out * 1000);
 
         if (TempCTR_count < 2)
-        { // ÎÂ¶È»¹Ã»ÎÈ¶¨
+        { // æ¸©åº¦è¿˜æ²¡ç¨³å®š
             if (fabsf(Error) < 0.5f)
                 TempCTR_count++;
             else
@@ -104,11 +103,11 @@ static void TempCTR_thread(void *parameter)
             }
         }
         else
-            // ÎÂ¶ÈÒÑÎÈ¶¨´ïµ½Éè¶¨Öµ
+            // æ¸©åº¦å·²ç¨³å®šè¾¾åˆ°è®¾å®šå€¼
             IfTempOK = RT_EOK;
 
         if (ifsemOK == -RT_ETIMEOUT)
-        { // ÓÉÓÚ³¬Ê±½øÈëµÄ¸ÃÏß³Ì
+        { // ç”±äºè¶…æ—¶è¿›å…¥çš„è¯¥çº¿ç¨‹
             SWDG_FEED(SWDG_TEMPCTRL_ID);
             rt_thread_delay(1000);
         }
@@ -116,15 +115,15 @@ static void TempCTR_thread(void *parameter)
 }
 
 /**
-* @brief£º³õÊ¼»¯IMUµÄ¿ØÎÂPWM£¨TIME10 CH1 PF6£©
-* @param [in] ÎŞ
-* @return£ºRT_EOK£º³õÊ¼»¯³É¹¦
-                RT_ERROR£º³õÊ¼»¯Ê§°Ü
-* @author£ºzzj
+* @briefï¼šåˆå§‹åŒ–IMUçš„æ§æ¸©PWMï¼ˆTIME10 CH1 PF6ï¼‰
+* @param [in] æ— 
+* @returnï¼šRT_EOKï¼šåˆå§‹åŒ–æˆåŠŸ
+                RT_ERRORï¼šåˆå§‹åŒ–å¤±è´¥
+* @authorï¼šzzj
 */
 int IMUtempPWM_init(void)
 {
-    //³¢ÊÔ²éÕÒÉè±¸£¬²éÕÒÊ§°ÜÊ±·µ»Ø
+    //å°è¯•æŸ¥æ‰¾è®¾å¤‡ï¼ŒæŸ¥æ‰¾å¤±è´¥æ—¶è¿”å›
     IMUtemp_pwm = (struct rt_device_pwm *)rt_device_find("pwm10");
     if (IMUtemp_pwm == RT_NULL)
         return RT_ERROR;
@@ -136,30 +135,30 @@ int IMUtempPWM_init(void)
 INIT_APP_EXPORT(IMUtempPWM_init);
 
 /**
-* @brief£º³õÊ¼»¯IMUÎÂ¶È¿ØÖÆÏß³Ì
-* @param [in]	ÎŞ
-* @return£º		1:³õÊ¼»¯³É¹¦
-                0:³õÊ¼»¯Ê§°Ü
-* @author£ºzzj
+* @briefï¼šåˆå§‹åŒ–IMUæ¸©åº¦æ§åˆ¶çº¿ç¨‹
+* @param [in]	æ— 
+* @returnï¼š		1:åˆå§‹åŒ–æˆåŠŸ
+                0:åˆå§‹åŒ–å¤±è´¥
+* @authorï¼šzzj
 */
 int TempCTR_init(void)
 {
     pid_init(&HERO_TPctr.TempCTR_pid, 300, 15, 500, 250, 1000, 0);
 
-    //³õÊ¼»¯IMUÎÂ¶È¿ØÖÆÏß³Ì
+    //åˆå§‹åŒ–IMUæ¸©åº¦æ§åˆ¶çº¿ç¨‹
     temp_ctr = rt_thread_create(
-        "TP_CTR",            //Ïß³ÌÃû
-        TempCTR_thread,      //Ïß³ÌÈë¿Ú
-        RT_NULL,             //Èë¿Ú²ÎÊıÎŞ
-        4096,                //Ïß³ÌÕ»
-        THREAD_PRIO_TEMPCTR, //Ïß³ÌÓÅÏÈ¼¶
-        1);                  //Ïß³ÌÊ±¼äÆ¬´óĞ¡
+        "TP_CTR",            //çº¿ç¨‹å
+        TempCTR_thread,      //çº¿ç¨‹å…¥å£
+        RT_NULL,             //å…¥å£å‚æ•°æ— 
+        4096,                //çº¿ç¨‹æ ˆ
+        THREAD_PRIO_TEMPCTR, //çº¿ç¨‹ä¼˜å…ˆçº§
+        1);                  //çº¿ç¨‹æ—¶é—´ç‰‡å¤§å°
 
-    //Ïß³Ì´´½¨Ê§°Ü·µ»Øfalse
+    //çº¿ç¨‹åˆ›å»ºå¤±è´¥è¿”å›false
     if (temp_ctr == RT_NULL)
         return RT_ERROR;
 
-    //Ïß³ÌÆô¶¯Ê§°Ü·µ»Øfalse
+    //çº¿ç¨‹å¯åŠ¨å¤±è´¥è¿”å›false
     if (rt_thread_startup(temp_ctr) != RT_EOK)
         return RT_ERROR;
 

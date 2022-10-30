@@ -3,7 +3,7 @@
 
 #include <rtthread.h>
 
-// Ò»·¢µ¯Íè»ıÀÛµÄÈÈÁ¿
+// ä¸€å‘å¼¹ä¸¸ç§¯ç´¯çš„çƒ­é‡
 #ifdef CORE_USING_INFANTRY
 #define SHOOT_HEAT (10)
 #elif defined CORE_USING_HERO
@@ -12,31 +12,31 @@
 
 typedef enum
 {
-    Unselected = 0, // Î´Ñ¡ÔñÀàĞÍ
+    Unselected = 0, // æœªé€‰æ‹©ç±»å‹
     AmmoBooster_Mode_Start,
-    Outbreak_Priority, // ±¬·¢ÓÅÏÈ
+    Outbreak_Priority, // çˆ†å‘ä¼˜å…ˆ
 #ifndef CORE_USING_HERO
-    Cooling_Priority, // ÀäÈ´ÓÅÏÈ
+    Cooling_Priority, // å†·å´ä¼˜å…ˆ
 #endif
-    BulletSpeed_Priority, // µ¯ËÙÓÅÏÈ
+    BulletSpeed_Priority, // å¼¹é€Ÿä¼˜å…ˆ
 
     Chassis_Mode_Start,
-    Power_Priority, // ¹¦ÂÊÓÅÏÈ
-    Blood_Priority, // ÑªÁ¿ÓÅÏÈ
-} Robot_Type_Enum;  // ·¢Éä»ú¹¹ÀàĞÍÑ¡Ôñ
+    Power_Priority, // åŠŸç‡ä¼˜å…ˆ
+    Blood_Priority, // è¡€é‡ä¼˜å…ˆ
+} Robot_Type_Enum;  // å‘å°„æœºæ„ç±»å‹é€‰æ‹©
 
 typedef enum
 {
-    Level1 = 0,    // 1 ¼¶»úÆ÷ÈË
-    Level2,        // 2 ¼¶»úÆ÷ÈË
-    Level3,        // 3 ¼¶»úÆ÷ÈË
-} RobotLevel_Enum; // »úÆ÷ÈËµÈ¼¶
+    Level1 = 0,    // 1 çº§æœºå™¨äºº
+    Level2,        // 2 çº§æœºå™¨äºº
+    Level3,        // 3 çº§æœºå™¨äºº
+} RobotLevel_Enum; // æœºå™¨äººç­‰çº§
 
 typedef struct
 {
-    rt_uint16_t HeatLim;      // Ç¹¹ÜÈÈÁ¿ÉÏÏŞ
-    rt_uint16_t CoolingSpeed; // Ç¹¹ÜÀäÈ´ËÙ¶È
-    rt_uint16_t SpeedLim;     // ÉäËÙÉÏÏŞ
-} LairerAttribute_s;          // ·¢Éä»ú¹¹ÊôĞÔ
+    rt_uint16_t HeatLim;      // æªç®¡çƒ­é‡ä¸Šé™
+    rt_uint16_t CoolingSpeed; // æªç®¡å†·å´é€Ÿåº¦
+    rt_uint16_t SpeedLim;     // å°„é€Ÿä¸Šé™
+} LairerAttribute_s;          // å‘å°„æœºæ„å±æ€§
 
 #endif /* __DRV_GUNSETTINGS_H__ */

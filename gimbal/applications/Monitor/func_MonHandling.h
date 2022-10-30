@@ -4,7 +4,7 @@
 #include <rtthread.h>
 
 /**
- * @brief »úÆ÷ÈËÔÆÌ¨µ¥Æ¬»ú¸´Î»
+ * @brief éˆå“„æ«’æµœè½°ç°¯é™æ¿å´Ÿé—å›¨æº€æ¾¶å¶„ç¶…
  * @author fwlh
  */
 extern void Robot_Reset_Gimbal(void);

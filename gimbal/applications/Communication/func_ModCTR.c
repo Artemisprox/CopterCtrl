@@ -13,27 +13,27 @@
 #include "drv_IMU.h"
 #include "func_gun.h"
 
-static rt_int16_t basespeed = 1300; // µ×ÅÌËÙ¶ÈÉè¶¨Öµ
+static rt_int16_t basespeed = 1300; // åº•ç›˜é€Ÿåº¦è®¾å®šå€¼
 static rt_int16_t Shift_SpeedUp = 0;
 static rt_int16_t Ctrl_SpeedDown = 0;
 
-/* ÔÚ°´¼ü»Øµ÷º¯ÊıÀïÃæĞŞ¸ÄµÄ±äÁ¿ */
-rt_int8_t motion_mode = 0;                      // µ×ÅÌÔË¶¯Ä£Ê½
-static rt_uint8_t probe_last_motion_mode = 0;   // Ì½Í·Ä£Ê½½áÊøÒÔºó¸ÃÉè¶¨µÄµ×ÅÌÄ£Ê½
-float SetYaw_NotViewing;                        // ÔÚ½øÈëÌ½Í·Ä£Ê½Ö®Ç°µÄ Yaw ÖáÉè¶¨Öµ
-static rt_uint8_t moveback_end_motion_mode = 0; // »ØÍ·Ä£Ê½½áÊøÒÔºó¸ÃÉè¶¨µÄµ×ÅÌÄ£Ê½
+/* åœ¨æŒ‰é”®å›è°ƒå‡½æ•°é‡Œé¢ä¿®æ”¹çš„å˜é‡ */
+rt_int8_t motion_mode = 0;                      // åº•ç›˜è¿åŠ¨æ¨¡å¼
+static rt_uint8_t probe_last_motion_mode = 0;   // æ¢å¤´æ¨¡å¼ç»“æŸä»¥åè¯¥è®¾å®šçš„åº•ç›˜æ¨¡å¼
+float SetYaw_NotViewing;                        // åœ¨è¿›å…¥æ¢å¤´æ¨¡å¼ä¹‹å‰çš„ Yaw è½´è®¾å®šå€¼
+static rt_uint8_t moveback_end_motion_mode = 0; // å›å¤´æ¨¡å¼ç»“æŸä»¥åè¯¥è®¾å®šçš„åº•ç›˜æ¨¡å¼
 
-static rt_tick_t Recover_Start_Tick = 0; // ¿ªÊ¼´ÓÌ½Í·Ä£Ê½»Ö¸´/Ò»¼ü»ØÍ·µÄÊ±¿Ì
-static rt_uint8_t Recover_Times = 0;     // ÓÃÓÚÌ½Í·Ä£Ê½/Ò»¼ü»ØÍ·¼ì²é¿ØÖÆ¾«¶ÈµÄÁ¬Ğø±È½Ï¼ÆÊı±äÁ¿
-static rt_uint8_t Probe_Back_Flag = 0;   // ´¦ÓÚÌ½Í·Ä£Ê½»Ö¸´×´Ì¬µÄ±êÖ¾Î»
-static rt_uint8_t Moving_Back_Flag = 0;  // ´¦ÓÚÒ»¼ü»ØÍ·Ä£Ê½µÄ±êÖ¾Î»
+static rt_tick_t Recover_Start_Tick = 0; // å¼€å§‹ä»æ¢å¤´æ¨¡å¼æ¢å¤/ä¸€é”®å›å¤´çš„æ—¶åˆ»
+static rt_uint8_t Recover_Times = 0;     // ç”¨äºæ¢å¤´æ¨¡å¼/ä¸€é”®å›å¤´æ£€æŸ¥æ§åˆ¶ç²¾åº¦çš„è¿ç»­æ¯”è¾ƒè®¡æ•°å˜é‡
+static rt_uint8_t Probe_Back_Flag = 0;   // å¤„äºæ¢å¤´æ¨¡å¼æ¢å¤çŠ¶æ€çš„æ ‡å¿—ä½
+static rt_uint8_t Moving_Back_Flag = 0;  // å¤„äºä¸€é”®å›å¤´æ¨¡å¼çš„æ ‡å¿—ä½
 
-rt_uint8_t GimbalSetPower = 0; // ÔÆÌ¨¸øµ×ÅÌµÄÉè¶¨¹¦ÂÊ
+rt_uint8_t GimbalSetPower = 0; // äº‘å°ç»™åº•ç›˜çš„è®¾å®šåŠŸç‡
 
-rt_uint8_t In_Dangling_Mode = 0; // ¼ÇÂ¼ÉÏÒ»´ÎÊÇ·ñ´¦ÓÚµõÉäÄ£Ê½ÖĞ
-rt_int8_t Dangling_Motion_Mode;  // ½øÈëµõÉäÄ£Ê½Ê±µÄµ×ÅÌÄ£Ê½
+rt_uint8_t In_Dangling_Mode = 0; // è®°å½•ä¸Šä¸€æ¬¡æ˜¯å¦å¤„äºåŠå°„æ¨¡å¼ä¸­
+rt_int8_t Dangling_Motion_Mode;  // è¿›å…¥åŠå°„æ¨¡å¼æ—¶çš„åº•ç›˜æ¨¡å¼
 
-rt_int8_t FillMode_EN = 0; // ²¹µ¯Ä£Ê½±êÖ¾Î»
+rt_int8_t FillMode_EN = 0; // è¡¥å¼¹æ¨¡å¼æ ‡å¿—ä½
 
 float PitchFix = 0;
 float YawFix = 0;
@@ -42,13 +42,13 @@ mixed_msg_t mixedMsgs = {0};
 
 static int Robot_Chassis_Reset;
 
-// ÉèÖÃµ×ÅÌ¸´Î»ÃüÁî
+// è®¾ç½®åº•ç›˜å¤ä½å‘½ä»¤
 void ResetCmd_Write(int Reset_Flag)
 {
     Robot_Chassis_Reset = Reset_Flag;
 }
 
-// ±¾ÎÄ¼şÄÚÄ£¿é¶ÁÈ¡µ×ÅÌ¸´Î»ÃüÁî
+// æœ¬æ–‡ä»¶å†…æ¨¡å—è¯»å–åº•ç›˜å¤ä½å‘½ä»¤
 static int ResetCmd_Read(void)
 {
     int cmd = Robot_Chassis_Reset;
@@ -56,40 +56,40 @@ static int ResetCmd_Read(void)
     return cmd;
 }
 
-static uint8_t Now_In_Probe = 0; // ¼ÇÂ¼µ±Ç°ÊÇ²»ÊÇÔÚÌ½Í·Ä£Ê½ÖĞ
-// ½øÈë/ÍË³öÌ½Í·Ä£Ê½ĞèÒªµ÷ÓÃµÄº¯Êı
+static uint8_t Now_In_Probe = 0; // è®°å½•å½“å‰æ˜¯ä¸æ˜¯åœ¨æ¢å¤´æ¨¡å¼ä¸­
+// è¿›å…¥/é€€å‡ºæ¢å¤´æ¨¡å¼éœ€è¦è°ƒç”¨çš„å‡½æ•°
 void Enter_Probe_Mode(int Enter)
 {
     if (Enter)
     {
-        // Ì½Í·Ä£Ê½ÎŞ·¨ÖØ¸´½øÈë
+        // æ¢å¤´æ¨¡å¼æ— æ³•é‡å¤è¿›å…¥
         if (Now_In_Probe)
             return;
         Now_In_Probe = (uint8_t)Enter;
-        // ½øÈëÌ½Í·Ä£Ê½Ö®Ç°ĞèÒª¼ÇÂ¼ÏÖÔÚµÄ Yaw ÖáÉè¶¨Öµ
+        // è¿›å…¥æ¢å¤´æ¨¡å¼ä¹‹å‰éœ€è¦è®°å½•ç°åœ¨çš„ Yaw è½´è®¾å®šå€¼
         SetYaw_NotViewing = Read_Real_Set(Yaw_Set);
-        // ¼ÇÂ¼µ±Ç°µ×ÅÌÄ£Ê½
+        // è®°å½•å½“å‰åº•ç›˜æ¨¡å¼
         probe_last_motion_mode = motion_mode;
-        // µ×ÅÌÄ£Ê½ĞŞ¸ÄÎªµ×ÅÌ×ÔÖ÷
+        // åº•ç›˜æ¨¡å¼ä¿®æ”¹ä¸ºåº•ç›˜è‡ªä¸»
         motion_mode = CHASS_AUTO;
     }
     else
     {
-        // Î´½øÈëÌ½Í·Ä£Ê½Ê±²»ÄÜÍË³öÌ½Í·Ä£Ê½
+        // æœªè¿›å…¥æ¢å¤´æ¨¡å¼æ—¶ä¸èƒ½é€€å‡ºæ¢å¤´æ¨¡å¼
         if (!Now_In_Probe)
             return;
         Now_In_Probe = (uint8_t)Enter;
-        // °Ñ Yaw ÖáÉè¶¨Öµ¸Ä»ØÈ¥
+        // æŠŠ Yaw è½´è®¾å®šå€¼æ”¹å›å»
         Smooth_SetDataABS(&Smooth_YawAngleSet, SetYaw_NotViewing);
-        // ÑÓÊ±°Ñµ×ÅÌÄ£Ê½¸Ã»ØÈ¥
+        // å»¶æ—¶æŠŠåº•ç›˜æ¨¡å¼è¯¥å›å»
         Probe_Back_Flag = 1;
         Recover_Start_Tick = rt_tick_get();
     }
-    // Çå¿Õ¼ÆÊı±äÁ¿
+    // æ¸…ç©ºè®¡æ•°å˜é‡
     Recover_Times = 0;
 }
 
-// ½øÈëÒ»¼ü»ØÍ·Ä£Ê½Ê±µ÷ÓÃµÄº¯Êı
+// è¿›å…¥ä¸€é”®å›å¤´æ¨¡å¼æ—¶è°ƒç”¨çš„å‡½æ•°
 void Enter_MoveBack_Mode(void)
 {
     Recover_Start_Tick = rt_tick_get();
@@ -101,12 +101,12 @@ void Enter_MoveBack_Mode(void)
         moveback_end_motion_mode = FOLLOW_GIMBAL;
     else
         moveback_end_motion_mode = motion_mode;
-    motion_mode = MOVE_BACK; // µ¹³µÄ£Ê½
-    // Çå¿Õ¼ÆÊı±äÁ¿
+    motion_mode = MOVE_BACK; // å€’è½¦æ¨¡å¼
+    // æ¸…ç©ºè®¡æ•°å˜é‡
     Recover_Times = 0;
 }
 
-// ¼ÇÂ¼½øÈëµõÉäÄ£Ê½Ê±µÄµ×ÅÌÄ£Ê½
+// è®°å½•è¿›å…¥åŠå°„æ¨¡å¼æ—¶çš„åº•ç›˜æ¨¡å¼
 void Dangling_RecNow_MotionMode(void)
 {
     Dangling_Motion_Mode = motion_mode;
@@ -115,26 +115,26 @@ void Dangling_RecNow_MotionMode(void)
 void Refresh_ComputerSet_Gimbal(void);
 void Chassis_ComputerCTR(RC_Ctrl_t *RC_Data_in);
 /**
- * @brief£º¿Í»§¶Ë¿ØÖÆÖ÷º¯Êı
- * @param [RC_Ctrl_t*] RC_Data_in£ºÒ£¿ØÆ÷Êı¾İ½á¹¹Ìå
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šå®¢æˆ·ç«¯æ§åˆ¶ä¸»å‡½æ•°
+ * @param [RC_Ctrl_t*] RC_Data_inï¼šé¥æ§å™¨æ•°æ®ç»“æ„ä½“
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 void Computer_CTR(RC_Ctrl_t *RC_Data_in)
 {
 #if defined CORE_USING_HERO
-    // ´ÓµõÉäÄ£Ê½»Ö¸´
+    // ä»åŠå°„æ¨¡å¼æ¢å¤
     if (!Read_Dangling_Mode() && In_Dangling_Mode)
         motion_mode = Dangling_Motion_Mode;
     In_Dangling_Mode = Read_Dangling_Mode();
 #endif /* CORE_USING_HERO */
-    // Ì½Í·Ä£Ê½»òÕßÒ»¼ü»ØÍ·Ä£Ê½µÄÏà¹Øµ×ÅÌÄ£Ê½µÄ»Ö¸´
+    // æ¢å¤´æ¨¡å¼æˆ–è€…ä¸€é”®å›å¤´æ¨¡å¼çš„ç›¸å…³åº•ç›˜æ¨¡å¼çš„æ¢å¤
     if (Probe_Back_Flag || Moving_Back_Flag)
     {
-        // ¾­ÀúµÄÊ±¼ä±È½Ï³¤(0.8s)»òÕß¿ØÖÆÎó²î±È½ÏĞ¡ÒÔºó¿ÉÒÔ°Ñµ×ÅÌÄ£Ê½ĞŞ¸Ä»ØÈ¥
+        // ç»å†çš„æ—¶é—´æ¯”è¾ƒé•¿(0.8s)æˆ–è€…æ§åˆ¶è¯¯å·®æ¯”è¾ƒå°ä»¥åå¯ä»¥æŠŠåº•ç›˜æ¨¡å¼ä¿®æ”¹å›å»
         if (rt_tick_get() - Recover_Start_Tick > 800)
         {
-            // ÍË³ö»Ö¸´µÈ´ı×´Ì¬
+            // é€€å‡ºæ¢å¤ç­‰å¾…çŠ¶æ€
             if (Probe_Back_Flag)
             {
                 motion_mode = probe_last_motion_mode;
@@ -146,7 +146,7 @@ void Computer_CTR(RC_Ctrl_t *RC_Data_in)
                 Moving_Back_Flag = 0;
             }
         }
-        // ½øĞĞ¿ØÖÆ¾«¶ÈµÄ¼ì²é
+        // è¿›è¡Œæ§åˆ¶ç²¾åº¦çš„æ£€æŸ¥
         else if (fabsf(CtrlErr_Yaw) < 20.f)
         {
             if (Recover_Times < 200)
@@ -158,7 +158,7 @@ void Computer_CTR(RC_Ctrl_t *RC_Data_in)
             Recover_Times = 0;
         if (Recover_Times > 25)
         {
-            // ÍË³ö»Ö¸´µÈ´ı×´Ì¬
+            // é€€å‡ºæ¢å¤ç­‰å¾…çŠ¶æ€
             if (Probe_Back_Flag)
             {
                 motion_mode = probe_last_motion_mode;
@@ -172,14 +172,14 @@ void Computer_CTR(RC_Ctrl_t *RC_Data_in)
         }
     }
 
-    /* ÔÆÌ¨¿ØÖÆ */
-    Refresh_ComputerSet_Gimbal(); //¸üĞÂµçÄÔ¶ËÔÆÌ¨Êı¾İ
+    /* äº‘å°æ§åˆ¶ */
+    Refresh_ComputerSet_Gimbal(); //æ›´æ–°ç”µè„‘ç«¯äº‘å°æ•°æ®
 
-    /* ·¢µ¯, Ö»ÓĞÔÚ´ËÊ±×ÔÃé¿ª»ğÖ¸Áî²ÅÄÜÉúĞ§ */
+    /* å‘å¼¹, åªæœ‰åœ¨æ­¤æ—¶è‡ªç„å¼€ç«æŒ‡ä»¤æ‰èƒ½ç”Ÿæ•ˆ */
     if (Key_GetState(MOUSE_L) == 1)
     {
         if ((abs(Read_Gun_Motor(RubMotorLeft)->dji.speed) > 1000) && (Rub_speed_ReadSet() > 0))
-            // ±£Ö¤Ä¦²ÁÂÖÒÑ¾­Õı³£×ª¶¯
+            // ä¿è¯æ‘©æ“¦è½®å·²ç»æ­£å¸¸è½¬åŠ¨
             Gun_FireSet(FIRE_ON);
         else
         {
@@ -191,49 +191,49 @@ void Computer_CTR(RC_Ctrl_t *RC_Data_in)
     else
         Gun_FireSet(FIRE_OFF);
 
-    /* ·¢ËÍÇ¹¹ÜÏà¹ØÊı¾İ */
+    /* å‘é€æªç®¡ç›¸å…³æ•°æ® */
     // strike_status_send(&gun1);
     chassis_data_send();
 
-    /* Shift¼ÓËÙ */
+    /* ShiftåŠ é€Ÿ */
     if (Key_GetState(ACCL_KEY) == 1)
         Shift_SpeedUp = 1;
     else
         Shift_SpeedUp = 0;
 
-    /* Ctrl¼õËÙ */
+    /* Ctrlå‡é€Ÿ */
     if (Key_GetState(SLOW_KEY) == 1)
         Ctrl_SpeedDown = 1;
     else
         Ctrl_SpeedDown = 0;
 
-    /* µ×ÅÌÔË¶¯¿ØÖÆ */
+    /* åº•ç›˜è¿åŠ¨æ§åˆ¶ */
     Chassis_ComputerCTR(RC_Data_in);
 }
 
 /**
- * @brief£º¶ÁÈ¡²¢¸üĞÂÒ£¿ØÆ÷ÔÆÌ¨Éè¶¨Öµ
- * @param [in]	ÎŞ
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šè¯»å–å¹¶æ›´æ–°é¥æ§å™¨äº‘å°è®¾å®šå€¼
+ * @param [in]	æ— 
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 void Refresh_RemoteSet_Gimbal()
 {
     static float yaw_add = 0;
     static float pitch_add = 0;
-    //¶ÁÈ¡ÔöÁ¿
+    //è¯»å–å¢é‡
     yaw_add = -(RC_data.Remote_Data.ch0 - 1024) * 0.009f;
     pitch_add = (RC_data.Remote_Data.ch1 - 1024) * 0.004f;
-    //·¢ËÍÉè¶¨ÖµÔöÁ¿
+    //å‘é€è®¾å®šå€¼å¢é‡
     Smooth_SetDataADD(&Smooth_PitchAngleSet, pitch_add);
     Smooth_SetDataADD(&Smooth_YawAngleSet, yaw_add);
 }
 
 /**
- * @brief£º¶ÁÈ¡²¢¸üĞÂµçÄÔ¶ËÔÆÌ¨Éè¶¨Öµ
- * @param [in]	ÎŞ
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šè¯»å–å¹¶æ›´æ–°ç”µè„‘ç«¯äº‘å°è®¾å®šå€¼
+ * @param [in]	æ— 
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 void Refresh_ComputerSet_Gimbal(void)
 {
@@ -242,7 +242,7 @@ void Refresh_ComputerSet_Gimbal(void)
     static int16_t xspeed_last = 0;
     static int16_t yspeed_last = 0;
 
-    //´íÎóÊı¾İ´¦Àí
+    //é”™è¯¯æ•°æ®å¤„ç†
     if (abs(RC_data.Mouse_Data.x_speed) > 20000)
         RC_data.Mouse_Data.x_speed = xspeed_last;
     else
@@ -255,7 +255,7 @@ void Refresh_ComputerSet_Gimbal(void)
     yaw_add = -RC_data.Mouse_Data.x_speed * MOUSE_SPEED_GAIN_YAW;
     pitch_add = -RC_data.Mouse_Data.y_speed * MOUSE_SPEED_GAIN_PITCH;
 #if defined CORE_USING_HERO
-    // ÔÚµõÉäÄ£Ê½ÖĞ¾ÍĞèÒª´ó·ù¶ÈË¥¼õÊó±êÒÆ¶¯ÃüÁî
+    // åœ¨åŠå°„æ¨¡å¼ä¸­å°±éœ€è¦å¤§å¹…åº¦è¡°å‡é¼ æ ‡ç§»åŠ¨å‘½ä»¤
     if (Read_Dangling_Mode())
     {
         yaw_add *= MOUSE_SPEED_EXTRAGAIN_DANGLING;
@@ -263,21 +263,21 @@ void Refresh_ComputerSet_Gimbal(void)
     }
 #endif /* CORE_USING_HERO */
     if ((Gimbal_SetData_Out.State == RT_EOK) && (Exit_AimbotFlag == 0))
-    { // ×ÔÃéÇÒÓĞÄ¿±ê
+    { // è‡ªç„ä¸”æœ‰ç›®æ ‡
         PitchFix += pitch_add * AIMBOT_FIX_GAIN;
         YawFix += yaw_add * AIMBOT_FIX_GAIN;
     }
     else if (Exit_AimbotFlag == 0)
-    { // ×ÔÃéÎŞÄ¿±ê
+    { // è‡ªç„æ— ç›®æ ‡
     }
     else
-    { // ·Ç×ÔÃé£¬Çå¿Õ»ı·Ö
-        //¶ÁÈ¡ÔöÁ¿
+    { // éè‡ªç„ï¼Œæ¸…ç©ºç§¯åˆ†
+        //è¯»å–å¢é‡
         PitchFix = 0;
         YawFix = 0;
     }
 
-    //·¢ËÍÉè¶¨ÖµÔöÁ¿
+    //å‘é€è®¾å®šå€¼å¢é‡
     if (FillMode_EN == 0)
     {
         Smooth_SetDataADD(&Smooth_PitchAngleSet, pitch_add);
@@ -285,18 +285,18 @@ void Refresh_ComputerSet_Gimbal(void)
     }
     else
     {
-        // ²¹µ¯Ä£Ê½ÏÂ£¬²»ĞŞ¸ÄÔÆÌ¨Éè¶¨Öµ
+        // è¡¥å¼¹æ¨¡å¼ä¸‹ï¼Œä¸ä¿®æ”¹äº‘å°è®¾å®šå€¼
         Smooth_SetDataADD(&Smooth_PitchAngleSet, 0);
         Smooth_SetDataADD(&Smooth_YawAngleSet, 0);
     }
 }
 
 /**
- * @brief  »ñÈ¡²¢·¢ËÍµ×ÅÌ¿ØÖÆ½á¹¹Ìå
- * @param  xspeed£ºxÖáËÙ¶È
- * @param  yspeed£ºyÖáËÙ¶È
- * @param  mode: Ä£Ê½£¨²»¸úËæ0£¬¸úËæ1£¬¶ÀÁ¢µ×ÅÌ2£©
- * @param  angel_or_speed£º¸úËæÊ±µÄ½Ç¶È£¬²»¸úËæÊ±ËÙ¶È
+ * @brief  è·å–å¹¶å‘é€åº•ç›˜æ§åˆ¶ç»“æ„ä½“
+ * @param  xspeedï¼šxè½´é€Ÿåº¦
+ * @param  yspeedï¼šyè½´é€Ÿåº¦
+ * @param  mode: æ¨¡å¼ï¼ˆä¸è·Ÿéš0ï¼Œè·Ÿéš1ï¼Œç‹¬ç«‹åº•ç›˜2ï¼‰
+ * @param  angel_or_speedï¼šè·Ÿéšæ—¶çš„è§’åº¦ï¼Œä¸è·Ÿéšæ—¶é€Ÿåº¦
  */
 static void chassis_ctl(rt_int16_t xspeed, rt_int16_t yspeed, rt_uint8_t mode, rt_int16_t angel_or_speed)
 {
@@ -317,22 +317,22 @@ static void chassis_ctl(rt_int16_t xspeed, rt_int16_t yspeed, rt_uint8_t mode, r
     rt_device_write(can1_dev, 0, &txmsg, sizeof(txmsg));
 }
 
-static uint8_t ComputerCtrl_Flag = 0; // ±êÖ¾µ±Ç°ÊÇ·ñ´¦ÓÚ¿Í»§¶Ë¿ØÖÆÄ£Ê½
+static uint8_t ComputerCtrl_Flag = 0; // æ ‡å¿—å½“å‰æ˜¯å¦å¤„äºå®¢æˆ·ç«¯æ§åˆ¶æ¨¡å¼
 void Write_Computer_Ctrl_Status(int Now_Computer_Ctrl)
 {
     ComputerCtrl_Flag = Now_Computer_Ctrl;
 }
 
-rt_sem_t chassis_send_sem = RT_NULL; // ¸ÃĞÅºÅÁ¿ÓÃÓÚ¼ÓËø, ·ÀÖ¹·ÃÎÊ³åÍ»
+rt_sem_t chassis_send_sem = RT_NULL; // è¯¥ä¿¡å·é‡ç”¨äºåŠ é”, é˜²æ­¢è®¿é—®å†²çª
 /***
- * @brief    Ïòµ×ÅÌ·¢ËÍ¸÷ÀàÉè¶¨Êı¾İ
+ * @brief    å‘åº•ç›˜å‘é€å„ç±»è®¾å®šæ•°æ®
  * @param
  * @retval   none
  * @author   dxy
  ***/
 void chassis_data_send(void)
 {
-    // ·ÃÎÊ³åÍ»Ê±²»µÈ´ıÖ±½Ó·µ»Ø
+    // è®¿é—®å†²çªæ—¶ä¸ç­‰å¾…ç›´æ¥è¿”å›
     if (rt_sem_trytake(chassis_send_sem) != RT_EOK)
         return;
     static uint16_t cnt = 0;
@@ -388,34 +388,34 @@ void chassis_data_send(void)
     }
     cnt++;
     if (cnt > 3000)
-        cnt = 0; // ·ÀÒç³ö±£»¤
-    // ·ÃÎÊ½áÊø, ½âËø
+        cnt = 0; // é˜²æº¢å‡ºä¿æŠ¤
+    // è®¿é—®ç»“æŸ, è§£é”
     rt_sem_release(chassis_send_sem);
 }
 
 /**
- * @brief£ºÒ£¿ØÆ÷¿ØÖÆµ×ÅÌº¯Êı
- * @param [RC_Ctrl_t*] RC_Data_in£ºÒ£¿ØÆ÷Êı¾İ½á¹¹Ìå
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šé¥æ§å™¨æ§åˆ¶åº•ç›˜å‡½æ•°
+ * @param [RC_Ctrl_t*] RC_Data_inï¼šé¥æ§å™¨æ•°æ®ç»“æ„ä½“
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 void Chassis_RemoteCTR(RC_Ctrl_t *RC_Data_in)
 {
-    // ·¢ËÍ IMU µÈÊı¾İ
+    // å‘é€ IMU ç­‰æ•°æ®
     chassis_data_send();
-    // ·¢ËÍµ×ÅÌ¿ØÖÆĞÅÏ¢
+    // å‘é€åº•ç›˜æ§åˆ¶ä¿¡æ¯
     switch (motion_mode)
     {
-    case NO_FOLLOW: //·Ç¸úËæ
+    case NO_FOLLOW: //éè·Ÿéš
         chassis_ctl((RC_Data_in->Remote_Data.ch2 - 1024) * 4, (RC_Data_in->Remote_Data.ch3 - 1024) * 4, 0, 0);
         break;
-    case FOLLOW_GIMBAL: //¸úËæ
+    case FOLLOW_GIMBAL: //è·Ÿéš
         chassis_ctl((RC_Data_in->Remote_Data.ch2 - 1024) * 6, (RC_Data_in->Remote_Data.ch3 - 1024) * 6, 1, 0);
         break;
-    case SLOW_GYRO: //ÂıÍÓÂİ
+    case SLOW_GYRO: //æ…¢é™€èº
         chassis_ctl((RC_Data_in->Remote_Data.ch2 - 1024) * 3, (RC_Data_in->Remote_Data.ch3 - 1024) * 3, 0, SMALLGYRO_ROTATE_SPEED);
         break;
-    case FAST_GYRO: //¿ìÍÓÂİ
+    case FAST_GYRO: //å¿«é™€èº
     {
         rt_int16_t xspeed_out = (RC_Data_in->Remote_Data.ch2 - 1024) * 2;
         rt_int16_t yspeed_out = (RC_Data_in->Remote_Data.ch3 - 1024) * 2;
@@ -432,13 +432,13 @@ void Chassis_RemoteCTR(RC_Ctrl_t *RC_Data_in)
 }
 
 /**
- * @brief£º¿Í»§¶Ë¿ØÖÆµ×ÅÌº¯Êı
- * @param [RC_Ctrl_t*] RC_Data_in£ºÒ£¿ØÆ÷Êı¾İ½á¹¹Ìå
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šå®¢æˆ·ç«¯æ§åˆ¶åº•ç›˜å‡½æ•°
+ * @param [RC_Ctrl_t*] RC_Data_inï¼šé¥æ§å™¨æ•°æ®ç»“æ„ä½“
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
-static rt_int16_t xspeed_out = 0; //·¢ËÍ¸øµ×ÅÌµÄxspeed
-static rt_int16_t yspeed_out = 0; //·¢ËÍ¸øµ×ÅÌµÄyspeed
+static rt_int16_t xspeed_out = 0; //å‘é€ç»™åº•ç›˜çš„xspeed
+static rt_int16_t yspeed_out = 0; //å‘é€ç»™åº•ç›˜çš„yspeed
 
 ExactSmth_CTRL_S MouseX_Filter, MouseY_Filter;
 
@@ -446,8 +446,8 @@ static volatile float Mouse_Speed_K_use = MOUSE_SPEED_K;
 
 void Chassis_ComputerCTR(RC_Ctrl_t *RC_Data_in)
 {
-    float x_set = 0; //¼ÇÂ¼AD°´¼ü×´Ì¬µÄÁÙÊ±±äÁ¿
-    float y_set = 0; //¼ÇÂ¼WS°´¼ü×´Ì¬µÄÁÙÊ±±äÁ¿
+    float x_set = 0; //è®°å½•ADæŒ‰é”®çŠ¶æ€çš„ä¸´æ—¶å˜é‡
+    float y_set = 0; //è®°å½•WSæŒ‰é”®çŠ¶æ€çš„ä¸´æ—¶å˜é‡
 
     Smooth_SetDataADD(&MouseX_Filter, RC_data.Mouse_Data.x_speed);
     Smooth_SetDataADD(&MouseY_Filter, -RC_data.Mouse_Data.y_speed);
@@ -484,16 +484,16 @@ void Chassis_ComputerCTR(RC_Ctrl_t *RC_Data_in)
 
     switch (motion_mode)
     {
-    case NO_FOLLOW: //·Ç¸úËæ
+    case NO_FOLLOW: //éè·Ÿéš
         chassis_ctl(xspeed_out, yspeed_out, 0, 0);
         break;
-    case FOLLOW_GIMBAL: //¸úËæ
+    case FOLLOW_GIMBAL: //è·Ÿéš
         chassis_ctl(xspeed_out, yspeed_out, 1, 0);
         break;
-    case FOLLOWBACK_GIMBAL: // ·´Ïò¸úËæ
+    case FOLLOWBACK_GIMBAL: // åå‘è·Ÿéš
         chassis_ctl(xspeed_out, yspeed_out, 1, 4096);
         break;
-    case SLOW_GYRO: //ÂıÍÓÂİ
+    case SLOW_GYRO: //æ…¢é™€èº
         chassis_ctl(xspeed_out, yspeed_out, 0, SMALLGYRO_ROTATE_SPEED);
         break;
     case FAST_GYRO:
@@ -502,11 +502,11 @@ void Chassis_ComputerCTR(RC_Ctrl_t *RC_Data_in)
         else
             chassis_ctl(xspeed_out, yspeed_out, 0, (FASTGYRO_ROTATE_SPEED + (int)(FASTGYRO_ROTATE_CHANGE_A * sinf(rt_tick_get() * FASTGYRO_RATATE_CHANGE_W))));
         break;
-    case MOVE_BACK: //µ¹³µÄ£Ê½
+    case MOVE_BACK: //å€’è½¦æ¨¡å¼
         chassis_ctl(-xspeed_out, -yspeed_out, 2, 0);
         break;
-    case CHASS_AUTO: // µ×ÅÌ×ÔÖ÷
-        // Ì½Í·Ä£Ê½ÏÂĞèÒªÅĞ¶ÏÖ®Ç°ÊÇ²»ÊÇÔÚ·´Ïò¸úËæ
+    case CHASS_AUTO: // åº•ç›˜è‡ªä¸»
+        // æ¢å¤´æ¨¡å¼ä¸‹éœ€è¦åˆ¤æ–­ä¹‹å‰æ˜¯ä¸æ˜¯åœ¨åå‘è·Ÿéš
         if (Now_In_Probe && (probe_last_motion_mode == FOLLOWBACK_GIMBAL))
             chassis_ctl(-xspeed_out, -yspeed_out, 2, 0);
         else

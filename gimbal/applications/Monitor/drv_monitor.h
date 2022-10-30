@@ -5,7 +5,7 @@
 
 #define SWDG_INITED_FLAG (0x5A)
 
-/*¿´ÃÅ¹·¶ÔÏóID£¬ÒªÇóidÎ¨Ò»£¬¾¡Á¿Ğ¡*/
+/*çœ‹é—¨ç‹—å¯¹è±¡IDï¼Œè¦æ±‚idå”¯ä¸€ï¼Œå°½é‡å°*/
 typedef enum
 {
     SWDG_IMU_ID = 0,
@@ -20,8 +20,8 @@ typedef enum
     MONITOR_ID_ALL,
 } swdg_deviceID;
 
-/*ÒªÍØÕ¹¸ü¶àµÄRGB±¨¾¯ÑÕÉ«ĞèÒªÔÚRGBÇı¶¯ÎÄ¼ş.hÔö¼ÓÈıÔªÉ«ºê£»
-ÔÚAlarm_ThreadÏß³ÌµÄswicthÓï¾äÄÚÔö¼ÓcaseÑ¡Ïî£»*/
+/*è¦æ‹“å±•æ›´å¤šçš„RGBæŠ¥è­¦é¢œè‰²éœ€è¦åœ¨RGBé©±åŠ¨æ–‡ä»¶.hå¢åŠ ä¸‰å…ƒè‰²å®ï¼›
+åœ¨Alarm_Threadçº¿ç¨‹çš„swicthè¯­å¥å†…å¢åŠ caseé€‰é¡¹ï¼›*/
 typedef enum
 {
     ALARM_WHITE,
@@ -35,26 +35,26 @@ typedef enum
 
 } Alarm_color_e;
 
-/*ÕâÀï²ÉÓÃÁ´±íÌ×½á¹¹ÌåµÄ·½·¨£¬ÓÅµã£ºË¼Â·¼òµ¥Ò×ÊµÏÖ£»È±µã£ºÍ¨ÓÃĞÔ²»¹»*/
-//¿´ÃÅ¹·¾ä±ú
+/*è¿™é‡Œé‡‡ç”¨é“¾è¡¨å¥—ç»“æ„ä½“çš„æ–¹æ³•ï¼Œä¼˜ç‚¹ï¼šæ€è·¯ç®€å•æ˜“å®ç°ï¼›ç¼ºç‚¹ï¼šé€šç”¨æ€§ä¸å¤Ÿ*/
+//çœ‹é—¨ç‹—å¥æŸ„
 typedef struct swdg_dev
 {
-    swdg_deviceID ID;           // Ğ¡¿´ÃÅ¹·¸ú×ÙÉè±¸µÄid£¬idÊÇÎ¨Ò»µÄ
-    Alarm_color_e color;        // ¼àÊÓÆ÷±¨¾¯µÄRGBµÆÑÕÉ«
-    rt_uint32_t time_threshold; // Ê±¼äãĞÖµ£¬³¬¹ı¸ÃÊ±¼äÎ´ÏìÓ¦Ôò±¨¾¯£¬µ¥Î»ms
-    rt_tick_t time_deadline;    // ±¨¾¯Ê±¿Ì, µ½Õâ¸öÊ±¿Ì²»Î¹¹·¾ÍÖ±½Ó±¨¾¯
+    swdg_deviceID ID;           // å°çœ‹é—¨ç‹—è·Ÿè¸ªè®¾å¤‡çš„idï¼Œidæ˜¯å”¯ä¸€çš„
+    Alarm_color_e color;        // ç›‘è§†å™¨æŠ¥è­¦çš„RGBç¯é¢œè‰²
+    rt_uint32_t time_threshold; // æ—¶é—´é˜ˆå€¼ï¼Œè¶…è¿‡è¯¥æ—¶é—´æœªå“åº”åˆ™æŠ¥è­¦ï¼Œå•ä½ms
+    rt_tick_t time_deadline;    // æŠ¥è­¦æ—¶åˆ», åˆ°è¿™ä¸ªæ—¶åˆ»ä¸å–‚ç‹—å°±ç›´æ¥æŠ¥è­¦
 
-    rt_uint8_t flag_inited; // Ğ´Èë 0x20 ´ú±í³õÊ¼»¯³É¹¦, ·´Ö®±íÊ¾Î´³õÊ¼»¯
-    rt_bool_t if_start;     // ¿´ÃÅ¹·¿ªÊ¼¹¤×÷
-    rt_bool_t if_error;     // RT_FALSE:Õı³££¬RT_TRUE:Òì³£
-    rt_bool_t if_alarm;     // RT_TRUE:ÆôÓÃ±¨¾¯£¬RT_FALSE:¹Ø±Õ±¨¾¯¹¦ÄÜ
+    rt_uint8_t flag_inited; // å†™å…¥ 0x20 ä»£è¡¨åˆå§‹åŒ–æˆåŠŸ, åä¹‹è¡¨ç¤ºæœªåˆå§‹åŒ–
+    rt_bool_t if_start;     // çœ‹é—¨ç‹—å¼€å§‹å·¥ä½œ
+    rt_bool_t if_error;     // RT_FALSE:æ­£å¸¸ï¼ŒRT_TRUE:å¼‚å¸¸
+    rt_bool_t if_alarm;     // RT_TRUE:å¯ç”¨æŠ¥è­¦ï¼ŒRT_FALSE:å…³é—­æŠ¥è­¦åŠŸèƒ½
 
-    struct swdg_dev *next;         // Ö¸ÏòÏÂÒ»¸öÒª¼àÊÓµÄ¿´ÃÅ¹·¾ä±ú
-    rt_err_t (*handle)(rt_bool_t); // Òì³£¶ÔÓ¦µÄ´¦Àíº¯ÊıÖ¸Õë,(´¥·¢Ê½º¯Êı£¬²»»áÒ»Ö±ÂÖÑ¯)
+    struct swdg_dev *next;         // æŒ‡å‘ä¸‹ä¸€ä¸ªè¦ç›‘è§†çš„çœ‹é—¨ç‹—å¥æŸ„
+    rt_err_t (*handle)(rt_bool_t); // å¼‚å¸¸å¯¹åº”çš„å¤„ç†å‡½æ•°æŒ‡é’ˆ,(è§¦å‘å¼å‡½æ•°ï¼Œä¸ä¼šä¸€ç›´è½®è¯¢)
 
 } swdg_dev_t;
 
-//±¨¾¯Ë«ÏòÁ´±í£¬¹ÒÔØÒì³£¿´ÃÅ¹·¶ÔÏó
+//æŠ¥è­¦åŒå‘é“¾è¡¨ï¼ŒæŒ‚è½½å¼‚å¸¸çœ‹é—¨ç‹—å¯¹è±¡
 typedef struct mlist_node
 {
     struct mlist_node *next;
@@ -64,14 +64,14 @@ typedef struct mlist_node
 } alarm_dev_t;
 
 /**
- * @brief  ´´½¨Ò»¸öÈí¼ş¿´ÃÅ¹·¶ÔÏó
- * @param  id    ¼àÊÓID
- * @param  color  ±¨¾¯ÑÕÉ«
- * @param  if_alarm  ÊÇ·ñÆôÓÃ±¨¾¯¹¦ÄÜ
- * @param  time_threshold    ±¨¾¯Ê±¼ä£¬³¬¹ı¸ÃÊ±¼ä²»Î¹¹·Ôò»á±¨¾¯£¨µ¥Î»ms£©
- * @param  handle    Òì³£´¦Àíº¯ÊıÖ¸Õë
- * @param  init_flag ³õÊ¼»¯ÓÃµÄ±êÖ¾Î»
- * @return RT_ERROR  ³õÊ¼»¯Ê§°Ü£¬RT_EOK  ³õÊ¼»¯³É¹¦
+ * @brief  åˆ›å»ºä¸€ä¸ªè½¯ä»¶çœ‹é—¨ç‹—å¯¹è±¡
+ * @param  id    ç›‘è§†ID
+ * @param  color  æŠ¥è­¦é¢œè‰²
+ * @param  if_alarm  æ˜¯å¦å¯ç”¨æŠ¥è­¦åŠŸèƒ½
+ * @param  time_threshold    æŠ¥è­¦æ—¶é—´ï¼Œè¶…è¿‡è¯¥æ—¶é—´ä¸å–‚ç‹—åˆ™ä¼šæŠ¥è­¦ï¼ˆå•ä½msï¼‰
+ * @param  handle    å¼‚å¸¸å¤„ç†å‡½æ•°æŒ‡é’ˆ
+ * @param  init_flag åˆå§‹åŒ–ç”¨çš„æ ‡å¿—ä½
+ * @return RT_ERROR  åˆå§‹åŒ–å¤±è´¥ï¼ŒRT_EOK  åˆå§‹åŒ–æˆåŠŸ
  * @author mqy
  */
 rt_err_t Swdg_Create(swdg_deviceID id, Alarm_color_e color, rt_bool_t if_alarm,
@@ -85,7 +85,7 @@ void Mlist_Init(alarm_dev_t *l);
 
 /***
  * @brief  insert a node after alarm_head
- * @param  HungryDog   Ã»ÓĞ¼°Ê±±»Î¹¹·µÄswdgÖ¸Õë
+ * @param  HungryDog   æ²¡æœ‰åŠæ—¶è¢«å–‚ç‹—çš„swdgæŒ‡é’ˆ
  * @return none
  * @author Lvfp
  ***/
@@ -93,7 +93,7 @@ void Mlist_Insert(swdg_dev_t *HungryDog);
 
 /***
  * @brief  remove node from list and release memory block
- * @param  mID: ¶ÔÓ¦¼àÊÓÆ÷µÄID
+ * @param  mID: å¯¹åº”ç›‘è§†å™¨çš„ID
  * @return None
  * @author Lvfp
  ***/

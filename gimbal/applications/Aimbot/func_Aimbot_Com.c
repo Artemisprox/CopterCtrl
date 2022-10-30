@@ -12,16 +12,16 @@
 #include "mod_Monitor.h"
 #include "drv_utils.h"
 
-static rt_thread_t Visual_Send_ThreadTid = RT_NULL; // ×ÔÃéÊÓ¾õÍ¨ĞÅÏß³Ì¾ä±ú
+static rt_thread_t Visual_Send_ThreadTid = RT_NULL; // è‡ªç„è§†è§‰é€šä¿¡çº¿ç¨‹å¥æŸ„
 
 static AttitudeData_Type Gimbal_Atti_Send;
 
 #undef AIMBOT_COM_COLLECT_PACKET_LOSS_RATE
 #ifdef AIMBOT_COM_COLLECT_PACKET_LOSS_RATE
-rt_uint8_t flag_packet_loss_rate_start = 0;  // ¶ª°üÍ³¼Æ¿ªÊ¼±êÖ¾
+rt_uint8_t flag_packet_loss_rate_start = 0;  // ä¸¢åŒ…ç»Ÿè®¡å¼€å§‹æ ‡å¿—
 
-rt_uint16_t send_Package_Num = 0;            // ¼º·½·¢ËÍ°üµÄ¸öÊı
-rt_uint32_t Package_SumCheck_Passed_Num = 0; // ºÍĞ£ÑéÍ¨¹ıµÄ¸öÊı
+rt_uint16_t send_Package_Num = 0;            // å·±æ–¹å‘é€åŒ…çš„ä¸ªæ•°
+rt_uint32_t Package_SumCheck_Passed_Num = 0; // å’Œæ ¡éªŒé€šè¿‡çš„ä¸ªæ•°
 #endif                                       /* AIMBOT_COM_COLLECT_PACKET_LOSS_RATE */
 
 #define AIMBOT_WATCH_CLICK_DATA
@@ -29,11 +29,11 @@ rt_uint32_t Package_SumCheck_Passed_Num = 0; // ºÍĞ£ÑéÍ¨¹ıµÄ¸öÊı
 uint8_t click = 0;
 #endif /* AIMBOT_WATCH_CLICK_DATA */
 
-// ×ÔÃéÍ¨ĞÅÉè±¸, ¿ÉÄÜÎª´®¿Ú»òÕß CAN , ¿ÉÔÚ menuconfig ÄÚĞŞ¸Ä
+// è‡ªç„é€šä¿¡è®¾å¤‡, å¯èƒ½ä¸ºä¸²å£æˆ–è€… CAN , å¯åœ¨ menuconfig å†…ä¿®æ”¹
 rt_device_t aimbot_device;
 
 #if (LED_CTRL_EN)
-//ÊÕµ½ÓĞĞ§Êı¾İºóLEDÉÁµÆ
+//æ”¶åˆ°æœ‰æ•ˆæ•°æ®åLEDé—ªç¯
 static char rec = 0;
 static int count = 100;
 static void can2_LEDCTRL()
@@ -59,28 +59,28 @@ static void can2_LEDCTRL()
 struct rt_can_msg VisualTiming_Sendmsg;
 struct rt_can_msg GimbalAtti_Sendmsg;
 
-static rt_tick_t Timing_Tick_Get;      // ÓÃÓÚ»ñÈ¡µ±Ç°tick
-static rt_tick_t Timing_Tick_NextSend; // ¼ÆËãÏÂÒ»´Î·¢ËÍÊ±µÄTick
+static rt_tick_t Timing_Tick_Get;      // ç”¨äºè·å–å½“å‰tick
+static rt_tick_t Timing_Tick_NextSend; // è®¡ç®—ä¸‹ä¸€æ¬¡å‘é€æ—¶çš„Tick
 
-static rt_uint32_t Count_100ms; // ¼ÇÂ¼µ±Ç°ÎªµÚ¶àÉÙ¸ö100ms
-static rt_uint32_t Count_5ms;   // ¼ÇÂ¼µ±Ç°ÎªµÚ¶àÉÙ¸ö5ms
+static rt_uint32_t Count_100ms; // è®°å½•å½“å‰ä¸ºç¬¬å¤šå°‘ä¸ª100ms
+static rt_uint32_t Count_5ms;   // è®°å½•å½“å‰ä¸ºç¬¬å¤šå°‘ä¸ª5ms
 
-// Íâ²¿µ÷ÓÃ£¬ÓÃÓÚĞŞ¸Äµ±Ç°·¢¸øÊÓ¾õµÄÊó±êÓÒ¼ü±êÖ¾Î» °´ÏÂÎª1
+// å¤–éƒ¨è°ƒç”¨ï¼Œç”¨äºä¿®æ”¹å½“å‰å‘ç»™è§†è§‰çš„é¼ æ ‡å³é”®æ ‡å¿—ä½ æŒ‰ä¸‹ä¸º1
 void Aimbot_FreshMouseClick(char ClickData)
 {
     utils_write_bit(&VisualSend_Flags, AimFlag_MouseRightData, ClickData);
 }
 
-// ·¢ËÍ¶ÔÊ±ĞÅÏ¢
+// å‘é€å¯¹æ—¶ä¿¡æ¯
 static void VisualCom_TimingSend(void)
 {
-    rt_int16_t MuzzleV_Temp; // ÓÃÓÚÊÊÓ¦·¢ËÍĞ­ÒéµÄÖĞ×ª±äÁ¿
+    rt_int16_t MuzzleV_Temp; // ç”¨äºé€‚åº”å‘é€åè®®çš„ä¸­è½¬å˜é‡
     int fori;
     char sum;
 
-    MuzzleV_Temp = (rt_int16_t)(Muzzle_V_REM * 100); // ÏÈ´æÈë±äÁ¿£¬±ÜÃâ¶ÁĞ´·ÃÎÊ³åÍ»µ¼ÖÂ³ö´í µ¥Î»0.01
+    MuzzleV_Temp = (rt_int16_t)(Muzzle_V_REM * 100); // å…ˆå­˜å…¥å˜é‡ï¼Œé¿å…è¯»å†™è®¿é—®å†²çªå¯¼è‡´å‡ºé”™ å•ä½0.01
     if (MuzzleV_Temp > 4095 || MuzzleV_Temp <= 0)
-        // Í¨ĞÅ²»ÄÜÒç³ö
+        // é€šä¿¡ä¸èƒ½æº¢å‡º
         MuzzleV_Temp = 4095;
 
     VisualTiming_Sendmsg.data[0] = (Count_100ms >> 0) & 0xFF;
@@ -89,7 +89,7 @@ static void VisualCom_TimingSend(void)
     VisualTiming_Sendmsg.data[3] = (Visual_Mode_Set & 0x0F) | ((MuzzleV_Temp >> 4) & 0xF0);
     VisualTiming_Sendmsg.data[4] = MuzzleV_Temp & 0xFF;
 
-    utils_write_bit(&VisualSend_Flags, AimFlag_MyColor, Color_Myself); // ¸üĞÂµ±Ç°×ÔÃéÑÕÉ«
+    utils_write_bit(&VisualSend_Flags, AimFlag_MyColor, Color_Myself); // æ›´æ–°å½“å‰è‡ªç„é¢œè‰²
     VisualTiming_Sendmsg.data[5] = (VisualSend_Flags & 0xC3);
 
     sum = 0;
@@ -101,7 +101,7 @@ static void VisualCom_TimingSend(void)
     ++send_Package_Num;
 #endif /* AIMBOT_COM_COLLECT_PACKET_LOSS_RATE */
 
-    /* ·¢ËÍ */
+    /* å‘é€ */
 #ifndef AIMBOT_CIMMUNICATION_USING_CAN
     Aimbot_Write_UART_Data(&aimbot_device, 0, VisualTiming_Sendmsg.data, 8);
 #else
@@ -113,19 +113,19 @@ static unsigned char AttiSend_5ms_Count;
 
 static int SendCount = 0;
 
-// ·¢ËÍÔÆÌ¨×ËÌ¬ĞÅÏ¢
+// å‘é€äº‘å°å§¿æ€ä¿¡æ¯
 static void VisualCom_AttiSend(void)
 {
     int fori;
     char sum;
     rt_int16_t IntToChar_Temp;
 
-    // »ñÈ¡µ±Ç°ÍÓÂİÒÇ×ËÌ¬
+    // è·å–å½“å‰é™€èºä»ªå§¿æ€
     Gimbal_Atti_Send.Pitch = gimbal_atti.pitch;
     Gimbal_Atti_Send.Yaw = gimbal_atti.yaw;
     Gimbal_Atti_Send.Roll = gimbal_atti.roll;
 
-    // ½ÃÕıÉãÏñÍ·°²×°½Ç¶ÈÎó²î
+    // çŸ«æ­£æ‘„åƒå¤´å®‰è£…è§’åº¦è¯¯å·®
     Gimbal_Atti_Send.Pitch += CAMERA_PITCH_FIX;
     Gimbal_Atti_Send.Yaw += CAMERA_YAW_FIX;
     utils_norm_circle_number(&Gimbal_Atti_Send.Yaw, -180.f, 360.f);
@@ -160,7 +160,7 @@ static void VisualCom_AttiSend(void)
     ++send_Package_Num;
 #endif /* AIMBOT_COM_COLLECT_PACKET_LOSS_RATE */
 
-    /* ·¢ËÍ */
+    /* å‘é€ */
 #ifndef AIMBOT_CIMMUNICATION_USING_CAN
     Aimbot_Write_UART_Data(&aimbot_device, 1, GimbalAtti_Sendmsg.data, 8);
 #else
@@ -168,67 +168,67 @@ static void VisualCom_AttiSend(void)
 #endif
 }
 
-// ×ÔÃéÓëÊÓ¾õÍ¨ĞÅÏß³Ì
+// è‡ªç„ä¸è§†è§‰é€šä¿¡çº¿ç¨‹
 void Visual_Send_Thread(void *Para)
 {
-    VisualTiming_Sendmsg.id = ID_VISUAL_TIMING_SEND; //ÉèÖÃID
-    VisualTiming_Sendmsg.ide = RT_CAN_STDID;         //±ê×¼Ö¡
-    VisualTiming_Sendmsg.rtr = RT_CAN_DTR;           //Êı¾İÖ¡
-    VisualTiming_Sendmsg.priv = 0;                   //±¨ÎÄÓÅÏÈ¼¶×î¸ß
-    VisualTiming_Sendmsg.len = 7;                    //³¤¶È7
+    VisualTiming_Sendmsg.id = ID_VISUAL_TIMING_SEND; //è®¾ç½®ID
+    VisualTiming_Sendmsg.ide = RT_CAN_STDID;         //æ ‡å‡†å¸§
+    VisualTiming_Sendmsg.rtr = RT_CAN_DTR;           //æ•°æ®å¸§
+    VisualTiming_Sendmsg.priv = 0;                   //æŠ¥æ–‡ä¼˜å…ˆçº§æœ€é«˜
+    VisualTiming_Sendmsg.len = 7;                    //é•¿åº¦7
 
-    GimbalAtti_Sendmsg.id = ID_VISUAL_ATTI_SEND; //ÉèÖÃID
-    GimbalAtti_Sendmsg.ide = RT_CAN_STDID;       //±ê×¼Ö¡
-    GimbalAtti_Sendmsg.rtr = RT_CAN_DTR;         //Êı¾İÖ¡
-    GimbalAtti_Sendmsg.priv = 0;                 //±¨ÎÄÓÅÏÈ¼¶×î¸ß
-    GimbalAtti_Sendmsg.len = 8;                  //³¤¶È8
+    GimbalAtti_Sendmsg.id = ID_VISUAL_ATTI_SEND; //è®¾ç½®ID
+    GimbalAtti_Sendmsg.ide = RT_CAN_STDID;       //æ ‡å‡†å¸§
+    GimbalAtti_Sendmsg.rtr = RT_CAN_DTR;         //æ•°æ®å¸§
+    GimbalAtti_Sendmsg.priv = 0;                 //æŠ¥æ–‡ä¼˜å…ˆçº§æœ€é«˜
+    GimbalAtti_Sendmsg.len = 8;                  //é•¿åº¦8
 
-    /* ÑÓÊ±£¬Ê¹µÚÒ»´Î·¢ËÍµÄÊ±¿ÌÎª100msµÄÕûÊı±¶ */
-    // ¶Áµ±Ç°Tick
+    /* å»¶æ—¶ï¼Œä½¿ç¬¬ä¸€æ¬¡å‘é€çš„æ—¶åˆ»ä¸º100msçš„æ•´æ•°å€ */
+    // è¯»å½“å‰Tick
     Timing_Tick_Get = rt_tick_get();
-    // È¡µ±Ç°TickµÄ°ÙÎ»¼°ÒÔÉÏ ÔÙ¼Ó2 µÃµ½ĞèÒªÑÓÊ±µ½µÄÊ±¿Ì
+    // å–å½“å‰Tickçš„ç™¾ä½åŠä»¥ä¸Š å†åŠ 2 å¾—åˆ°éœ€è¦å»¶æ—¶åˆ°çš„æ—¶åˆ»
     Timing_Tick_NextSend = (Timing_Tick_Get / 100 + 2) * 100;
-    // µÈµ½Timing_Tick_NextSend
+    // ç­‰åˆ°Timing_Tick_NextSend
     rt_thread_delay_to_tick(Timing_Tick_NextSend, &Timing_Tick_Get);
     SWDG_START(SWDG_AIMBOT_SEND_ID);
 
     while (1)
     {
-        Count_5ms = Timing_Tick_Get / 5;          // È¡µ±Ç°TickµÄÕû5msµÄ¸öÊı
-        Timing_Tick_NextSend = (Count_5ms)*5 + 5; // ¼ÆËã³öÏÂÒ»´Î·¢ËÍµÄÊ±¼ä
+        Count_5ms = Timing_Tick_Get / 5;          // å–å½“å‰Tickçš„æ•´5msçš„ä¸ªæ•°
+        Timing_Tick_NextSend = (Count_5ms)*5 + 5; // è®¡ç®—å‡ºä¸‹ä¸€æ¬¡å‘é€çš„æ—¶é—´
         if (Timing_Tick_Get % 100 == 0)
         {
-            // µ±Ç°ÎªÕû100ms£¬ĞèÒªÏÈ·¢ËÍ¶ÔÊ±
+            // å½“å‰ä¸ºæ•´100msï¼Œéœ€è¦å…ˆå‘é€å¯¹æ—¶
             Count_100ms = Timing_Tick_Get / 100;
-            VisualCom_TimingSend(); // ·¢ËÍ¶ÔÊ±ĞÅÏ¢
+            VisualCom_TimingSend(); // å‘é€å¯¹æ—¶ä¿¡æ¯
 #ifdef AIMBOT_WATCH_CLICK_DATA
             click = VisualSend_Flags & 0x01;
 #endif /* AIMBOT_WATCH_CLICK_DATA */
         }
-        VisualCom_AttiSend(); // ·¢ËÍÔÆÌ¨×ËÌ¬ĞÅÏ¢
+        VisualCom_AttiSend(); // å‘é€äº‘å°å§¿æ€ä¿¡æ¯
 
-        rt_thread_delay_to_tick(Timing_Tick_NextSend, &Timing_Tick_Get); // ×¼±¸ÏÂÒ»´Î·¢ËÍ
+        rt_thread_delay_to_tick(Timing_Tick_NextSend, &Timing_Tick_Get); // å‡†å¤‡ä¸‹ä¸€æ¬¡å‘é€
         SWDG_FEED(SWDG_AIMBOT_SEND_ID);
     }
 }
 
-// ÊÓ¾õÍ¨ĞÅ³õÊ¼»¯
+// è§†è§‰é€šä¿¡åˆå§‹åŒ–
 int Visual_Com_Init(void)
 {
-    // Çå¿Õµ±Ç°¼ÇÂ¼µÄÊÓ¾õ¹¤×÷Ä£Ê½
+    // æ¸…ç©ºå½“å‰è®°å½•çš„è§†è§‰å·¥ä½œæ¨¡å¼
     VisualMode_FB = VISUAL_MODE_ERR;
-    VisualSend_Flags = 0;        // Çå¿ÕËùÓĞ·¢ËÍ±êÖ¾Î»
-    Color_Myself = My_Color_Red; // Ä¬ÈÏÊ¶±ğºìÉ«
+    VisualSend_Flags = 0;        // æ¸…ç©ºæ‰€æœ‰å‘é€æ ‡å¿—ä½
+    Color_Myself = My_Color_Red; // é»˜è®¤è¯†åˆ«çº¢è‰²
 
-    Gimbal_Set_Cal_READ_Valid = 0; // Ä¬ÈÏ¿É¶ÁÉè¶¨Öµ£º×é0
+    Gimbal_Set_Cal_READ_Valid = 0; // é»˜è®¤å¯è¯»è®¾å®šå€¼ï¼šç»„0
 
-    //ËùÓĞ×ÔÃé×ËÌ¬Éè¶¨ÖµÊı¾İ±ê¼ÇÎŞĞ§
+    //æ‰€æœ‰è‡ªç„å§¿æ€è®¾å®šå€¼æ•°æ®æ ‡è®°æ— æ•ˆ
     GimbalSet_Receive[0].State = RT_ERROR;
     GimbalSet_Receive[1].State = RT_ERROR;
 
-    Visual_Mode_Set = VISUAL_MODE_AIMBOT_V2; //Ä¬ÈÏ¿ªÆô¶ş´ú×ÔÃé
+    Visual_Mode_Set = VISUAL_MODE_AIMBOT_V2; //é»˜è®¤å¼€å¯äºŒä»£è‡ªç„
 
-    // Èç¹ûÊ¹ÓÃ CAN Í¨ĞÅ, ¾Í½«×ÔÃéÊı¾İ·¢ËÍµÄÉè±¸Ğ´Îª CAN2, ·ñÔò¾Í³õÊ¼»¯´®¿Ú 6
+    // å¦‚æœä½¿ç”¨ CAN é€šä¿¡, å°±å°†è‡ªç„æ•°æ®å‘é€çš„è®¾å¤‡å†™ä¸º CAN2, å¦åˆ™å°±åˆå§‹åŒ–ä¸²å£ 6
 #ifndef AIMBOT_CIMMUNICATION_USING_CAN
     if (RT_EOK != Aimbot_UART_Init(&aimbot_device, VisualCom_Receive_Flag, VisualCom_Receive_Atti))
         return RT_ERROR;
@@ -236,35 +236,35 @@ int Visual_Com_Init(void)
     aimbot_device = can2_dev;
 #endif /* AIMBOT_CIMMUNICATION_USING_CAN */
 
-    // ³õÊ¼»¯×ÔÃéÍ¨ĞÅÏß³Ì
-    /* ´´½¨Ïß³Ì£¬Ãû³ÆÊÇ Aimbot_2£¬Èë¿ÚÊÇ Visual_Send_Thread */
+    // åˆå§‹åŒ–è‡ªç„é€šä¿¡çº¿ç¨‹
+    /* åˆ›å»ºçº¿ç¨‹ï¼Œåç§°æ˜¯ Aimbot_2ï¼Œå…¥å£æ˜¯ Visual_Send_Thread */
     Visual_Send_ThreadTid = rt_thread_create("AimbotSend", Visual_Send_Thread, RT_NULL,
                                              1024, THREAD_PRIO_AIMBOT_V2_SEND, 1);
 
-    /* Èç¹û»ñµÃÏß³Ì¿ØÖÆ¿é£¬Æô¶¯Õâ¸öÏß³Ì */
+    /* å¦‚æœè·å¾—çº¿ç¨‹æ§åˆ¶å—ï¼Œå¯åŠ¨è¿™ä¸ªçº¿ç¨‹ */
     if (Visual_Send_ThreadTid != RT_NULL)
         rt_thread_startup(Visual_Send_ThreadTid);
 
     return RT_EOK;
 }
 
-// ½ÓÊÕ£º±êÖ¾Î»±¨ÎÄ
+// æ¥æ”¶ï¼šæ ‡å¿—ä½æŠ¥æ–‡
 rt_err_t VisualCom_Receive_Flag(rt_uint8_t rxmsg[])
 {
     int fori;
     char sum;
     char FlagsTemp;
-    // Ğ£ÑéºÍ¼ì²é
+    // æ ¡éªŒå’Œæ£€æŸ¥
     sum = 0;
     for (fori = 0; fori < 6; fori++)
         sum += rxmsg[fori];
     if (sum != rxmsg[fori])
-        // ºÍĞ£ÑéÎ´Í¨¹ı
+        // å’Œæ ¡éªŒæœªé€šè¿‡
         return RT_ERROR;
 
     Visual_LastFresh_Tick = rt_tick_get();
 
-    // Êı¾İ±£´æ
+    // æ•°æ®ä¿å­˜
     VisualMode_FB = rxmsg[1];
     GimbalTolerance_Pitch = ((rt_int16_t)(rxmsg[2]) << 8 | rxmsg[3]) / 180.0f;
     GimbalTolerance_Yaw = ((rt_int16_t)(rxmsg[4]) << 8 | rxmsg[5]) / 180.0f;
@@ -280,7 +280,7 @@ rt_err_t VisualCom_Receive_Flag(rt_uint8_t rxmsg[])
 
     if (VisualFlag_TargetFound == 0)
     {
-        // ÊÓ¾õ¶ªÊ§Ä¿±êÁË£¬´ËÊ±ĞèÒªÖ±½Ó½«ÒÑÓĞÉè¶¨ÖµÊı¾İÉè¶¨Îª Ê§Ğ§
+        // è§†è§‰ä¸¢å¤±ç›®æ ‡äº†ï¼Œæ­¤æ—¶éœ€è¦ç›´æ¥å°†å·²æœ‰è®¾å®šå€¼æ•°æ®è®¾å®šä¸º å¤±æ•ˆ
         GimbalSet_Receive[0].State = RT_ERROR;
         GimbalSet_Receive[1].State = RT_ERROR;
     }
@@ -293,19 +293,19 @@ rt_err_t VisualCom_Receive_Flag(rt_uint8_t rxmsg[])
 
 static float VisualAttiSetOri_Pitch, VisualAttiSetOri_Yaw;
 static float VisualAttiSetOri_PitchSpe, VisualAttiSetOri_YawSpe;
-static rt_uint8_t VisualAttiSet_TickOri; // ÊÕµ½µÄÉè¶¨Öµ±¨ÎÄ¸ø³öµÄ¶ÔÓ¦TickµÄÔ­Ê¼Öµ
+static rt_uint8_t VisualAttiSet_TickOri; // æ”¶åˆ°çš„è®¾å®šå€¼æŠ¥æ–‡ç»™å‡ºçš„å¯¹åº”Tickçš„åŸå§‹å€¼
 
-static rt_tick_t VisualAttiSetReceive_TickOut; // ÊÕµ½µÄÉè¶¨Öµ±¨ÎÄ¸ø³öµÄ¶ÔÓ¦TickµÄÍêÕûÊ¶±ğÖµ
+static rt_tick_t VisualAttiSetReceive_TickOut; // æ”¶åˆ°çš„è®¾å®šå€¼æŠ¥æ–‡ç»™å‡ºçš„å¯¹åº”Tickçš„å®Œæ•´è¯†åˆ«å€¼
 
-// ÍÆËã²¹È«ÊÓ¾õ·¢À´µÄTickÊı¾İ
+// æ¨ç®—è¡¥å…¨è§†è§‰å‘æ¥çš„Tickæ•°æ®
 static rt_tick_t VisualCom_Tick_Fill(rt_uint8_t TickOri)
 {
     rt_tick_t Tick_Temp;
     rt_int32_t DeltaTick;
-    rt_tick_t TickNow = rt_tick_get(); // ¶ÁÈ¡²¢Ôİ´æµ±Ç°µÄTick
+    rt_tick_t TickNow = rt_tick_get(); // è¯»å–å¹¶æš‚å­˜å½“å‰çš„Tick
 
-    Tick_Temp = (TickNow / 1000) * 1000 + TickOri * 10; // µ±Ç°ÕûÊıÃë+ÊÓ¾õ·¢ËÍµÄÁãÍ·
-    // ¼ì²éÊÇ·ñ²îÁËÕûÃë
+    Tick_Temp = (TickNow / 1000) * 1000 + TickOri * 10; // å½“å‰æ•´æ•°ç§’+è§†è§‰å‘é€çš„é›¶å¤´
+    // æ£€æŸ¥æ˜¯å¦å·®äº†æ•´ç§’
     DeltaTick = Tick_Temp - TickNow;
     if (DeltaTick > 500)
         VisualAttiSetReceive_TickOut = Tick_Temp - 1000;
@@ -316,30 +316,30 @@ static rt_tick_t VisualCom_Tick_Fill(rt_uint8_t TickOri)
     return VisualAttiSetReceive_TickOut;
 }
 
-// ½ÓÊÕ£ºÔÆÌ¨Éè¶¨Öµ±¨ÎÄ
+// æ¥æ”¶ï¼šäº‘å°è®¾å®šå€¼æŠ¥æ–‡
 rt_err_t VisualCom_Receive_Atti(rt_uint8_t rxmsg[])
 {
     int fori;
     char sum;
-    // Ğ£ÑéºÍ¼ì²é
+    // æ ¡éªŒå’Œæ£€æŸ¥
     sum = 0;
     for (fori = 0; fori < 7; fori++)
         sum += rxmsg[fori];
     if (sum != rxmsg[fori])
-        // ºÍĞ£ÑéÎ´Í¨¹ı
+        // å’Œæ ¡éªŒæœªé€šè¿‡
         return RT_ERROR;
 
     Visual_LastFresh_Tick = rt_tick_get();
 
-    // Êı¾İ±£´æ
+    // æ•°æ®ä¿å­˜
     VisualAttiSet_TickOri = rxmsg[0];
     VisualAttiSetOri_Pitch = ((rt_int16_t)(rxmsg[1] << 8 | rxmsg[2])) / 180.0f;
     VisualAttiSetOri_Yaw = ((rt_int16_t)(rxmsg[3] << 8 | rxmsg[4])) / 180.0f;
     VisualAttiSetOri_PitchSpe = (rt_int8_t)rxmsg[5];
     VisualAttiSetOri_YawSpe = (rt_int8_t)rxmsg[6];
 
-    /*Êı¾İ´¦Àí*/
-    // ÏÈ¼ÆËãTickµÄÊıÖµ
+    /*æ•°æ®å¤„ç†*/
+    // å…ˆè®¡ç®—Tickçš„æ•°å€¼
     GimbalSet_Receive[!Gimbal_Set_Cal_READ_Valid].PredictedTime = VisualCom_Tick_Fill(VisualAttiSet_TickOri);
     GimbalSet_Receive[!Gimbal_Set_Cal_READ_Valid].GimbalSet_Angle.Pitch = VisualAttiSetOri_Pitch + PitchFix;
     GimbalSet_Receive[!Gimbal_Set_Cal_READ_Valid].GimbalSet_Angle.Yaw = VisualAttiSetOri_Yaw + YawFix;
@@ -348,13 +348,13 @@ rt_err_t VisualCom_Receive_Atti(rt_uint8_t rxmsg[])
 
     if (Visual_Mode_Set == VisualMode_FB)
     {
-        // µ±Ç°ÊÓ¾õ¹¤×÷Ä£Ê½ÕıÈ·
+        // å½“å‰è§†è§‰å·¥ä½œæ¨¡å¼æ­£ç¡®
         GimbalSet_Receive[!Gimbal_Set_Cal_READ_Valid].State = RT_EOK;
-        Gimbal_Set_Cal_READ_Valid = !Gimbal_Set_Cal_READ_Valid; // ÇĞ»»¿É¶ÁÈ¡
+        Gimbal_Set_Cal_READ_Valid = !Gimbal_Set_Cal_READ_Valid; // åˆ‡æ¢å¯è¯»å–
     }
     else
     {
-        // ÊÓ¾õ¹¤×÷Ä£Ê½´íÎó ÔòËùÓĞÊı¾İ¾ù±ê¼ÇÎªÊ§Ğ§
+        // è§†è§‰å·¥ä½œæ¨¡å¼é”™è¯¯ åˆ™æ‰€æœ‰æ•°æ®å‡æ ‡è®°ä¸ºå¤±æ•ˆ
         GimbalSet_Receive[!Gimbal_Set_Cal_READ_Valid].State = RT_ERROR;
         GimbalSet_Receive[Gimbal_Set_Cal_READ_Valid].State = RT_ERROR;
     }

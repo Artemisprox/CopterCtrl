@@ -2,10 +2,10 @@
 #include "robodata.h"
 #include "drv_utils.h"
 
-FBData_S GimbalFB = {FB_NONE}; // ·´À¡Á¿Ïà¹ØÄÚÈİ
+FBData_S GimbalFB = {FB_NONE}; // åé¦ˆé‡ç›¸å…³å†…å®¹
 
-// Ê¹ÓÃÔÆÌ¨±àÂëÆ÷¼ÆËãµ±Ç°ÔÆÌ¨Ïà¶ÔÓÚµ×ÅÌµÄ×ËÌ¬
-static float Pitch_ENCD, Yaw_ENCD; // PitchÖá±àÂëÆ÷Êı¾İ»»ËãÊı¾İÁãÎ»ºÍµ¥Î» ±ãÓÚJSCOPE¹Û²ì
+// ä½¿ç”¨äº‘å°ç¼–ç å™¨è®¡ç®—å½“å‰äº‘å°ç›¸å¯¹äºåº•ç›˜çš„å§¿æ€
+static float Pitch_ENCD, Yaw_ENCD; // Pitchè½´ç¼–ç å™¨æ•°æ®æ¢ç®—æ•°æ®é›¶ä½å’Œå•ä½ ä¾¿äºJSCOPEè§‚å¯Ÿ
 static void Get_ENCD_ATTI(AttitudeData_Type *Gimbal_ENCD_Data_Get)
 {
     Pitch_ENCD = Motor_Get_DeltaAngle(Motor_Read_NowEncoder(&Pitch), PITCH_ZERO_ANGLE, 8192.0f) * 360.0f / 8192;
@@ -22,41 +22,41 @@ static void Get_ENCD_ATTI(AttitudeData_Type *Gimbal_ENCD_Data_Get)
     Gimbal_ENCD_Data_Get->Yaw = Yaw_ENCD;
 }
 
-// Ë¢ĞÂIMU×ËÌ¬Êı¾İ
+// åˆ·æ–°IMUå§¿æ€æ•°æ®
 static void Get_IMU_ATTI(AttitudeData_Type *Gimbal_IMU_Data_Get)
-{ // Ö±½Ó¼ÇÂ¼µ±Ç°IMUÊıÖµ
+{ // ç›´æ¥è®°å½•å½“å‰IMUæ•°å€¼
     Gimbal_IMU_Data_Get->Pitch = gimbal_atti.pitch;
     Gimbal_IMU_Data_Get->Yaw = gimbal_atti.yaw;
 }
 
-/* ¹ØÓÚÇĞ»»¹ı³Ì£º
- *  ´ÓÍÓÂİÒÇÇĞ»»ÖÁ±àÂëÆ÷£º±àÂëÆ÷·´À¡Á¿»á°´ÕÕµ±Ç°ÍÓÂİÒÇÊıÖµ½øĞĞÏàÓ¦Æ«ÖÃ´¦Àí£¬Êı¾İÃ»ÓĞÌø±ä
- *  ´Ó±àÂëÆ÷ÇĞ»»ÖÁÍÓÂİÒÇ£ºÍÓÂİÒÇÊı¾İÒ»°ãÓë±àÂëÆ÷+Æ«ÖÃºóµÄÊı¾İÓĞÇø±ğ£¬´ËÊ±·´À¡Êı¾İ»á³öÏÖÌø±ä£¬ĞèÒªÍ¨¹ıĞŞ¸ÄÉè¶¨ÖµÊµÏÖÎŞÕñ¶¯ÇĞ»»
+/* å…³äºåˆ‡æ¢è¿‡ç¨‹ï¼š
+ *  ä»é™€èºä»ªåˆ‡æ¢è‡³ç¼–ç å™¨ï¼šç¼–ç å™¨åé¦ˆé‡ä¼šæŒ‰ç…§å½“å‰é™€èºä»ªæ•°å€¼è¿›è¡Œç›¸åº”åç½®å¤„ç†ï¼Œæ•°æ®æ²¡æœ‰è·³å˜
+ *  ä»ç¼–ç å™¨åˆ‡æ¢è‡³é™€èºä»ªï¼šé™€èºä»ªæ•°æ®ä¸€èˆ¬ä¸ç¼–ç å™¨+åç½®åçš„æ•°æ®æœ‰åŒºåˆ«ï¼Œæ­¤æ—¶åé¦ˆæ•°æ®ä¼šå‡ºç°è·³å˜ï¼Œéœ€è¦é€šè¿‡ä¿®æ”¹è®¾å®šå€¼å®ç°æ— æŒ¯åŠ¨åˆ‡æ¢
  */
 
-// Ë¢ĞÂ£ºÔÆÌ¨·´À¡Á¿¼ÆËã½á¹¹Ìå GimbalFB
+// åˆ·æ–°ï¼šäº‘å°åé¦ˆé‡è®¡ç®—ç»“æ„ä½“ GimbalFB
 static GimbalFBSelection_E Pitch_FBS_Old = FB_IMU, Yaw_FBS_Old = FB_IMU;
 void Gimbal_PID_FB_Fresh(void)
 {
     float PitchTemp, YawTemp;
-    // Ë¢ĞÂ½á¹¹Ìå»ù´¡Êı¾İ
+    // åˆ·æ–°ç»“æ„ä½“åŸºç¡€æ•°æ®
     Get_ENCD_ATTI(&GimbalFB.ENCD_ATTI);
     Get_IMU_ATTI(&GimbalFB.IMU_ATTI);
-    GimbalFB.DeltaAtti.Pitch = GimbalFB.ENCD_ATTI.Pitch + GimbalFB.ENCD_BIAS.Pitch - GimbalFB.IMU_ATTI.Pitch; // ¸üĞÂ½Ç¶È²î
+    GimbalFB.DeltaAtti.Pitch = GimbalFB.ENCD_ATTI.Pitch + GimbalFB.ENCD_BIAS.Pitch - GimbalFB.IMU_ATTI.Pitch; // æ›´æ–°è§’åº¦å·®
     GimbalFB.DeltaAtti.Yaw = GimbalFB.ENCD_ATTI.Yaw + GimbalFB.ENCD_BIAS.Yaw - GimbalFB.IMU_ATTI.Yaw;
 
-    // ¼ÆËãÊä³öÊı¾İ
+    // è®¡ç®—è¾“å‡ºæ•°æ®
     PitchTemp = GimbalFB.FB_This.Pitch;
     YawTemp = GimbalFB.FB_This.Yaw;
     if (GimbalFB.FBS_Now_Pitch == FB_ENCD)
-    { // ±¾´ÎÊ¹ÓÃ±àÂëÆ÷Êı¾İ
+    { // æœ¬æ¬¡ä½¿ç”¨ç¼–ç å™¨æ•°æ®
         if (Pitch_FBS_Old != FB_ENCD)
             PitchTemp = GimbalFB.ENCD_ATTI.Pitch + GimbalFB.ENCD_BIAS.Pitch;
         else
-            PitchTemp = PitchTemp * 0.001f + 0.999f * (GimbalFB.ENCD_ATTI.Pitch + GimbalFB.ENCD_BIAS.Pitch); // Êä³ö±àÂëÆ÷ÊıÖµÊ±Ìí¼ÓÇĞ»»Êı¾İÔ´Ê±¼ÇÂ¼µÄÆ«ÖÃÁ¿
+            PitchTemp = PitchTemp * 0.001f + 0.999f * (GimbalFB.ENCD_ATTI.Pitch + GimbalFB.ENCD_BIAS.Pitch); // è¾“å‡ºç¼–ç å™¨æ•°å€¼æ—¶æ·»åŠ åˆ‡æ¢æ•°æ®æºæ—¶è®°å½•çš„åç½®é‡
     }
     else
-    { // Èç¹ûÃ»ÓĞ³õÊ¼»¯ »ò ĞèÒªÊ¹ÓÃÍÓÂİÒÇÊı¾İ ½øĞĞ±Õ»·£¬ÔòÖ±½ÓÊ¹ÓÃÍÓÂİÒÇÊı¾İ½øĞĞÊä³ö£¬Í¬Ê±¸üĞÂENCD_BIAS
+    { // å¦‚æœæ²¡æœ‰åˆå§‹åŒ– æˆ– éœ€è¦ä½¿ç”¨é™€èºä»ªæ•°æ® è¿›è¡Œé—­ç¯ï¼Œåˆ™ç›´æ¥ä½¿ç”¨é™€èºä»ªæ•°æ®è¿›è¡Œè¾“å‡ºï¼ŒåŒæ—¶æ›´æ–°ENCD_BIAS
         GimbalFB.ENCD_BIAS.Pitch = gimbal_atti.pitch - GimbalFB.ENCD_ATTI.Pitch;
         PitchTemp = gimbal_atti.pitch;
     }
@@ -67,9 +67,9 @@ void Gimbal_PID_FB_Fresh(void)
             YawTemp = GimbalFB.ENCD_ATTI.Yaw + GimbalFB.ENCD_BIAS.Yaw;
         else
         {
-            // Êä³ö±àÂëÆ÷ÊıÖµÊ±Ìí¼ÓÇĞ»»Êı¾İÔ´Ê±¼ÇÂ¼µÄÆ«ÖÃÁ¿
-            YawTemp = GimbalFB.FB_This.Yaw + utils_angle_difference(GimbalFB.ENCD_ATTI.Yaw + GimbalFB.ENCD_BIAS.Yaw, GimbalFB.FB_This.Yaw) * 0.5f; // ÖÍºóÂË²¨
-            // ÖØĞÂ×ª»»»Ø [-180¡ã,180¡ã]
+            // è¾“å‡ºç¼–ç å™¨æ•°å€¼æ—¶æ·»åŠ åˆ‡æ¢æ•°æ®æºæ—¶è®°å½•çš„åç½®é‡
+            YawTemp = GimbalFB.FB_This.Yaw + utils_angle_difference(GimbalFB.ENCD_ATTI.Yaw + GimbalFB.ENCD_BIAS.Yaw, GimbalFB.FB_This.Yaw) * 0.5f; // æ»åæ»¤æ³¢
+            // é‡æ–°è½¬æ¢å› [-180Â°,180Â°]
             utils_norm_circle_number(&YawTemp, -180.f, 360.f);
         }
     }
@@ -79,7 +79,7 @@ void Gimbal_PID_FB_Fresh(void)
         YawTemp = gimbal_atti.yaw;
     }
 
-    // Êı¾İÏŞ·ù¡¢¿çÈ¦ĞŞÕı
+    // æ•°æ®é™å¹…ã€è·¨åœˆä¿®æ­£
     if (PitchTemp > 90.0f)
         PitchTemp = 90.0f;
     else if (PitchTemp < -90.0f)
@@ -87,47 +87,47 @@ void Gimbal_PID_FB_Fresh(void)
 
     utils_norm_circle_number(&YawTemp, -180.f, 360.f);
 
-    // Êä³öÊı¾İ
+    // è¾“å‡ºæ•°æ®
     GimbalFB.FB_This.Pitch = PitchTemp;
     GimbalFB.FB_This.Yaw = YawTemp;
     Pitch_FBS_Old = GimbalFB.FBS_Now_Pitch;
     Yaw_FBS_Old = GimbalFB.FBS_Now_Yaw;
 }
 
-// »ñÈ¡µ±Ç°ÔÆÌ¨½Ç¶È·´À¡Á¿
+// è·å–å½“å‰äº‘å°è§’åº¦åé¦ˆé‡
 void Gimbal_FB_Get(AttitudeData_Type *FB_Atti)
-{ // Êä³ö·´À¡Á¿
+{ // è¾“å‡ºåé¦ˆé‡
     FB_Atti->Pitch = GimbalFB.FB_This.Pitch;
     FB_Atti->Yaw = GimbalFB.FB_This.Yaw;
 }
 
-// Éè¶¨ÏÖÔÚÊ¹ÓÃµÄµÄ·´À¡Êı¾İÔ´
+// è®¾å®šç°åœ¨ä½¿ç”¨çš„çš„åé¦ˆæ•°æ®æº
 void GimbalPitch_FB_Select_Set(GimbalFBSelection_E FB_Set)
 {
-    GimbalFB.FBS_Now_Pitch = FB_Set; // Ö±½Ó¸üĞÂÉè¶¨µÄÊı¾İÔ´
+    GimbalFB.FBS_Now_Pitch = FB_Set; // ç›´æ¥æ›´æ–°è®¾å®šçš„æ•°æ®æº
 }
-// Éè¶¨ÏÖÔÚÊ¹ÓÃµÄµÄ·´À¡Êı¾İÔ´
+// è®¾å®šç°åœ¨ä½¿ç”¨çš„çš„åé¦ˆæ•°æ®æº
 void GimbalYaw_FB_Select_Set(GimbalFBSelection_E FB_Set)
 {
-    GimbalFB.FBS_Now_Yaw = FB_Set; // Ö±½Ó¸üĞÂÉè¶¨µÄÊı¾İÔ´
+    GimbalFB.FBS_Now_Yaw = FB_Set; // ç›´æ¥æ›´æ–°è®¾å®šçš„æ•°æ®æº
 }
-// ¶ÁÈ¡ÏÖÔÚÊ¹ÓÃµÄµÄ·´À¡Êı¾İÔ´
+// è¯»å–ç°åœ¨ä½¿ç”¨çš„çš„åé¦ˆæ•°æ®æº
 GimbalFBSelection_E GimbalYaw_FB_Select_Get(void)
 {
     return GimbalFB.FBS_Now_Yaw;
 }
-// ¶ÁÈ¡ÏÖÔÚÊ¹ÓÃµÄµÄ·´À¡Êı¾İÔ´
+// è¯»å–ç°åœ¨ä½¿ç”¨çš„çš„åé¦ˆæ•°æ®æº
 GimbalFBSelection_E GimbalPitch_FB_Select_Get(void)
 {
     return GimbalFB.FBS_Now_Pitch;
 }
 
-// ³õÊ¼»¯ÔÆÌ¨¿ØÖÆ·´À¡ĞÅÏ¢
+// åˆå§‹åŒ–äº‘å°æ§åˆ¶åé¦ˆä¿¡æ¯
 void GimbalFB_Init(void)
 {
-    // ÔÆÌ¨·´À¡Á¿Ä¬ÈÏÊ¹ÓÃIMUÊı¾İ
+    // äº‘å°åé¦ˆé‡é»˜è®¤ä½¿ç”¨IMUæ•°æ®
     GimbalFB.FBS_Now_Pitch = FB_IMU;
     GimbalFB.FBS_Now_Yaw = FB_IMU;
 
-    Gimbal_PID_FB_Fresh(); // Á¢¼´Ë¢ĞÂÒ»´ÎÊı¾İ ÒªÇóµÈ´ıµç»úÉÏµçÒÔ¼°Ïà¹Ø³õÊ¼»¯Íê³ÉºóÖ´ĞĞ
+    Gimbal_PID_FB_Fresh(); // ç«‹å³åˆ·æ–°ä¸€æ¬¡æ•°æ® è¦æ±‚ç­‰å¾…ç”µæœºä¸Šç”µä»¥åŠç›¸å…³åˆå§‹åŒ–å®Œæˆåæ‰§è¡Œ
 }

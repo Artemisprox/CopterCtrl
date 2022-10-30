@@ -5,17 +5,17 @@
 #include "drv_rgblight.h"
 #endif
 
-/*Éè¶¨±¨¾¯ÖÜÆÚ£¬µ¥Î»ms*/
+/*è®¾å®šæŠ¥è­¦å‘¨æœŸï¼Œå•ä½ms*/
 #define ALARM_PERIOD 100
 
-///////////////////////////*¸ù¾İ°å×ÓÉÏÊÇ·ñÓĞ·äÃùÆ÷À´Ñ¡Ôñ*///////////////////////////
+///////////////////////////*æ ¹æ®æ¿å­ä¸Šæ˜¯å¦æœ‰èœ‚é¸£å™¨æ¥é€‰æ‹©*///////////////////////////
 #ifdef BSP_USING_BUZZER
 #include "drv_buzzer.h"
 
-/*¿ØÖÆ±¨¾¯Ê±·äÃùÆ÷¿ªÆô»ò¹Ø±ÕµÄ¿ª¹ØÒı½Å*/
+/*æ§åˆ¶æŠ¥è­¦æ—¶èœ‚é¸£å™¨å¼€å¯æˆ–å…³é—­çš„å¼€å…³å¼•è„š*/
 #define SWITCH_BUZZER_PIN 67
 
-/*³ÌĞò³õÊ¼»¯Ê§°ÜºÍ¸´Î»µÄÌáĞÑ£»´®¿Ú»áÒ»Ö±ÖØ¸´´òÓ¡;·äÃùÆ÷»áÒ»Ö±µÎ´ğµÎ´ğÏì*/
+/*ç¨‹åºåˆå§‹åŒ–å¤±è´¥å’Œå¤ä½çš„æé†’ï¼›ä¸²å£ä¼šä¸€ç›´é‡å¤æ‰“å°;èœ‚é¸£å™¨ä¼šä¸€ç›´æ»´ç­”æ»´ç­”å“*/
 #define WARN_PROGRAM_EXCEPTION               \
     do                                       \
     {                                        \
@@ -26,18 +26,18 @@
         rt_thread_mdelay(50);                \
     } while (0);
 
-//¼àÊÓÆ÷×Ô¶¨Òå±¨¾¯·ç¸ñ
+//ç›‘è§†å™¨è‡ªå®šä¹‰æŠ¥è­¦é£æ ¼
 #define ALARM_SET         \
     set_buzzer(1800);     \
     rt_thread_mdelay(50); \
     set_buzzer(0);        \
-    rt_thread_mdelay(400); //Ä¬ÈÏ1500Hz
+    rt_thread_mdelay(400); //é»˜è®¤1500Hz
 #define ALARM_RESET       \
     set_buzzer(900);      \
     rt_thread_mdelay(50); \
     set_buzzer(0);        \
-    rt_thread_mdelay(800); //ÒÔµÍÆµÂÊÉùÒôÀ´×÷Îª¼ä¸ô
-                           //#define ALARM_RESET  rt_thread_mdelay(2000);//ÒÔ¾²ÒôÀ´×÷Îª¼ä¸ô
+    rt_thread_mdelay(800); //ä»¥ä½é¢‘ç‡å£°éŸ³æ¥ä½œä¸ºé—´éš”
+                           //#define ALARM_RESET  rt_thread_mdelay(2000);//ä»¥é™éŸ³æ¥ä½œä¸ºé—´éš”
 #else
 #define WARN_PROGRAM_EXCEPTION
 #define ALARM_SET
@@ -46,9 +46,9 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @brief    ±¨¾¯³õÊ¼»¯
- * @param    ÎŞ
- * @return   ³õÊ¼»¯³É¹¦orÊ§°Ü
+ * @brief    æŠ¥è­¦åˆå§‹åŒ–
+ * @param    æ— 
+ * @return   åˆå§‹åŒ–æˆåŠŸorå¤±è´¥
  * @author   Lvfp
  */
 rt_err_t Alarm_Init(void);

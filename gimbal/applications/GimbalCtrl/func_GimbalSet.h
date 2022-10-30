@@ -6,7 +6,7 @@
 #include "drv_SetPlanning.h"
 #include "drv_ExactSmooth.h"
 
-#define GIMBAL_LIM_LEN (1.5f) //¶¨ÒåÔÆÌ¨Éè¶¨Öµ½Ó½üÏŞ·ùÖµµÄ»º³åÇøµÄ´óĞ¡ µ¥Î» ¡ã
+#define GIMBAL_LIM_LEN (1.5f) //å®šä¹‰äº‘å°è®¾å®šå€¼æ¥è¿‘é™å¹…å€¼çš„ç¼“å†²åŒºçš„å¤§å° å•ä½ Â°
 
 typedef struct
 {
@@ -23,31 +23,31 @@ typedef enum
 extern ExactSmth_CTRL_S Smooth_PitchAngleSet, Smooth_YawAngleSet;
 
 /**
- * @brief ÔÆÌ¨Éè¶¨Öµ»ñÈ¡Ö÷º¯Êı
- * @param [GimbalCTRL_Set_Type*] Gimbal_Setang£ºÔÆÌ¨Éè¶¨Öµ½á¹¹Ìå µ÷ÓÃº¯ÊıÇ°ÎªÉÏÒ»´ÎµÄÉè¶¨Öµ£¬µ÷ÓÃºóÎªÕâÒ»´ÎµÄÉè¶¨Öµ
- * @return ÎŞ
+ * @brief äº‘å°è®¾å®šå€¼è·å–ä¸»å‡½æ•°
+ * @param [GimbalCTRL_Set_Type*] Gimbal_Setangï¼šäº‘å°è®¾å®šå€¼ç»“æ„ä½“ è°ƒç”¨å‡½æ•°å‰ä¸ºä¸Šä¸€æ¬¡çš„è®¾å®šå€¼ï¼Œè°ƒç”¨åä¸ºè¿™ä¸€æ¬¡çš„è®¾å®šå€¼
+ * @return æ— 
  * @author ych
  */
 extern void Gimbal_getset(GimbalCTRL_Set_Type *Gimbal_Setang);
 
 /**
- * @brief Éè¶¨Öµ¼°Ïà¹Ø¹¦ÄÜ³õÊ¼»¯
- * @param [GimbalCTRL_Set_Type*] SetSTR£º×ËÌ¬½ÇÉè¶¨Öµ½á¹¹ÌåÖ¸Õë
- * @param [float] PitchSet: ÉÏµçºóµÄ³õÊ¼×ËÌ¬½ÇÉè¶¨Öµ
- * @param [float] YawSet: ÉÏµçºóµÄ³õÊ¼×ËÌ¬½ÇÉè¶¨Öµ
- * @return ÎŞ
+ * @brief è®¾å®šå€¼åŠç›¸å…³åŠŸèƒ½åˆå§‹åŒ–
+ * @param [GimbalCTRL_Set_Type*] SetSTRï¼šå§¿æ€è§’è®¾å®šå€¼ç»“æ„ä½“æŒ‡é’ˆ
+ * @param [float] PitchSet: ä¸Šç”µåçš„åˆå§‹å§¿æ€è§’è®¾å®šå€¼
+ * @param [float] YawSet: ä¸Šç”µåçš„åˆå§‹å§¿æ€è§’è®¾å®šå€¼
+ * @return æ— 
  * @author ych
  */
 extern void GimbalSet_Init(GimbalCTRL_Set_Type *SetSTR, float PitchSet, float YawSet);
 
-// ÓÃÓÚÍâ²¿¶ÁÈ¡µ±Ç°µÄÊµ¼Ê½Ç¶ÈÉè¶¨Öµ
+// ç”¨äºå¤–éƒ¨è¯»å–å½“å‰çš„å®é™…è§’åº¦è®¾å®šå€¼
 extern float Read_Real_Set(SetData_Type_Enum Data);
 
 #if defined CORE_USING_HERO
-// ÓÃÓÚÍË³ö»ò½øÈëµõÉäÄ£Ê½
+// ç”¨äºé€€å‡ºæˆ–è¿›å…¥åŠå°„æ¨¡å¼
 extern void Enter_Dangling_Mode(rt_uint8_t Enter);
 
-// ¶ÁÈ¡µ±Ç°ÊÇ·ñ´¦ÓÚµõÉäÄ£Ê½ÖĞ
+// è¯»å–å½“å‰æ˜¯å¦å¤„äºåŠå°„æ¨¡å¼ä¸­
 extern rt_uint8_t Read_Dangling_Mode(void);
 #endif /* CORE_USING_HERO */
 

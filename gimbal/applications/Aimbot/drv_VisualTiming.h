@@ -3,7 +3,7 @@
 
 #include "rtthread.h"
 
-// delayµ½Ö¸¶¨tickº¯Êı£¬»áÍ¨¹ıÖ¸ÕëTick_WakeUpÏòÍâÊä³öÏß³Ì»½ĞÑµÄÊµ¼ÊÊ±¿Ì
+// delayåˆ°æŒ‡å®štickå‡½æ•°ï¼Œä¼šé€šè¿‡æŒ‡é’ˆTick_WakeUpå‘å¤–è¾“å‡ºçº¿ç¨‹å”¤é†’çš„å®é™…æ—¶åˆ»
 extern rt_err_t rt_thread_delay_to_tick(rt_tick_t Tick_WaitFor, rt_tick_t *Tick_WakeUp);
 
 #endif

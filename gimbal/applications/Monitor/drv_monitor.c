@@ -1,30 +1,30 @@
 #include "drv_monitor.h"
 #include <rtthread.h>
 
-//Ð¡¿´ÃÅ¹·Á´±íÍ·Ö¸Õë,Head pointer
+//å°çœ‹é—¨ç‹—é“¾è¡¨å¤´æŒ‡é’ˆ,Head pointer
 swdg_dev_t *monitor_hp = RT_NULL;
-static rt_sem_t monitor_sem = RT_NULL; // ÓÃÀ´¶Ô²Ù×÷Á´±íÉÏËøµÄÐÅºÅÁ¿
-//±¨¾¯Ïß³ÌË«ÏòÁ´±íÍ·
+static rt_sem_t monitor_sem = RT_NULL; // ç”¨æ¥å¯¹æ“ä½œé“¾è¡¨ä¸Šé”çš„ä¿¡å·é‡
+//æŠ¥è­¦çº¿ç¨‹åŒå‘é“¾è¡¨å¤´
 alarm_dev_t alarm_head;
-//È¡Í·Ö¸Õë
+//å–å¤´æŒ‡é’ˆ
 alarm_dev_t *alarm_hp = &alarm_head;
-static rt_sem_t alarm_sem = RT_NULL; // ÓÃÀ´¶Ô²Ù×÷Á´±íÉÏËøµÄÐÅºÅÁ¿
+static rt_sem_t alarm_sem = RT_NULL; // ç”¨æ¥å¯¹æ“ä½œé“¾è¡¨ä¸Šé”çš„ä¿¡å·é‡
 
 /**
- * @brief  ´´½¨Ò»¸öÈí¼þ¿´ÃÅ¹·¶ÔÏó
- * @param  id    ¼àÊÓID
- * @param  color  ±¨¾¯ÑÕÉ«
- * @param  if_alarm  ÊÇ·ñÆôÓÃ±¨¾¯¹¦ÄÜ
- * @param  time_threshold    ±¨¾¯Ê±¼ä£¬³¬¹ý¸ÃÊ±¼ä²»Î¹¹·Ôò»á±¨¾¯£¨µ¥Î»ms£©
- * @param  handle    Òì³£´¦Àíº¯ÊýÖ¸Õë
- * @param  init_flag ³õÊ¼»¯ÓÃµÄ±êÖ¾Î»
- * @return RT_ERROR  ³õÊ¼»¯Ê§°Ü£¬RT_EOK  ³õÊ¼»¯³É¹¦
+ * @brief  åˆ›å»ºä¸€ä¸ªè½¯ä»¶çœ‹é—¨ç‹—å¯¹è±¡
+ * @param  id    ç›‘è§†ID
+ * @param  color  æŠ¥è­¦é¢œè‰²
+ * @param  if_alarm  æ˜¯å¦å¯ç”¨æŠ¥è­¦åŠŸèƒ½
+ * @param  time_threshold    æŠ¥è­¦æ—¶é—´ï¼Œè¶…è¿‡è¯¥æ—¶é—´ä¸å–‚ç‹—åˆ™ä¼šæŠ¥è­¦ï¼ˆå•ä½msï¼‰
+ * @param  handle    å¼‚å¸¸å¤„ç†å‡½æ•°æŒ‡é’ˆ
+ * @param  init_flag åˆå§‹åŒ–ç”¨çš„æ ‡å¿—ä½
+ * @return RT_ERROR  åˆå§‹åŒ–å¤±è´¥ï¼ŒRT_EOK  åˆå§‹åŒ–æˆåŠŸ
  * @author mqy
  */
 rt_err_t Swdg_Create(swdg_deviceID id, Alarm_color_e color, rt_bool_t if_alarm,
                      rt_uint32_t time_threshold, rt_err_t (*handle)(rt_bool_t), rt_uint8_t init_flag)
 {
-    // ÅÐ¶ÏÐÅºÅÁ¿ÊÇ²»ÊÇ´æÔÚ
+    // åˆ¤æ–­ä¿¡å·é‡æ˜¯ä¸æ˜¯å­˜åœ¨
     if (!monitor_sem)
     {
         monitor_sem = rt_sem_create("MonitorSem", 1, RT_IPC_FLAG_FIFO);
@@ -32,20 +32,20 @@ rt_err_t Swdg_Create(swdg_deviceID id, Alarm_color_e color, rt_bool_t if_alarm,
             return RT_ERROR;
     }
 
-    swdg_dev_t *swdg_dev_tem = (swdg_dev_t *)rt_malloc(sizeof(swdg_dev_t)); //ÉêÇë¿Õ¼ä
+    swdg_dev_t *swdg_dev_tem = (swdg_dev_t *)rt_malloc(sizeof(swdg_dev_t)); //ç”³è¯·ç©ºé—´
     if (swdg_dev_tem == RT_NULL)
         return RT_ERROR;
 
-    // ²Ù×÷Ç°µÚÒ»²½ÊÇÉÏËø
+    // æ“ä½œå‰ç¬¬ä¸€æ­¥æ˜¯ä¸Šé”
     rt_sem_take(monitor_sem, RT_WAITING_FOREVER);
     while (RT_EOK == rt_sem_trytake(monitor_sem))
         continue;
 
-    //¹¹½¨Á´±í
+    //æž„å»ºé“¾è¡¨
     swdg_dev_tem->next = monitor_hp;
     monitor_hp = swdg_dev_tem;
 
-    //¸³Öµ
+    //èµ‹å€¼
     swdg_dev_tem->flag_inited = init_flag;
     swdg_dev_tem->ID = id;
     swdg_dev_tem->color = color;
@@ -56,7 +56,7 @@ rt_err_t Swdg_Create(swdg_deviceID id, Alarm_color_e color, rt_bool_t if_alarm,
     swdg_dev_tem->handle = handle;
     swdg_dev_tem->if_start = RT_FALSE;
 
-    // ²Ù×÷Íê³É, ½âËø
+    // æ“ä½œå®Œæˆ, è§£é”
     rt_sem_release(monitor_sem);
     return RT_EOK;
 }
@@ -74,13 +74,13 @@ void Mlist_Init(alarm_dev_t *l)
 
 /***
  * @brief  insert a node after alarm_head
- * @param  HungryDog   Ã»ÓÐ¼°Ê±±»Î¹¹·µÄswdgÖ¸Õë
+ * @param  HungryDog   æ²¡æœ‰åŠæ—¶è¢«å–‚ç‹—çš„swdgæŒ‡é’ˆ
  * @return none
  * @author Lvfp
  ***/
 void Mlist_Insert(swdg_dev_t *HungryDog)
 {
-    // ÅÐ¶ÏÐÅºÅÁ¿ÊÇ²»ÊÇ´æÔÚ
+    // åˆ¤æ–­ä¿¡å·é‡æ˜¯ä¸æ˜¯å­˜åœ¨
     if (!alarm_sem)
     {
         alarm_sem = rt_sem_create("AlarmSem", 1, RT_IPC_FLAG_FIFO);
@@ -90,7 +90,7 @@ void Mlist_Insert(swdg_dev_t *HungryDog)
 
     alarm_dev_t *alarm_dev_tem = alarm_hp->next;
 
-    //È·±£¹ÒÔÚalarm_hpµÄÁ´±í³ÉÔ±µÄ¿´ÃÅ¹·ID²»ÖØ¸´
+    //ç¡®ä¿æŒ‚åœ¨alarm_hpçš„é“¾è¡¨æˆå‘˜çš„çœ‹é—¨ç‹—IDä¸é‡å¤
     while (alarm_dev_tem != alarm_hp)
     {
         if (HungryDog->ID == alarm_dev_tem->swdg->ID)
@@ -98,35 +98,35 @@ void Mlist_Insert(swdg_dev_t *HungryDog)
         alarm_dev_tem = alarm_dev_tem->next;
     }
 
-    // ²Ù×÷Ç°µÚÒ»²½ÊÇÉÏËø
+    // æ“ä½œå‰ç¬¬ä¸€æ­¥æ˜¯ä¸Šé”
     rt_sem_take(alarm_sem, RT_WAITING_FOREVER);
     while (RT_EOK == rt_sem_trytake(alarm_sem))
         continue;
 
-    //ÉêÇë¿Õ¼ä£¬¹ÒÉÏÖ¸Õë
+    //ç”³è¯·ç©ºé—´ï¼ŒæŒ‚ä¸ŠæŒ‡é’ˆ
     alarm_dev_t *n = (alarm_dev_t *)rt_malloc(sizeof(alarm_dev_t));
     n->swdg = HungryDog;
 
-    //½¨Á¢alarm_hpºóÒ»¸ö½ÚµãÓëÐÂ½ÚµãµÄÁªÏµ
+    //å»ºç«‹alarm_hpåŽä¸€ä¸ªèŠ‚ç‚¹ä¸Žæ–°èŠ‚ç‚¹çš„è”ç³»
     alarm_hp->next->prev = n;
     n->next = alarm_hp->next;
-    //½¨Á¢alarm_hpÓëÐÂ½ÚµãµÄÁªÏµ
+    //å»ºç«‹alarm_hpä¸Žæ–°èŠ‚ç‚¹çš„è”ç³»
     alarm_hp->next = n;
     n->prev = alarm_hp;
 
-    // ²Ù×÷ÍêÒÔºó½âËø
+    // æ“ä½œå®Œä»¥åŽè§£é”
     rt_sem_release(alarm_sem);
 }
 
 /***
  * @brief  remove node from list and release memory block
- * @param  mID: ¶ÔÓ¦¼àÊÓÆ÷µÄID
+ * @param  mID: å¯¹åº”ç›‘è§†å™¨çš„ID
  * @return None
  * @author Lvfp
  ***/
 void Mlist_Remove(swdg_deviceID mID)
 {
-    // ÅÐ¶ÏÐÅºÅÁ¿ÊÇ²»ÊÇ´æÔÚ
+    // åˆ¤æ–­ä¿¡å·é‡æ˜¯ä¸æ˜¯å­˜åœ¨
     if (!alarm_sem)
     {
         alarm_sem = rt_sem_create("AlarmSem", 1, RT_IPC_FLAG_FIFO);
@@ -137,7 +137,7 @@ void Mlist_Remove(swdg_deviceID mID)
     alarm_dev_t *n = RT_NULL;
     alarm_dev_t *alarm_dev_tem = alarm_hp->next;
 
-    //Ë÷ÒýÕÒµ½ID¶ÔÓ¦µÄ±¨¾¯Á´±íµÄ½Úµã
+    //ç´¢å¼•æ‰¾åˆ°IDå¯¹åº”çš„æŠ¥è­¦é“¾è¡¨çš„èŠ‚ç‚¹
     while (alarm_dev_tem != alarm_hp)
     {
         if (mID == alarm_dev_tem->swdg->ID)
@@ -149,9 +149,9 @@ void Mlist_Remove(swdg_deviceID mID)
     }
 
     if (n == RT_NULL)
-        return; //ÎÞÐ§id
+        return; //æ— æ•ˆid
 
-    // ²Ù×÷Ç°µÚÒ»²½ÊÇÉÏËø
+    // æ“ä½œå‰ç¬¬ä¸€æ­¥æ˜¯ä¸Šé”
     rt_sem_take(alarm_sem, RT_WAITING_FOREVER);
     while (RT_EOK == rt_sem_trytake(alarm_sem))
         continue;
@@ -159,7 +159,7 @@ void Mlist_Remove(swdg_deviceID mID)
     n->next->prev = n->prev;
     n->prev->next = n->next;
 
-    // ²Ù×÷ÍêÒÔºó½âËø
+    // æ“ä½œå®Œä»¥åŽè§£é”
     rt_sem_release(alarm_sem);
 
     // n->next = n->prev = n;

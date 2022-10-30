@@ -5,15 +5,15 @@
 
 #define LED_CTRL_EN (0)
 
-// ³õÊ¼»¯ÊÓ¾õÍ¨ĞÅ
+// åˆå§‹åŒ–è§†è§‰é€šä¿¡
 extern int Visual_Com_Init(void);
 
-// Íâ²¿µ÷ÓÃ£¬ÓÃÓÚĞŞ¸Äµ±Ç°·¢¸øÊÓ¾õµÄÊó±êÓÒ¼ü±êÖ¾Î» °´ÏÂÎª1
+// å¤–éƒ¨è°ƒç”¨ï¼Œç”¨äºä¿®æ”¹å½“å‰å‘ç»™è§†è§‰çš„é¼ æ ‡å³é”®æ ‡å¿—ä½ æŒ‰ä¸‹ä¸º1
 extern void Aimbot_FreshMouseClick(char ClickData);
 
-// CAN½ÓÊÕ£º±êÖ¾Î»±¨ÎÄ
+// CANæ¥æ”¶ï¼šæ ‡å¿—ä½æŠ¥æ–‡
 extern rt_err_t VisualCom_Receive_Flag(rt_uint8_t rxmsg[]);
-// CAN½ÓÊÕ£ºÔÆÌ¨Éè¶¨Öµ±¨ÎÄ
+// CANæ¥æ”¶ï¼šäº‘å°è®¾å®šå€¼æŠ¥æ–‡
 extern rt_err_t VisualCom_Receive_Atti(rt_uint8_t rxmsg[]);
 
 #endif

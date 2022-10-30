@@ -6,36 +6,36 @@
 
 typedef struct
 {
-    GimbalFBSelection_E FBS_Now_Pitch; // µ±Ç°·´À¡Á¿
-    GimbalFBSelection_E FBS_Now_Yaw; // µ±Ç°·´À¡Á¿
+    GimbalFBSelection_E FBS_Now_Pitch; // å½“å‰åé¦ˆé‡
+    GimbalFBSelection_E FBS_Now_Yaw; // å½“å‰åé¦ˆé‡
 
-    AttitudeData_Type ENCD_BIAS;  // µ±Ç°±àÂëÆ÷Æ«ÖÃ½Ç¶È
-    AttitudeData_Type ENCD_ATTI; // ÓÉ±àÂëÆ÷Êı¾İ¼ÆËãµÄ½Ç¶È
-    AttitudeData_Type IMU_ATTI; // ×ËÌ¬´«¸ĞÆ÷Êı¾İ
-    AttitudeData_Type FB_This;    // ¹©ÔÆÌ¨±¾´Î¼ÆËãPIDÊ¹ÓÃµÄÊı¾İ
-    AttitudeData_Type DeltaAtti;    // µ±Ç°£º±àÂëÆ÷½Ç¶È - ×ËÌ¬´«¸Ğ½Ç¶È
-} FBData_S;                       // ÓÃÓÚ´¦ÀíÔÆÌ¨±àÂëÆ÷ºÍ×ËÌ¬Êı¾İÇĞ»»µÄ½á¹¹Ìå
+    AttitudeData_Type ENCD_BIAS;  // å½“å‰ç¼–ç å™¨åç½®è§’åº¦
+    AttitudeData_Type ENCD_ATTI; // ç”±ç¼–ç å™¨æ•°æ®è®¡ç®—çš„è§’åº¦
+    AttitudeData_Type IMU_ATTI; // å§¿æ€ä¼ æ„Ÿå™¨æ•°æ®
+    AttitudeData_Type FB_This;    // ä¾›äº‘å°æœ¬æ¬¡è®¡ç®—PIDä½¿ç”¨çš„æ•°æ®
+    AttitudeData_Type DeltaAtti;    // å½“å‰ï¼šç¼–ç å™¨è§’åº¦ - å§¿æ€ä¼ æ„Ÿè§’åº¦
+} FBData_S;                       // ç”¨äºå¤„ç†äº‘å°ç¼–ç å™¨å’Œå§¿æ€æ•°æ®åˆ‡æ¢çš„ç»“æ„ä½“
 
-extern FBData_S GimbalFB; // ·´À¡Á¿ĞÅÏ¢¼ÆËã½á¹¹Ìå
+extern FBData_S GimbalFB; // åé¦ˆé‡ä¿¡æ¯è®¡ç®—ç»“æ„ä½“
 
-// ¹¤¾ß£ºfloat¿çÈ¦´¦Àí
+// å·¥å…·ï¼šfloatè·¨åœˆå¤„ç†
 extern void FloatDataFix(float *data, float UpLim, float DownLim);
 
-// Ë¢ĞÂ£ºÔÆÌ¨·´À¡Á¿¼ÆËã½á¹¹Ìå GimbalFB
+// åˆ·æ–°ï¼šäº‘å°åé¦ˆé‡è®¡ç®—ç»“æ„ä½“ GimbalFB
 extern void Gimbal_PID_FB_Fresh(void);
 
-// »ñÈ¡µ±Ç°ÔÆÌ¨½Ç¶È·´À¡Á¿
+// è·å–å½“å‰äº‘å°è§’åº¦åé¦ˆé‡
 extern void Gimbal_FB_Get(AttitudeData_Type *FB_Atti);
 
-// Éè¶¨ËùĞèµÄ·´À¡Êı¾İÔ´
+// è®¾å®šæ‰€éœ€çš„åé¦ˆæ•°æ®æº
 extern void GimbalPitch_FB_Select_Set(GimbalFBSelection_E FB_Set);
 extern void GimbalYaw_FB_Select_Set(GimbalFBSelection_E FB_Set);
 
-// ¶ÁÈ¡ÏÖÔÚÊ¹ÓÃµÄµÄ·´À¡Êı¾İÔ´
+// è¯»å–ç°åœ¨ä½¿ç”¨çš„çš„åé¦ˆæ•°æ®æº
 extern GimbalFBSelection_E GimbalPitch_FB_Select_Get(void);
 extern GimbalFBSelection_E GimbalYaw_FB_Select_Get(void);
 
-// ³õÊ¼»¯ÔÆÌ¨¿ØÖÆ·´À¡ĞÅÏ¢
+// åˆå§‹åŒ–äº‘å°æ§åˆ¶åé¦ˆä¿¡æ¯
 extern void GimbalFB_Init(void);
 
 #endif

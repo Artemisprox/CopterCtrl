@@ -14,7 +14,7 @@
 static rt_thread_t atti_calcu = RT_NULL;
 
 /***
- * @brief Å·À­½Ç³õÊ¼»¯,yaw->pitch->rollË³¹æ
+ * @brief æ¬§æ‹‰è§’åˆå§‹åŒ–,yaw->pitch->rollé¡ºè§„
  * @param none
  * @retval none
  * @author dxy
@@ -28,19 +28,19 @@ void Atti_FirstUpdate(AHRS_Accl_t *Accl)
     ay = Accl->y;
     az = Accl->z;
 
-    //³õÊ¼×ËÌ¬(Å·À­½Ç)
+    //åˆå§‹å§¿æ€(æ¬§æ‹‰è§’)
     first_euler.pit = -atan2f(ax, sqrtf(az * az + ay * ay));
     first_euler.rol = atan2f(ay, az);
     first_euler.yaw = 0.0f;
 
-    //Å·À­½Ç×ªËÄÔªÊı
+    //æ¬§æ‹‰è§’è½¬å››å…ƒæ•°
     AHRS_Euler2Quarternion(&first_euler, &HERO_AHRS);
 }
 
-#define ACCL_STATIC 9.8f // ¶¨ÒåÕı³£Ä£³¤
+#define ACCL_STATIC 9.8f // å®šä¹‰æ­£å¸¸æ¨¡é•¿
 #define BETA_MAX 0.006f
 #define BETA_MIN 0.001f
-#define BETA_FIX_K 0.002f // ACCL_ERRORÎª 1 m/(s^2) Ê±£¬BETA¼õĞ¡µÄÁ¿
+#define BETA_FIX_K 0.002f // ACCL_ERRORä¸º 1 m/(s^2) æ—¶ï¼ŒBETAå‡å°çš„é‡
 
 static float Accl_Len = ACCL_STATIC, Accl_Filter;
 static float Accl_Error;
@@ -53,18 +53,18 @@ static void Fresh_Beta(void)
     float Accl_Len_2;
     float Beta_Filter;
 
-    // ¼ÆËã¼ÓËÙ¶ÈÊ¸Á¿Ä£³¤
+    // è®¡ç®—åŠ é€Ÿåº¦çŸ¢é‡æ¨¡é•¿
     Accl_Len_2 = SQUARE(HERO_BMI088_DEV.Accl_Raw.x) + SQUARE(HERO_BMI088_DEV.Accl_Raw.y) + SQUARE(HERO_BMI088_DEV.Accl_Raw.z);
     if (Accl_Len_2 < 0)
         Accl_Len_2 = 0;
     Accl_Filter = 10 * sqrtf(Accl_Len_2);
     if (isnan(Accl_Len))
         Accl_Len = Accl_Filter;
-    Accl_Len = Accl_Filter * 0.01f + Accl_Len * 0.99f; // ½ØÖ¹ÆµÂÊ1.6Hz
+    Accl_Len = Accl_Filter * 0.01f + Accl_Len * 0.99f; // æˆªæ­¢é¢‘ç‡1.6Hz
 
     Accl_Error = fabsf(Accl_Len - ACCL_STATIC);
     if (Accl_Error < 0.3f)
-        // Îó²îĞ¡ÓÚÒ»¶¨ÖµÊ±£¬ÈÏÎªµ±Ç°¼ÓËÙ¶È¼ÆÊı¾İÍêÈ«Ã»ÓĞÎÊÌâ
+        // è¯¯å·®å°äºä¸€å®šå€¼æ—¶ï¼Œè®¤ä¸ºå½“å‰åŠ é€Ÿåº¦è®¡æ•°æ®å®Œå…¨æ²¡æœ‰é—®é¢˜
         Accl_Error = 0;
 
     Beta_Filter = BETA_MAX - Accl_Error * BETA_FIX_K;
@@ -77,32 +77,32 @@ static void Fresh_Beta(void)
 }
 
 /**
- * @brief£º×ËÌ¬½âËãÏß³Ì
- * @param [in]	parameter:¸Ã²ÎÊı²»»á±»Ê¹ÓÃ
- * @return£º		ÎŞ
- * @author£ºzzj
+ * @briefï¼šå§¿æ€è§£ç®—çº¿ç¨‹
+ * @param [in]	parameter:è¯¥å‚æ•°ä¸ä¼šè¢«ä½¿ç”¨
+ * @returnï¼š		æ— 
+ * @authorï¼šzzj
  */
 static void AttiCalcu_thread(void *parameter)
 {
     int count, AttiReady_Flag;
     count = 0;
     rt_uint8_t first_flag = 1;
-    int FirstCount = 100; // Ç°100´Î¼ÆËãÊ±£¬¶Ô¼ÓËÙ¶È¼ÆÊı¾İ½øĞĞ»ı·ÖÀ´È·¶¨³õÊ¼½Ç¶È
+    int FirstCount = 100; // å‰100æ¬¡è®¡ç®—æ—¶ï¼Œå¯¹åŠ é€Ÿåº¦è®¡æ•°æ®è¿›è¡Œç§¯åˆ†æ¥ç¡®å®šåˆå§‹è§’åº¦
     float inv_sample_freq;
-    AHRS_Accl_t AcclFix;       // ¾­¹ı×ø±ê±ä»»ºóµÄ¼ÓËÙ¶È¼ÆÊı¾İ
-    AHRS_Accl_t AcclSum = {0}; // Æô¶¯Ê±
-    AHRS_Gyro_t GyroFix;       // ¾­¹ı×ø±ê±ä»»ºÍÁãÆ®Ğ£ÕıºóµÄ½ÇËÙ¶ÈÊı¾İ
+    AHRS_Accl_t AcclFix;       // ç»è¿‡åæ ‡å˜æ¢åçš„åŠ é€Ÿåº¦è®¡æ•°æ®
+    AHRS_Accl_t AcclSum = {0}; // å¯åŠ¨æ—¶
+    AHRS_Gyro_t GyroFix;       // ç»è¿‡åæ ‡å˜æ¢å’Œé›¶é£˜æ ¡æ­£åçš„è§’é€Ÿåº¦æ•°æ®
     SWDG_START(SWDG_IMU_ID);
 
     while (1)
     {
         BMI088_WaitForRawData();
 
-        // ×ø±ê»»Ëã£¬ÁãÆ®Ğ£Õı
+        // åæ ‡æ¢ç®—ï¼Œé›¶é£˜æ ¡æ­£
         GetCaliIMUData(&HERO_BMI088_DEV.Accl_Raw, &HERO_BMI088_DEV.Gyro_Raw, &AcclFix, &GyroFix);
 
         if (first_flag)
-        { // ³õÊ¼Î»ÖÃ»¹Ã»È·¶¨
+        { // åˆå§‹ä½ç½®è¿˜æ²¡ç¡®å®š
             FirstCount--;
             if (FirstCount > 0)
             {
@@ -120,7 +120,7 @@ static void AttiCalcu_thread(void *parameter)
             AttiReady_Flag = 0;
         }
         else
-        { // ³õÊ¼Î»ÖÃÈ·¶¨Íê³É
+        { // åˆå§‹ä½ç½®ç¡®å®šå®Œæˆ
             inv_sample_freq = 1 / HERO_BMI088_DEV.DataRate;
             Fresh_Beta();
 
@@ -138,41 +138,41 @@ static void AttiCalcu_thread(void *parameter)
             else
                 AttiReady_Flag = 1;
         }
-        // Ë¢ĞÂÔÆÌ¨×ËÌ¬½ÇÊı¾İ
+        // åˆ·æ–°äº‘å°å§¿æ€è§’æ•°æ®
         IMU_SetData_Extern(GyroFix.y, GyroFix.z, GyroFix.x, HERO_Eulr.pit, HERO_Eulr.yaw, HERO_Eulr.rol, AttiReady_Flag);
         SWDG_FEED(SWDG_IMU_ID);
     }
 }
 
 /**
-* @brief£º³õÊ¼»¯×ËÌ¬½âËãÏß³Ì
-* @param [in]	ÎŞ
-* @return£º		1:³õÊ¼»¯³É¹¦
-                0:³õÊ¼»¯Ê§°Ü
-* @author£ºzzj
+* @briefï¼šåˆå§‹åŒ–å§¿æ€è§£ç®—çº¿ç¨‹
+* @param [in]	æ— 
+* @returnï¼š		1:åˆå§‹åŒ–æˆåŠŸ
+                0:åˆå§‹åŒ–å¤±è´¥
+* @authorï¼šzzj
 */
 int Atti_init(void)
 {
     AHRS_Init(&HERO_AHRS, NULL, 1000);
 
     TempCTR_init();
-    // ³¢ÊÔ´ÓFlashÖĞ¶ÁÈ¡ÁãÆ®Êı¾İ ÈôÎŞÊı¾İ»òĞèÒªÖØ²â£¬Ôò»á×Ô¶¯ÖØ²â£¬Íê³Éºóº¯Êı·µ»Ø
+    // å°è¯•ä»Flashä¸­è¯»å–é›¶é£˜æ•°æ® è‹¥æ— æ•°æ®æˆ–éœ€è¦é‡æµ‹ï¼Œåˆ™ä¼šè‡ªåŠ¨é‡æµ‹ï¼Œå®Œæˆåå‡½æ•°è¿”å›
     LoadGyroOffSet();
 
-    //³õÊ¼»¯×ËÌ¬½âËãÏß³Ì
+    //åˆå§‹åŒ–å§¿æ€è§£ç®—çº¿ç¨‹
     atti_calcu = rt_thread_create(
-        "AT_CTRL",             //Ïß³ÌÃû
-        AttiCalcu_thread,      //Ïß³ÌÈë¿Ú
-        RT_NULL,               //Èë¿Ú²ÎÊıÎŞ
-        4096,                  //Ïß³ÌÕ»
-        THREAD_PRIO_ATTICALCU, //Ïß³ÌÓÅÏÈ¼¶
-        2);                    //Ïß³ÌÊ±¼äÆ¬´óĞ¡
+        "AT_CTRL",             //çº¿ç¨‹å
+        AttiCalcu_thread,      //çº¿ç¨‹å…¥å£
+        RT_NULL,               //å…¥å£å‚æ•°æ— 
+        4096,                  //çº¿ç¨‹æ ˆ
+        THREAD_PRIO_ATTICALCU, //çº¿ç¨‹ä¼˜å…ˆçº§
+        2);                    //çº¿ç¨‹æ—¶é—´ç‰‡å¤§å°
 
-    //Ïß³Ì´´½¨Ê§°Ü·µ»Øfalse
+    //çº¿ç¨‹åˆ›å»ºå¤±è´¥è¿”å›false
     if (atti_calcu == RT_NULL)
         return RT_ERROR;
 
-    //Ïß³ÌÆô¶¯Ê§°Ü·µ»Øfalse
+    //çº¿ç¨‹å¯åŠ¨å¤±è´¥è¿”å›false
     if (rt_thread_startup(atti_calcu) != RT_EOK)
         return RT_ERROR;
 

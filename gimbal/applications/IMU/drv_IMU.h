@@ -7,49 +7,49 @@
 
 typedef struct
 {
-	//IMU,´óµØ×ø±êÏµ
-	float pitch;										/*pitch*///Óë°²×°·½ÏòÓĞ¹Ø
+	//IMU,å¤§åœ°åæ ‡ç³»
+	float pitch;										/*pitch*///ä¸å®‰è£…æ–¹å‘æœ‰å…³
 	float yaw;											/*yaw*/
-	float roll;											/*roll*///Óë°²×°·½ÏòÓĞ¹Ø
+	float roll;											/*roll*///ä¸å®‰è£…æ–¹å‘æœ‰å…³
 
-	float pitch_speed;											/*PITCHÖá½ÇËÙ¶È*/
-	float roll_speed;											/*ROLLÖá½ÇËÙ¶È*/
-	float yaw_speed;											/*YAWÖá½ÇËÙ¶È*/
+	float pitch_speed;											/*PITCHè½´è§’é€Ÿåº¦*/
+	float roll_speed;											/*ROLLè½´è§’é€Ÿåº¦*/
+	float yaw_speed;											/*YAWè½´è§’é€Ÿåº¦*/
 
-	char speed_ready;										//½ÇËÙ¶ÈÊı¾İÕı³£±êÖ¾
-	char atti_ready;										//×ËÌ¬Êı¾İÕı³£±êÖ¾
+	char speed_ready;										//è§’é€Ÿåº¦æ•°æ®æ­£å¸¸æ ‡å¿—
+	char atti_ready;										//å§¿æ€æ•°æ®æ­£å¸¸æ ‡å¿—
 
 	
-}IMU_t;//IMU´«¸ĞÆ÷½á¹¹Ìå
+}IMU_t;//IMUä¼ æ„Ÿå™¨ç»“æ„ä½“
 
 typedef struct
 {
-	//ÔÆÌ¨µç»úÏµ,
+	//äº‘å°ç”µæœºç³»,
 	float pitch;										/*pitch*/
 	float yaw;											/*yaw*/
 	float roll;											/*roll*/
 
-	float pitch_speed;											/*PITCHÖá½ÇËÙ¶È*/
-	float roll_speed;											/*ROLLÖá½ÇËÙ¶È*/
-	float yaw_speed;											/*YAWÖá½ÇËÙ¶È*/
+	float pitch_speed;											/*PITCHè½´è§’é€Ÿåº¦*/
+	float roll_speed;											/*ROLLè½´è§’é€Ÿåº¦*/
+	float yaw_speed;											/*YAWè½´è§’é€Ÿåº¦*/
 
 	
-}ATTI_t;//×ËÌ¬½á¹¹Ìå
+}ATTI_t;//å§¿æ€ç»“æ„ä½“
 
 extern void IMU_transfer2_gm(void);
 
-extern rt_err_t IMU_WaitForInit(void); // ÉÏµçºóµÈ´ıÍÓÂİÒÇÆô¶¯Íê³É
+extern rt_err_t IMU_WaitForInit(void); // ä¸Šç”µåç­‰å¾…é™€èºä»ªå¯åŠ¨å®Œæˆ
 
-extern IMU_t HERO_IMU; //µ¥Î»m/s^2,rad/s
+extern IMU_t HERO_IMU; //å•ä½m/s^2,rad/s
 extern ATTI_t gimbal_atti;//
 
 extern rt_err_t IMU_GetAttiState(void);
-extern rt_tick_t IMU_LastValid_tick;// ±ê¼Ç×î½üÒ»´ÎÍÓÂİÒÇÊı¾İÓĞĞ§¶ÔÓ¦µÄÊ±¿Ì
+extern rt_tick_t IMU_LastValid_tick;// æ ‡è®°æœ€è¿‘ä¸€æ¬¡é™€èºä»ªæ•°æ®æœ‰æ•ˆå¯¹åº”çš„æ—¶åˆ»
 
 /***
   * @Name     gyro_read_extern
-  * @brief    ÍÓÂİÒÇ×ËÌ¬½âËãº¯Êıµ÷ÓÃ£¬ÀàËÆÓÚCAN½ÓÊÕ£¬ÓÃÓÚ°åÔØÍÓÂİÒÇµÄ¼æÈİ
-  * @param	  float µ¥Î»£ºdps¡¢degree
+  * @brief    é™€èºä»ªå§¿æ€è§£ç®—å‡½æ•°è°ƒç”¨ï¼Œç±»ä¼¼äºCANæ¥æ”¶ï¼Œç”¨äºæ¿è½½é™€èºä»ªçš„å…¼å®¹
+  * @param	  float å•ä½ï¼šdpsã€degree
   * @author   ych
 ***/
 extern void IMU_SetData_Extern(float PitchSpe,

@@ -6,9 +6,9 @@
 
 typedef enum
 {
-    MOTORCTRL_CLR = 1, // Í£Ö¹±Õ»·
-    MOTORCTRL_SPE,     // ×ªËÙ±Õ»·
-    MOTORCTRL_ANG,     // ½Ç¶È±Õ»·
+    MOTORCTRL_CLR = 1, // åœæ­¢é—­ç¯
+    MOTORCTRL_SPE,     // è½¬é€Ÿé—­ç¯
+    MOTORCTRL_ANG,     // è§’åº¦é—­ç¯
 } Motor_CtrlMode_E;
 
 typedef enum
@@ -17,11 +17,11 @@ typedef enum
     RubMotorLeft,
     RubMotorRight,
     GunMotor_All
-} Gun_Motor_Enum; // ·¢Éä»ú¹¹µÄËùÓĞµç»ú
+} Gun_Motor_Enum; // å‘å°„æœºæ„çš„æ‰€æœ‰ç”µæœº
 
-// µç»ú½á¹¹Ìå£¬±Õ»·×´Ì¬¼ÇÂ¼½á¹¹Ìå
+// ç”µæœºç»“æ„ä½“ï¼Œé—­ç¯çŠ¶æ€è®°å½•ç»“æ„ä½“
 extern Motor_CtrlMode_E CTRLMode_Motor[(int)GunMotor_All];
-extern char LaunchMotor_SleepFlag; // ÖÃ1¿ÉÒÔ¹Ø±Õ²¦µ¯µç»úµÄPIDÊä³ö
+extern char LaunchMotor_SleepFlag; // ç½®1å¯ä»¥å…³é—­æ‹¨å¼¹ç”µæœºçš„PIDè¾“å‡º
 
 typedef struct
 {
@@ -29,36 +29,36 @@ typedef struct
 } StrikeMotor_CtrlData_s;
 
 /**
- * @brief  ·¢Éä»ú¹¹µç»ú±Õ»·³õÊ¼»¯
+ * @brief  å‘å°„æœºæ„ç”µæœºé—­ç¯åˆå§‹åŒ–
  */
 extern void StrikeMotor_init(void);
 
-// ¶ÁÈ¡·¢Éä»ú¹¹ÊÇ·ñ±»³õÊ¼»¯
+// è¯»å–å‘å°„æœºæ„æ˜¯å¦è¢«åˆå§‹åŒ–
 extern int Read_Gun_Inited(void);
 
-// ¶ÁÈ¡·¢Éä»ú¹¹µÄÖ¸¶¨µç»ú½á¹¹Ìå, ×¢ÒâÅĞ¶Ï·µ»ØÖµÊÇ·ñÎª NULL
+// è¯»å–å‘å°„æœºæ„çš„æŒ‡å®šç”µæœºç»“æ„ä½“, æ³¨æ„åˆ¤æ–­è¿”å›å€¼æ˜¯å¦ä¸º NULL
 extern Motor_t *Read_Gun_Motor(Gun_Motor_Enum GunMotor);
 
-// ¹Ø±ÕÄ¦²ÁÂÖ
+// å…³é—­æ‘©æ“¦è½®
 extern void StrikeMotor_Enable(int Enable);
 
 /**
- * @brief  Ä¦²ÁÂÖ×ªËÙÉè¶¨
- * @param  speed£º×ªËÙ
+ * @brief  æ‘©æ“¦è½®è½¬é€Ÿè®¾å®š
+ * @param  speedï¼šè½¬é€Ÿ
  */
 extern void Rub_speed_set(rt_int16_t speed);
 
-// ¶ÁÈ¡µ±Ç°Ä¦²ÁÂÖÊÇ·ñ¿ªÆô
+// è¯»å–å½“å‰æ‘©æ“¦è½®æ˜¯å¦å¼€å¯
 extern rt_bool_t Read_Rub_Started(void);
 
-// ¶ÁÈ¡µ±Ç°Ä¦²ÁÂÖ×ªËÙÉè¶¨Öµ
+// è¯»å–å½“å‰æ‘©æ“¦è½®è½¬é€Ÿè®¾å®šå€¼
 extern rt_int16_t Rub_speed_ReadSet(void);
 
-// Ö¸¶¨ÂÖÑ¯º¯ÊıÖ¸Õë
+// æŒ‡å®šè½®è¯¢å‡½æ•°æŒ‡é’ˆ
 extern void CTRLRoutine_Set(void (*Func)(void));
 
 #if defined CORE_USING_HERO
-// ·¢Éä»ú¹¹±Õ»·Âß¼­¼°¿ØÖÆ¼ÆËã
+// å‘å°„æœºæ„é—­ç¯é€»è¾‘åŠæ§åˆ¶è®¡ç®—
 extern void StrikeMotor_CtrlRoutine(StrikeMotor_CtrlData_s *DataOut);
 #endif
 

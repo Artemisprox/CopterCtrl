@@ -3,18 +3,18 @@
 #include "drv_StrikeMotor.h"
 
 /**
- * @brief 机器人云台单片机复位
+ * @brief 鏈哄櫒浜轰簯鍙板崟鐗囨満澶嶄綅
  * @author fwlh
  */
 void Robot_Reset_Gimbal(void)
 {
-    // 关闭云台电机输出
+    // 鍏抽棴浜戝彴鐢垫満杈撳嚭
     Gimbal_Motor_EN(0);
-    // 关闭发射机构电机输出
+    // 鍏抽棴鍙戝皠鏈烘瀯鐢垫満杈撳嚭
     StrikeMotor_Enable(0);
-    // 等待相关程序响应
+    // 绛夊緟鐩稿叧绋嬪簭鍝嶅簲
     rt_thread_mdelay(200);
-    // 直接复位重启
+    // 鐩存帴澶嶄綅閲嶅惎
     rt_hw_cpu_reset();
 }
 

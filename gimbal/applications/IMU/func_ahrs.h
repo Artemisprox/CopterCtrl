@@ -2,40 +2,40 @@
 #define __FUNC_AHRS_H__
 
 /*
-  ¿ªÔ´µÄAHRSËã·¨¡£
+  å¼€æºçš„AHRSç®—æ³•ã€‚
   MadgwickAHRS
 */
 #include <stdint.h>
 
-/* Å·À­½Ç£¨Euler angle£© */
+/* æ¬§æ‹‰è§’ï¼ˆEuler angleï¼‰ */
 typedef struct {
-  float yaw; /* Æ«º½½Ç£¨Yaw angle£© */
-  float pit; /* ¸©Ñö½Ç£¨Pitch angle£© */
-  float rol; /* ·­¹ö½Ç£¨Roll angle£© */
+  float yaw; /* åèˆªè§’ï¼ˆYaw angleï¼‰ */
+  float pit; /* ä¿¯ä»°è§’ï¼ˆPitch angleï¼‰ */
+  float rol; /* ç¿»æ»šè§’ï¼ˆRoll angleï¼‰ */
 } AHRS_Eulr_t;
 
-/* ¼ÓËÙ¶È¼Æ Accelerometer */
+/* åŠ é€Ÿåº¦è®¡ Accelerometer */
 typedef struct {
   float x;
   float y;
   float z;
 } AHRS_Accl_t;
 
-/* ÍÓÂİÒÇ Gyroscope */
+/* é™€èºä»ª Gyroscope */
 typedef struct {
   float x;
   float y;
   float z;
 } AHRS_Gyro_t;
 
-/* ´ÅÁ¦¼Æ Magnetometer */
+/* ç£åŠ›è®¡ Magnetometer */
 typedef struct {
   float x;
   float y;
   float z;
 } AHRS_Magn_t;
 
-/* ËÄÔªÊı */
+/* å››å…ƒæ•° */
 typedef struct {
   float q0;
   float q1;
@@ -43,12 +43,12 @@ typedef struct {
   float q3;
 } AHRS_Quaternion_t;
 
-/* ×ËÌ¬½âËãËã·¨Ö÷½á¹¹Ìå */
+/* å§¿æ€è§£ç®—ç®—æ³•ä¸»ç»“æ„ä½“ */
 typedef struct {
-  /* ËÄÔªÊı */
+  /* å››å…ƒæ•° */
   AHRS_Quaternion_t quat;
 
-  float inv_sample_freq; /* ²ÉÑùÆµÂÊµÄµÄµ¹Êı */
+  float inv_sample_freq; /* é‡‡æ ·é¢‘ç‡çš„çš„å€’æ•° */
 } AHRS_t;
 
 extern AHRS_t HERO_AHRS;
@@ -57,42 +57,42 @@ extern AHRS_Eulr_t HERO_Eulr;
 extern AHRS_Eulr_t HERO_Eulr_Gyro;
 
 /**
- * @brief ³õÊ¼»¯×ËÌ¬½âËã
+ * @brief åˆå§‹åŒ–å§¿æ€è§£ç®—
  *
- * @param ahrs ×ËÌ¬½âËãÖ÷½á¹¹Ìå
- * @param magn ´ÅÁ¦¼ÆÊı¾İ
- * @param sample_freq ²ÉÑùÆµÂÊ
- * @return int8_t 0¶ÔÓ¦Ã»ÓĞ´íÎó
+ * @param ahrs å§¿æ€è§£ç®—ä¸»ç»“æ„ä½“
+ * @param magn ç£åŠ›è®¡æ•°æ®
+ * @param sample_freq é‡‡æ ·é¢‘ç‡
+ * @return int8_t 0å¯¹åº”æ²¡æœ‰é”™è¯¯
  */
 int8_t AHRS_Init(AHRS_t *ahrs, const AHRS_Magn_t *magn, float sample_freq);
 
 /**
- * @brief ×ËÌ¬ÔËËã¸üĞÂÒ»´Î
+ * @brief å§¿æ€è¿ç®—æ›´æ–°ä¸€æ¬¡
  *
- * @param ahrs ×ËÌ¬½âËãÖ÷½á¹¹Ìå
- * @param accl ¼ÓËÙ¶È¼ÆÊı¾İ
- * @param gyro ÍÓÂİÒÇÊı¾İ
- * @param magn ´ÅÁ¦¼ÆÊı¾İ
- * @return int8_t 0¶ÔÓ¦Ã»ÓĞ´íÎó
+ * @param ahrs å§¿æ€è§£ç®—ä¸»ç»“æ„ä½“
+ * @param accl åŠ é€Ÿåº¦è®¡æ•°æ®
+ * @param gyro é™€èºä»ªæ•°æ®
+ * @param magn ç£åŠ›è®¡æ•°æ®
+ * @return int8_t 0å¯¹åº”æ²¡æœ‰é”™è¯¯
  */
 int8_t AHRS_Update(AHRS_t *ahrs, const AHRS_Accl_t *accl,
                    const AHRS_Gyro_t *gyro, const AHRS_Magn_t *magn);
 
 /**
- * @brief Í¨¹ı×ËÌ¬½âËãÖ÷½á¹¹ÌåÖĞµÄËÄÔªÊı¼ÆËãÅ·À­½Ç
+ * @brief é€šè¿‡å§¿æ€è§£ç®—ä¸»ç»“æ„ä½“ä¸­çš„å››å…ƒæ•°è®¡ç®—æ¬§æ‹‰è§’
  *
- * @param eulr Å·À­½Ç
- * @param ahrs ×ËÌ¬½âËãÖ÷½á¹¹Ìå
- * @return int8_t 0¶ÔÓ¦Ã»ÓĞ´íÎó
+ * @param eulr æ¬§æ‹‰è§’
+ * @param ahrs å§¿æ€è§£ç®—ä¸»ç»“æ„ä½“
+ * @return int8_t 0å¯¹åº”æ²¡æœ‰é”™è¯¯
  */
 int8_t AHRS_GetEulr(AHRS_Eulr_t *eulr, const AHRS_t *ahrs);
 
 
 
 /***
-* @brief Å·À­½Ç×ªËÄÔªÊı,yaw->pitch->rollË³¹æ
-* @param eulr: Å·À­½Ç½á¹¹Ìå
-* @param ahrs: ËÄÔªÊı½á¹¹Ìå
+* @brief æ¬§æ‹‰è§’è½¬å››å…ƒæ•°,yaw->pitch->rollé¡ºè§„
+* @param eulr: æ¬§æ‹‰è§’ç»“æ„ä½“
+* @param ahrs: å››å…ƒæ•°ç»“æ„ä½“
 * @retval none
 * @author dxy
 ***/
@@ -100,20 +100,20 @@ void AHRS_Euler2Quarternion(const AHRS_Eulr_t *eulr, AHRS_t *ahrs);
 
 
 /**
- * \brief ½«¶ÔÓ¦Êı¾İÖÃÁã
+ * \brief å°†å¯¹åº”æ•°æ®ç½®é›¶
  *
- * \param eulr Å·À­½Ç½á¹¹Ìå
- * \param ahrs ËÄÔªÊı½á¹¹Ìå
+ * \param eulr æ¬§æ‹‰è§’ç»“æ„ä½“
+ * \param ahrs å››å…ƒæ•°ç»“æ„ä½“
  */
 void AHRS_ResetYaw(AHRS_Eulr_t *eulr, AHRS_t *ahrs);
 
 /**
- * @brief ´¿ÍÓÂİÒÇÊı¾İ½âËã×ËÌ¬½Ç
- * @param ahrs_gyro ÍÓÂİÒÇÊı¾İµÃµ½µÄËÄÔªÊı
- * @param ahrs ÈÚºÏËã·¨µÃµ½µÄËÄÔªÊı
- * @param gyro ÍÓÂİÒÇÊı¾İ
- * @param ifClear ÊÇ·ñÇå³ıÍÓÂİÒÇËÄÔªÊı
- * @return int8_t 0¶ÔÓ¦Ã»ÓĞ´íÎó
+ * @brief çº¯é™€èºä»ªæ•°æ®è§£ç®—å§¿æ€è§’
+ * @param ahrs_gyro é™€èºä»ªæ•°æ®å¾—åˆ°çš„å››å…ƒæ•°
+ * @param ahrs èåˆç®—æ³•å¾—åˆ°çš„å››å…ƒæ•°
+ * @param gyro é™€èºä»ªæ•°æ®
+ * @param ifClear æ˜¯å¦æ¸…é™¤é™€èºä»ªå››å…ƒæ•°
+ * @return int8_t 0å¯¹åº”æ²¡æœ‰é”™è¯¯
  */
 int8_t AHRS_UpdateGyro(AHRS_t *ahrs_gyro, AHRS_t *ahrs,
                        const AHRS_Gyro_t *gyro, int ifClear);

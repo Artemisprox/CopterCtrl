@@ -2,29 +2,29 @@
 
 #include "robodata.h"
 
-drv_VisualMode_e Visual_Mode_Set; // ÓÃÓÚ¼ÇÂ¼µ±Ç°³ÌĞòÉè¶¨µÄÊÓ¾õ¹¤×÷Ä£Ê½£¬Èç¹û³öÏÖÄ£Ê½²»·û£¬³ÌĞò»á×Ô¶¯Í¨¹ıÍ¨ĞÅµ÷ÕûÊÓ¾õ¹¤×÷Ä£Ê½
+drv_VisualMode_e Visual_Mode_Set; // ç”¨äºè®°å½•å½“å‰ç¨‹åºè®¾å®šçš„è§†è§‰å·¥ä½œæ¨¡å¼ï¼Œå¦‚æœå‡ºç°æ¨¡å¼ä¸ç¬¦ï¼Œç¨‹åºä¼šè‡ªåŠ¨é€šè¿‡é€šä¿¡è°ƒæ•´è§†è§‰å·¥ä½œæ¨¡å¼
 
-char GunSet_AimbotShootFlag = 0; // ÓÉ×ÔÃéÎÄ¼şË¢ĞÂµÄ×ÔÃé·¢ÉäÏŞÖÆÊı¾İ£¬¿ÉÔÚ×ÔÃéÊ±¿ØÖÆÊÇ·ñ·¢µ¯£¬ÔÚFuncGunÖĞÊ¹ÓÃ
+char GunSet_AimbotShootFlag = 0; // ç”±è‡ªç„æ–‡ä»¶åˆ·æ–°çš„è‡ªç„å‘å°„é™åˆ¶æ•°æ®ï¼Œå¯åœ¨è‡ªç„æ—¶æ§åˆ¶æ˜¯å¦å‘å¼¹ï¼Œåœ¨FuncGunä¸­ä½¿ç”¨
 
-char VisualFlag_TargetFound = 0;    // ÊÓ¾õËø¶¨Ä¿±ê±êÖ¾
-char VisualFlag_Fire = 0;           // ÔË¶¯Ô¤²â×¼È·±êÖ¾
-char VisualFlag_BurstShoot = 0;     // ±¬·¢¹¥»÷±êÖ¾
-char VisualFlag_RuneFire = 0;       // ÊÓ¾õµÄ¾«Ñ¡·¢µ¯¿ØÖÆ, ½öÔÚÄÜÁ¿»ú¹ØÏÂÊ¹ÓÃ
-char VisualFlag_RuneBurstShoot = 0; // ÄÜÁ¿»ú¹ØÏÂ½øÈë 5 Á¬·¢Ä£Ê½
-char VisualFlag_ExitRune = 0;       // ÄÜÁ¿»ú¹ØÍË³öµÄ±êÖ¾Î»
-char VisualFlag_WorkingCorrect = 0; // µ±Ç°ÊÓ¾õ³ÌĞòÕıÔÚÕı³£ÔËĞĞ
+char VisualFlag_TargetFound = 0;    // è§†è§‰é”å®šç›®æ ‡æ ‡å¿—
+char VisualFlag_Fire = 0;           // è¿åŠ¨é¢„æµ‹å‡†ç¡®æ ‡å¿—
+char VisualFlag_BurstShoot = 0;     // çˆ†å‘æ”»å‡»æ ‡å¿—
+char VisualFlag_RuneFire = 0;       // è§†è§‰çš„ç²¾é€‰å‘å¼¹æ§åˆ¶, ä»…åœ¨èƒ½é‡æœºå…³ä¸‹ä½¿ç”¨
+char VisualFlag_RuneBurstShoot = 0; // èƒ½é‡æœºå…³ä¸‹è¿›å…¥ 5 è¿å‘æ¨¡å¼
+char VisualFlag_ExitRune = 0;       // èƒ½é‡æœºå…³é€€å‡ºçš„æ ‡å¿—ä½
+char VisualFlag_WorkingCorrect = 0; // å½“å‰è§†è§‰ç¨‹åºæ­£åœ¨æ­£å¸¸è¿è¡Œ
 
-char VisualMode_FB = 0; // ÊÓ¾õ·´À¡µÄµ±Ç°×ÔÃéÄ£Ê½
+char VisualMode_FB = 0; // è§†è§‰åé¦ˆçš„å½“å‰è‡ªç„æ¨¡å¼
 
-rt_tick_t Visual_LastFresh_Tick = 0; // ÉÏÒ»´ÎÊÕµ½ÊÓ¾õÊı¾İµÄÊ±¼ä
+rt_tick_t Visual_LastFresh_Tick = 0; // ä¸Šä¸€æ¬¡æ”¶åˆ°è§†è§‰æ•°æ®çš„æ—¶é—´
 
-float Muzzle_V_REM; // ¼ÇÂ¼µ±Ç°µ¯ËÙ
+float Muzzle_V_REM; // è®°å½•å½“å‰å¼¹é€Ÿ
 
-char VisualSend_Flags; // 8¸öÏòÊÓ¾õ·¢ËÍµÄ±êÖ¾Î»£¬Óë¶ÔÊ±Ò»Æğ·¢ËÍ£¬10Hz
+char VisualSend_Flags; // 8ä¸ªå‘è§†è§‰å‘é€çš„æ ‡å¿—ä½ï¼Œä¸å¯¹æ—¶ä¸€èµ·å‘é€ï¼Œ10Hz
 
-char Color_Myself = (int)My_Color_Red; // ¼º·½ÑÕÉ« 0ºì£¬1À¶
+char Color_Myself = (int)My_Color_Red; // å·±æ–¹é¢œè‰² 0çº¢ï¼Œ1è“
 
-float GimbalTolerance_Pitch = 0, GimbalTolerance_Yaw = 0; // µ±Ç°ÊÓ¾õ¸ø³öµÄÔÊĞí¿ØÖÆ¾«¶È
+float GimbalTolerance_Pitch = 0, GimbalTolerance_Yaw = 0; // å½“å‰è§†è§‰ç»™å‡ºçš„å…è®¸æ§åˆ¶ç²¾åº¦
 
-Gimbal_SetReceive_Type GimbalSet_Receive[2]; // Ê¹ÓÃË«»º³å
-char Gimbal_Set_Cal_READ_Valid;              // Ë«»º³å¶ÓÁĞ¿É¶Á¶ÓÁĞºÅ
+Gimbal_SetReceive_Type GimbalSet_Receive[2]; // ä½¿ç”¨åŒç¼“å†²
+char Gimbal_Set_Cal_READ_Valid;              // åŒç¼“å†²é˜Ÿåˆ—å¯è¯»é˜Ÿåˆ—å·
