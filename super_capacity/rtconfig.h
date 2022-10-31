@@ -174,6 +174,24 @@
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F1
 
+/* Choose Public Libraries */
+
+/* Whether to use the HardWare Libraries */
+
+#define BSP_USING_BUZZER
+#define BUZZER_PWM_DEVICE_NAME "pwm3"
+#define BUZZER_PWM_CHANNEL 1
+#define BSP_USING_OLED
+
+/* Whether to use the SoftWare Libraries */
+
+
+/* Use the filter module(s) */
+
+
+/* Use the key-menu module(s) */
+
+
 /* Hardware Drivers Config */
 
 #define SOC_STM32F103RC

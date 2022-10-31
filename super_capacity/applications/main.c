@@ -20,7 +20,7 @@
 
 int main(void)
 {
-    adc_dev_init();//初始化adc采样
+    adc_dev_init();//鍒濆鍖朼dc閲囨牱
     rt_thread_delay(50);
     can1_init();
 #if (TEST_MEASURE)

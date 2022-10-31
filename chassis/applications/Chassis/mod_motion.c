@@ -5,7 +5,14 @@
 #include "drv_wheel.h"
 #include "drv_EnergyConservation.h"
 
-pid_t angfol_pid = PID_INIT(50, 0, 0, 0, 2200, -2200);
+pid_t angfol_pid;
+
+static int AngFollow_PID_Init(void)
+{
+    pid_init(&angfol_pid, 50, 0, 0, 0, 2200, -2200);
+    return RT_EOK;
+}
+INIT_BOARD_EXPORT(AngFollow_PID_Init);
 
 /**
  * @brief   输入xy速度平滑模块
@@ -46,12 +53,12 @@ static Mot_base_t MotModule_Low_OutGain(Mot_base_t VxyW, float fol_angle)
     float error = CIRCLE_SHORTEST_DIS(MotModule_Get_YawGc(), fol_angle, -180.0f, 180.0f);
 
     /*当跟随角度偏差量在gain_range~180°之间时，增大角速度，偏差越大增益越大*/
-    float w_gain = utils_clamp(fabsf(error) - gain_range, 0 ,180) / utils_clamp(180.0f - gain_range, 0, 180) * k_w;
+    float w_gain = utils_clamp(fabsf(error) - gain_range, 0, 180) / utils_clamp(180.0f - gain_range, 0, 180) * k_w;
     VxyW.angvel += VxyW.angvel * w_gain;
 
     /*当跟随角度偏差量在gain_range~180°之间时，减小角速度，偏差越大衰减越大*/
-    
-    float xy_gain = utils_clamp(180.0f - fabsf(error), 0 ,180) / utils_clamp(180.0f - gain_range, 0, 180) * k_xy;
+
+    float xy_gain = utils_clamp(180.0f - fabsf(error), 0, 180) / utils_clamp(180.0f - gain_range, 0, 180) * k_xy;
     VxyW.vel.x -= VxyW.vel.x * xy_gain;
     VxyW.vel.y -= VxyW.vel.y * xy_gain;
 

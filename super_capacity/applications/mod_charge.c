@@ -55,7 +55,7 @@ void Charge_Ctrl_Timer_TimeOut(void *para)
 void Power_Est(float P_Set, float P_IN, struct Power_State_s *Power_State)
 {
     float temp_P_Real = P_Set * POWER_EST_FILTER_SET + Power_State->P_Real * (1 - POWER_EST_FILTER_SET);
-    float delta_P = temp_P_Real - P_IN;
+//     float delta_P = temp_P_Real - P_IN;
 
     float temp_PCE = temp_P_Real / P_IN_Now; // 计算出电源效率
     if (temp_PCE > PCE_CAL_MAX)

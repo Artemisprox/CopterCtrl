@@ -170,14 +170,46 @@
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4
 
+/* Choose Public Libraries */
+
+/* Whether to use the HardWare Libraries */
+
+#define BSP_USING_BUZZER
+#define BUZZER_PWM_DEVICE_NAME "pwm2"
+#define BUZZER_PWM_CHANNEL 3
+#define BSP_USING_RGBLIGHT
+#define RLIGHT_PWM_DEVICE_NAME "pwm5"
+#define RLIGHT_PWM_CHANNEL 3
+#define GLIGHT_PWM_DEVICE_NAME "pwm5"
+#define GLIGHT_PWM_CHANNEL 1
+#define BLIGHT_PWM_DEVICE_NAME "pwm5"
+#define BLIGHT_PWM_CHANNEL 2
+
+/* Whether to use the SoftWare Libraries */
+
+#define BSP_USING_CPU_USAGE
+#define BSP_USING_PID
+#define BSP_USING_MOTORLIB
+#define BSP_USING_UTILS
+
+/* Use the filter module(s) */
+
+
+/* Use the key-menu module(s) */
+
+
+/* Monitor Settings */
+
+#define BSP_USING_MONITOR_CHASSIS
+#define BSP_USING_WDG
+#define BSP_USING_MONITOR
+
 /* Hardware Drivers Config */
 
 #define SOC_STM32F427VI
 
 /* Onboard Peripheral Drivers */
 
-#define CORE_USING_BUZZER
-#define CORE_USING_RGB_LIGHT
 
 /* On-chip Peripheral Drivers */
 
@@ -210,12 +242,6 @@
 
 /* Car Customize Config */
 
-/* Board function module */
-
-#define CORE_USING_MONITOR
-#define BSP_USING_RGB_LIGHT
-#define BSP_USING_BUZZER
-#define BSP_USING_WDT
 #define USE_CAPACITY
 #define MOTOR_USE_SYNC
 
@@ -223,7 +249,6 @@
 
 #define CORE_USING_INFANTRY
 #define CORE_USING_CLOUD_INFANTRY1
-#define CORE_USING_INFANTRY_3
 #define MECANUM_WHEEL
 #define WHEEL_MOTOR_3508
 

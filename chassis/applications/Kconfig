@@ -1,18 +1,18 @@
 menu "Car Customize Config"
 
-#ÊÇ·ñÊ¹ÓÃ³¬¼¶µçÈİÏŞÖÆ
+#æ˜¯å¦ä½¿ç”¨è¶…çº§ç”µå®¹é™åˆ¶
 menuconfig USE_CAPACITY
     bool "Use Super Capacity"
     default n
 
-#ÊÇ·ñÊ¹ÄÜµ×ÅÌÍ¬²½
+#æ˜¯å¦ä½¿èƒ½åº•ç›˜åŒæ­¥
 menuconfig MOTOR_USE_SYNC
     bool "Use Chassis Synchronization"
     default n
 
 menu "Choose Car model Config"
     
-    #Ñ¡Ôñ±øÖÖ
+    #é€‰æ‹©å…µç§
     choice
         prompt "select Types of arms" 
         default CORE_USING_INFANTRY
@@ -23,72 +23,72 @@ menu "Choose Car model Config"
     endchoice
 
 
-    Ñ¡ÔñÓ¢ĞÛ»úÆ÷ÈË
+    é€‰æ‹©è‹±é›„æœºå™¨äºº
     if  CORE_USING_HERO
         choice
             prompt "select Types of hero robot" 
             default CORE_USING_BLACKHEAD_HERO
-            #ºÚÍ·Ó¢ĞÛ
+            #é»‘å¤´è‹±é›„
             config CORE_USING_BLACKHEAD_HERO
                 bool "21 black head hero"
-            #C°åÓ¢ĞÛ
+            #Cæ¿è‹±é›„
             config CORE_USING_C_BOARD_HERO
                 bool "21 C board hero"
-            #¹úÈüÓ¢ĞÛ
+            #å›½èµ›è‹±é›„
             config CORE_USING_NATION_HERO
                 bool "21 nation hero"
-            #22Ë«ÂíÎ²Ó¢ĞÛ
+            #22åŒé©¬å°¾è‹±é›„
             config CORE_USING_BUNCHES_HERO
                 bool "22 bunches hero"
         endchoice
     endif
 
 
-    Ñ¡Ôñ²½±ø»úÆ÷ÈË
+    é€‰æ‹©æ­¥å…µæœºå™¨äºº
     if  CORE_USING_INFANTRY
         choice
             prompt "select Types of infantry robot" 
             default CORE_USING_BLACKHEAD_INFANTRY
-            #ºÚÍ·²½±ø
+            #é»‘å¤´æ­¥å…µ
             config CORE_USING_BLACKHEAD_INFANTRY
                 bool "21 black head infantry"
-            #ÂÌÍ·²½±ø
+            #ç»¿å¤´æ­¥å…µ
             config CORE_USING_GREENHEAD_INFANTRY
                 bool "21 green head infantry"    
-            #Ğ¡²½±ø
+            #å°æ­¥å…µ
             config CORE_USING_SMALL_INFANTRY
                 bool "21 small infantry"
-            #È«ÏòÂÖ²½±ø
+            #å…¨å‘è½®æ­¥å…µ
             config CORE_USING_OMNI_WHEEL_INFANTRY
                 bool "21 omni wheel infantry"
-            #¹úÈüÏéÔÆ²½±ø(µÚÒ»Á¾)(Ì¼°å²½±ø)
+            #å›½èµ›ç¥¥äº‘æ­¥å…µ(ç¬¬ä¸€è¾†)(ç¢³æ¿æ­¥å…µ)
             config CORE_USING_CLOUD_INFANTRY1
                 bool "21 cloud infantry 1(Carbon Plate Infantry)"
-            #¹úÈüÏéÔÆ²½±ø(µÚ¶şÁ¾)
+            #å›½èµ›ç¥¥äº‘æ­¥å…µ(ç¬¬äºŒè¾†)
             config CORE_USING_CLOUD_INFANTRY2
                 bool "21 cloud infantry 2"
-            #22¸»¹ó²½±ø
+            #22å¯Œè´µæ­¥å…µ
             config CORE_USING_RICH_INFANTRY
                 bool "22 rich infantry"
-            #22²£Í·²½±ø
+            #22ç»å¤´æ­¥å…µ
             config CORE_USING_GLASS_INFANTRY
                 bool "22 glass infantry"
         endchoice
     endif
     
-    #µ×ÅÌÑ¡È¡ÂóÂÖorÈ«ÏòÂÖ
+    #åº•ç›˜é€‰å–éº¦è½®orå…¨å‘è½®
     choice
         prompt "select chassis kind"
         default MECANUM_WHEEL
         config MECANUM_WHEEL
             bool "select mecanum"
-        if CORE_USING_INFANTRY      #ifÓï¾äµÄ »ò ÓÃ ||
+        if CORE_USING_INFANTRY      #ifè¯­å¥çš„ æˆ– ç”¨ ||
             config OMNI_WHEEL
                 bool "select omnidirectional"
         endif
     endchoice
 
-    #ÂÖ×ÓÑ¡È¡3508Çı¶¯or2006Çı¶¯
+    #è½®å­é€‰å–3508é©±åŠ¨or2006é©±åŠ¨
     choice
         prompt "select wheel motor kind"
         default WHEEL_MOTOR_3508

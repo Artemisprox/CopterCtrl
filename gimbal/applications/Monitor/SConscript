@@ -2,10 +2,18 @@ from building import *
 
 cwd = GetCurrentDir()
 
-src = Glob('*.c')
+src = []
+if GetDepend(['BSP_USING_WDG']):
+    src += ['drv_iwdg.c']
+    src += ['drv_HardWdt.c']
+if GetDepend(['BSP_USING_MONITOR']):
+    src += ['drv_monitor.c']
+    src += ['func_Alarm.c']
+    src += ['func_MonHandling.c']
+    src += ['mod_Monitor.c']
 
 CPPPATH = [cwd]
 
-group = DefineGroup('Monitor', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Public/Monitor', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

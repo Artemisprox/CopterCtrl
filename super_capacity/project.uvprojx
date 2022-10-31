@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER, STM32F103xE</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\..\include;applications;.;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\..\libraries\STM32F1xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\..\include;applications;.;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\..\libraries\STM32F1xx_HAL\CMSIS\Include;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\OLED</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -518,11 +518,6 @@
               <FilePath>applications\func_adc.c</FilePath>
             </File>
             <File>
-              <FileName>func_buzzer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\func_buzzer.c</FilePath>
-            </File>
-            <File>
               <FileName>func_can.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\func_can.c</FilePath>
@@ -531,16 +526,6 @@
               <FileName>func_dac.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\func_dac.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_oled.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\func_oled.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_oled_font.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\func_oled_font.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -906,6 +891,31 @@
               <FileName>stm32f1xx_hal_wwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_wwdg.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Hardware/Buzzer</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Hardware\Buzzer\drv_buzzer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Hardware/Oled</GroupName>
+          <Files>
+            <File>
+              <FileName>func_oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Hardware\OLED\func_oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>func_oled_font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Hardware\OLED\func_oled_font.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -6,7 +6,7 @@
 #include "drv_dac.h"
 
 #include "func_HW_Pin_Set.h"
-#include "func_buzzer.h"
+#include "drv_buzzer.h"
 
 #include "func_adc.h"
 

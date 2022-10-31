@@ -1,4 +1,4 @@
-// ´ËÎÄ¼şÖĞ·ÅÖÃÒ»Ğ©HAL¹¤³ÌµÄmain.cÖĞ³öÏÖµÄÓërtt³åÍ»µÄº¯Êı
+// æ­¤æ–‡ä»¶ä¸­æ”¾ç½®ä¸€äº›HALå·¥ç¨‹çš„main.cä¸­å‡ºç°çš„ä¸rttå†²çªçš„å‡½æ•°
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None

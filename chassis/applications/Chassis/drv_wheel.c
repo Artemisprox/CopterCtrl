@@ -291,10 +291,10 @@ static void PID_Cal_Thread(void *parameter)
 static void Wheels_Motors_Init(void)
 {
     /*初始化电机结构体*/
-    motor_init(&wheel[WHEEL_RF], RIGHT_FRONT, REDUCT_RATIO, ANGLE_CTRL_EXTRA, 8192, 180, -180);
-    motor_init(&wheel[WHEEL_LF], LEFT_FRONT, REDUCT_RATIO, ANGLE_CTRL_EXTRA, 8192, 180, -180);
-    motor_init(&wheel[WHEEL_LB], LEFT_BACK, REDUCT_RATIO, ANGLE_CTRL_EXTRA, 8192, 180, -180);
-    motor_init(&wheel[WHEEL_RB], RIGHT_BACK, REDUCT_RATIO, ANGLE_CTRL_EXTRA, 8192, 180, -180);
+    motor_init(&wheel[WHEEL_RF], RIGHT_FRONT, REDUCT_RATIO, ANGLE_CTRL_EXTRA, 8192, 180, -180, 0);
+    motor_init(&wheel[WHEEL_LF], LEFT_FRONT, REDUCT_RATIO, ANGLE_CTRL_EXTRA, 8192, 180, -180, 0);
+    motor_init(&wheel[WHEEL_LB], LEFT_BACK, REDUCT_RATIO, ANGLE_CTRL_EXTRA, 8192, 180, -180, 0);
+    motor_init(&wheel[WHEEL_RB], RIGHT_BACK, REDUCT_RATIO, ANGLE_CTRL_EXTRA, 8192, 180, -180, 0);
 
     /*pid初始化*/
     pid_init(&wheel[WHEEL_RF].spe, SPE_PID_PARAMETER_RF);
@@ -386,7 +386,7 @@ rt_err_t Wheels_Init(void)
  */
 void Refresh_Wheels_Motor(struct rt_can_msg *msg, Wheel_local_e local)
 {
-    motor_readmsg(msg, &wheel[local].dji);
+    motor_readmsg(msg->data, &wheel[local].dji);
 }
 
 /**

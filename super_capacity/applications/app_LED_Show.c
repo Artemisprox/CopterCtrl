@@ -9,18 +9,18 @@
 
 #include "func_HW_Pin_Set.h"
 
-// ´ËÎÄ¼ş¿ØÖÆ°åÔØLEDÏÔÊ¾³äµç¹¦ÂÊºÍµçÈİµçÁ¿
+// æ­¤æ–‡ä»¶æ§åˆ¶æ¿è½½LEDæ˜¾ç¤ºå……ç”µåŠŸç‡å’Œç”µå®¹ç”µé‡
 
-// ³äµç¹¦ÂÊÍ¨¹ıÎåÖá°´¼üÅÔµÄLEDµÄÁÁ¶È½øĞĞÏÔÊ¾
+// å……ç”µåŠŸç‡é€šè¿‡äº”è½´æŒ‰é”®æ—çš„LEDçš„äº®åº¦è¿›è¡Œæ˜¾ç¤º
 
-// µçÈİµçÁ¿Í¨¹ı4¸öLEDÁÁÆğµÄ¸öÊı½øĞĞÏÔÊ¾
+// ç”µå®¹ç”µé‡é€šè¿‡4ä¸ªLEDäº®èµ·çš„ä¸ªæ•°è¿›è¡Œæ˜¾ç¤º
 
-static rt_thread_t LED_Show_App_Thread_tid = RT_NULL; // OLEDÏÔÊ¾¿ØÖÆÏß³Ì¾ä±ú
+static rt_thread_t LED_Show_App_Thread_tid = RT_NULL; // OLEDæ˜¾ç¤ºæ§åˆ¶çº¿ç¨‹å¥æŸ„
 static Cap_Energy_Type CAP_Energy_data;
 
 static char LED_4_REM;
 
-// ¶ÔÁãÉ¢µÄLED-GPIO²Ù×÷½øĞĞÊı×Ö»¯µÄ·â×°
+// å¯¹é›¶æ•£çš„LED-GPIOæ“ä½œè¿›è¡Œæ•°å­—åŒ–çš„å°è£…
 static void LED_4_GPIOFUN(char LED_Num, rt_base_t LED_State)
 {
     rt_base_t LED_GPIO;
@@ -45,25 +45,25 @@ static void LED_4_GPIOFUN(char LED_Num, rt_base_t LED_State)
     rt_pin_write(LED_GPIO, LED_State);
 }
 
-//¿ØÖÆ4¸öLEDµÆÁÁÆğµÄ¸öÊı
+//æ§åˆ¶4ä¸ªLEDç¯äº®èµ·çš„ä¸ªæ•°
 static void LED_4_CTRL(int LED_Num)
 {
     int LED_Select;
     int Bit;
     int fori;
 
-    // ¿ì½İ¼ÆËãĞèÒªÁÁÆğµÄµÆ ÓÃ¶ş½øÖÆ±íÊ¾
+    // å¿«æ·è®¡ç®—éœ€è¦äº®èµ·çš„ç¯ ç”¨äºŒè¿›åˆ¶è¡¨ç¤º
     LED_Select = (1 << LED_Num);
     LED_Select--;
 
-    Bit = 1; // µÚÒ»Î»ÖÃ1
+    Bit = 1; // ç¬¬ä¸€ä½ç½®1
 
     for (fori = 0; fori < 4;fori++)
     {
         if ((LED_Select & Bit)!=0)
-        { //Èç¹ûĞèÒªÁÁÆğµÚÒ»¸öµÆ
+        { //å¦‚æœéœ€è¦äº®èµ·ç¬¬ä¸€ä¸ªç¯
             if ((LED_4_REM & Bit) == 0)
-            { //ĞèÒªµçÆ½·­×ª
+            { //éœ€è¦ç”µå¹³ç¿»è½¬
                 LED_4_GPIOFUN(fori + 1, HW_LED_ON);
                 LED_4_REM |= Bit;
             }
@@ -71,24 +71,24 @@ static void LED_4_CTRL(int LED_Num)
         else
         {
             if ((LED_4_REM & Bit) != 0)
-            { //ĞèÒªµçÆ½·­×ª
+            { //éœ€è¦ç”µå¹³ç¿»è½¬
                 LED_4_GPIOFUN(fori + 1, HW_LED_OFF);
                 LED_4_REM &= ~Bit;
             }
         }
-        Bit <<= 1;//¿ªÊ¼´¦ÀíÏÂÒ»¸öµÆ
+        Bit <<= 1;//å¼€å§‹å¤„ç†ä¸‹ä¸€ä¸ªç¯
     }
 }
 
-static rt_int16_t Energy_Count;//ÓÃÓÚ·ÅÖÃ¼ÆËãºÃµÄLEDÁÁÆğ¸öÊı
-// Íê³ÉµçÈİµçÁ¿µÄ»ñÈ¡ºÍLEDµÆµÄ¿ØÖÆ
+static rt_int16_t Energy_Count;//ç”¨äºæ”¾ç½®è®¡ç®—å¥½çš„LEDäº®èµ·ä¸ªæ•°
+// å®Œæˆç”µå®¹ç”µé‡çš„è·å–å’ŒLEDç¯çš„æ§åˆ¶
 static void LED_CAP_Energy_Fresh(void)
 {
-    // »ñÈ¡µçÈİµçÁ¿Êı¾İ
+    // è·å–ç”µå®¹ç”µé‡æ•°æ®
     Get_CAP_Energy(&CAP_Energy_data);
     Energy_Count = ((rt_int16_t)(CAP_Energy_data.Energy_Percentage_Real * 4.0f+0.5f));
 
-    // ÏŞ·ù
+    // é™å¹…
     if(Energy_Count>4)
     {
         Energy_Count = 4;
@@ -98,15 +98,15 @@ static void LED_CAP_Energy_Fresh(void)
         Energy_Count = 0;
     }
 
-    // Ö´ĞĞÏÔÊ¾
+    // æ‰§è¡Œæ˜¾ç¤º
     LED_4_CTRL(Energy_Count);
 }
 
 static rt_int16_t LED_ON_Time, LED_OFF_Time;
-//LEDµÆĞ§¿ØÖÆÏß³Ìº¯Êı-ÏÔÊ¾³äµç¹¦ÂÊ
+//LEDç¯æ•ˆæ§åˆ¶çº¿ç¨‹å‡½æ•°-æ˜¾ç¤ºå……ç”µåŠŸç‡
 static void LED_Show_Power_Thread(void *Para)
 {
-    rt_thread_delay(200);//ÉÏµçºóÏÈÑÓÊ±£¬±£Ö¤ÆäËü³ÌĞòÄ£¿éÕı³£Æô¶¯ºóÔÙ¿ØÖÆµÆĞ§
+    rt_thread_delay(200);//ä¸Šç”µåå…ˆå»¶æ—¶ï¼Œä¿è¯å…¶å®ƒç¨‹åºæ¨¡å—æ­£å¸¸å¯åŠ¨åå†æ§åˆ¶ç¯æ•ˆ
     while(1)
     {
         LED_ON_Time = (rt_int16_t)(adc_data.UseDat.I_IN / 4.0f * LED_SHOW_SOFTPWM_PERIOD_MS);
@@ -135,10 +135,10 @@ static void LED_Show_Power_Thread(void *Para)
     }
 }
 
-//LEDµÆĞ§¿ØÖÆÏß³Ìº¯Êı-ÏÔÊ¾µçÁ¿
+//LEDç¯æ•ˆæ§åˆ¶çº¿ç¨‹å‡½æ•°-æ˜¾ç¤ºç”µé‡
 static void LED_Show_Energy_Thread(void *Para)
 {
-    rt_thread_delay(200); //ÉÏµçºóÏÈÑÓÊ±£¬±£Ö¤ÆäËü³ÌĞòÄ£¿éÕı³£Æô¶¯ºóÔÙ¿ØÖÆµÆĞ§
+    rt_thread_delay(200); //ä¸Šç”µåå…ˆå»¶æ—¶ï¼Œä¿è¯å…¶å®ƒç¨‹åºæ¨¡å—æ­£å¸¸å¯åŠ¨åå†æ§åˆ¶ç¯æ•ˆ
     while(1)
     {
         LED_CAP_Energy_Fresh();
@@ -146,26 +146,26 @@ static void LED_Show_Energy_Thread(void *Para)
     }
 }
 
-//³õÊ¼»¯LEDÏÔÊ¾¿ØÖÆÏß³Ì
+//åˆå§‹åŒ–LEDæ˜¾ç¤ºæ§åˆ¶çº¿ç¨‹
 static int LED_Show_App_Init(void)
 {
-    //Çå¿ÕLED×´Ì¬¼ÇÂ¼Êı¾İ
+    //æ¸…ç©ºLEDçŠ¶æ€è®°å½•æ•°æ®
     LED_4_REM = 0;
 
-    //Æô¶¯ÏÔÊ¾¿ØÖÆÏß³Ì
+    //å¯åŠ¨æ˜¾ç¤ºæ§åˆ¶çº¿ç¨‹
     LED_Show_App_Thread_tid = rt_thread_create("LED_ENGY",
                                                 LED_Show_Energy_Thread, RT_NULL,
                                                 512,
                                                 LED_SHO_APP_THREAD_PRIO, 1);
-    /* Æô¶¯Õâ¸öÏß³Ì */
+    /* å¯åŠ¨è¿™ä¸ªçº¿ç¨‹ */
     rt_thread_startup(LED_Show_App_Thread_tid);
 
-    //Æô¶¯ÏÔÊ¾¿ØÖÆÏß³Ì
+    //å¯åŠ¨æ˜¾ç¤ºæ§åˆ¶çº¿ç¨‹
     LED_Show_App_Thread_tid = rt_thread_create("LED_POWR",
                                                LED_Show_Power_Thread, RT_NULL,
                                                512,
                                                LED_SHO_APP_THREAD_PRIO, 1);
-    /* Æô¶¯Õâ¸öÏß³Ì */
+    /* å¯åŠ¨è¿™ä¸ªçº¿ç¨‹ */
     rt_thread_startup(LED_Show_App_Thread_tid);
     return RT_EOK;
 }

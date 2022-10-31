@@ -5,7 +5,7 @@
 #include "mod_adc.h"
 #include "mod_can.h"
 
-#include "func_buzzer.h"
+#include "drv_buzzer.h"
 
 #define POWER_DEFAULT_SET (40)
 #define CHARGE_SPEED_SAVE_SET (0.1f)//预留功率余量比例

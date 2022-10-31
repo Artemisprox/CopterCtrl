@@ -344,6 +344,7 @@
           <state />
           <state>$PROJ_DIR$\..\..\libraries\STM32F1xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Hardware\OLED</state>
           <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\..\..\include</state>
@@ -353,6 +354,7 @@
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Hardware\Buzzer</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers\config</state>
@@ -1375,6 +1377,7 @@
           <state />
           <state>$PROJ_DIR$\..\..\libraries\STM32F1xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Hardware\OLED</state>
           <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\..\..\include</state>
@@ -1384,6 +1387,7 @@
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include</state>
+          <state>$PROJ_DIR$\..\..\PublicLib\Hardware\Buzzer</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\libraries\HAL_Drivers\config</state>
@@ -2146,19 +2150,10 @@
       <name>$PROJ_DIR$\applications\func_adc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\func_buzzer.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\applications\func_can.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\applications\func_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\applications\func_oled.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\applications\func_oled_font.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\applications\main.c</name>
@@ -2378,6 +2373,21 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_wwdg.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Hardware/Buzzer</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Hardware\Buzzer\drv_buzzer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Public/Hardware/Oled</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Hardware\OLED\func_oled.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\PublicLib\Hardware\OLED\func_oled_font.c</name>
     </file>
   </group>
 </project>
