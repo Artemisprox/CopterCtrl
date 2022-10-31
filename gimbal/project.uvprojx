@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>__TARGET_FPU_VFP, USE_HAL_DRIVER, STM32F407xx, __FPU_PRESENT=1U, __ARM_FEATURE_DSP=1, ARM_MATH_ROUNDING, ARM_MATH_MATRIX_CHECK, __FPU_USED=1U, ARM_MATH_CM4</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\..\include;applications\Aimbot;applications\Communication;applications\GimbalCtrl;applications\Gun;applications\IMU;applications\Magazine;applications\Main;applications\Monitor;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\libraries\HAL_Drivers\drv_flash;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL\CMSIS\Include;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\Remote;..\..\PublicLib\Software\Filter;..\..\PublicLib\Software\Menu;..\..\PublicLib\Software\Motor;..\..\PublicLib\Software\Pid;..\..\PublicLib\Software\Queue;..\..\PublicLib\Software\SetPlanning;..\..\PublicLib\Software\Utils</IncludePath>
+              <IncludePath>.;..\..\..\..\include;applications\Aimbot;applications\Communication;applications\GimbalCtrl;applications\Gun;applications\IMU;applications\Magazine;applications\Main;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\libraries\HAL_Drivers\drv_flash;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\Remote;..\..\PublicLib\Monitor;..\..\PublicLib\Software\CPU_Usage;..\..\PublicLib\Software\Filter;..\..\PublicLib\Software\Menu;..\..\PublicLib\Software\Motor;..\..\PublicLib\Software\Pid;..\..\PublicLib\Software\Queue;..\..\PublicLib\Software\SetPlanning;..\..\PublicLib\Software\Utils;..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -633,11 +633,6 @@
               <FilePath>applications\Main\app_robocontrol.c</FilePath>
             </File>
             <File>
-              <FileName>drv_cpuusage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Main\drv_cpuusage.c</FilePath>
-            </File>
-            <File>
               <FileName>func_KeyCallback.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\Main\func_KeyCallback.c</FilePath>
@@ -661,41 +656,6 @@
               <FileName>roboselect.h</FileName>
               <FileType>5</FileType>
               <FilePath>applications\Main\roboselect.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Monitor</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_HardWdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Monitor\drv_HardWdt.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Monitor\drv_iwdg.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_monitor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Monitor\drv_monitor.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_Alarm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Monitor\func_Alarm.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_MonHandling.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Monitor\func_MonHandling.c</FilePath>
-            </File>
-            <File>
-              <FileName>mod_Monitor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Monitor\mod_Monitor.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -964,6 +924,146 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Public/Hardware/Buzzer</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Hardware\Buzzer\drv_buzzer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Hardware/Remote</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_remote.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Hardware\Remote\drv_remote.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Monitor</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_HardWdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Monitor\drv_HardWdt.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Monitor\drv_iwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_monitor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Monitor\drv_monitor.c</FilePath>
+            </File>
+            <File>
+              <FileName>func_MonHandling.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Monitor\func_MonHandling.c</FilePath>
+            </File>
+            <File>
+              <FileName>mod_Monitor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Monitor\mod_Monitor.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Hardware/Cpu_Usage</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_cpuusage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Software\CPU_Usage\drv_cpuusage.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Software/Filter</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_ExactSmooth.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Software\Filter\drv_ExactSmooth.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Software/Menu</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_Key_Set.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\PublicLib\Software\Menu\drv_Key_Set.h</FilePath>
+            </File>
+            <File>
+              <FileName>func_Key_Record.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Software\Menu\func_Key_Record.c</FilePath>
+            </File>
+            <File>
+              <FileName>mod_KeyCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Software\Menu\mod_KeyCtrl.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Software/Motor</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Software\Motor\drv_motor.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Software/Pid</GroupName>
+          <Files>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Software\Pid\pid.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Software/Queue</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_Queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Software\Queue\drv_Queue.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Software/SetPlanning</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_SetPlanning.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Software\SetPlanning\drv_SetPlanning.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Public/Software/Utils</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\PublicLib\Software\Utils\drv_utils.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>STM32_HAL</GroupName>
           <Files>
             <File>
@@ -1105,106 +1205,6 @@
               <FileName>stm32f4xx_hal_flash_ramfunc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ramfunc.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Hardware/Buzzer</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_buzzer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Hardware\Buzzer\drv_buzzer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Hardware/Remote</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_remote.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Hardware\Remote\drv_remote.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Filter</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_ExactSmooth.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Filter\drv_ExactSmooth.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Menu</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_Key_Set.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\PublicLib\Software\Menu\drv_Key_Set.h</FilePath>
-            </File>
-            <File>
-              <FileName>func_Key_Record.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Menu\func_Key_Record.c</FilePath>
-            </File>
-            <File>
-              <FileName>mod_KeyCtrl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Menu\mod_KeyCtrl.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Motor</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Motor\drv_motor.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Pid</GroupName>
-          <Files>
-            <File>
-              <FileName>pid.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Pid\pid.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Queue</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_Queue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Queue\drv_Queue.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/SetPlanning</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_SetPlanning.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\SetPlanning\drv_SetPlanning.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Utils</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Utils\drv_utils.c</FilePath>
             </File>
           </Files>
         </Group>

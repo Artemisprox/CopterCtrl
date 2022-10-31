@@ -218,6 +218,7 @@
 
 /* Whether to use the SoftWare Libraries */
 
+#define BSP_USING_CPU_USAGE
 #define BSP_USING_PID
 #define BSP_USING_MOTORLIB
 #define BSP_USING_SETPLANNING
@@ -232,6 +233,12 @@
 
 #define BSP_USING_KEY_CALLBACK
 #define BSP_USING_KEY_MENU
+
+/* Monitor Settings */
+
+#define BSP_USING_MONITOR_GIMBAL
+#define BSP_USING_WDG
+#define BSP_USING_MONITOR
 
 /* Hardware Drivers Config */
 

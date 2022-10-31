@@ -185,12 +185,17 @@
 
 /* Whether to use the SoftWare Libraries */
 
+#define BSP_USING_CPU_USAGE
 
 /* Use the filter module(s) */
 
 
 /* Use the key-menu module(s) */
 
+
+/* Monitor Settings */
+
+#define BSP_NOT_USING_MONITOR
 
 /* Hardware Drivers Config */
 

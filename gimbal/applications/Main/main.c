@@ -24,6 +24,7 @@
 #include "mod_gimbal.h"
 #include "app_robocontrol.h"
 #include "func_MonHandling.h"
+#include "drv_thread.h"
 
 #if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO)
 #error "Please specify the robot type!"
@@ -32,12 +33,12 @@
 int main(void)
 {
     // 上电提示音
-    set_buzzer(4200);
+    set_buzzer(4200, 1);
     rt_thread_mdelay(20);
-    set_buzzer(0);
+    set_buzzer(0, 1);
 
     // 所有程序注意, 如果初始化函数存在非 RT_EOK 的返回值单片机会直接复位
-    if (MONITOR_INIT() != RT_EOK)
+    if (MONITOR_INIT(1024, 1, THREAD_PRIO_MONITOR) != RT_EOK)
         Robot_Reset_Gimbal();
 
     if (can1_init() != RT_EOK)
