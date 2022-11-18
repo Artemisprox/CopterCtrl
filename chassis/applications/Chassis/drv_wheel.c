@@ -236,7 +236,7 @@ static void PID_Cal_Thread(void *parameter)
                 NewSet[lo] = Motor_Read_SetSpeed(&wheel[lo]);
 #endif
                 Motor_Write_SetSpeed_ABS(&wheel[lo], alpha * Motor_Read_SetSpeed(&wheel[lo]));
-                float SpeedNow = Motor_Read_NowSpeed(&wheel[lo]); //控制输入单位:快转子的rpm;
+                float SpeedNow = Motor_Read_NowSpeed(&wheel[lo]) * REDUCT_RATIO; //控制输入单位:快转子的rpm;
                 if ((wheel[lo].dji.FreshTick) && (rt_tick_get() - wheel[lo].dji.FreshTick < 200))
                 {
                     Motor_SpeedPIDCalculate(&wheel[lo], SpeedNow); // pid计算结果,单位:电流
@@ -255,7 +255,7 @@ static void PID_Cal_Thread(void *parameter)
                 //底盘同步计算
                 for (int i = 0; i < (int)WHEELS_NUM; ++i)
                 {
-                    SpeedState.SpeedSenseNow = Motor_Read_NowSpeed(&wheel[i]);
+                    SpeedState.SpeedSenseNow = Motor_Read_NowSpeed(&wheel[i]) * REDUCT_RATIO;
                     SpeedState.SpeedSetNow = Motor_Read_SetSpeed(&wheel[i]);
                     SpeedState.SpeedSet_BeforeAlpha = NewSet[i];
                     MotorSync_MotorInput(&SpeedState, &MotorSync_Data, i);
@@ -488,7 +488,7 @@ float Wheel_Read_SetSpeed(Wheel_local_e local)
 float Wheel_Read_NowSpeed(Wheel_local_e local)
 {
     /*物理量和单位转化为快转子的rpm*/
-    float speed = Motor_Read_NowSpeed(&wheel[local]) / REDUCT_RATIO / 30 * PI * WHEEL_RADIUS;
+    float speed = Motor_Read_NowSpeed(&wheel[local]) / 30 * PI * WHEEL_RADIUS;
 
     /*根据电机安装朝向，修正速度方向*/
     if (INSTALL_DIR == W_INSIDE)

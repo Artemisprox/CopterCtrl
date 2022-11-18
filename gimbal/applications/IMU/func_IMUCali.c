@@ -35,6 +35,11 @@ void GetCaliIMUData(AHRS_Accl_t *AcclRaw, AHRS_Gyro_t *GyroRaw, AHRS_Accl_t *Acc
     Gyro->z = GYRO_Z_SOURCE;
 }
 
+// 为了防止出现报错而设置的函数
+__weak void Hwdt_Feed_Slowly(rt_bool_t if_slow)
+{
+}
+
 // Flash存储函数
 static void FlashRecord(AHRS_Gyro_t *CaliData)
 {

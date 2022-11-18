@@ -412,7 +412,7 @@ void Reset_Callback(int TrigSource)
     switch (TrigSource)
     {
     case MISC_KEY_GIMBAL_RESET:
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
         break;
     case MISC_KEY_CHASSIS_RESET:
         ResetCmd_Write(1);
@@ -421,7 +421,7 @@ void Reset_Callback(int TrigSource)
     case MISC_KEY_TOTAL_RESET:
         ResetCmd_Write(1);
         chassis_data_send(); // 该命令即刻生效, 所以需要调用一次发送
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
         break;
     default:
         break;

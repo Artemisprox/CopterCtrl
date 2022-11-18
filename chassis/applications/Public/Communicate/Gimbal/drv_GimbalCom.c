@@ -180,5 +180,5 @@ void Refresh_Gimbaldata(struct rt_can_msg *msg)
     rt_memcpy(&gimbal_msg, msg->data, 8);
     // 读取复位指令
     if (gimbal_msg.chassis_reset)
-        Robot_Reset_Chassis();
+        Thread_Err_Exception(Chassis, RT_ERROR);
 }

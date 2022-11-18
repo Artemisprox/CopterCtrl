@@ -18,37 +18,37 @@
 
 int main(void)
 {
-    // …œµÁÃ· æ“Ù
+    // ‰∏äÁîµÊèêÁ§∫Èü≥
     set_buzzer(2000, 1);
     rt_thread_mdelay(120);
     set_buzzer(0, 0);
 
     if (MONITOR_INIT(THREAD_STACK_MONITOR, THREAD_PRIO_MONITOR, THREAD_TICK_MONITOR) != RT_EOK)
-        Robot_Reset_Chassis();
+        Thread_Err_Exception(Chassis, RT_ERROR);
 
     /* SoftMod */
     if (Can1_Init() != RT_EOK)
-        Robot_Reset_Chassis();
+        Thread_Err_Exception(Chassis, RT_ERROR);
     if (Can2_Init() != RT_EOK)
-        Robot_Reset_Chassis();
-    if (rt_thread_mdelay(150) != RT_EOK) // CAN ∆Ù∂Ø—” ±
-        Robot_Reset_Chassis();
+        Thread_Err_Exception(Chassis, RT_ERROR);
+    if (rt_thread_mdelay(150) != RT_EOK) // CAN ÂêØÂä®Âª∂Êó∂
+        Thread_Err_Exception(Chassis, RT_ERROR);
 
     /* HardMod */
 
     /* Communication */
     if (DJI_Init() != RT_EOK)
-        Robot_Reset_Chassis();
+        Thread_Err_Exception(Chassis, RT_ERROR);
     if (Scpr_Com_Init() != RT_EOK)
-        Robot_Reset_Chassis();
+        Thread_Err_Exception(Chassis, RT_ERROR);
     if (Gimbal_Com_Init() != RT_EOK)
-        Robot_Reset_Chassis();
+        Thread_Err_Exception(Chassis, RT_ERROR);
 
     /* Main Module */
     if (Chassis_Ctrl_Init() != RT_EOK)
-        Robot_Reset_Chassis();
+        Thread_Err_Exception(Chassis, RT_ERROR);
     if (UI_Init() != RT_EOK)
-        Robot_Reset_Chassis();
+        Thread_Err_Exception(Chassis, RT_ERROR);
 
     return RT_EOK;
 }

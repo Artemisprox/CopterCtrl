@@ -32,41 +32,41 @@
 
 int main(void)
 {
-    // ÉÏµçÌáÊ¾Òô
+    // ä¸Šç”µæç¤ºéŸ³
     set_buzzer(4200, 1);
     rt_thread_mdelay(20);
     set_buzzer(0, 1);
 
-    // ËùÓĞ³ÌĞò×¢Òâ, Èç¹û³õÊ¼»¯º¯Êı´æÔÚ·Ç RT_EOK µÄ·µ»ØÖµµ¥Æ¬»ú»áÖ±½Ó¸´Î»
+    // æ‰€æœ‰ç¨‹åºæ³¨æ„, å¦‚æœåˆå§‹åŒ–å‡½æ•°å­˜åœ¨é RT_EOK çš„è¿”å›å€¼å•ç‰‡æœºä¼šç›´æ¥å¤ä½
     if (MONITOR_INIT(1024, 1, THREAD_PRIO_MONITOR) != RT_EOK)
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
 
     if (can1_init() != RT_EOK)
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
     if (can2_init() != RT_EOK)
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
 
     if (BMI088_Init() != RT_EOK)
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
     if (Atti_init() != RT_EOK)
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
     if (IMU_WaitForInit() != RT_EOK)
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
 
-    if (Gun_Init() != RT_EOK) // ·¢Éä»ú¹¹³õÊ¼»¯
-        Robot_Reset_Gimbal();
+    if (Gun_Init() != RT_EOK) // å‘å°„æœºæ„åˆå§‹åŒ–
+        Thread_Err_Exception(Gimbal, RT_ERROR);
 
-    if (remote_uart_init() != RT_EOK) // Ò£¿ØÆ÷³õÊ¼»¯
-        Robot_Reset_Gimbal();
+    if (remote_uart_init() != RT_EOK) // é¥æ§å™¨åˆå§‹åŒ–
+        Thread_Err_Exception(Gimbal, RT_ERROR);
     if (Ctrl_Menu_Init() != RT_EOK)
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
 
-    if (AimbotV2_Init() != RT_EOK) // Æô¶¯¶ş´ú×ÔÃé
-        Robot_Reset_Gimbal();
-    if (gimbal_init() != RT_EOK) // ÔÆÌ¨³õÊ¼»¯
-        Robot_Reset_Gimbal();
+    if (AimbotV2_Init() != RT_EOK) // å¯åŠ¨äºŒä»£è‡ªç„
+        Thread_Err_Exception(Gimbal, RT_ERROR);
+    if (gimbal_init() != RT_EOK) // äº‘å°åˆå§‹åŒ–
+        Thread_Err_Exception(Gimbal, RT_ERROR);
     if (RoboControl_init() != RT_EOK)
-        Robot_Reset_Gimbal();
+        Thread_Err_Exception(Gimbal, RT_ERROR);
 
     return RT_EOK;
 }

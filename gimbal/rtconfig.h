@@ -236,9 +236,7 @@
 
 /* Monitor Settings */
 
-#define BSP_USING_MONITOR_GIMBAL
-#define BSP_USING_WDG
-#define BSP_USING_MONITOR
+#define BSP_NOT_USING_MONITOR
 
 /* Hardware Drivers Config */
 

@@ -148,7 +148,7 @@ static void Remote_Reset_Check(void)
             // 复位全车单片机
             ResetCmd_Write(1);
             chassis_data_send(); // 由于发送数据是在本线程中进行的, 所以需要立即调用一次发送
-            Robot_Reset_Gimbal();
+            Thread_Err_Exception(Gimbal, RT_ERROR);
         }
     }
     else
