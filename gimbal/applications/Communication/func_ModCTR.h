@@ -39,7 +39,6 @@ typedef enum
     PerformanceChooseMenu // 当前处于机器人性能选择菜单
 } menu_e;
 
-//typedef __packed struct
 typedef struct
 {
     // 工作状态数据
@@ -72,7 +71,6 @@ typedef struct
     unsigned launch_motor_online : 1;    // 播弹盘电机通信正常
     unsigned strike_stuck : 1;           // 发射机构卡弹
 } mixed_msg_t;                           // 杂项数据包
-// } __packed mixed_msg_t;
 
 extern rt_int8_t FillMode_EN; // 补弹模式标志位
 extern rt_int8_t motion_mode; // 底盘运动模式

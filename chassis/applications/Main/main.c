@@ -8,7 +8,7 @@
 #include "CustomUI.h"
 #include "app_ChassisCtrl.h"
 #include "mod_Monitor.h"
-#include "func_MonHandling.h"
+#include "func_MonitorCfg.h"
 #include "drv_buzzer.h"
 #include "HThread_data.h"
 
@@ -24,31 +24,31 @@ int main(void)
     set_buzzer(0, 0);
 
     if (MONITOR_INIT(THREAD_STACK_MONITOR, THREAD_PRIO_MONITOR, THREAD_TICK_MONITOR) != RT_EOK)
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
 
     /* SoftMod */
     if (Can1_Init() != RT_EOK)
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
     if (Can2_Init() != RT_EOK)
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
     if (rt_thread_mdelay(150) != RT_EOK) // CAN 启动延时
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
 
     /* HardMod */
 
     /* Communication */
     if (DJI_Init() != RT_EOK)
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
     if (Scpr_Com_Init() != RT_EOK)
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
     if (Gimbal_Com_Init() != RT_EOK)
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
 
     /* Main Module */
     if (Chassis_Ctrl_Init() != RT_EOK)
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
     if (UI_Init() != RT_EOK)
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
 
     return RT_EOK;
 }

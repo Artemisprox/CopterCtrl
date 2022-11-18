@@ -10,7 +10,7 @@
 #include "mod_Monitor.h"
 #include "drv_GunSettings.h"
 #include "func_GimbalSet.h"
-#include "func_MonHandling.h"
+#include "func_MonitorCfg.h"
 
 char ComputerCTRL_EN = 0; // 是否为客户端模式
 
@@ -148,7 +148,7 @@ static void Remote_Reset_Check(void)
             // 复位全车单片机
             ResetCmd_Write(1);
             chassis_data_send(); // 由于发送数据是在本线程中进行的, 所以需要立即调用一次发送
-            Thread_Err_Exception(Gimbal, RT_ERROR);
+            Robot_Reset_Gimbal();
         }
     }
     else

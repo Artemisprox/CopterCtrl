@@ -2344,6 +2344,9 @@
       <name>$PROJ_DIR$\applications\Main\func_KeyCallback.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\applications\Main\func_MonitorCfg.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\applications\Main\main.c</name>
     </file>
     <file>
@@ -2489,9 +2492,6 @@
     <name>Public/Monitor</name>
     <file>
       <name>$PROJ_DIR$\..\..\PublicLib\Monitor\NoMonitor\mod_Monitor.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\PublicLib\Monitor\func_MonHandling.c</name>
     </file>
   </group>
   <group>

@@ -9,7 +9,7 @@
 #include "drv_CustomUI_AuxAiming.h"
 #include "mod_RefSystem.h"
 #include "mod_Monitor.h"
-#include "func_MonHandling.h"
+#include "func_MonitorCfg.h"
 
 #ifdef CORE_USING_HERO
 uint8_t MaxPower = 55;
@@ -180,5 +180,5 @@ void Refresh_Gimbaldata(struct rt_can_msg *msg)
     rt_memcpy(&gimbal_msg, msg->data, 8);
     // 读取复位指令
     if (gimbal_msg.chassis_reset)
-        Thread_Err_Exception(Chassis, RT_ERROR);
+        Robot_Reset_Chassis();
 }

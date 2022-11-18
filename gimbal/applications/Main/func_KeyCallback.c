@@ -9,7 +9,7 @@
 #include "mod_aimbot_V2.h"
 #include "drv_gundata.h"
 #include "func_ModCTR.h"
-#include "func_MonHandling.h"
+#include "func_MonitorCfg.h"
 #include "func_GimbalSet.h"
 #ifndef CORE_USING_HERO
 #include "drv_magazine.h"
@@ -412,7 +412,7 @@ void Reset_Callback(int TrigSource)
     switch (TrigSource)
     {
     case MISC_KEY_GIMBAL_RESET:
-        Thread_Err_Exception(Gimbal, RT_ERROR);
+        Robot_Reset_Gimbal();
         break;
     case MISC_KEY_CHASSIS_RESET:
         ResetCmd_Write(1);
@@ -421,7 +421,7 @@ void Reset_Callback(int TrigSource)
     case MISC_KEY_TOTAL_RESET:
         ResetCmd_Write(1);
         chassis_data_send(); // 该命令即刻生效, 所以需要调用一次发送
-        Thread_Err_Exception(Gimbal, RT_ERROR);
+        Robot_Reset_Gimbal();
         break;
     default:
         break;

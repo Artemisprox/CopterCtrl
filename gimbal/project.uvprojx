@@ -709,6 +709,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>func_MonitorCfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\Main\func_MonitorCfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\Main\main.c</FilePath>
@@ -1028,13 +1035,6 @@
               <FileName>mod_Monitor.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\PublicLib\Monitor\NoMonitor\mod_Monitor.h</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>func_MonHandling.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Monitor\func_MonHandling.c</FilePath>
             </File>
           </Files>
         </Group>
