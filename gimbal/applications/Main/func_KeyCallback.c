@@ -39,9 +39,11 @@ void MainMenu_REC_Quit_Fun(int TrigSource)
  */
 void Aimbot_PressCallback(void)
 {
-    Exit_AimbotFlag = 0; //正常自瞄
-    Aimbot_FreshMouseClick(1);
-    FireCtrl_AimbotLim_Set(1); // 允许视觉自动发弹
+    // 重启平滑使得当前视觉设定值与电控设定值相等
+    Smooth_Restart_VisualSet(Read_Real_Set(Pitch_Set), Read_Real_Set(Yaw_Set));
+    Smooth_Restart_RobocontrolSet(Read_Real_Set(Pitch_Set), Read_Real_Set(Yaw_Set));
+    Aimbot_Enable_Visual_CtrlFire(true); // 给予视觉控制机器人的权限
+    Aimbot_FreshMouseClick(1);           // 向视觉发送鼠标按下的信息
 }
 
 /**
@@ -52,13 +54,11 @@ void Aimbot_PressCallback(void)
  */
 void Aimbot_LoosenCallback(void)
 {
-    Exit_AimbotFlag = 1; //强行不自瞄
-    Aimbot_FreshMouseClick(0);
-    FireCtrl_AimbotLim_Set(0); // 不允许视觉自动发弹
-#ifdef CORE_USING_INFANTRY
-    // 关闭精细发弹控制
-    FireCtrl_VisualFineFire_EN(0);
-#endif
+    // 重启平滑使得当前视觉设定值与电控设定值相等
+    Smooth_Restart_VisualSet(Read_Real_Set(Pitch_Set), Read_Real_Set(Yaw_Set));
+    Smooth_Restart_RobocontrolSet(Read_Real_Set(Pitch_Set), Read_Real_Set(Yaw_Set));
+    Aimbot_Enable_Visual_CtrlFire(false); // 关闭视觉控制机器人的权限
+    Aimbot_FreshMouseClick(0);            // 向视觉发送鼠标未按下的信息
 }
 
 /**
@@ -277,8 +277,7 @@ void AimMode_Set_Callback(int TrigSource)
         Dangling_RecNow_MotionMode();                           // 进入吊射模式的瞬间记录一下当前的底盘模式, 从吊射模式恢复时自动恢复
         MotionModeSet_Callback(CHASSISMODE_KEY_MODE_NO_FOLLOW); // 由于吊射模式采用编码器闭环, 所以不能跟随
         Enter_Dangling_Mode(1);                                 // 进入吊射模式
-        Smooth_SetData_Restart(&Smooth_YawAngleSet, Read_Real_Set(Yaw_Set));
-        Smooth_SetData_Restart(&Smooth_PitchAngleSet, Read_Real_Set(Pitch_Set));
+        Smooth_Restart_RobocontrolSet(Read_Real_Set(Pitch_Set), Read_Real_Set(Yaw_Set));
         // 关闭自动发弹检查
         FireCtrl_AimbotLim_Set(0);
         if (Read_Speed_Lim() > GUN_SPEED_REAL_16) // 设定弹速为 15m/s

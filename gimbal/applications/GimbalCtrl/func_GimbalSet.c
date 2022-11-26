@@ -34,7 +34,7 @@ ExactSmth_CTRL_S Smooth_PitchAngleSet, Smooth_YawAngleSet;
 GimbalLiPItch_Type Gimbal_PitchLim_IMU, Gimbal_PitchLim_ENCD; // IMU反馈时限幅、编码器反馈时限幅
 
 Gimbal_SetCal_Type Gimbal_SetData_Out;       // 定义一个用来查询二代自瞄状态的结构体
-AttitudeData_Type RoboControl_GimbalSet_ADD; // 从遥控器端获得的云台设定值增量
+AttitudeData_Type RoboControl_GimbalSetAng;  // 从遥控器端获得的云台设定值增量
 AttitudeData_Type Visual_GimbalSet_ABS;      // 从视觉端端获得的云台设定值
 
 int Exit_AimbotFlag = 1; //为1时强行退出自瞄
@@ -339,6 +339,18 @@ static void GimbalSet_Fix(GimbalCTRL_Set_Type *Gimbal_Setang, float *SetPlanning
     }
 }
 
+/**
+ * @brief 重启电控自己给定的设定角度的滤波器
+ * @author fwlh
+ * @param  NewPitch         重启以后的 Pitch 设定值
+ * @param  NewYaw           重启以后的 Yaw 设定值
+ */
+void Smooth_Restart_RobocontrolSet(float NewPitch, float NewYaw)
+{
+    Smooth_SetData_Restart(&Smooth_PitchAngleSet, NewPitch);
+    Smooth_SetData_Restart(&Smooth_YawAngleSet, NewYaw);
+}
+
 static GimbalCTRL_Set_Type SetAng_BeforePlanning;
 /**
  * @brief 云台设定值获取主函数
@@ -382,10 +394,10 @@ void Gimbal_getset(GimbalCTRL_Set_Type *Gimbal_Setang)
     UTILS_NAN_ZERO_F(Gimbal_SetData_Out.GimbalSet_Atti.Yaw);
     UTILS_NAN_ZERO_F(Gimbal_SetData_Out.GimbalSet_Speed.Yaw);
     /* 运行遥控器设定值增量获取 */
-    Smooth_GetDataADD(&RoboControl_GimbalSet_ADD.Pitch, &Smooth_PitchAngleSet);
-    Smooth_GetDataADD(&RoboControl_GimbalSet_ADD.Yaw, &Smooth_YawAngleSet);
-    UTILS_NAN_ZERO_F(RoboControl_GimbalSet_ADD.Pitch);
-    UTILS_NAN_ZERO_F(RoboControl_GimbalSet_ADD.Yaw);
+    Smooth_GetDataABS(&RoboControl_GimbalSetAng.Pitch, &Smooth_PitchAngleSet);
+    Smooth_GetDataABS(&RoboControl_GimbalSetAng.Yaw, &Smooth_YawAngleSet);
+    UTILS_NAN_ZERO_F(RoboControl_GimbalSetAng.Pitch);
+    UTILS_NAN_ZERO_F(RoboControl_GimbalSetAng.Yaw);
 
     /* 判断二代自瞄是否锁定目标 */
     // 获得展开后的 Yaw 轴真实角度
@@ -415,11 +427,11 @@ void Gimbal_getset(GimbalCTRL_Set_Type *Gimbal_Setang)
         SetYaw.Settings.Accl_Max = SETPLANNING_ROBOCONTROL_ACCLMAX_YAW;
         SetYaw.Settings.Speed_Max = SETPLANNING_ROBOCONTROL_SPEEDMAX_YAW;
         // 更新设定值
-        TempSet = SetPitch.Input.Set.pos + RoboControl_GimbalSet_ADD.Pitch;
+        TempSet = RoboControl_GimbalSetAng.Pitch;
         utils_truncate_number(&TempSet, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE); // Pitch 轴设定值需要限幅
         CurrentSetPitch = TempSet;
         // Yaw 轴设定值跨圈处理
-        TempSet = SetYaw.Input.Set.pos + RoboControl_GimbalSet_ADD.Yaw;
+        TempSet = RoboControl_GimbalSetAng.Yaw;
         if (SetYaw.Input.Now.pos - TempSet > 180.f)
             CurrentSetYaw = TempSet + 360.f;
         else if (SetYaw.Input.Now.pos - TempSet < -180.f)
@@ -487,6 +499,9 @@ void GimbalSet_Init(GimbalCTRL_Set_Type *SetSTR, float PitchSet, float YawSet)
     // 数据平滑模块, 用于数据接力
     Smooth_Init(&Smooth_PitchAngleSet, 0, 15);
     Smooth_Init(&Smooth_YawAngleSet, 0, 15);
+    Smooth_SetDataFix(&Smooth_YawAngleSet, 180.f, -180.f, 1);
+    Smooth_SetDataABS(&Smooth_PitchAngleSet, 0.f);
+    Smooth_SetDataABS(&Smooth_PitchAngleSet, 0.f);
 
     GimbalFB_Init();                   // 初始化反馈数据计算结构体
     GimbalYaw_FB_Select_Set(FB_IMU);   // 默认使用IMU反馈

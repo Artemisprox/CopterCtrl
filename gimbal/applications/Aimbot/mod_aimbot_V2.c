@@ -107,6 +107,18 @@ static int LongTime_Accuracy_Check(struct Accuracy_Check_Module *Accuracy_Check_
     }
 }
 
+/**
+ * @brief 重启视觉给定的设定角度的滤波器
+ * @author fwlh
+ * @param  NewPitch         重启以后的 Pitch 设定值
+ * @param  NewYaw           重启以后的 Yaw 设定值
+ */
+void Smooth_Restart_VisualSet(float NewPitch, float NewYaw)
+{
+    Smooth_SetData_Restart(&Smooth_VisualPitchSet, NewPitch);
+    Smooth_SetData_Restart(&Smooth_VisualYawSet, NewYaw);
+}
+
 static Gimbal_SetReceive_Type GimbalSet_GetFromVisual;
 static rt_tick_t Last_Predicted_Tick;           // 上一次收到有效数据时的预测时间点
 static drv_VisualMode_e Visual_Mode_Set_Last;   // 上一次的视觉设定工作模式
@@ -120,7 +132,7 @@ void Aimbot_Get_GimbalSet(Gimbal_SetCal_Type *Gimbal_SetData_Out)
 {
     char ReadValid_Rem;
     rt_tick_t TickNow = rt_tick_get(); // 获取并保存当前的Tick
-    
+
     AttitudeData_Type GimbalSet_Atti_Temp; // 该变量包含较多中间过程, 不建议使用 jscope 观察
 
     // 检查自瞄模式是否正常，检查是否瞄准到了目标
@@ -236,4 +248,30 @@ int AimbotV2_Init(void)
     Visual_Com_Init();
 
     return RT_EOK;
+}
+
+/**
+ * @brief 在电控端向视觉开放开火和云台控制的权限
+ * @author fwlh
+ * @param  Enable           输入真时开放权限, 反之关闭相关权限
+ */
+void Aimbot_Enable_Visual_CtrlFire(bool Enable)
+{
+    if (Enable)
+    {
+        Exit_AimbotFlag = 0;       // 正常自瞄
+        FireCtrl_AimbotLim_Set(1); // 允许视觉自动发弹
+#ifdef CORE_USING_INFANTRY
+        FireCtrl_VisualFineFire_EN(0); // 关闭精细发弹控制
+#endif
+    }
+    else
+    {
+        Exit_AimbotFlag = 1;       // 强行不自瞄
+        FireCtrl_AimbotLim_Set(0); // 不允许视觉自动发弹
+#ifdef CORE_USING_INFANTRY
+        // 关闭精细发弹控制
+        FireCtrl_VisualFineFire_EN(0);
+#endif
+    }
 }

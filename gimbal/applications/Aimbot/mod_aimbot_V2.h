@@ -5,6 +5,7 @@
 #include "func_Aimbot_Com.h"
 #include "drv_IMU.h"
 #include "drv_Aimbot_Public.h"
+#include <stdbool.h>
 
 #define AIMBUFF_PITCH_SPEED_MAX (50) // 自瞄能量机关状态下，云台设定值允许的最大变化速度 dps
 #define AIMBUFF_YAW_SPEED_MAX (50)   // 自瞄能量机关状态下，云台设定值允许的最大变化速度 dps
@@ -30,4 +31,20 @@ extern void Aimbot_Get_GimbalSet(Gimbal_SetCal_Type *Gimbal_SetData_Out);
 
 // 二代自瞄启动程序
 extern int AimbotV2_Init(void);
+
+/**
+ * @brief 重启视觉给定的设定角度的滤波器
+ * @author fwlh
+ * @param  NewPitch         重启以后的 Pitch 设定值
+ * @param  NewYaw           重启以后的 Yaw 设定值
+ */
+extern void Smooth_Restart_VisualSet(float NewPitch, float NewYaw);
+
+/**
+ * @brief 在电控端向视觉开放开火和云台控制的权限
+ * @author fwlh
+ * @param  Enable           输入真时开放权限, 反之关闭相关权限
+ */
+extern void Aimbot_Enable_Visual_CtrlFire(bool Enable);
+
 #endif

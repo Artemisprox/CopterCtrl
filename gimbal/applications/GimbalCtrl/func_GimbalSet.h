@@ -23,6 +23,14 @@ typedef enum
 extern ExactSmth_CTRL_S Smooth_PitchAngleSet, Smooth_YawAngleSet;
 
 /**
+ * @brief 重启电控自己给定的设定角度的滤波器
+ * @author fwlh
+ * @param  NewPitch         重启以后的 Pitch 设定值
+ * @param  NewYaw           重启以后的 Yaw 设定值
+ */
+extern void Smooth_Restart_RobocontrolSet(float NewPitch, float NewYaw);
+
+/**
  * @brief 云台设定值获取主函数
  * @param [GimbalCTRL_Set_Type*] Gimbal_Setang：云台设定值结构体 调用函数前为上一次的设定值，调用后为这一次的设定值
  * @return 无
