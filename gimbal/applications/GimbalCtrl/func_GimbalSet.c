@@ -25,46 +25,46 @@ pid_t YawSPE_ENCD_Settings, YawSPE_IMU_Settings;
 pid_t PitchSPE_Dangling_Settings, PitchANG_Dangling_Settings;
 #endif
 
-static SetPlanning_Str SetPitch, SetYaw;     // Pitch ºÍ Yaw ÖáµÄÉè¶¨Öµ¹æ»®Ä£¿é
-static float CurrentSetPitch, CurrentSetYaw; // µ±Ç°×¼±¸Éè¶¨µÄ Pitch ºÍ Yaw ÖáµÄÉè¶¨Öµ(Õ¹¿ªºóÖÁ(-¡Ş, +¡Ş)ºó)
+static SetPlanning_Str SetPitch, SetYaw;     // Pitch å’Œ Yaw è½´çš„è®¾å®šå€¼è§„åˆ’æ¨¡å—
+static float CurrentSetPitch, CurrentSetYaw; // å½“å‰å‡†å¤‡è®¾å®šçš„ Pitch å’Œ Yaw è½´çš„è®¾å®šå€¼(å±•å¼€åè‡³(-âˆ, +âˆ)å)
 
 ExactSmth_CTRL_S Smooth_PitchAngleSet, Smooth_YawAngleSet;
 
-// ¼ÇÂ¼µ±Ç°ÔÆÌ¨×ËÌ¬½ÇÏŞÎ»
-GimbalLiPItch_Type Gimbal_PitchLim_IMU, Gimbal_PitchLim_ENCD; // IMU·´À¡Ê±ÏŞ·ù¡¢±àÂëÆ÷·´À¡Ê±ÏŞ·ù
+// è®°å½•å½“å‰äº‘å°å§¿æ€è§’é™ä½
+GimbalLiPItch_Type Gimbal_PitchLim_IMU, Gimbal_PitchLim_ENCD; // IMUåé¦ˆæ—¶é™å¹…ã€ç¼–ç å™¨åé¦ˆæ—¶é™å¹…
 
-Gimbal_SetCal_Type Gimbal_SetData_Out;       // ¶¨ÒåÒ»¸öÓÃÀ´²éÑ¯¶ş´ú×ÔÃé×´Ì¬µÄ½á¹¹Ìå
-AttitudeData_Type RoboControl_GimbalSetAng;  // ´ÓÒ£¿ØÆ÷¶Ë»ñµÃµÄÔÆÌ¨Éè¶¨ÖµÔöÁ¿
-AttitudeData_Type Visual_GimbalSet_ABS;      // ´ÓÊÓ¾õ¶Ë¶Ë»ñµÃµÄÔÆÌ¨Éè¶¨Öµ
+Gimbal_SetCal_Type Gimbal_SetData_Out;       // å®šä¹‰ä¸€ä¸ªç”¨æ¥æŸ¥è¯¢äºŒä»£è‡ªç„çŠ¶æ€çš„ç»“æ„ä½“
+AttitudeData_Type RoboControl_GimbalSetAng;  // ä»é¥æ§å™¨ç«¯è·å¾—çš„äº‘å°è®¾å®šå€¼å¢é‡
+AttitudeData_Type Visual_GimbalSet_ABS;      // ä»è§†è§‰ç«¯ç«¯è·å¾—çš„äº‘å°è®¾å®šå€¼
 
-int Exit_AimbotFlag = 1; //Îª1Ê±Ç¿ĞĞÍË³ö×ÔÃé
+int Exit_AimbotFlag = 1; //ä¸º1æ—¶å¼ºè¡Œé€€å‡ºè‡ªç„
 #if defined CORE_USING_HERO
-rt_uint8_t DanglingMode_Flag = 0; // ±êÖ¾µ±Ç°ÊÇ·ñ´¦ÔÚµõÉäÄ£Ê½ÖĞ
+rt_uint8_t DanglingMode_Flag = 0; // æ ‡å¿—å½“å‰æ˜¯å¦å¤„åœ¨åŠå°„æ¨¡å¼ä¸­
 #endif                            /* CORE_USING_HERO */
 
-static GimbalFBSelection_E FB_Selection_Last_Pitch = FB_IMU; // ÉÏÒ»´ÎÊ¹ÓÃµÄÊı¾İÔ´
-static GimbalFBSelection_E FB_Selection_Last_Yaw = FB_IMU;   // ÉÏÒ»´ÎÊ¹ÓÃµÄÊı¾İÔ´
-static GimbalFBSelection_E FB_Selection_Set_Pitch = FB_IMU;  // µ±Ç°Ô¤ÆÚÊı¾İÔ´
-static GimbalFBSelection_E FB_Selection_Set_Yaw = FB_IMU;    // µ±Ç°Ô¤ÆÚÊı¾İÔ´
+static GimbalFBSelection_E FB_Selection_Last_Pitch = FB_IMU; // ä¸Šä¸€æ¬¡ä½¿ç”¨çš„æ•°æ®æº
+static GimbalFBSelection_E FB_Selection_Last_Yaw = FB_IMU;   // ä¸Šä¸€æ¬¡ä½¿ç”¨çš„æ•°æ®æº
+static GimbalFBSelection_E FB_Selection_Set_Pitch = FB_IMU;  // å½“å‰é¢„æœŸæ•°æ®æº
+static GimbalFBSelection_E FB_Selection_Set_Yaw = FB_IMU;    // å½“å‰é¢„æœŸæ•°æ®æº
 
-// ĞŞ¸Äµ±Ç°ÔÆÌ¨Ô¤ÆÚÊı¾İÔ´
+// ä¿®æ”¹å½“å‰äº‘å°é¢„æœŸæ•°æ®æº
 void Gimbal_FBS_Set_Pitch(GimbalFBSelection_E Set)
 {
-    FB_Selection_Set_Pitch = Set; // Ö±½ÓÉè¶¨ Feedback Selection
+    FB_Selection_Set_Pitch = Set; // ç›´æ¥è®¾å®š Feedback Selection
 }
 void Gimbal_FBS_Set_Yaw(GimbalFBSelection_E Set)
 {
-    FB_Selection_Set_Yaw = Set; // Ö±½ÓÉè¶¨ Feedback Selection
+    FB_Selection_Set_Yaw = Set; // ç›´æ¥è®¾å®š Feedback Selection
 }
 
 #if defined CORE_USING_HERO
-// ÓÃÓÚÍË³ö»ò½øÈëµõÉäÄ£Ê½
+// ç”¨äºé€€å‡ºæˆ–è¿›å…¥åŠå°„æ¨¡å¼
 void Enter_Dangling_Mode(rt_uint8_t Enter)
 {
     DanglingMode_Flag = Enter;
 }
 
-// ¶ÁÈ¡µ±Ç°ÊÇ·ñ´¦ÓÚµõÉäÄ£Ê½ÖĞ
+// è¯»å–å½“å‰æ˜¯å¦å¤„äºåŠå°„æ¨¡å¼ä¸­
 rt_uint8_t Read_Dangling_Mode(void)
 {
     return DanglingMode_Flag;
@@ -72,60 +72,60 @@ rt_uint8_t Read_Dangling_Mode(void)
 #endif /* CORE_USING_HERO */
 
 /**
- * @brief ÔÆÌ¨×ËÌ¬ÏŞ·ù¼ÆËãºÍ¸üĞÂº¯Êı
- * @return ÎŞ
+ * @brief äº‘å°å§¿æ€é™å¹…è®¡ç®—å’Œæ›´æ–°å‡½æ•°
+ * @return æ— 
  * @author ych
  */
 static void Gimbal_Atti_Lim_Cal(void)
-{ // ¼ÆËãµ±Ç°ÔÆÌ¨Éè¶¨ÖµµÄÏŞ·ù(IMU) ±àÂëÆ÷ÏŞ·ùÊı¾İÔÚ³õÊ¼»¯Ê±ÒÑ¹Ì¶¨
+{ // è®¡ç®—å½“å‰äº‘å°è®¾å®šå€¼çš„é™å¹…(IMU) ç¼–ç å™¨é™å¹…æ•°æ®åœ¨åˆå§‹åŒ–æ—¶å·²å›ºå®š
     Gimbal_PitchLim_IMU.DownLim = -GimbalFB.DeltaAtti.Pitch + PITCH_MIN_ANGLE;
     Gimbal_PitchLim_IMU.UpLim = Gimbal_PitchLim_IMU.DownLim + PITCH_MAX_ANGLE - PITCH_MIN_ANGLE;
 }
 
-// Ë¢ĞÂ£ºÔÆÌ¨±Õ»·Êı¾İÔ´¼ì²é£¨ÏŞÎ»¸½½üÇ¿ÖÆÊ¹ÓÃ±àÂëÆ÷£¬ÆäÓàÓÅÏÈÊ¹ÓÃÉèÖÃÖĞ¸ø¶¨µÄÊı¾İÔ´
-static int GimbalPitch_LimState = 0; // 0±íÊ¾Ã»ÓĞ´¥·¢ÏŞÎ»£¬1±íÊ¾´¥·¢UpLim£¬-1±íÊ¾´¥·¢DownLim
+// åˆ·æ–°ï¼šäº‘å°é—­ç¯æ•°æ®æºæ£€æŸ¥ï¼ˆé™ä½é™„è¿‘å¼ºåˆ¶ä½¿ç”¨ç¼–ç å™¨ï¼Œå…¶ä½™ä¼˜å…ˆä½¿ç”¨è®¾ç½®ä¸­ç»™å®šçš„æ•°æ®æº
+static int GimbalPitch_LimState = 0; // 0è¡¨ç¤ºæ²¡æœ‰è§¦å‘é™ä½ï¼Œ1è¡¨ç¤ºè§¦å‘UpLimï¼Œ-1è¡¨ç¤ºè§¦å‘DownLim
 void Gimbal_FB_Selection_Fresh(void)
 {
 #if defined CORE_USING_HERO
-    // µõÉäÄ£Ê½ÏÂ²»ĞèÒªÖØĞÂÅĞ¶Ï
+    // åŠå°„æ¨¡å¼ä¸‹ä¸éœ€è¦é‡æ–°åˆ¤æ–­
     if (DanglingMode_Flag)
         return;
 #endif /* CORE_USING_HERO */
-    // Ë¢ĞÂµ±Ç°ÏŞÎ»×´Ì¬Êı¾İ
+    // åˆ·æ–°å½“å‰é™ä½çŠ¶æ€æ•°æ®
     switch (GimbalPitch_LimState)
     {
     default:
     case 0:
-        // µ±Ç°Ã»ÓĞ´¦ÔÚÏŞÎ»Î»ÖÃ
-        // ¼ÆËãµ±Ç°±àÂëÆ÷ÓëÏŞÎ»·¶Î§µÄ¹ØÏµ
+        // å½“å‰æ²¡æœ‰å¤„åœ¨é™ä½ä½ç½®
+        // è®¡ç®—å½“å‰ç¼–ç å™¨ä¸é™ä½èŒƒå›´çš„å…³ç³»
         if (GimbalFB.ENCD_ATTI.Pitch > Gimbal_PitchLim_ENCD.UpLim)
             GimbalPitch_LimState = 1;
         else if (GimbalFB.ENCD_ATTI.Pitch < Gimbal_PitchLim_ENCD.DownLim)
             GimbalPitch_LimState = -1;
         break;
     case 1:
-        // ´¦ÓÚ¶¥²¿ÏŞÎ»ÇøÓò
+        // å¤„äºé¡¶éƒ¨é™ä½åŒºåŸŸ
         if (GimbalFB.ENCD_ATTI.Pitch < Gimbal_PitchLim_ENCD.DownLim)
             GimbalPitch_LimState = -1;
         else if (GimbalFB.ENCD_ATTI.Pitch < Gimbal_PitchLim_ENCD.UpLim - GIMBAL_LIM_LEN)
-            // Èç¹û³¬³öÖÍ»Ø±È½ÏÇøÓò£¬Ôò»Ö¸´Î´´¥·¢ÏŞÎ»×´Ì¬
+            // å¦‚æœè¶…å‡ºæ»å›æ¯”è¾ƒåŒºåŸŸï¼Œåˆ™æ¢å¤æœªè§¦å‘é™ä½çŠ¶æ€
             GimbalPitch_LimState = 0;
         break;
     case -1:
-        // ´¦ÓÚµ×²¿ÏŞÎ»ÇøÓò
+        // å¤„äºåº•éƒ¨é™ä½åŒºåŸŸ
         if (GimbalFB.ENCD_ATTI.Pitch > Gimbal_PitchLim_ENCD.UpLim)
             GimbalPitch_LimState = 1;
         else if (GimbalFB.ENCD_ATTI.Pitch > Gimbal_PitchLim_ENCD.DownLim + GIMBAL_LIM_LEN)
-            // Èç¹û³¬³öÖÍ»Ø±È½ÏÇøÓò£¬Ôò»Ö¸´Î´´¥·¢ÏŞÎ»×´Ì¬
+            // å¦‚æœè¶…å‡ºæ»å›æ¯”è¾ƒåŒºåŸŸï¼Œåˆ™æ¢å¤æœªè§¦å‘é™ä½çŠ¶æ€
             GimbalPitch_LimState = 0;
         break;
     }
 
     if (GimbalPitch_LimState == 0)
-        // µ±Ç°Ã»ÓĞÏŞÎ»£¬Ê¹ÓÃÔ¤ÆÚÊı¾İÔ´
+        // å½“å‰æ²¡æœ‰é™ä½ï¼Œä½¿ç”¨é¢„æœŸæ•°æ®æº
         GimbalPitch_FB_Select_Set(FB_Selection_Set_Pitch);
     else
-        // ´¦ÓÚÏŞÎ»ÇøÓò£¬Ç¿ÖÆÑ¡ÓÃ±àÂëÆ÷±Õ»·
+        // å¤„äºé™ä½åŒºåŸŸï¼Œå¼ºåˆ¶é€‰ç”¨ç¼–ç å™¨é—­ç¯
         GimbalPitch_FB_Select_Set(FB_ENCD);
     GimbalYaw_FB_Select_Set(FB_Selection_Set_Yaw);
 }
@@ -135,7 +135,7 @@ volatile int YawPID_Num_JSCOPE = 0;
 
 static GimbalFBSelection_E PitchFBS_Rec = FB_NONE;
 static GimbalFBSelection_E YawFBS_Rec = FB_NONE;
-// °´ĞèĞŞ¸ÄPID±Õ»·²ÎÊı
+// æŒ‰éœ€ä¿®æ”¹PIDé—­ç¯å‚æ•°
 static void PID_ConfirmSettings(GimbalFBSelection_E PitchFBS, GimbalFBSelection_E YawFBS)
 {
 #if defined CORE_USING_HERO
@@ -179,7 +179,7 @@ static void PID_ConfirmSettings(GimbalFBSelection_E PitchFBS, GimbalFBSelection_
             PitchPID_Num_JSCOPE = 0;
         }
         else
-        { // Ä¬ÈÏÊ¹ÓÃ±àÂëÆ÷±Õ»·²ÎÊı
+        { // é»˜è®¤ä½¿ç”¨ç¼–ç å™¨é—­ç¯å‚æ•°
             Pitch.spe.i_limit = PitchSPE_ENCD_Settings.i_limit;
             Pitch.spe.kp = PitchSPE_ENCD_Settings.kp;
             Pitch.spe.ki = PitchSPE_ENCD_Settings.ki;
@@ -217,7 +217,7 @@ static void PID_ConfirmSettings(GimbalFBSelection_E PitchFBS, GimbalFBSelection_
             YawPID_Num_JSCOPE = 0;
         }
         else
-        { // Ä¬ÈÏÊ¹ÓÃ±àÂëÆ÷±Õ»·²ÎÊı
+        { // é»˜è®¤ä½¿ç”¨ç¼–ç å™¨é—­ç¯å‚æ•°
             Yaw.spe.i_limit = YawSPE_ENCD_Settings.i_limit;
             Yaw.spe.kp = YawSPE_ENCD_Settings.kp;
             Yaw.spe.ki = YawSPE_ENCD_Settings.ki;
@@ -237,20 +237,20 @@ static void PID_ConfirmSettings(GimbalFBSelection_E PitchFBS, GimbalFBSelection_
     }
 }
 
-// ÔÆÌ¨ÏŞ·ù¼ÆËãºÍÉè¶¨ÖµÇ¿ÖÆÇĞ»»´¦Àí
-static GimbalFBSelection_E FB_Now_Pitch, FB_Now_Yaw; // ±ãÓÚJscope¹Û²ì
+// äº‘å°é™å¹…è®¡ç®—å’Œè®¾å®šå€¼å¼ºåˆ¶åˆ‡æ¢å¤„ç†
+static GimbalFBSelection_E FB_Now_Pitch, FB_Now_Yaw; // ä¾¿äºJscopeè§‚å¯Ÿ
 static int LimRecover_Count = 0;
 static void GimbalSet_Fix(GimbalCTRL_Set_Type *Gimbal_Setang, float *SetPlanning_DeltaPitch)
 {
-    // Éè¶¨Öµ½á¹¹Ìå´«ÈëÊ±£¬ÆäÖĞ´æÓĞµ±Ç°ÆÚÍûµÄÉè¶¨Öµ¡£
-    // °´ÕÕÊı¾İÔ´·ÖÀàÌÖÂÛ£¬¼ì²éÊÇ·ñ·¢Éú¹ıÊı¾İÔ´ÇĞ»»
+    // è®¾å®šå€¼ç»“æ„ä½“ä¼ å…¥æ—¶ï¼Œå…¶ä¸­å­˜æœ‰å½“å‰æœŸæœ›çš„è®¾å®šå€¼ã€‚
+    // æŒ‰ç…§æ•°æ®æºåˆ†ç±»è®¨è®ºï¼Œæ£€æŸ¥æ˜¯å¦å‘ç”Ÿè¿‡æ•°æ®æºåˆ‡æ¢
     FB_Now_Pitch = GimbalPitch_FB_Select_Get();
     if (FB_Selection_Last_Pitch != FB_Now_Pitch)
     {
-        // ³öÏÖÊı¾İÔ´ÇĞ»»
+        // å‡ºç°æ•°æ®æºåˆ‡æ¢
         if (FB_Selection_Last_Pitch == FB_ENCD)
         {
-            // ´Ó±àÂëÆ÷ÇĞ»»µ½ÍÓÂİÒÇ
+            // ä»ç¼–ç å™¨åˆ‡æ¢åˆ°é™€èºä»ª
             Gimbal_Setang->Pitch -= GimbalFB.DeltaAtti.Pitch;
             *SetPlanning_DeltaPitch = -GimbalFB.DeltaAtti.Pitch;
 
@@ -260,38 +260,38 @@ static void GimbalSet_Fix(GimbalCTRL_Set_Type *Gimbal_Setang, float *SetPlanning
                 Gimbal_Setang->Pitch = -90;
         }
         else
-            // ´ÓÍÓÂİÒÇÇĞ»»µ½±àÂëÆ÷, ÎŞĞè´¦Àí
+            // ä»é™€èºä»ªåˆ‡æ¢åˆ°ç¼–ç å™¨, æ— éœ€å¤„ç†
             *SetPlanning_DeltaPitch = 0.f;
         FB_Selection_Last_Pitch = FB_Now_Pitch;
     }
     else
-        // Ã»ÓĞ³öÏÖÊı¾İÇĞ»», ÎŞĞè´¦Àí
+        // æ²¡æœ‰å‡ºç°æ•°æ®åˆ‡æ¢, æ— éœ€å¤„ç†
         *SetPlanning_DeltaPitch = 0.f;
 
     FB_Now_Yaw = GimbalYaw_FB_Select_Get();
     if (FB_Selection_Last_Yaw != FB_Now_Yaw)
     {
-        // ³öÏÖÊı¾İÔ´ÇĞ»»
+        // å‡ºç°æ•°æ®æºåˆ‡æ¢
         if (FB_Selection_Last_Yaw == FB_ENCD)
-            // ´Ó±àÂëÆ÷ÇĞ»»µ½ÍÓÂİÒÇ
+            // ä»ç¼–ç å™¨åˆ‡æ¢åˆ°é™€èºä»ª
             Gimbal_Setang->Yaw -= GimbalFB.DeltaAtti.Yaw;
-        // ´ÓÍÓÂİÒÇÇĞ»»µ½±àÂëÆ÷, ÎŞĞè´¦Àí
-        // ¼ÇÂ¼Êı¾İÇĞ»»
+        // ä»é™€èºä»ªåˆ‡æ¢åˆ°ç¼–ç å™¨, æ— éœ€å¤„ç†
+        // è®°å½•æ•°æ®åˆ‡æ¢
         FB_Selection_Last_Yaw = FB_Now_Yaw;
     }
     else
-        // Ã»ÓĞ³öÏÖÊı¾İÇĞ»», ÎŞĞè´¦Àí
+        // æ²¡æœ‰å‡ºç°æ•°æ®åˆ‡æ¢, æ— éœ€å¤„ç†
         PID_ConfirmSettings(FB_Now_Pitch, FB_Now_Yaw);
 
-    // ¼ì²éÊÇ·ñĞèÒª»Øµ½Õı³£¿ØÖÆÇø¼ä
+    // æ£€æŸ¥æ˜¯å¦éœ€è¦å›åˆ°æ­£å¸¸æ§åˆ¶åŒºé—´
     if (GimbalPitch_LimState != 0)
     {
         if (GimbalPitch_LimState == 1)
         {
-            // µ±Ç°Î»ÓÚ¶¥²¿ÏŞÎ»
+            // å½“å‰ä½äºé¡¶éƒ¨é™ä½
             if (GimbalFB.DeltaAtti.Pitch < -GIMBAL_LIM_LEN)
             {
-                // ÖÍ»Ø±È½Ï
+                // æ»å›æ¯”è¾ƒ
                 if (LimRecover_Count < 200)
                     LimRecover_Count++;
                 else if (LimRecover_Count > 0)
@@ -299,14 +299,14 @@ static void GimbalSet_Fix(GimbalCTRL_Set_Type *Gimbal_Setang, float *SetPlanning
             }
             if (LimRecover_Count > 100)
                 if (Gimbal_Setang->Pitch > Gimbal_PitchLim_ENCD.UpLim - 2 * GIMBAL_LIM_LEN)
-                    Gimbal_Setang->Pitch -= 3 / 1000.0f; // 3dps½ÇËÙ¶È»ØÕı
+                    Gimbal_Setang->Pitch -= 3 / 1000.0f; // 3dpsè§’é€Ÿåº¦å›æ­£
         }
         else
         {
-            // µ±Ç°Î»ÓÚµ×²¿ÏŞÎ»
+            // å½“å‰ä½äºåº•éƒ¨é™ä½
             if (GimbalFB.DeltaAtti.Pitch > GIMBAL_LIM_LEN)
             {
-                // ÖÍ»Ø±È½Ï
+                // æ»å›æ¯”è¾ƒ
                 if (LimRecover_Count < 200)
                     LimRecover_Count++;
                 else if (LimRecover_Count > 0)
@@ -314,16 +314,16 @@ static void GimbalSet_Fix(GimbalCTRL_Set_Type *Gimbal_Setang, float *SetPlanning
             }
             if (LimRecover_Count > 100)
                 if (Gimbal_Setang->Pitch < Gimbal_PitchLim_ENCD.DownLim + 2 * GIMBAL_LIM_LEN)
-                    Gimbal_Setang->Pitch += 3 / 1000.0f; // 3dps½ÇËÙ¶È»ØÕı
+                    Gimbal_Setang->Pitch += 3 / 1000.0f; // 3dpsè§’é€Ÿåº¦å›æ­£
         }
     }
     else
         LimRecover_Count = 0;
 
-    // °´ÕÕµ±Ç°²ÉÓÃµÄÊı¾İÔ´½øĞĞÉè¶¨ÖµÏŞ·ù
+    // æŒ‰ç…§å½“å‰é‡‡ç”¨çš„æ•°æ®æºè¿›è¡Œè®¾å®šå€¼é™å¹…
     if (FB_Now_Pitch == FB_ENCD)
     {
-        // ÕıÔÚÊ¹ÓÃ±àÂëÆ÷±Õ»·£¬Ê¹ÓÃ±àÂëÆ÷Êı¾İ½øĞĞÉè¶¨ÖµÏŞ·ù
+        // æ­£åœ¨ä½¿ç”¨ç¼–ç å™¨é—­ç¯ï¼Œä½¿ç”¨ç¼–ç å™¨æ•°æ®è¿›è¡Œè®¾å®šå€¼é™å¹…
         if (Gimbal_Setang->Pitch > Gimbal_PitchLim_ENCD.UpLim)
             Gimbal_Setang->Pitch = Gimbal_PitchLim_ENCD.UpLim;
         else if (Gimbal_Setang->Pitch < Gimbal_PitchLim_ENCD.DownLim)
@@ -331,7 +331,7 @@ static void GimbalSet_Fix(GimbalCTRL_Set_Type *Gimbal_Setang, float *SetPlanning
     }
     else
     {
-        // Ê¹ÓÃÍÓÂİÒÇ±Õ»·£¬Éè¶¨ÖµÏŞ·ù£º
+        // ä½¿ç”¨é™€èºä»ªé—­ç¯ï¼Œè®¾å®šå€¼é™å¹…ï¼š
         if (Gimbal_Setang->Pitch > Gimbal_PitchLim_IMU.UpLim + GIMBAL_LIM_LEN)
             Gimbal_Setang->Pitch = Gimbal_PitchLim_IMU.UpLim + GIMBAL_LIM_LEN;
         else if (Gimbal_Setang->Pitch < Gimbal_PitchLim_IMU.DownLim - GIMBAL_LIM_LEN)
@@ -340,10 +340,10 @@ static void GimbalSet_Fix(GimbalCTRL_Set_Type *Gimbal_Setang, float *SetPlanning
 }
 
 /**
- * @brief ÖØÆôµç¿Ø×Ô¼º¸ø¶¨µÄÉè¶¨½Ç¶ÈµÄÂË²¨Æ÷
+ * @brief é‡å¯ç”µæ§è‡ªå·±ç»™å®šçš„è®¾å®šè§’åº¦çš„æ»¤æ³¢å™¨
  * @author fwlh
- * @param  NewPitch         ÖØÆôÒÔºóµÄ Pitch Éè¶¨Öµ
- * @param  NewYaw           ÖØÆôÒÔºóµÄ Yaw Éè¶¨Öµ
+ * @param  NewPitch         é‡å¯ä»¥åçš„ Pitch è®¾å®šå€¼
+ * @param  NewYaw           é‡å¯ä»¥åçš„ Yaw è®¾å®šå€¼
  */
 void Smooth_Restart_RobocontrolSet(float NewPitch, float NewYaw)
 {
@@ -353,9 +353,9 @@ void Smooth_Restart_RobocontrolSet(float NewPitch, float NewYaw)
 
 static GimbalCTRL_Set_Type SetAng_BeforePlanning;
 /**
- * @brief ÔÆÌ¨Éè¶¨Öµ»ñÈ¡Ö÷º¯Êı
- * @param [GimbalCTRL_Set_Type*] Gimbal_Setang£ºÔÆÌ¨Éè¶¨Öµ½á¹¹Ìå µ÷ÓÃº¯ÊıÇ°ÎªÉÏÒ»´ÎµÄÉè¶¨Öµ£¬µ÷ÓÃºóÎªÕâÒ»´ÎµÄÉè¶¨Öµ
- * @return ÎŞ
+ * @brief äº‘å°è®¾å®šå€¼è·å–ä¸»å‡½æ•°
+ * @param [GimbalCTRL_Set_Type*] Gimbal_Setangï¼šäº‘å°è®¾å®šå€¼ç»“æ„ä½“ è°ƒç”¨å‡½æ•°å‰ä¸ºä¸Šä¸€æ¬¡çš„è®¾å®šå€¼ï¼Œè°ƒç”¨åä¸ºè¿™ä¸€æ¬¡çš„è®¾å®šå€¼
+ * @return æ— 
  * @author ych
  */
 void Gimbal_getset(GimbalCTRL_Set_Type *Gimbal_Setang)
@@ -363,74 +363,74 @@ void Gimbal_getset(GimbalCTRL_Set_Type *Gimbal_Setang)
     float SetPlanning_DeltaPitch;
     float TempSet;
 #if defined CORE_USING_HERO
-    /* ÔÆÌ¨×ËÌ¬ÏŞ·ù¼ÆËãºÍ¸üĞÂº¯Êı */
+    /* äº‘å°å§¿æ€é™å¹…è®¡ç®—å’Œæ›´æ–°å‡½æ•° */
     if (DanglingMode_Flag)
     {
-        // µõÉäÄ£Ê½ÏÂÖ±½ÓÑ¡Ôñ±àÂëÆ÷±Õ»·
+        // åŠå°„æ¨¡å¼ä¸‹ç›´æ¥é€‰æ‹©ç¼–ç å™¨é—­ç¯
         GimbalPitch_FB_Select_Set(FB_IMU);
         GimbalYaw_FB_Select_Set(FB_IMU);
     }
     else
     {
-        // ·ñÔòÓÅÏÈÑ¡ÓÃ IMU
+        // å¦åˆ™ä¼˜å…ˆé€‰ç”¨ IMU
         GimbalPitch_FB_Select_Set(FB_IMU);
         GimbalYaw_FB_Select_Set(FB_IMU);
     }
 #endif /* CORE_USING_HERO */
-    // ·´À¡»ù´¡Êı¾İ¼ÆËã
+    // åé¦ˆåŸºç¡€æ•°æ®è®¡ç®—
     Gimbal_PID_FB_Fresh();
-    // IMU¶¯Ì¬ÏŞ·ù·¶Î§¼ÆËã
+    // IMUåŠ¨æ€é™å¹…èŒƒå›´è®¡ç®—
     Gimbal_Atti_Lim_Cal();
-    // ¼ì²éÊÇ·ñĞèÒªÇĞ»»Êı¾İÔ´
+    // æ£€æŸ¥æ˜¯å¦éœ€è¦åˆ‡æ¢æ•°æ®æº
     Gimbal_FB_Selection_Fresh();
 
-    /* ÏŞ·ù·¢ËÍº¯Êı£¨·¢ËÍ¸ø¶ş´ú×ÔÃéº¯Êı£¬×÷ÓÃÓÚµ¯µÀ¼ÆËã£© */
+    /* é™å¹…å‘é€å‡½æ•°ï¼ˆå‘é€ç»™äºŒä»£è‡ªç„å‡½æ•°ï¼Œä½œç”¨äºå¼¹é“è®¡ç®—ï¼‰ */
     Refresh_Gimbal_Lim(Gimbal_PitchLim_IMU.UpLim, Gimbal_PitchLim_IMU.DownLim);
 
-    /* ÔËĞĞ¶ş´ú×ÔÃéÉè¶¨Öµ»ñÈ¡ ²¢½ÓÊÕ×ÔÃé×´Ì¬(ÄÚ²¿ÒÑ¾­Ê¹ÓÃÆ½»¬) */
+    /* è¿è¡ŒäºŒä»£è‡ªç„è®¾å®šå€¼è·å– å¹¶æ¥æ”¶è‡ªç„çŠ¶æ€(å†…éƒ¨å·²ç»ä½¿ç”¨å¹³æ»‘) */
     Aimbot_Get_GimbalSet(&Gimbal_SetData_Out);
     UTILS_NAN_ZERO_F(Gimbal_SetData_Out.GimbalSet_Atti.Pitch);
     UTILS_NAN_ZERO_F(Gimbal_SetData_Out.GimbalSet_Speed.Pitch);
     UTILS_NAN_ZERO_F(Gimbal_SetData_Out.GimbalSet_Atti.Yaw);
     UTILS_NAN_ZERO_F(Gimbal_SetData_Out.GimbalSet_Speed.Yaw);
-    /* ÔËĞĞÒ£¿ØÆ÷Éè¶¨ÖµÔöÁ¿»ñÈ¡ */
+    /* è¿è¡Œé¥æ§å™¨è®¾å®šå€¼å¢é‡è·å– */
     Smooth_GetDataABS(&RoboControl_GimbalSetAng.Pitch, &Smooth_PitchAngleSet);
     Smooth_GetDataABS(&RoboControl_GimbalSetAng.Yaw, &Smooth_YawAngleSet);
     UTILS_NAN_ZERO_F(RoboControl_GimbalSetAng.Pitch);
     UTILS_NAN_ZERO_F(RoboControl_GimbalSetAng.Yaw);
 
-    /* ÅĞ¶Ï¶ş´ú×ÔÃéÊÇ·ñËø¶¨Ä¿±ê */
-    // »ñµÃÕ¹¿ªºóµÄ Yaw ÖáÕæÊµ½Ç¶È
+    /* åˆ¤æ–­äºŒä»£è‡ªç„æ˜¯å¦é”å®šç›®æ ‡ */
+    // è·å¾—å±•å¼€åçš„ Yaw è½´çœŸå®è§’åº¦
     SetYaw.Input.Now.pos = utils_angle_difference(GimbalFB.FB_This.Yaw, SetYaw.Input.Now.pos) + SetYaw.Input.Now.pos;
     if ((Gimbal_SetData_Out.State == RT_EOK) && (Exit_AimbotFlag == 0))
-    {                                       // ÓĞËø¶¨Ä¿±ê
-        Gimbal_Setang->Set_Source = Aimbot; // ĞŞ¸Ä¿ØÖÆÔ´
+    {                                       // æœ‰é”å®šç›®æ ‡
+        Gimbal_Setang->Set_Source = Aimbot; // ä¿®æ”¹æ§åˆ¶æº
 
         SetPitch.Settings.Accl_Max = SETPLANNING_AIMBOT_ACCLMAX_PITCH;
         SetPitch.Settings.Speed_Max = SETPLANNING_AIMBOT_SPEEDMAX_PITCH;
         SetYaw.Settings.Accl_Max = SETPLANNING_AIMBOT_ACCLMAX_YAW;
         SetYaw.Settings.Speed_Max = SETPLANNING_AIMBOT_SPEEDMAX_YAW;
-        // ¸üĞÂÉè¶¨Öµ
+        // æ›´æ–°è®¾å®šå€¼
         TempSet = Gimbal_SetData_Out.GimbalSet_Atti.Pitch;
-        utils_truncate_number(&TempSet, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE); // Pitch ÖáÉè¶¨ÖµĞèÒªÏŞ·ù
+        utils_truncate_number(&TempSet, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE); // Pitch è½´è®¾å®šå€¼éœ€è¦é™å¹…
         CurrentSetPitch = TempSet;
         CurrentSetYaw = utils_angle_difference(Gimbal_SetData_Out.GimbalSet_Atti.Yaw, SetYaw.Input.Set.pos) + SetYaw.Input.Set.pos;
         SetPitch.Input.Set.spe = Gimbal_SetData_Out.GimbalSet_Speed.Pitch;
         SetYaw.Input.Set.spe = Gimbal_SetData_Out.GimbalSet_Speed.Yaw;
     }
     else
-    { // Ç¿ĞĞ²»×ÔÃé£¬Õı³£¸üĞÂÒ£¿ØÆ÷Êı¾İ
+    { // å¼ºè¡Œä¸è‡ªç„ï¼Œæ­£å¸¸æ›´æ–°é¥æ§å™¨æ•°æ®
         Gimbal_Setang->Set_Source = RoboControl;
 
         SetPitch.Settings.Accl_Max = SETPLANNING_ROBOCONTROL_ACCLMAX_PITCH;
         SetPitch.Settings.Speed_Max = SETPLANNING_ROBOCONTROL_SPEEDMAX_PITCH;
         SetYaw.Settings.Accl_Max = SETPLANNING_ROBOCONTROL_ACCLMAX_YAW;
         SetYaw.Settings.Speed_Max = SETPLANNING_ROBOCONTROL_SPEEDMAX_YAW;
-        // ¸üĞÂÉè¶¨Öµ
+        // æ›´æ–°è®¾å®šå€¼
         TempSet = RoboControl_GimbalSetAng.Pitch;
-        utils_truncate_number(&TempSet, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE); // Pitch ÖáÉè¶¨ÖµĞèÒªÏŞ·ù
+        utils_truncate_number(&TempSet, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE); // Pitch è½´è®¾å®šå€¼éœ€è¦é™å¹…
         CurrentSetPitch = TempSet;
-        // Yaw ÖáÉè¶¨Öµ¿çÈ¦´¦Àí
+        // Yaw è½´è®¾å®šå€¼è·¨åœˆå¤„ç†
         TempSet = RoboControl_GimbalSetAng.Yaw;
         if (SetYaw.Input.Now.pos - TempSet > 180.f)
             CurrentSetYaw = TempSet + 360.f;
@@ -444,8 +444,8 @@ void Gimbal_getset(GimbalCTRL_Set_Type *Gimbal_Setang)
     SetAng_BeforePlanning.Pitch = CurrentSetPitch;
     SetAng_BeforePlanning.Yaw = CurrentSetYaw;
 
-    /* ÏŞÎ»¡¢Êı¾İÔ´ĞŞÕı¡¢¹ı¶ÉµÈ */
-    // Pitch ÖáÉè¶¨ÖµÔÚÊı¾İÔ´ÇĞ»»Ê±ĞèÒªĞŞ¸Ä
+    /* é™ä½ã€æ•°æ®æºä¿®æ­£ã€è¿‡æ¸¡ç­‰ */
+    // Pitch è½´è®¾å®šå€¼åœ¨æ•°æ®æºåˆ‡æ¢æ—¶éœ€è¦ä¿®æ”¹
     GimbalSet_Fix(&SetAng_BeforePlanning, &SetPlanning_DeltaPitch);
     SetPlanning_SetOutput(&SetPitch, SetPitch.Output.pos + SetPlanning_DeltaPitch);
 
@@ -453,17 +453,17 @@ void Gimbal_getset(GimbalCTRL_Set_Type *Gimbal_Setang)
     SetPitch.Input.Now.pos = GimbalFB.FB_This.Pitch;
     SetPitch.Input.Set.pos = SetAng_BeforePlanning.Pitch;
 
-    /* Éè¶¨Öµ¹æ»® */
+    /* è®¾å®šå€¼è§„åˆ’ */
     SetPlanning_Cal(&SetYaw);
     SetPlanning_Cal(&SetPitch);
-    /* Êä³ö½á¹û */
+    /* è¾“å‡ºç»“æœ */
     float temp = SetYaw.Output.pos + 180.f;
     utils_norm_angle(&temp);
     Gimbal_Setang->Yaw = temp - 180.f;
     Gimbal_Setang->Pitch = SetPitch.Output.pos;
 }
 
-// ÓÃÓÚÍâ²¿¶ÁÈ¡µ±Ç°µÄÊµ¼Ê½Ç¶ÈÉè¶¨Öµ
+// ç”¨äºå¤–éƒ¨è¯»å–å½“å‰çš„å®é™…è§’åº¦è®¾å®šå€¼
 float Read_Real_Set(SetData_Type_Enum Data)
 {
     switch (Data)
@@ -482,10 +482,10 @@ float Read_Real_Set(SetData_Type_Enum Data)
     }
 }
 
-// Éè¶¨Öµ»ñÈ¡³õÊ¼»¯
+// è®¾å®šå€¼è·å–åˆå§‹åŒ–
 void GimbalSet_Init(GimbalCTRL_Set_Type *SetSTR, float PitchSet, float YawSet)
 {
-    // ³õÊ¼»¯Éè¶¨Öµ¹æ»®Ä£¿é
+    // åˆå§‹åŒ–è®¾å®šå€¼è§„åˆ’æ¨¡å—
     SetPlanSettings_Str Setting;
     Setting.dt = 1e-3f;
     Setting.POS_Error_Max = 3;
@@ -496,18 +496,17 @@ void GimbalSet_Init(GimbalCTRL_Set_Type *SetSTR, float PitchSet, float YawSet)
     Setting.Accl_Max = SETPLANNING_ROBOCONTROL_ACCLMAX_YAW;
     Setting.Speed_Max = SETPLANNING_ROBOCONTROL_SPEEDMAX_YAW;
     SetPlanning_Init(&SetYaw, &Setting);
-    // Êı¾İÆ½»¬Ä£¿é, ÓÃÓÚÊı¾İ½ÓÁ¦
+    // æ•°æ®å¹³æ»‘æ¨¡å—, ç”¨äºæ•°æ®æ¥åŠ›
     Smooth_Init(&Smooth_PitchAngleSet, 0, 15);
     Smooth_Init(&Smooth_YawAngleSet, 0, 15);
-    Smooth_SetDataFix(&Smooth_YawAngleSet, 180.f, -180.f, 1);
     Smooth_SetDataABS(&Smooth_PitchAngleSet, 0.f);
     Smooth_SetDataABS(&Smooth_PitchAngleSet, 0.f);
 
-    GimbalFB_Init();                   // ³õÊ¼»¯·´À¡Êı¾İ¼ÆËã½á¹¹Ìå
-    GimbalYaw_FB_Select_Set(FB_IMU);   // Ä¬ÈÏÊ¹ÓÃIMU·´À¡
-    GimbalPitch_FB_Select_Set(FB_IMU); // Ä¬ÈÏÊ¹ÓÃIMU·´À¡
+    GimbalFB_Init();                   // åˆå§‹åŒ–åé¦ˆæ•°æ®è®¡ç®—ç»“æ„ä½“
+    GimbalYaw_FB_Select_Set(FB_IMU);   // é»˜è®¤ä½¿ç”¨IMUåé¦ˆ
+    GimbalPitch_FB_Select_Set(FB_IMU); // é»˜è®¤ä½¿ç”¨IMUåé¦ˆ
 
-    SetSTR->Set_Source = Aimbot; //ÕâÀïÉè¶¨ÎªÉÏ´Î»ñÈ¡Êı¾İµÄÀ´Ô´ÊÇ×ÔÃé£¬ÔòÉÏµçºóÏÈµ÷ÓÃÒ£¿ØÆ÷¿ØÖÆÊ±£¬Æ½»¬³ÌĞò»áÕı³£½øĞĞ¿ªÆôÊ±µÄ¹ı¶É¡£
+    SetSTR->Set_Source = Aimbot; //è¿™é‡Œè®¾å®šä¸ºä¸Šæ¬¡è·å–æ•°æ®çš„æ¥æºæ˜¯è‡ªç„ï¼Œåˆ™ä¸Šç”µåå…ˆè°ƒç”¨é¥æ§å™¨æ§åˆ¶æ—¶ï¼Œå¹³æ»‘ç¨‹åºä¼šæ­£å¸¸è¿›è¡Œå¼€å¯æ—¶çš„è¿‡æ¸¡ã€‚
     SetSTR->Pitch = PitchSet;
     SetSTR->Yaw = YawSet;
     Gimbal_PitchLim_ENCD.DownLim = PITCH_MIN_ANGLE;
