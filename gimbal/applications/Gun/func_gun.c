@@ -847,6 +847,7 @@ static int Gun_ShootCtrl_Slow(void)
                 case BOOSTER_RDY:
                     // 发射机构对位正常，此时开始发射下一颗弹丸
                     CTRLMode_Motor[(int)LaunchMotor] = MOTORCTRL_ANG; // 使用角度闭环模式
+					     			Booster_FixApply();
                     if (fabsf(Read_Gun_Motor(LaunchMotor)->ang.err) < FIRE_ANGLE * 0.5f)
                     {                           // 若闭环差距不大于0.5颗弹丸，则继续设定角度增量
                         Visual_Fired_Recheck(); // 增加一个发弹量

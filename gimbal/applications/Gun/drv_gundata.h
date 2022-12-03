@@ -14,8 +14,8 @@
 #define GUNDATA_SOLVE_PERIOD (5)    // 5ms计算一次
 #define GUNCOOL_LEVELUP_WAIT (1000) // 如果冷却数据提升且没有收到场地交互加成标志位，则1000ms后认为确实升级了
 
-#define GUN_SLOWMODE_PERIOD (143) // 低射频模式下每发射一发弹丸后等待的时间 143ms - 7发/s
-#define GUN_FASTMODE_FRQ (18)     // 18发/s
+#define GUN_SLOWMODE_PERIOD (167) // 低射频模式下每发射一发弹丸后等待的时间 167ms - 6发/s
+#define GUN_FASTMODE_FRQ (22)     // 22发/s
 #elif defined CORE_USING_HERO
 #define REF_CAL_LAG_RSV_MS (300) // 预留一段时间的冷却量，用于补偿裁判系统结算频率低带来的影响
 #define HEAT_RSV_SET (-0.15f)    // 预留0发弹丸对应热量
