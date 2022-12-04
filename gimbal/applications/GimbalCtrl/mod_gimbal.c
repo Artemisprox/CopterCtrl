@@ -194,20 +194,6 @@ static void Gimbal_Controller_Run(void)
 #endif
         }
 
-#if defined CAR_USING_LINK
-        DeltaEncoderAngle = Motor_Get_DeltaAngle(Motor_Read_NowEncoder(&Pitch), PITCH_ZERO_ANGLE, 8192) * 360 / 8192;
-
-        Pitch.spe.out += Pitch_F0_Use * sinf((Pitch_ANG0_Use - gimbal_atti.pitch) / 180.0f * PI);
-
-        Connect_Alpha = (CONNECT_ANGLE) + DeltaEncoderAngle;
-        CompenOutGain = cosf(PI / 2 - (Connect_Alpha) / 360 * 2 * PI);
-        pitch_gain = CompenOutGain * CompenOutGain;
-
-        if (pitch_gain < 0.7f)
-            pitch_gain = 0.7f;
-
-        Pitch.spe.out = Pitch.spe.out / pitch_gain;
-#endif
 #ifdef GIMBAL_BIAS_SET
         Pitch.spe.out += GIMBAL_BIAS_SET * cosf(gimbal_atti.pitch);
 #endif
