@@ -26,15 +26,6 @@ Motor_t Pitch;
 
 float CtrlErr_Pitch = 0, CtrlErr_Yaw = 0; // Pitch 和 Yaw 的控制误差
 
-#if defined CAR_USING_LINK
-float Connect_Alpha;  // 用于连杆计算的角度
-float Pitch_F0_Use;   // Pitch重心在转轴正前方时产生的扭矩
-float Pitch_ANG0_Use; // Pitch重心在转轴正上方时云台姿态角
-float DeltaEncoderAngle;
-float CompenOutGain;
-float pitch_gain;
-#endif
-
 GimbalCTRL_Set_Type SetAng;                      // 大地坐标系下的云台姿态设定值
 static AttitudeData_Type GroundFrame_GimbalAtti; // 大地坐标系下的云台姿态
 static AttitudeData_Type MotorFrame_GimbalAtti;  // 电机坐标系下的云台姿态

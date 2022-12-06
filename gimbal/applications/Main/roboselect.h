@@ -35,7 +35,6 @@
 // 云台控制相关设置
 #define PITCH_MOTOR_ID 0x206                            // Pitch 轴电机 ID
 #define YAW_MOTOR_ID 0x205                              // Yaw 轴电机 ID
-#undef CAR_USING_LINK                                   // Pitch 轴电机传动没有采用连杆结构
 #define GIMBAL_BIAS_SET (-1800)                         // 云台重心电流补偿
 #define YAW_ZERO_ANGLE 0                                // 正常跟随时 Yaw 电机编码器数值
 #define PITCH_ZERO_ANGLE 0x505                          // Pitch 轴水平时 Pitch 电机编码器数值
@@ -88,7 +87,6 @@
 // 云台控制相关设置
 #define PITCH_MOTOR_ID 0x206                            // Pitch 轴电机 ID
 #define YAW_MOTOR_ID 0x205                              // Yaw 轴电机 ID
-#undef CAR_USING_LINK                                   // Pitch 轴电机传动没有采用连杆结构
 #define GIMBAL_BIAS_SET (2300)                          // 云台重心电流补偿
 #define YAW_ZERO_ANGLE 0                                // 正常跟随时 Yaw 电机编码器数值
 #define PITCH_ZERO_ANGLE 0x1D20                         // Pitch 轴水平时 Pitch 电机编码器数值
@@ -141,7 +139,6 @@
 // 云台控制相关设置
 #define PITCH_MOTOR_ID 0x206                         // Pitch 轴电机 ID
 #define YAW_MOTOR_ID 0x208                           // Yaw 轴电机 ID
-#define CAR_USING_LINK                               // Pitch 轴电机传动采用连杆结构
 #define CONNECT_ANGLE 90                             // 云台水平时连杆角度
 #define PITCH_ZEROCURRENT_ANG (9.f)                  // 当Pitch = 3.0f 时，达到机械平衡点
 #define PTICH_F0_CURRENT (-2500)                     // 重力补偿参数
@@ -196,7 +193,6 @@
 // 云台控制相关设置
 #define PITCH_MOTOR_ID 0x206                            // Pitch 轴电机 ID
 #define YAW_MOTOR_ID 0x205                              // Yaw 轴电机 ID
-#undef CAR_USING_LINK                                   // Pitch 轴电机传动不采用连杆结构
 #define GIMBAL_BIAS_SET (1300)                          // 云台重心电流补偿
 #define YAW_ZERO_ANGLE 0                                // 正常跟随时 Yaw 电机编码器数值
 #define PITCH_ZERO_ANGLE (4764)                         // Pitch 轴水平时 Pitch 电机编码器数值
@@ -243,7 +239,6 @@
  *                        英雄机器人
  * *************************************************************************/
 #elif defined CORE_USING_HERO
-#define CAR_USING_LINK    // 英雄机器人 Pitch 全都使用连杆结构
 #define SERVO_CTRL_EN (0) // 英雄机器人全部不需要电动弹舱
 /********************************* 国赛老英雄 *********************************/
 #if defined CORE_USING_NATION_HERO
