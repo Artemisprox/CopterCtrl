@@ -9,7 +9,7 @@
  */
 
 #include <rtthread.h>
-#include "RC_PPM.h"
+#include "drv_RC_PPM.h"
 #include "drv_PWM_motor.h"
 #include "drv_buzzer.h"
 #include "mod_Monitor.h"
@@ -20,7 +20,7 @@
 #include "func_MonitorCfg.h"
 #include "drv_thread.h"
 #include "mod_Atti.h"
-#include "TF_mini.h"
+#include "drv_TF_mini.h"
 
 #if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO)
 #error "Please specify the robot type!"

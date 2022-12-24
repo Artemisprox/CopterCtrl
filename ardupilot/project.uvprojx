@@ -543,9 +543,9 @@
           <GroupName>RC_PPM</GroupName>
           <Files>
             <File>
-              <FileName>RC_PPM.c</FileName>
+              <FileName>drv_RC_PPM.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\RC_PPM\RC_PPM.c</FilePath>
+              <FilePath>applications\RC_PPM\drv_RC_PPM.c</FilePath>
             </File>
             <File>
               <FileName>drv_tim13.c</FileName>
@@ -553,9 +553,9 @@
               <FilePath>applications\RC_PPM\drv_tim13.c</FilePath>
             </File>
             <File>
-              <FileName>RC_PPM_RC_PPM.h</FileName>
+              <FileName>RC_PPM_drv_RC_PPM.h</FileName>
               <FileType>5</FileType>
-              <FilePath>applications\RC_PPM\RC_PPM.h</FilePath>
+              <FilePath>applications\RC_PPM\drv_RC_PPM.h</FilePath>
             </File>
             <File>
               <FileName>RC_PPM_drv_tim13.h</FileName>
@@ -568,9 +568,9 @@
           <GroupName>Sensors</GroupName>
           <Files>
             <File>
-              <FileName>TF_mini.c</FileName>
+              <FileName>drv_TF_mini.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\Sensors\TF_mini.c</FilePath>
+              <FilePath>applications\Sensors\drv_TF_mini.c</FilePath>
             </File>
           </Files>
         </Group>
