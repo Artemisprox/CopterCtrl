@@ -1,0 +1,12 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Glob('*.c')
+src += ['drv_PWM_motor.h']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('copter_motor', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

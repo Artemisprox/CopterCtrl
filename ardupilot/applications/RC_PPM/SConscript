@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Glob('*.c')
+src += ['RC_PPM.h']
+src += ['drv_tim13.h']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('RC_PPM', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
