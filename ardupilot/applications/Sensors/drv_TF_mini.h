@@ -1,6 +1,6 @@
 #include <rtthread.h>
 
-#define TF_mini_device "uart1"
+#define TF_mini_device "uart6"
 
 
 typedef struct

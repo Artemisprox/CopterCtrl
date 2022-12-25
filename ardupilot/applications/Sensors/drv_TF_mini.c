@@ -1,11 +1,15 @@
 #include "drv_TF_mini.h"
 #include <rtthread.h>
+#include <rtdevice.h>
 #include "board.h"
 #include "drv_thread.h"
 
 static rt_device_t serial = RT_NULL;
 struct rt_semaphore TF_mini_sem; /* 用于接收消息的信号量 */
 uint8_t TF_mini_rx_buffer[RT_SERIAL_RB_BUFSZ + 1];
+
+static char msg_pool[256];
+
 /* 串口设备句柄 */
 static rt_device_t serial;
 /* 消息队列控制块 */
@@ -29,7 +33,6 @@ static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
     rt_err_t result;
     msg.dev = dev;
     msg.size = size;
-
     result = rt_mq_send(&TF_mini_rx_mq, &msg, sizeof(msg));
     if (result == -RT_EFULL)
     {
@@ -68,12 +71,13 @@ void TF_mini_DataProcess(uint8_t *pData)
 		{
 			
 			distance = ((uint16_t)pData[2] | ((uint16_t)pData[3] << 8));
-			if(distance == 0xFFFF || distance == 0xFFFE || distance == 0xFFFD )
+			if(distance == 0xFFFF || distance == 0xFFFE || distance == 0xFFFD )//数据获取错误
 			{
 				TF_mini_data.Data_valid = 0;
 				return;
 			}else
 			{
+			TF_mini_data.distance = distance;
 			TF_mini_data.strength = ((uint16_t)pData[4] | ((uint16_t)pData[5] << 8));
 			TF_mini_data.temperature = ((uint16_t)pData[6] | ((uint16_t)pData[7] << 8));
 			TF_mini_data.data_num ++;
@@ -102,6 +106,8 @@ static void serial_thread_entry(void *parameter)
         {
             /* 从串口读取数据*/
             rx_length = rt_device_read(msg.dev, 0, TF_mini_rx_buffer, msg.size);
+						//rt_device_read(serial, -1, TF_mini_buffer_p, 1);
+						//TF_mini_buffer_p ++ ;
             if (rx_length != 9)
             { // 如果长度不对，则直接跳过，但是必须从rt_device_read读出，否则缓冲区会溢出
                 continue;
@@ -111,10 +117,10 @@ static void serial_thread_entry(void *parameter)
             TF_mini_DataProcess(TF_mini_rx_buffer);
 
             TF_mini_data.Data_fresh_time = rt_tick_get(); // 刷新数据的更新时间
-
-//          rt_device_write
-       //rt_memcpy(&RC_data_last, &RC_data, sizeof(RC_data));
-        //释放遥控器数据处理信号量
+						
+						
+		 //rt_memcpy(&RC_data_last, &RC_data, sizeof(RC_data));
+     //释放遥控器数据处理信号量
      //   while (rt_sem_trytake(&TF_mini_sem) == RT_EOK)
      //       continue;
      //   rt_sem_release(&TF_mini_sem);
@@ -125,7 +131,6 @@ static void serial_thread_entry(void *parameter)
 
 rt_err_t TF_mini_Init(void)
 {
-		static char msg_pool[256];
 		struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; /* 初始化配置参数 */
 
     /* step1：查找串口设备 */
@@ -149,7 +154,7 @@ rt_err_t TF_mini_Init(void)
                RT_IPC_FLAG_FIFO);     /* 如果有多个线程等待，按照先来先得到的方法分配消息 */
 
     /* 以 DMA 接收及轮询发送方式打开串口设备 */
-    rt_device_open(serial, RT_DEVICE_FLAG_DMA_RX);
+    rt_device_open(serial, RT_DEVICE_FLAG_DMA_RX );
     /* 设置接收回调函数 */
     rt_device_set_rx_indicate(serial, uart_input);
 
@@ -157,7 +162,7 @@ rt_err_t TF_mini_Init(void)
     rt_sem_init(&TF_mini_sem, "TF_mini_rec", 0, RT_IPC_FLAG_FIFO);
 
     /* 创建 serial 线程 */
-    rt_thread_t thread = rt_thread_create("serial", serial_thread_entry, RT_NULL, 2048, THREAD_PRIO_RC_RX, 1);
+    rt_thread_t thread = rt_thread_create("serial", serial_thread_entry, RT_NULL, 2048, THREAD_PRIO_RC_RX, 5);
     /* 创建成功则启动线程 */
     if (thread != RT_NULL)
     {
