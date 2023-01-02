@@ -83,14 +83,14 @@ void EKF_Init(void)
 void EKF_update(void)
 {
 /*A矩阵更新*/
-	A_data[0][0] = -sinf( HERO_EKF_IMU.pitch ) * tanf( HERO_EKF_IMU.roll ) * HERO_BMI088_DEV.Gyro_Raw.z + tanf( HERO_EKF_IMU.roll )*cosf(HERO_EKF_IMU.pitch)*(HERO_BMI088_DEV.Gyro_Raw.y) + 1 ;
-	A_data[0][1] = 1.0/cosf(HERO_EKF_IMU.roll)/cosf(HERO_EKF_IMU.roll)*cosf(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.z + 1/cosf(HERO_EKF_IMU.roll)/cosf(HERO_EKF_IMU.roll)*sinf(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.y;
-	A_data[1][0] = -sinf( HERO_EKF_IMU.pitch )*HERO_BMI088_DEV.Gyro_Raw.y - cosf( HERO_EKF_IMU.pitch )*HERO_BMI088_DEV.Gyro_Raw.z;
+	A_data[0][0] = -EKF_sin( HERO_EKF_IMU.pitch ) * tanf( HERO_EKF_IMU.roll ) * HERO_BMI088_DEV.Gyro_Raw.z + tanf( HERO_EKF_IMU.roll )*EKF_cos(HERO_EKF_IMU.pitch)*(HERO_BMI088_DEV.Gyro_Raw.y) + 1 ;
+	A_data[0][1] = 1.0/EKF_cos(HERO_EKF_IMU.roll)/EKF_cos(HERO_EKF_IMU.roll)*EKF_cos(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.z + 1/EKF_cos(HERO_EKF_IMU.roll)/EKF_cos(HERO_EKF_IMU.roll)*EKF_sin(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.y;
+	A_data[1][0] = -EKF_sin( HERO_EKF_IMU.pitch )*HERO_BMI088_DEV.Gyro_Raw.y - EKF_cos( HERO_EKF_IMU.pitch )*HERO_BMI088_DEV.Gyro_Raw.z;
 	A_data[1][1] = 1.0;
-	A_data[2][1] = -g*cosf( HERO_EKF_IMU.roll );
+	A_data[2][1] = -g*EKF_cos( HERO_EKF_IMU.roll );
 	A_data[2][2] = -HERO_EKF_IMU.Kdrag/m +1;
-	A_data[3][0] = g*cosf(HERO_EKF_IMU.pitch)*cosf(HERO_EKF_IMU.roll);
-	A_data[3][1] = -g*sinf(HERO_EKF_IMU.pitch)*sinf(HERO_EKF_IMU.roll);
+	A_data[3][0] = g*EKF_cos(HERO_EKF_IMU.pitch)*EKF_cos(HERO_EKF_IMU.roll);
+	A_data[3][1] = -g*EKF_sin(HERO_EKF_IMU.pitch)*EKF_sin(HERO_EKF_IMU.roll);
 	A_data[3][3] = -HERO_EKF_IMU.Kdrag/m+1;
 	A_data[4][2] = -HERO_EKF_IMU.Vx/m;
 	A_data[4][3] = -HERO_EKF_IMU.Vy/m;
@@ -105,10 +105,10 @@ void EKF_update(void)
 	matrix_inverse(&H,&H_T);
 	
 /*Xk—（先验估计）更新*/
-	x_k_data[0][0] = HERO_EKF_IMU.pitch + HERO_BMI088_DEV.Gyro_Raw.x + tanf(HERO_EKF_IMU.roll)*cosf(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.z + tanf(HERO_EKF_IMU.roll)*sinf(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.y;
-	x_k_data[1][0] = HERO_EKF_IMU.roll + cosf( HERO_EKF_IMU.pitch ) - sinf(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.z;
-	x_k_data[2][0] = -g*sinf(HERO_EKF_IMU.roll) - HERO_EKF_IMU.Kdrag*HERO_EKF_IMU.Vx/m ;
-	x_k_data[3][0] = g*cosf(HERO_EKF_IMU.roll)*sinf(HERO_EKF_IMU.pitch) - HERO_EKF_IMU.Kdrag*HERO_EKF_IMU.Vy/m ;
+	x_k_data[0][0] = HERO_EKF_IMU.pitch + HERO_BMI088_DEV.Gyro_Raw.x + tanf(HERO_EKF_IMU.roll)*EKF_cos(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.z + tanf(HERO_EKF_IMU.roll)*EKF_sin(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.y;
+	x_k_data[1][0] = HERO_EKF_IMU.roll + EKF_cos( HERO_EKF_IMU.pitch ) - EKF_sin(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.z;
+	x_k_data[2][0] = -g*EKF_sin(HERO_EKF_IMU.roll) - HERO_EKF_IMU.Kdrag*HERO_EKF_IMU.Vx/m ;
+	x_k_data[3][0] = g*EKF_cos(HERO_EKF_IMU.roll)*EKF_sin(HERO_EKF_IMU.pitch) - HERO_EKF_IMU.Kdrag*HERO_EKF_IMU.Vy/m ;
 	x_k_data[4][0] = HERO_EKF_IMU.Kdrag;
 
 /*h(x)更新*/
@@ -119,8 +119,8 @@ void EKF_update(void)
 	
 /*w噪声矩阵更新*/
 	w_data[0][0] = 1;
-	w_data[0][1] = tanf(HERO_EKF_IMU.roll)*sinf(HERO_EKF_IMU.pitch);
-	w_data[1][1] = cosf(HERO_EKF_IMU.pitch);
+	w_data[0][1] = tanf(HERO_EKF_IMU.roll)*EKF_sin(HERO_EKF_IMU.pitch);
+	w_data[1][1] = EKF_cos(HERO_EKF_IMU.pitch);
 	w_data[2][2] = 1;
 	w_data[3][3] = 1;
 	w_data[4][4] = 1;

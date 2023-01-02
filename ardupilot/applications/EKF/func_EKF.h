@@ -1,6 +1,10 @@
 #include "arm_math.h"
 #include "drv_matrix.h"
 
+#define EKF_sin  arm_sin_f32
+#define EKF_cos  arm_cos_f32
+
+
 typedef struct
 {
 	float32_t pitch;
