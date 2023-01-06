@@ -55,10 +55,11 @@ matrix* matrix_tri_mutiply_5(matrix* A, matrix* B, matrix* C, matrix* answer)
 {
 	matrix temp;
 	float32_t temp_data[5][5];
-	//matrix_init(&temp,5,5,temp_data[0]);
+	matrix_init(&temp,5,5,temp_data[0]);
 	
 	matrix_multiply(A,B,&temp);
 	matrix_multiply(&temp,C,answer);
 	
 	return answer;
 }
+

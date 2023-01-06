@@ -5,7 +5,7 @@
 #include <math.h>
 #include "drv_IMU.h"
 
-EKF_IMU HERO_EKF_IMU;
+EKF_IMU HERO_EKF_IMU = {0};
 
 const float32_t g = 9.8;
 const float32_t m = 1.0;
@@ -15,8 +15,8 @@ matrix I;
 float32_t Q_diag[5] = {1,1,1,1,1};
 float32_t R_diag[2] = {1,1};
 
-float32_t x_kdata[5][1] = {0}, x_k_data[5][1] = {0},  x_k_1data[5][1] = {0};
-matrix x_k, x_k_, x_k_1;
+float32_t x_kdata[5][1] = {0}, x_k_data[5][1] = {0};
+matrix x_k, x_k_;
 float32_t 	Q_data[5][5] = {0}, R_data[2][2] = {0};
 matrix Q,R;
 
@@ -42,34 +42,40 @@ void EKF_Init(void)
 {
 	int i = 0;
 	
-	matrix_init(&I,5,5,Idata[0]);
+	matrix_init(&I,5,5,Idata[0]);//单位矩阵
 	for(i = 0;i < 5; i++)
 	{
 		matrix_data_fresh(&I,i,i,1.0);
 	}
 	
-	matrix_init(&x_k_1,5,1,x_k_1data[0]);
+	matrix_init(&x_k,5,1,x_kdata[0]);
+	matrix_init(&x_k_,5,1,x_k_data[0]);
 	
 	matrix_init(&Q,5,5,Q_data[0]);
-	matrix_init(&P,5,5,P_data[0]);
 	for(i = 0;i < 5; i++)
 	{
 		matrix_data_fresh(&Q,i,i,Q_diag[i]);
 	}
 	
-	matrix_init(&R,2,2,P_data[0]);
+	matrix_init(&R,2,2,R_data[0]);
 	for(i = 0;i < 2; i++)
 	{ 
 		matrix_data_fresh(&R,i,i,R_diag[i]);
 	}
 	
-	matrix_init(&P,5,5,P_data[0]);
+	matrix_init(&P,5,5,Pdata[0]);
+	for(i = 0;i < 5; i++)
+	{
+		matrix_data_fresh(&P,i,i,1.0f);
+	}
+	matrix_init(&P_,5,5,P_data[0]);
 	
 	matrix_init(&A,5,5,A_data[0]);
 	matrix_init(&A_T,5,5,A_T_data[0]);
 	
 	matrix_init(&H,2,5,H_data[0]);
-	matrix_init(&Z_,2,5,Z_data[0]);
+	matrix_init(&Z,2,1,Z_data[0]);
+	matrix_init(&Z_,2,1,Z_data[0]);
 	
 	matrix_init(&w,5,5,w_data[0]);
 	matrix_init(&w_T,5,5,w_T_data[0]);
@@ -80,55 +86,56 @@ void EKF_Init(void)
 	
 }
 
-void EKF_update(void)
+void EKF_update(EKF_IMU* HERO_EKF_IMU,EKF_Gyro_t* Gyro_Fix ,EKF_Accl_t* Accl_Fix )
 {
+	
 /*A矩阵更新*/
-	A_data[0][0] = -EKF_sin( HERO_EKF_IMU.pitch ) * tanf( HERO_EKF_IMU.roll ) * HERO_BMI088_DEV.Gyro_Raw.z + tanf( HERO_EKF_IMU.roll )*EKF_cos(HERO_EKF_IMU.pitch)*(HERO_BMI088_DEV.Gyro_Raw.y) + 1 ;
-	A_data[0][1] = 1.0/EKF_cos(HERO_EKF_IMU.roll)/EKF_cos(HERO_EKF_IMU.roll)*EKF_cos(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.z + 1/EKF_cos(HERO_EKF_IMU.roll)/EKF_cos(HERO_EKF_IMU.roll)*EKF_sin(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.y;
-	A_data[1][0] = -EKF_sin( HERO_EKF_IMU.pitch )*HERO_BMI088_DEV.Gyro_Raw.y - EKF_cos( HERO_EKF_IMU.pitch )*HERO_BMI088_DEV.Gyro_Raw.z;
-	A_data[1][1] = 1.0;
-	A_data[2][1] = -g*EKF_cos( HERO_EKF_IMU.roll );
-	A_data[2][2] = -HERO_EKF_IMU.Kdrag/m +1;
-	A_data[3][0] = g*EKF_cos(HERO_EKF_IMU.pitch)*EKF_cos(HERO_EKF_IMU.roll);
-	A_data[3][1] = -g*EKF_sin(HERO_EKF_IMU.pitch)*EKF_sin(HERO_EKF_IMU.roll);
-	A_data[3][3] = -HERO_EKF_IMU.Kdrag/m+1;
-	A_data[4][2] = -HERO_EKF_IMU.Vx/m;
-	A_data[4][3] = -HERO_EKF_IMU.Vy/m;
-	A_data[4][4] = 1.0;
+	A_data[0][0] = -EKF_sin( HERO_EKF_IMU->pitch ) * EKF_tan( HERO_EKF_IMU->roll ) * Gyro_Fix->z + EKF_tan( HERO_EKF_IMU->roll )*EKF_cos(HERO_EKF_IMU->pitch)*(Gyro_Fix->y) + 1.0f ;
+	A_data[0][1] = 1.0f/EKF_cos(HERO_EKF_IMU->roll)/EKF_cos(HERO_EKF_IMU->roll)*EKF_cos(HERO_EKF_IMU->pitch)*Gyro_Fix->z + 1.0f/EKF_cos(HERO_EKF_IMU->roll)/EKF_cos(HERO_EKF_IMU->roll)*EKF_sin(HERO_EKF_IMU->pitch)*Gyro_Fix->y;
+	A_data[1][0] = -EKF_sin( HERO_EKF_IMU->pitch )*Gyro_Fix->y - EKF_cos( HERO_EKF_IMU->pitch )*Gyro_Fix->z;
+	A_data[1][1] = 1.0f;
+	A_data[2][1] = -g*EKF_cos( HERO_EKF_IMU->roll );
+	A_data[2][2] = -HERO_EKF_IMU->Kdrag/m +1.0f;
+	A_data[3][0] = g*EKF_cos(HERO_EKF_IMU->pitch)*EKF_cos(HERO_EKF_IMU->roll);
+	A_data[3][1] = -g*EKF_sin(HERO_EKF_IMU->pitch)*EKF_sin(HERO_EKF_IMU->roll);
+	A_data[3][3] = -HERO_EKF_IMU->Kdrag/m+1.0f;
+	A_data[4][2] = -HERO_EKF_IMU->Vx/m;
+	A_data[4][3] = -HERO_EKF_IMU->Vy/m;
+	A_data[4][4] = 1.0f;
 	matrix_trans(&A,&A_T);
 	
 /*H矩阵更新*/
-	H_data[0][2] = -HERO_EKF_IMU.Kdrag/m;
-	H_data[0][4] = -HERO_EKF_IMU.Vx/m;
-	H_data[1][3] = -HERO_EKF_IMU.Kdrag/m;
-	H_data[1][4] = -HERO_EKF_IMU.Vy/m;
+	H_data[0][2] = -HERO_EKF_IMU->Kdrag/m;
+	H_data[0][4] = -HERO_EKF_IMU->Vx/m;
+	H_data[1][3] = -HERO_EKF_IMU->Kdrag/m;
+	H_data[1][4] = -HERO_EKF_IMU->Vy/m;
 	matrix_inverse(&H,&H_T);
 	
 /*Xk—（先验估计）更新*/
-	x_k_data[0][0] = HERO_EKF_IMU.pitch + HERO_BMI088_DEV.Gyro_Raw.x + tanf(HERO_EKF_IMU.roll)*EKF_cos(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.z + tanf(HERO_EKF_IMU.roll)*EKF_sin(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.y;
-	x_k_data[1][0] = HERO_EKF_IMU.roll + EKF_cos( HERO_EKF_IMU.pitch ) - EKF_sin(HERO_EKF_IMU.pitch)*HERO_BMI088_DEV.Gyro_Raw.z;
-	x_k_data[2][0] = -g*EKF_sin(HERO_EKF_IMU.roll) - HERO_EKF_IMU.Kdrag*HERO_EKF_IMU.Vx/m ;
-	x_k_data[3][0] = g*EKF_cos(HERO_EKF_IMU.roll)*EKF_sin(HERO_EKF_IMU.pitch) - HERO_EKF_IMU.Kdrag*HERO_EKF_IMU.Vy/m ;
-	x_k_data[4][0] = HERO_EKF_IMU.Kdrag;
+	x_k_data[0][0] = HERO_EKF_IMU->pitch + Gyro_Fix->x + EKF_tan(HERO_EKF_IMU->roll)*EKF_cos(HERO_EKF_IMU->pitch)*Gyro_Fix->z + EKF_tan(HERO_EKF_IMU->roll)*EKF_sin(HERO_EKF_IMU->pitch)*Gyro_Fix->y;
+	x_k_data[1][0] = HERO_EKF_IMU->roll + EKF_cos( HERO_EKF_IMU->pitch ) - EKF_sin(HERO_EKF_IMU->pitch)*Gyro_Fix->z;
+	x_k_data[2][0] = -g*EKF_sin(HERO_EKF_IMU->roll) - HERO_EKF_IMU->Kdrag*HERO_EKF_IMU->Vx/m ;
+	x_k_data[3][0] = g*EKF_cos(HERO_EKF_IMU->roll)*EKF_sin(HERO_EKF_IMU->pitch) - HERO_EKF_IMU->Kdrag*HERO_EKF_IMU->Vy/m ;
+	x_k_data[4][0] = HERO_EKF_IMU->Kdrag;
 
 /*h(x)更新*/
 	Z_data[0][0] = -x_k_data[4][0]*x_k_data[2][0]/m;
 	Z_data[1][0] = -x_k_data[4][0]*x_k_data[3][0]/m;
-	Zdata[0][0]  = HERO_BMI088_DEV.Accl_Raw.x;
-	Zdata[1][0]	 = HERO_BMI088_DEV.Accl_Raw.y;
+	Zdata[0][0]  = Accl_Fix->x;
+	Zdata[1][0]	 = Accl_Fix->y;
 	
 /*w噪声矩阵更新*/
-	w_data[0][0] = 1;
-	w_data[0][1] = tanf(HERO_EKF_IMU.roll)*EKF_sin(HERO_EKF_IMU.pitch);
-	w_data[1][1] = EKF_cos(HERO_EKF_IMU.pitch);
-	w_data[2][2] = 1;
-	w_data[3][3] = 1;
-	w_data[4][4] = 1;
+	w_data[0][0] = 1.0f;
+	w_data[0][1] = EKF_tan(HERO_EKF_IMU->roll)*EKF_sin(HERO_EKF_IMU->pitch);
+	w_data[1][1] = EKF_cos(HERO_EKF_IMU->pitch);
+	w_data[2][2] = 1.0f;
+	w_data[3][3] = 1.0f;
+	w_data[4][4] = 1.0f;
 	matrix_trans(&w,&w_T);
 	
 /*v噪声矩阵更新*/
-	v_data[0][0] = 1;
-	v_data[1][1] = 1;
+	v_data[0][0] = 1.0f;
+	v_data[1][1] = 1.0f;
 	matrix_trans(&v,&v_T);
 
 /*Pk_（先验估计）更新*/
@@ -153,6 +160,7 @@ void EKF_update(void)
 	matrix_add(matrix_tri_mutiply_5(&H,&P_,&H_T,&HP_H_T), matrix_tri_mutiply_5(&v,&R,&v_T,&vRv_T), &S);
 	float32_t S_data[5][5];
 	matrix S_;
+	matrix_init(&S_ ,5,5,S_data[0]);
 	matrix_inverse(&S,&S_);
 	matrix_tri_mutiply_5(&P_,&H_T,&S_,&K);
 	
@@ -164,19 +172,22 @@ void EKF_update(void)
 	
 	float32_t Tdata[2][1];
 	matrix T;
-	matrix_init(&Y ,5,5,Ydata[0]);
+	matrix_init(&Y ,5,5,Tdata[0]);
 	matrix_add(&x_k_,matrix_multiply(&K,&Y,&T),&x_k);
 	
 /*Pk后验估计*/
 	float32_t T1data[2][1];
 	matrix T1;
-	matrix_init(&Y ,2,1,Ydata[0]);
+	matrix_init(&Y ,2,1,T1data[0]);
 	float32_t T2data[2][1];
 	matrix T2;
-	matrix_init(&Y ,5,5,Ydata[0]);
+	matrix_init(&Y ,5,5,T2data[0]);
 	matrix_multiply(&K,&H,&T1);
 	matrix_sub(&I,&T1,&T2);
 	matrix_multiply(&T2,&P_,&P);
+	
+	IMU_data_update(&x_k,HERO_EKF_IMU);
+	
 }
 
 void IMU_data_update(matrix* X,EKF_IMU* IMU )

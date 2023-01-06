@@ -8,7 +8,7 @@
 #include "func_TempCtr.h"
 #include "mod_Monitor.h"
 #include "drv_utils.h"
-
+#include "func_EKF.h"
 #include "drv_IMU.h"
 
 static rt_thread_t atti_calcu = RT_NULL;
@@ -89,11 +89,12 @@ static void AttiCalcu_thread(void *parameter)
     rt_uint8_t first_flag = 1;
     int FirstCount = 100; // 前100次计算时，对加速度计数据进行积分来确定初始角度
     float inv_sample_freq;
+	
     AHRS_Accl_t AcclFix;       // 经过坐标变换后的加速度计数据
     AHRS_Accl_t AcclSum = {0}; // 启动时
     AHRS_Gyro_t GyroFix;       // 经过坐标变换和零飘校正后的角速度数据
-    SWDG_START(SWDG_IMU_ID);
-
+    SWDG_START(SWDG_IMU_ID);		
+		
     while (1)
     {
         BMI088_WaitForRawData();
@@ -129,7 +130,7 @@ static void AttiCalcu_thread(void *parameter)
             AHRS_Update(&HERO_AHRS, &AcclFix, &GyroFix, NULL);
 
             AHRS_GetEulr(&HERO_Eulr, &HERO_AHRS);
-
+					
             if (count <= 50)
             {
                 count++;
