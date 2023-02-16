@@ -21,8 +21,8 @@
 #include "drv_thread.h"
 #include "mod_Atti.h"
 #include "drv_TF_mini.h"
-
-#if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO)
+#include "drv_NimingFlow.h"
+#if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO) && (!defined CORE_USING_COPTER)
 #error "Please specify the robot type!"
 #endif
 
@@ -34,7 +34,7 @@ int main(void)
     set_buzzer(0, 1);
 */
     // 所有程序注意, 如果初始化函数存在非 RT_EOK 的返回值单片机会直接复位
-    if (MONITOR_INIT(1024, 1, THREAD_PRIO_MONITOR) != RT_EOK)
+/*    if (MONITOR_INIT(1024, 1, THREAD_PRIO_MONITOR) != RT_EOK)
         Robot_Reset_Gimbal();
 
     if (BMI088_Init() != RT_EOK)
@@ -43,7 +43,8 @@ int main(void)
         Robot_Reset_Gimbal();
     if (IMU_WaitForInit() != RT_EOK)
         Robot_Reset_Gimbal();
-	
+*/
+	  NiMingFlow_Init();
 	//TF_mini_Init();
 /*
     if (remote_uart_init() != RT_EOK) // 遥控器初始化

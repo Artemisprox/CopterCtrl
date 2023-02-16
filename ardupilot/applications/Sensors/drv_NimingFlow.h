@@ -6,6 +6,7 @@
 typedef struct
 {
 	uint32_t distance;
+	float distance_v;
 	int16_t Vx_Flow;
 	int16_t Vy_Flow;
 	int16_t pos_x;
@@ -14,6 +15,13 @@ typedef struct
 	uint8_t  Data_fresh_time;
 	uint8_t  quality;
 } NiMingFlow_Rec;
+
+typedef struct
+{
+	int8_t Vx_flow;
+	int8_t Vy_flow;
+	uint8_t quality;
+}NiMingFlow_Raw;
 
 rt_err_t NiMingFlow_Init(void);
 

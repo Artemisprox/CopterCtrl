@@ -1,5 +1,4 @@
 #include "func_IMUCali.h"
-#include "robodata.h"
 #include "func_bmi088.h"
 #include "drv_thread.h"
 #include "drv_buzzer.h"
@@ -11,6 +10,7 @@
 #include <rtthread.h>
 #include <board.h>
 #include "drv_HardWdt.h"
+#include "roboselect.h"
 
 #define FLASH_ERASE_PIN GET_PIN(A, 0)
 #define GYRO_SUM_MAX 60000 // 校准陀螺仪积分时需要收集数据的个数

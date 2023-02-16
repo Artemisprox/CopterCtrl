@@ -2,7 +2,6 @@
 #include "drv_IMU.h"
 #include "drv_utils.h"
 #include "func_TempCtr.h"
-#include "robodata.h"
 
 IMU_t HERO_IMU; // IMU数据,unit:m/s^2,rad/s
 ATTI_t gimbal_atti;
@@ -13,7 +12,6 @@ int AimlossFlag = 0; // 自瞄丢失目标为0，有目标为1。有目标时需
 rt_tick_t IMU_LastValid_tick = 0;
 void IMU_transfer2gm(void);
 
-const float pitch_ecd_offset = IMU_PITCH_FIX; // 枪口绝对水平时，陀螺仪发回的Pitch角度 单位 °
 
 /***
  * @Name     gyro_read_extern

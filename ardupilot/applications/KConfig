@@ -8,6 +8,8 @@ menu "Choose Car model Config"
             bool "infantry"
         config CORE_USING_HERO
             bool "hero"
+        config CORE_USING_COPTER
+            bool "copter"    
     endchoice
 
 
@@ -46,5 +48,7 @@ menu "Choose Car model Config"
         endchoice
     endif
 
-
+    #选择空中机器人
+    if CORE_USING_COPTER
+    endif
 endmenu

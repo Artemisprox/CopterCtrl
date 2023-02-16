@@ -18,6 +18,7 @@ static struct rt_messagequeue NiMingFlow_rx_mq;
 /*匿名光流接收数据结构*/
 NiMingFlow_Rec NiMingFlow_data = {0};
 
+NiMingFlow_Raw Nimingflow_1 = {0};
 /* 串口接收消息结构*/
 struct rx_msg
 {
@@ -42,11 +43,13 @@ static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
     return result;
 }
 
+
+double sum_x = 0 , sum_y = 0 ,k1 = 0 , k2 = 0;
 void NiMingFlow_DataProcess(uint8_t *pData,uint8_t rec_length)
 {
 	//获取数据长度检查
 	uint8_t length = pData[3];
-	if( length != rec_length-6 )
+	if( length != rec_length - 6 )
 	{
 		//NiMingFlow_data.data_Valid = 0;
 		return ;
@@ -71,8 +74,22 @@ void NiMingFlow_DataProcess(uint8_t *pData,uint8_t rec_length)
 	uint8_t ID = pData[2];
 	if(ID == 0x51)//光流数据
 	{
-		uint8_t mode = pData[3];
-		uint8_t state = pData[4];
+//		Nimingflow_1.Vx_flow = pData[6];
+//		Nimingflow_1.Vy_flow = pData[7];
+//		NiMingFlow_data.Vx_Flow = ((uint16_t)pData[17] | ((uint16_t)pData[18] << 8));
+//		NiMingFlow_data.Vy_Flow = ((uint16_t)pData[19] | ((uint16_t)pData[20] << 8));
+//		
+//		if(NiMingFlow_data.distance != 0)
+//		{	if(Nimingflow_1.Vx_flow != 0)
+//				k1 = NiMingFlow_data.Vx_Flow*0.02 / Nimingflow_1.Vx_flow / NiMingFlow_data.distance*1000;
+//			if(Nimingflow_1.Vy_flow != 0)
+//				k2 = NiMingFlow_data.Vy_Flow*0.02 / Nimingflow_1.Vy_flow / NiMingFlow_data.distance*1000;
+//		}
+//		sum_x +=  NiMingFlow_data.Vx_Flow*0.02;
+//		sum_y +=  NiMingFlow_data.Vy_Flow*0.02;
+				
+		uint8_t mode = pData[4];
+		uint8_t state = pData[5];
 		
 		if(!state)//状态错误
 		{
@@ -88,22 +105,38 @@ void NiMingFlow_DataProcess(uint8_t *pData,uint8_t rec_length)
 			NiMingFlow_data.pos_x   =  ((uint16_t)pData[13] | ((uint16_t)pData[14] << 8));
 			NiMingFlow_data.pos_y   =  ((uint16_t)pData[15] | ((uint16_t)pData[16] << 8));
 			NiMingFlow_data.quality =  pData[17];
+		}else if(mode ==0)
+		{
+			Nimingflow_1.Vx_flow = pData[6];
+			Nimingflow_1.Vy_flow = pData[7];
+		    Nimingflow_1.quality = pData[8];
+			sum_x += Nimingflow_1.Vx_flow;
+			sum_y += Nimingflow_1.Vy_flow;
+		}	else if(mode == 1)
+		{
+			Nimingflow_1.Vx_flow = ((uint16_t)pData[6] | ((uint16_t)pData[7] << 8));
+			Nimingflow_1.Vy_flow = ((uint16_t)pData[8] | ((uint16_t)pData[9] << 8));
+			sum_x += Nimingflow_1.Vx_flow*0.02;
+			sum_y += Nimingflow_1.Vy_flow*0.02;
 		}
-		
 	}else if(ID == 0x34 )
 	{
+        static int16_t first_flag = 0;
+        static float distance_last;
 		uint32_t distance = (uint32_t)pData[7] | ((uint32_t)pData[8] << 8) | ((uint32_t)pData[9] << 8*2 ) | ((uint32_t)pData[10] << 8*3 );
+
 		if(distance != 0xFFFFFFFF )
 		{
 			NiMingFlow_data.distance = distance;
 			NiMingFlow_data.data_Valid = 1;
+            if(first_flag != 0)
+                NiMingFlow_data.distance_v = distance - distance_last;//使用高度变化量估计速度
+            else 
+                first_flag++;
+            distance_last = distance;
 		}
 		else NiMingFlow_data.data_Valid = 0;
 	}
-		
-
-    
-    
 }
 
 
@@ -126,7 +159,7 @@ static void serial_thread_entry(void *parameter)
             /* 从串口读取数据*/
             rx_length = rt_device_read(msg.dev, 0, NiMingFlow_rx_buffer, msg.size);
 						
-            if (rx_length >= 6 && NiMingFlow_rx_buffer[0] == 0xAA)
+            if (rx_length <= 6)
             { // 如果长度不对，则直接跳过，但是必须从rt_device_read读出，否则缓冲区会溢出
                 continue;
             }

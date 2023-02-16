@@ -266,7 +266,6 @@
 
 /* Choose Car model Config */
 
-#define CORE_USING_INFANTRY
-#define CORE_USING_CARBONPLATE_INFANTRY
+#define CORE_USING_COPTER
 
 #endif
