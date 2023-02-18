@@ -57,3 +57,6 @@ typedef struct
 	
 	mixer copter_mixer;
 }copter_ctrl;
+
+
+

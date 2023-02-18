@@ -17,11 +17,12 @@ static struct rt_timer atti_1ms_tim;         /* 闭环线程定时器 */
 static struct rt_timer pos_20ms_tim;         /* 闭环线程定时器 */
 
 copter_ctrl HERO_copter;
+state HERO_state;
 
 //x,y大地坐标系变换到机体坐标系
 static void earth_body_tranfer(void)
 {	
-	HERO_copter.copter_pitch.ang.set = ((1 - cosf(HERO_IMU.yaw)*cosf(HERO_IMU.yaw))/sinf(cosf(HERO_IMU.yaw)))*HERO_copter.copter_x.vec.out
+	HERO_copter.copter_pitch.ang.set = ((1 - cosf(HERO_IMU.yaw)*cosf(HERO_IMU.yaw))/sinf(HERO_IMU.yaw))*HERO_copter.copter_x.vec.out
 										- cosf(HERO_IMU.yaw)*HERO_copter.copter_y.vec.out;
 	HERO_copter.copter_roll.ang.set = cosf(HERO_IMU.yaw)*HERO_copter.copter_x.vec.out 
 										+ sinf(HERO_IMU.yaw)*HERO_copter.copter_y.vec.out;
@@ -51,7 +52,7 @@ static void matrix_control(void)
 			HERO_copter.copter_mixer.motor_duty2 = (__sqrtf(temp.motor_spe2) - propeller_spe_base)/propeller_spe_gain;//计算得到占空比
 		}
 	else 
-		HERO_copter.copter_mixer.motor_duty1 = 0;
+		HERO_copter.copter_mixer.motor_duty2 = 0;
 
     temp.motor_spe3 = HERO_copter.copter_mixer.f/Ct
 					+ HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
@@ -62,7 +63,7 @@ static void matrix_control(void)
 			HERO_copter.copter_mixer.motor_duty3 = (__sqrtf(temp.motor_spe3) - propeller_spe_base)/propeller_spe_gain;//计算得到占空比
 		}
 	else 
-		HERO_copter.copter_mixer.motor_duty1 = 0;
+		HERO_copter.copter_mixer.motor_duty3 = 0;
 	
 	temp.motor_spe4 = HERO_copter.copter_mixer.f/Ct
 					- HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
@@ -73,7 +74,7 @@ static void matrix_control(void)
 			HERO_copter.copter_mixer.motor_duty4 = (__sqrtf(temp.motor_spe4) - propeller_spe_base)/propeller_spe_gain;//计算得到占空比
 		}
 	else 
-		HERO_copter.copter_mixer.motor_duty1 = 0;
+		HERO_copter.copter_mixer.motor_duty4 = 0;
 }
 
 static void atti_1ms_entry(void *parameter)
@@ -101,6 +102,12 @@ static void atti_1ms_entry(void *parameter)
 	HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.ang.out;
 
 	matrix_control();//混控器进行动力分配
+
+	MX_TIM_DUTY(TIM1,COPTER_MOTOR_1,HERO_copter.copter_mixer.motor_duty1);
+	MX_TIM_DUTY(TIM1,COPTER_MOTOR_2,HERO_copter.copter_mixer.motor_duty2);
+	MX_TIM_DUTY(TIM1,COPTER_MOTOR_3,HERO_copter.copter_mixer.motor_duty3);
+	MX_TIM_DUTY(TIM1,COPTER_MOTOR_4,HERO_copter.copter_mixer.motor_duty4);
+
 }
 
 static void pos_20ms_entry(void *parameter)

@@ -3,8 +3,7 @@ from building import *
 cwd = GetCurrentDir()
 
 src = Glob('*.c')
-src += ['drv_RC_PPM.h']
-src += ['drv_tim13.h']
+
 
 CPPPATH = [cwd]
 

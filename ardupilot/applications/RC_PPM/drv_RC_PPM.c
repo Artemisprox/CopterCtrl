@@ -11,7 +11,7 @@ static int Now_Tick;
 static int Last_Tick;
 static int pulse_flag = 0;
 
-RC_PPM_data copter_ctrl = {0};
+RC_PPM_data copter_rec_data;
 
 static rt_thread_t RC_PPM = RT_NULL;
 
@@ -38,7 +38,7 @@ rt_err_t RC_PPM_Init(void)
    return RT_EOK;
 }
 
-void pulse_process(void *args)
+static void pulse_process(void *args)
 {
 	int Delt_Tick = 0;
 	
@@ -85,7 +85,12 @@ void pulse_process(void *args)
 	}
 }
 
+static void (*Remote_Routine)(void);
 
+void Remote_Routine_Set(void (*Func)(void))
+{
+    Remote_Routine = Func;
+}
 
 static int RC_S1_now = 0 ,RC_S2_now = 0 , RC_Roller_now = 0;
 
@@ -94,11 +99,11 @@ void RC_PPM_REC_Thread(void *Para)
 	rt_sem_take(&RC_PPM_rec,RT_WAITING_FOREVER);
 
 	//以下为无级变化通道，实时更新
-	copter_ctrl.RC_roll 					= channel_duty[0];
-	copter_ctrl.RC_pitch 					= channel_duty[1];
-	copter_ctrl.RC_yaw 						= channel_duty[2];
-	copter_ctrl.RC_throttle 			= channel_duty[3];
-	copter_ctrl.RC_roller 				= channel_duty[6];
+	copter_rec_data.RC_roll 					= channel_duty[0];
+	copter_rec_data.RC_pitch 					= channel_duty[1];
+	copter_rec_data.RC_yaw 						= channel_duty[2];
+	copter_rec_data.RC_throttle 			= channel_duty[3];
+	copter_rec_data.RC_roller 				= channel_duty[6];
 	
 	//以下为开关通道，开关改变触发事件
 	RC_S1_now 	= channel_duty[4];
@@ -106,41 +111,44 @@ void RC_PPM_REC_Thread(void *Para)
 		
 	//三档开关
 	if(RC_S1_now <= s1_low )
-			RC_S1_now = 500;
+			copter_rec_data.RC_switch_left = 500;
 	else if (RC_S1_now > s1_low && RC_S1_now < s1_high )
-			RC_S1_now = 1000;
+			copter_rec_data.RC_switch_left = 1000;
 	else if (RC_S1_now > s1_high )
-			RC_S1_now = 1500;
-	
-	if( RC_S1_now != copter_ctrl.RC_switch_left )
-	{
-		copter_ctrl.RC_switch_left = RC_S1_now;
-		/*以下为开关对应事件代码*/
-		switch(copter_ctrl.RC_switch_left)
-			{
-				case 500:   break;
-				case 1000:  break;
-				case 1500:  break;
-			}
-	}
-	
+			copter_rec_data.RC_switch_left = 1500;
+
+//		if( RC_S1_now != copter_rec_data.RC_switch_left )
+//    	copter_rec_data.RC_switch_left = RC_S1_now;
+//	if( RC_S1_now != copter_rec_data.RC_switch_left )
+//	{
+//		copter_rec_data.RC_switch_left = RC_S1_now;
+//		/*以下为开关对应事件代码*/
+//		switch(copter_rec_data.RC_switch_left)
+//			{
+//				case 500:   break;
+//				case 1000:  break;
+//				case 1500:  break;
+//			}
+//	}
 	if(RC_S2_now <= s2_low )
-			RC_S2_now = 500;
+			copter_rec_data.RC_switch_right = 500;
 	else if (RC_S2_now > s2_low && RC_S2_now < s2_high )
-			RC_S2_now = 1000;
+			copter_rec_data.RC_switch_right = 1000;
 	else if (RC_S2_now > s2_high )
-			RC_S2_now = 1500;
+			copter_rec_data.RC_switch_right = 1500;
 	
-	if( RC_S2_now != copter_ctrl.RC_switch_right )
-	{
-		copter_ctrl.RC_switch_right = RC_S2_now;
-		/*以下为开关对应事件代码*/
-		switch(copter_ctrl.RC_switch_right)
-			{
-				case 500:   break;
-				case 1000:  break;
-				case 1500:  break;
-			}
-	}
+//	if( RC_S2_now != copter_rec_data.RC_switch_right )
+//		copter_rec_data.RC_switch_right = RC_S2_now;
+//		/*以下为开关对应事件代码*/
+//		switch(copter_rec_data.RC_switch_right)
+//			{
+//				case 500:   break;
+//				case 1000:  break;
+//				case 1500:  break;
+//			}
+//	}
+
+	Remote_Routine();//遥控器数据处理
+
 }
 
