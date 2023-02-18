@@ -6,6 +6,7 @@
 #include "drv_IMU.h"
 #include "drv_NimingFlow.h"
 #include "arm_math.h"
+#include "func_remote.h"
 
 //电机的线性化模型:W0 + k*duty
 #define propeller_spe_base 1000 //基础转速
@@ -77,28 +78,36 @@ static void matrix_control(void)
 		HERO_copter.copter_mixer.motor_duty4 = 0;
 }
 
+//姿态控制
 static void atti_1ms_entry(void *parameter)
 {
 	rt_sem_take(&atti_1ms_sem,RT_WAITING_FOREVER);
 
-	float error = 0;
-	
-	error = HERO_copter.copter_pitch.ang.set - HERO_IMU.pitch ;
-	PID_Calculate(&HERO_copter.copter_pitch.ang,error);
-	error = HERO_copter.copter_pitch.ang.out - HERO_IMU.pitch_speed;
-	PID_Calculate(&HERO_copter.copter_pitch.spe,error);
+	float error1 = 0,error2 = 0,error3 = 0;
+	if(copter_state.mode == position)
+	{
+		error1 = HERO_copter.copter_pitch.ang.set - HERO_IMU.pitch ;
+		error2 = HERO_copter.copter_roll.ang.set - HERO_IMU.roll ;
+	}else if( copter_state.mode == height || copter_state.mode == stabilization)
+	{
+		error1 = copter_remote.pitch_deg - HERO_IMU.pitch ;
+		error2 = copter_remote.roll_deg - HERO_IMU.roll ;
+	}
+
+	PID_Calculate(&HERO_copter.copter_pitch.ang,error1);
+	error1 = HERO_copter.copter_pitch.ang.out - HERO_IMU.pitch_speed;
+	PID_Calculate(&HERO_copter.copter_pitch.spe,error1);
 	HERO_copter.copter_mixer.tau_y = HERO_copter.copter_pitch.ang.out;
 
-	error = HERO_copter.copter_roll.ang.set - HERO_IMU.pitch ;
-	PID_Calculate(&HERO_copter.copter_roll.ang,error);
-	error = HERO_copter.copter_roll.ang.out - HERO_IMU.roll_speed;
-	PID_Calculate(&HERO_copter.copter_roll.spe,error);
+	PID_Calculate(&HERO_copter.copter_roll.ang,error2);
+	error2 = HERO_copter.copter_roll.ang.out - HERO_IMU.roll_speed;
+	PID_Calculate(&HERO_copter.copter_roll.spe,error2);
 	HERO_copter.copter_mixer.tau_x = HERO_copter.copter_roll.ang.out;
 
-	error = 0 - HERO_IMU.yaw ;
-	PID_Calculate(&HERO_copter.copter_yaw.ang,error);
-	error = HERO_copter.copter_yaw.ang.out - HERO_IMU.yaw_speed;
-	PID_Calculate(&HERO_copter.copter_yaw.spe,error);
+	error3 = 0 - HERO_IMU.yaw ;
+	PID_Calculate(&HERO_copter.copter_yaw.ang,error3);
+	error3 = HERO_copter.copter_yaw.ang.out - HERO_IMU.yaw_speed;
+	PID_Calculate(&HERO_copter.copter_yaw.spe,error3);
 	HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.ang.out;
 
 	matrix_control();//混控器进行动力分配
@@ -110,29 +119,46 @@ static void atti_1ms_entry(void *parameter)
 
 }
 
+//位置控制
 static void pos_20ms_entry(void *parameter)
 {
 	rt_sem_take(&pos_20ms_sem,RT_WAITING_FOREVER);
 
 	float error = 0;
 	
-	error = 0 - NiMingFlow_data.pos_x;
-	PID_Calculate(&HERO_copter.copter_x.pos,error);
-	error = HERO_copter.copter_x.pos.out - NiMingFlow_data.Vx_Flow;
-	PID_Calculate(&HERO_copter.copter_x.vec,error);
-	
-	error = 0 - NiMingFlow_data.pos_y;
-	PID_Calculate(&HERO_copter.copter_y.pos,error);
-	error = HERO_copter.copter_y.pos.out - NiMingFlow_data.Vy_Flow;
-	PID_Calculate(&HERO_copter.copter_y.vec,error);
-	
-	error = 0 - NiMingFlow_data.distance;
-	PID_Calculate(&HERO_copter.copter_h.pos,error);
-	error = HERO_copter.copter_h.pos.out - - NiMingFlow_data.distance_v;
-	PID_Calculate(&HERO_copter.copter_h.vec,error);
-	HERO_copter.copter_mixer.f =  HERO_copter.copter_h.vec.out + MASS*g;
+	if(copter_state.mode == position )
+	{
+		error = 0 - NiMingFlow_data.pos_x;
+		PID_Calculate(&HERO_copter.copter_x.pos,error);
+		error = HERO_copter.copter_x.pos.out - NiMingFlow_data.Vx_Flow;
+		PID_Calculate(&HERO_copter.copter_x.vec,error);
+		
+		error = 0 - NiMingFlow_data.pos_y;
+		PID_Calculate(&HERO_copter.copter_y.pos,error);
+		error = HERO_copter.copter_y.pos.out - NiMingFlow_data.Vy_Flow;
+		PID_Calculate(&HERO_copter.copter_y.vec,error);
+		
+		error = 0 - NiMingFlow_data.distance;
+		PID_Calculate(&HERO_copter.copter_h.pos,error);
+		error = HERO_copter.copter_h.pos.out - - NiMingFlow_data.distance_v;
+		PID_Calculate(&HERO_copter.copter_h.vec,error);
+		HERO_copter.copter_mixer.f =  HERO_copter.copter_h.vec.out + MASS*g;
 
-	earth_body_tranfer();//坐标变换
+		earth_body_tranfer();//坐标变换
+	}else if(copter_state.mode == height)
+	{
+
+		error = 0 - NiMingFlow_data.distance;
+		PID_Calculate(&HERO_copter.copter_h.pos,error);
+		error = HERO_copter.copter_h.pos.out - NiMingFlow_data.distance_v;
+		PID_Calculate(&HERO_copter.copter_h.vec,error);
+		HERO_copter.copter_mixer.f =  HERO_copter.copter_h.vec.out + MASS*g;
+
+	}else if(copter_state.mode == stabilization)
+	{
+		HERO_copter.copter_mixer.f =  copter_remote.f ;
+	}
+
 }
 
 static void atti_1ms_IRQHandler(void *parameter)
