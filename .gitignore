@@ -40,3 +40,5 @@ RTE/
 settings/
 *.uvguix*
 cconfig.h
+*.uvgui.---------
+*.uvgui.19859577606
