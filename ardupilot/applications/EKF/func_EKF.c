@@ -1,8 +1,5 @@
 #include "func_EKF.h"
-#include "drv_matrix.h"
 #include "func_bmi088.h"
-#include "arm_math.h"
-#include <math.h>
 #include "drv_IMU.h"
 
 EKF_IMU HERO_EKF_IMU = {0};

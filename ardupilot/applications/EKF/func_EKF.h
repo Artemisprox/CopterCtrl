@@ -1,5 +1,5 @@
 #include "arm_math.h"
-#include "drv_matrix.h"
+#include "drv_utils.h"
 
 #define EKF_sin(a)  arm_sin_f32(a)
 #define EKF_cos(a)  arm_cos_f32(a)
