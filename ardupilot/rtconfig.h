@@ -209,10 +209,14 @@
 #define BSP_USING_SETPLANNING
 #define BSP_USING_QUEUE
 #define BSP_USING_UTILS
+#define BSP_USING_DATASERVER
+#define DATA_MAX_SIZE 2048
+#define DataServer_Handle_MAX 50
 
 /* Use the filter module(s) */
 
 #define BSP_USING_EXACTSMOOTH
+#define BSP_USING_ACCCLAMP
 
 /* Use the key-menu module(s) */
 

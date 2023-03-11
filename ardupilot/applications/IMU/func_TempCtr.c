@@ -77,11 +77,11 @@ static void TempCTR_thread(void *parameter)
     float Error;
     int ifsemOK;
     static int TempCTR_count = 0;
-    SWDG_START(SWDG_TEMPCTRL_ID);
+//    SWDG_START(SWDG_TEMPCTRL_ID);
     while (1)
     {
         /* 读取信号量 */
-        SWDG_FEED(SWDG_TEMPCTRL_ID);
+//        SWDG_FEED(SWDG_TEMPCTRL_ID);
         ifsemOK = rt_sem_take(&temp_pid_sem, 1400);
 
         HERO_TPctr.TempCTR_pid.set = IMUTempSet; // 更新设定值
@@ -108,7 +108,7 @@ static void TempCTR_thread(void *parameter)
 
         if (ifsemOK == -RT_ETIMEOUT)
         { // 由于超时进入的该线程
-            SWDG_FEED(SWDG_TEMPCTRL_ID);
+//            SWDG_FEED(SWDG_TEMPCTRL_ID);
             rt_thread_delay(1000);
         }
     }

@@ -1,21 +1,24 @@
 #include <rtthread.h>
 
-#define f_max            30//×î´óÍÆÁ¦
-#define pitch_max_degree 10//×î´ó½Ç¶È
-#define roll_max_degree  10//×î´ó½Ç¶È
-#define yaw_max_spe      30//×î´óÐý×ªËÙ¶È
+#define f_max            30//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define pitch_max_degree 10//ï¿½ï¿½ï¿½Ç¶ï¿½
+#define roll_max_degree  10//ï¿½ï¿½ï¿½Ç¶ï¿½
+#define yaw_max_spe      30//ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Ù¶ï¿½
 
-#define rocker_min       36.0f  //×îÐ¡Õ¼¿Õ±È
-#define rocker_max       72.0f  //×î´óÕ¼¿Õ±È
-#define rocker_inter     2.0f		//ÔÚÏàÍ¬Î»ÖÃÏÂÒ¡¸ËµÄÐÅºÅÎó²î
+#define rocker_min       36.0f  //ï¿½ï¿½Ð¡Õ¼ï¿½Õ±ï¿½
+#define rocker_max       72.0f  //ï¿½ï¿½ï¿½Õ¼ï¿½Õ±ï¿½
+#define rocker_middle    50.0f
+#define rocker_inter     2.0f		//ï¿½ï¿½ï¿½ï¿½Í¬Î»ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½Ëµï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½
 
-#define stabilization    1   //×ÔÎÈÄ£Ê½
-#define height           2   //¶¨¸ßÄ£Ê½
-#define position         3   //¶¨µãÄ£Ê½
+#define stabilization    1   //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+#define height           2   //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+#define position         3   //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
 
-#define ready                 1   //×¼±¸
-#define armed                 0   //Æð·É
-#define emergency_stop        2   //½ô¼±Í£Ö¹
+#define ready                 1   //×¼ï¿½ï¿½
+#define armed                 0   //ï¿½ï¿½ï¿½
+#define emergency_stop        2   //ï¿½ï¿½ï¿½ï¿½Í£Ö¹
+
+#define LPF_k                0.9
 
 typedef struct
 {
@@ -23,14 +26,15 @@ typedef struct
 	float pitch_deg;
 	float roll_deg;
 	float yaw_spe;
+
+	uint8_t pitch_middle_flag;
+	uint8_t roll_middle_flag;
+	uint8_t yaw_middle_flag;
+	uint8_t throttle_low_flag;
+
+	uint8_t switch_arm;
+	uint8_t switch_mode;
+	uint8_t switch_arm_change;
+	uint8_t switch_mode_change;
+
 }remote_data;
-
-typedef struct 
-{
-	uint8_t mode;
-	uint8_t arm;
-	uint8_t emergency;
-}switch_state;
-
-extern remote_data copter_remote ;
-extern switch_state copter_state ;

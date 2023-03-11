@@ -93,7 +93,7 @@ static void AttiCalcu_thread(void *parameter)
     AHRS_Accl_t AcclFix;       // 经过坐标变换后的加速度计数据
     AHRS_Accl_t AcclSum = {0}; // 启动时
     AHRS_Gyro_t GyroFix;       // 经过坐标变换和零飘校正后的角速度数据
-    SWDG_START(SWDG_IMU_ID);		
+//    SWDG_START(SWDG_IMU_ID);		
 		
     while (1)
     {
@@ -110,7 +110,7 @@ static void AttiCalcu_thread(void *parameter)
                 AcclSum.x += AcclFix.x;
                 AcclSum.y += AcclFix.y;
                 AcclSum.z += AcclFix.z;
-                SWDG_FEED(SWDG_IMU_ID);
+//                SWDG_FEED(SWDG_IMU_ID);
                 continue;
             }
             else
@@ -141,7 +141,7 @@ static void AttiCalcu_thread(void *parameter)
         }
         // 刷新姿态角数据
         IMU_SetData_Extern(GyroFix.y, GyroFix.z, GyroFix.x, HERO_Eulr.pit, HERO_Eulr.yaw, HERO_Eulr.rol, AttiReady_Flag);
-        SWDG_FEED(SWDG_IMU_ID);
+//        SWDG_FEED(SWDG_IMU_ID);
     }
 }
 
