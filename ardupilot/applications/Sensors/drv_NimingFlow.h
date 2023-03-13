@@ -11,8 +11,11 @@ typedef struct
 	int16_t Vy_Flow;
 	int16_t pos_x;
 	int16_t pos_y;
-	uint8_t  data_Valid;
-	uint8_t  Data_fresh_time;
+	
+	uint8_t  pos_data_Valid;
+	uint8_t  height_data_Valid;
+	uint32_t height_data_fresh_time;
+	uint32_t pos_data_fresh_time;
 	uint8_t  quality;
 } NiMingFlow_Rec;
 
@@ -26,4 +29,3 @@ typedef struct
 rt_err_t NiMingFlow_Init(void);
 
 extern NiMingFlow_Rec NiMingFlow_data;
-

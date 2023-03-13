@@ -6,6 +6,6 @@ src = Glob('*.c')
 
 CPPPATH = [cwd]
 
-group = DefineGroup('copter_state', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Communication', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

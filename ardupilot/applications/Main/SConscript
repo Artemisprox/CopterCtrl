@@ -4,6 +4,7 @@ cwd = GetCurrentDir()
 
 src = Glob('*.c')
 src += ['drv_thread.h']
+src += ['roboselect.h']
 
 CPPPATH = [cwd]
 

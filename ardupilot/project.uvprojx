@@ -335,7 +335,7 @@
               <MiscControls />
               <Define>__TARGET_FPU_VFP, USE_HAL_DRIVER, STM32F407xx, __FPU_PRESENT=1U, __ARM_FEATURE_DSP=1, ARM_MATH_ROUNDING, ARM_MATH_MATRIX_CHECK, __FPU_USED=1U, ARM_MATH_CM4</Define>
               <Undefine />
-              <IncludePath>.;..\..\..\..\include;applications\coopter_state;applications\copter_motor;applications\EKF;applications\IMU;applications\Main;applications\RC_PPM;applications\Sensors;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\libraries\HAL_Drivers\drv_flash;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\Remote;..\..\PublicLib\Monitor;..\..\PublicLib\Software\CPU_Usage;..\..\PublicLib\Software\DataServer;..\..\PublicLib\Software\Filter;..\..\PublicLib\Software\Menu;..\..\PublicLib\Software\Motor;..\..\PublicLib\Software\Pid;..\..\PublicLib\Software\Queue;..\..\PublicLib\Software\SetPlanning;..\..\PublicLib\Software\Utils;..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\..\include;applications\Communication;applications\coopter_state;applications\copter_motor;applications\EKF;applications\IMU;applications\Main;applications\RC_PPM;applications\Sensors;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\libraries\HAL_Drivers\drv_flash;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\Remote;..\..\PublicLib\Monitor;..\..\PublicLib\Software\CPU_Usage;..\..\PublicLib\Software\DataServer;..\..\PublicLib\Software\Filter;..\..\PublicLib\Software\Menu;..\..\PublicLib\Software\Motor;..\..\PublicLib\Software\Pid;..\..\PublicLib\Software\Queue;..\..\PublicLib\Software\SetPlanning;..\..\PublicLib\Software\Utils;..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -478,7 +478,31 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>copter_motor</GroupName>
+          <GroupName>Communication</GroupName>
+          <Files>
+            <File>
+              <FileName>battery.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\Communication\battery.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>can_receive.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\Communication\can_receive.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_canthread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\Communication\drv_canthread.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>copter_state</GroupName>
           <Files>
             <File>
               <FileName>func_state.c</FileName>
@@ -486,6 +510,16 @@
               <FilePath>applications\coopter_state\func_state.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>mod_error_handle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\coopter_state\mod_error_handle.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>copter_motor</GroupName>
           <Files>
             <File>
               <FileName>drv_PWM_motor.c</FileName>
@@ -598,6 +632,13 @@
               <FileName>drv_thread.h</FileName>
               <FileType>5</FileType>
               <FilePath>applications\Main\drv_thread.h</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>roboselect.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\Main\roboselect.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -141,7 +141,7 @@ static void AttiCalcu_thread(void *parameter)
         }
         // 刷新姿态角数据
         IMU_SetData_Extern(GyroFix.y, GyroFix.z, GyroFix.x, HERO_Eulr.pit, HERO_Eulr.yaw, HERO_Eulr.rol, AttiReady_Flag);
-//        SWDG_FEED(SWDG_IMU_ID);
+        //SWDG_FEED(SWDG_IMU_ID);
     }
 }
 

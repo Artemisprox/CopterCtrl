@@ -93,18 +93,25 @@ void NiMingFlow_DataProcess(uint8_t *pData,uint8_t rec_length)
 		
 		if(!state)//状态错误
 		{
-			NiMingFlow_data.data_Valid = 0;
+			NiMingFlow_data.pos_data_Valid = 0;
 			return ;
 		}
 		
 		if(mode == 2)
 		{
-			NiMingFlow_data.data_Valid = 1;
 			NiMingFlow_data.Vx_Flow =  ((uint16_t)pData[9] | ((uint16_t)pData[10] << 8));
 			NiMingFlow_data.Vy_Flow =  ((uint16_t)pData[11] | ((uint16_t)pData[12] << 8));
 			NiMingFlow_data.pos_x   =  ((uint16_t)pData[13] | ((uint16_t)pData[14] << 8));
 			NiMingFlow_data.pos_y   =  ((uint16_t)pData[15] | ((uint16_t)pData[16] << 8));
 			NiMingFlow_data.quality =  pData[17];
+            
+            if(NiMingFlow_data.quality > 150)
+            {
+                NiMingFlow_data.pos_data_Valid = 1;
+                NiMingFlow_data.pos_data_fresh_time = rt_tick_get(); // 刷新数据的更新时间
+            }
+            else NiMingFlow_data.pos_data_Valid = 0;
+
 		}else if(mode ==0)
 		{
 			Nimingflow_1.Vx_flow = pData[6];
@@ -128,15 +135,17 @@ void NiMingFlow_DataProcess(uint8_t *pData,uint8_t rec_length)
 		if(distance != 0xFFFFFFFF )
 		{
 			NiMingFlow_data.distance = distance;
-			NiMingFlow_data.data_Valid = 1;
+			NiMingFlow_data.height_data_Valid = 1;
+            NiMingFlow_data.height_data_fresh_time = rt_tick_get(); // 刷新数据的更新时间
             if(first_flag != 0)
-                NiMingFlow_data.distance_v = distance - distance_last;//使用高度变化量估计速度
+                NiMingFlow_data.distance_v = (distance - distance_last)/0.02f;//使用高度变化量估计速度
             else 
                 first_flag++;
             distance_last = distance;
 		}
-		else NiMingFlow_data.data_Valid = 0;
+		else NiMingFlow_data.height_data_Valid = 0;
 	}
+
 }
 
 
@@ -166,8 +175,6 @@ static void serial_thread_entry(void *parameter)
             NiMingFlow_rx_buffer[rx_length] = '\0';
 
             NiMingFlow_DataProcess(NiMingFlow_rx_buffer,rx_length);
-
-            NiMingFlow_data.Data_fresh_time = rt_tick_get(); // 刷新数据的更新时间
 						
 						
      //释放数据处理信号量

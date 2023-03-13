@@ -13,8 +13,6 @@ static int pulse_flag = 0;
 
 RC_PPM_data copter_rec_data;
 
-static rt_thread_t RC_PPM = RT_NULL;
-
 struct rt_semaphore RC_PPM_rec;
 
 rt_err_t RC_PPM_Init(void)
@@ -22,6 +20,8 @@ rt_err_t RC_PPM_Init(void)
 	MX_TIM13_Init();
 	
 	rt_sem_init(&RC_PPM_rec, "RC_PPM_rec", 0, RT_IPC_FLAG_FIFO);
+	
+	rt_thread_t RC_PPM = RT_NULL;
 	
 	RC_PPM = rt_thread_create(
         "RC_PPM_receive",                     //Ïß³ÌÃû
@@ -92,7 +92,7 @@ void Remote_Routine_Set(void (*Func)(void))
     Remote_Routine = Func;
 }
 
-static int RC_S1_now = 0 ,RC_S2_now = 0 , RC_Roller_now = 0;
+static int RC_S1_now = 0 ,RC_S2_now = 0 ;
 
 void RC_PPM_REC_Thread(void *Para)
 {
