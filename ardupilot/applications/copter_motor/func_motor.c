@@ -9,14 +9,14 @@
 #include "func_sensor.h"
 #include "func_state.h"
 
-//��������Ի�ģ��:W0 + k*duty
-#define propeller_spe_base 1000 //����ת��
-#define propeller_spe_gain 6374 //ռ�ձȵ�ת������
+//电机模型:W0 + k*duty
+#define propeller_spe_base 1000 //基础转速
+#define propeller_spe_gain 6374 //转速增益
 
-static struct rt_semaphore atti_1ms_sem; /* ���ڽ�����Ϣ���ź��� */
-static struct rt_semaphore pos_20ms_sem; /* ���ڽ�����Ϣ���ź��� */
-static struct rt_timer atti_1ms_tim;         /* �ջ��̶߳�ʱ�� */
-static struct rt_timer pos_20ms_tim;         /* �ջ��̶߳�ʱ�� */
+static struct rt_semaphore atti_1ms_sem; /* 姿态环 */
+static struct rt_semaphore pos_20ms_sem; /* 位置环 */
+static struct rt_timer atti_1ms_tim;         /* 姿态环定时器 */
+static struct rt_timer pos_20ms_tim;         /* 位置环定时器 */
 
 copter_ctrl HERO_copter;
 state HERO_state;
@@ -32,7 +32,7 @@ static void earth_body_tranfer(void)
 										+ sinf(HERO_IMU.yaw)*HERO_copter.copter_y.vec.out;
 }
 
-//��������ж�������
+//混控器
 static void matrix_control(void)
 {
 	mixer_spe temp;
@@ -40,45 +40,29 @@ static void matrix_control(void)
 					- HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
 					- HERO_copter.copter_mixer.tau_y*COPTER_ARM_LENGTH/Ct
 					- HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
-	if(temp.motor_spe1 >= propeller_spe_base)
-		{
-			HERO_copter.copter_mixer.motor_duty1 = (__sqrtf(temp.motor_spe1) - propeller_spe_base)/propeller_spe_gain;//����õ�ռ�ձ�
-		}
-	else 
-		HERO_copter.copter_mixer.motor_duty1 = 0;
+	HERO_copter.copter_mixer.motor_duty1 = (__sqrtf(temp.motor_spe1) - propeller_spe_base)/propeller_spe_gain;//最终占空比
+	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty1,MIN_DUTY,MAX_DUTY);
 
 	temp.motor_spe2 = HERO_copter.copter_mixer.f/Ct
 					+ HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
 					+ HERO_copter.copter_mixer.tau_y*COPTER_ARM_LENGTH/Ct
 					- HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
-    if(temp.motor_spe2 >= propeller_spe_base)
-		{
-			HERO_copter.copter_mixer.motor_duty2 = (__sqrtf(temp.motor_spe2) - propeller_spe_base)/propeller_spe_gain;//����õ�ռ�ձ�
-		}
-	else 
-		HERO_copter.copter_mixer.motor_duty2 = 0;
+	HERO_copter.copter_mixer.motor_duty2 = (__sqrtf(temp.motor_spe2) - propeller_spe_base)/propeller_spe_gain;//最终占空比
+	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty2,MIN_DUTY,MAX_DUTY);
 
     temp.motor_spe3 = HERO_copter.copter_mixer.f/Ct
 					+ HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
 					- HERO_copter.copter_mixer.tau_y*COPTER_ARM_LENGTH/Ct
 					+ HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
-	if(temp.motor_spe3 >= propeller_spe_base)
-		{
-			HERO_copter.copter_mixer.motor_duty3 = (__sqrtf(temp.motor_spe3) - propeller_spe_base)/propeller_spe_gain;//����õ�ռ�ձ�
-		}
-	else 
-		HERO_copter.copter_mixer.motor_duty3 = 0;
+	HERO_copter.copter_mixer.motor_duty3 = (__sqrtf(temp.motor_spe3) - propeller_spe_base)/propeller_spe_gain;//最终占空比
+	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty3,MIN_DUTY,MAX_DUTY);
 	
 	temp.motor_spe4 = HERO_copter.copter_mixer.f/Ct
 					- HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
 					+ HERO_copter.copter_mixer.tau_y*COPTER_ARM_LENGTH/Ct
 					+ HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
-	if(temp.motor_spe4 >= propeller_spe_base)
-		{
-			HERO_copter.copter_mixer.motor_duty4 = (__sqrtf(temp.motor_spe4) - propeller_spe_base)/propeller_spe_gain;//����õ�ռ�ձ�
-		}
-	else 
-		HERO_copter.copter_mixer.motor_duty4 = 0;
+	HERO_copter.copter_mixer.motor_duty4 = (__sqrtf(temp.motor_spe4) - propeller_spe_base)/propeller_spe_gain;//最终占空比
+	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty4,MIN_DUTY,MAX_DUTY);
 }
 
 //速度环控制
@@ -89,7 +73,7 @@ static void velocity_control(float error_x, float error_y, pid_t* x, pid_t* y)
 }
 
 
-//��̬����
+//姿态环线程
 static void atti_1ms_entry(void *parameter)
 {
 	rt_sem_take(&atti_1ms_sem,RT_WAITING_FOREVER);
@@ -185,7 +169,7 @@ static void pos_20ms_IRQHandler(void *parameter)
 
 static void motor_start(void)
 {
-    /*��ʱ�������߳�*/
+    /*线程初始化*/
     rt_thread_t thread;
     rt_sem_init(&atti_1ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);
 		rt_sem_init(&pos_20ms_sem, "copter_pos", 0, RT_IPC_FLAG_FIFO);
@@ -194,12 +178,12 @@ static void motor_start(void)
     if (thread != RT_NULL)
         rt_thread_startup(thread);
 
-    /*��ʱ���ж�*/
+    /*定时线程*/
     rt_timer_init(&atti_1ms_tim, "atti_Tim", atti_1ms_IRQHandler, RT_NULL, 1,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 		 rt_timer_init(&pos_20ms_tim, "pos_Tim", pos_20ms_IRQHandler, RT_NULL, 20,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
-    /* ������ʱ�� */
+    /* 开启定时器 */
     rt_timer_start(&atti_1ms_tim);
 		rt_timer_start(&pos_20ms_tim);
 }
@@ -208,14 +192,14 @@ void Motor_init(void)
 {
 	
 	MX_TIM1_PWM_Init();
-	//��̬
+	//姿态环
 	pid_init(&HERO_copter.copter_pitch.ang,PITCHANG_PID);
 	pid_init(&HERO_copter.copter_pitch.spe,PITCHSPE_PID);
 	pid_init(&HERO_copter.copter_roll.ang,ROLLANG_PID);
 	pid_init(&HERO_copter.copter_roll.spe,ROLLSPE_PID);
 	pid_init(&HERO_copter.copter_yaw.ang,YAWANG_PID);
 	pid_init(&HERO_copter.copter_yaw.spe,YAWSPE_PID);
-	//λ��
+	//位置环
 	pid_init(&HERO_copter.copter_h.pos,POS_H_PID);
 	pid_init(&HERO_copter.copter_h.pos,VEC_H_PID);
 	pid_init(&HERO_copter.copter_x.pos,POS_X_PID);

@@ -4,6 +4,9 @@
 #define sinf(a)  arm_sin_f32(a)
 #define cosf(a)  arm_cos_f32(a)
 
+#define MAX_DUTY   0.8
+#define MIN_DUTY   0.2
+
 typedef struct
 {
 	pid_t pos;
@@ -57,6 +60,3 @@ typedef struct
 	
 	mixer copter_mixer;
 }copter_ctrl;
-
-
-
