@@ -1,31 +1,37 @@
 #include <rtthread.h>
 
-#define f_max            30//�������
-#define pitch_max_degree 10//���Ƕ�
-#define roll_max_degree  10//���Ƕ�
-#define yaw_max_spe      30//�����ת�ٶ�
+#define HEIGHT_MAX_V    0.5f //最大上升速度
+#define POS_X_MAX_V     1.0f //最大X轴速度
+#define POS_Y_MAX_V     1.0f //最大Y轴速度
 
-#define rocker_min       36.0f  //��Сռ�ձ�
-#define rocker_max       72.0f  //���ռ�ձ�
-#define rocker_middle    50.0f
-#define rocker_inter     2.0f		//����ͬλ����ҡ�˵��ź����
+#define F_MAX            30 //最大升力
+#define PITCH_MAX_DEG    10 //最大俯仰角
+#define ROLL_MAX_DEG     10 //最大翻滚角
+#define YAW_MAX_SPE      30 //最大偏航角角度度
 
-#define stabilization    1   //����ģʽ
-#define height           2   //����ģʽ
-#define position         3   //����ģʽ
+#define rocker_min       36.0f  //遥控器摇杆低位
+#define rocker_max       72.0f  //遥控器摇杆高位
+#define rocker_middle    50.0f  //遥控器摇杆低位
+#define rocker_width     36.0f  //遥控器信号占空比总宽度
+#define rocker_inter     2.0f	//遥控器信号
 
-#define ready                 1   //׼��
-#define armed                 0   //���
-#define emergency_stop        2   //����ֹͣ
 
-#define LPF_k                0.9
+#define STABILIZATION    1   
+#define HEIGHT           2  
+#define POSITION         3  
+
+#define READY                 1   
+#define ARMED                 0   
+#define EMERGENCY_STOP        2   
+
+#define LPF_k                0.9f
 
 typedef struct
 {
-	float f;
-	float pitch_deg;
-	float roll_deg;
-	float yaw_spe;
+	float throttle;
+	float pitch;
+	float roll;
+	float yaw;
 
 	uint8_t pitch_middle_flag;
 	uint8_t roll_middle_flag;
@@ -37,4 +43,5 @@ typedef struct
 	uint8_t switch_arm_change;
 	uint8_t switch_mode_change;
 
+	uint32_t fresh_time;
 }remote_data;

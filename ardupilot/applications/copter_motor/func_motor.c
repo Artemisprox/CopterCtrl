@@ -4,23 +4,26 @@
 #include "roboselect.h"
 #include "drv_thread.h"
 #include "drv_IMU.h"
-#include "drv_NimingFlow.h"
 #include "arm_math.h"
 #include "func_remote.h"
+#include "func_sensor.h"
+#include "func_state.h"
 
-//µÁª˙µƒœﬂ–‘ªØƒ£–Õ:W0 + k*duty
-#define propeller_spe_base 1000 //ª˘¥°◊™ÀŸ
-#define propeller_spe_gain 6374 //’ºø’±»µƒ◊™ÀŸ‘ˆ“Ê
+//ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ‘ªÔøΩƒ£ÔøΩÔøΩ:W0 + k*duty
+#define propeller_spe_base 1000 //ÔøΩÔøΩÔøΩÔøΩ◊™ÔøΩÔøΩ
+#define propeller_spe_gain 6374 //’ºÔøΩ’±»µÔøΩ◊™ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
 
-static struct rt_semaphore atti_1ms_sem; /* ”√”⁄Ω” ’œ˚œ¢µƒ–≈∫≈¡ø */
-static struct rt_semaphore pos_20ms_sem; /* ”√”⁄Ω” ’œ˚œ¢µƒ–≈∫≈¡ø */
-static struct rt_timer atti_1ms_tim;         /* ±’ª∑œﬂ≥Ã∂® ±∆˜ */
-static struct rt_timer pos_20ms_tim;         /* ±’ª∑œﬂ≥Ã∂® ±∆˜ */
+static struct rt_semaphore atti_1ms_sem; /* ÔøΩÔøΩÔøΩ⁄ΩÔøΩÔøΩÔøΩÔøΩÔøΩœ¢ÔøΩÔøΩÔøΩ≈∫ÔøΩÔøΩÔøΩ */
+static struct rt_semaphore pos_20ms_sem; /* ÔøΩÔøΩÔøΩ⁄ΩÔøΩÔøΩÔøΩÔøΩÔøΩœ¢ÔøΩÔøΩÔøΩ≈∫ÔøΩÔøΩÔøΩ */
+static struct rt_timer atti_1ms_tim;         /* ÔøΩ’ªÔøΩÔøΩﬂ≥Ã∂ÔøΩ ±ÔøΩÔøΩ */
+static struct rt_timer pos_20ms_tim;         /* ÔøΩ’ªÔøΩÔøΩﬂ≥Ã∂ÔøΩ ±ÔøΩÔøΩ */
 
 copter_ctrl HERO_copter;
 state HERO_state;
+remote_data control_data;
+status copter_status;
 
-//x,y¥Ûµÿ◊¯±Íœµ±‰ªªµΩª˙ÃÂ◊¯±Íœµ
+//Êú∫‰ΩìÁ≥ªÂèòÊç¢Âà∞Â§ßÂú∞Á≥ª
 static void earth_body_tranfer(void)
 {	
 	HERO_copter.copter_pitch.ang.set = ((1 - cosf(HERO_IMU.yaw)*cosf(HERO_IMU.yaw))/sinf(HERO_IMU.yaw))*HERO_copter.copter_x.vec.out
@@ -29,7 +32,7 @@ static void earth_body_tranfer(void)
 										+ sinf(HERO_IMU.yaw)*HERO_copter.copter_y.vec.out;
 }
 
-//ªÏøÿ∆˜Ω¯––∂Ø¡¶∑÷≈‰
+//ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ–∂ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
 static void matrix_control(void)
 {
 	mixer_spe temp;
@@ -39,7 +42,7 @@ static void matrix_control(void)
 					- HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
 	if(temp.motor_spe1 >= propeller_spe_base)
 		{
-			HERO_copter.copter_mixer.motor_duty1 = (__sqrtf(temp.motor_spe1) - propeller_spe_base)/propeller_spe_gain;//º∆À„µ√µΩ’ºø’±»
+			HERO_copter.copter_mixer.motor_duty1 = (__sqrtf(temp.motor_spe1) - propeller_spe_base)/propeller_spe_gain;//ÔøΩÔøΩÔøΩÔøΩ√µÔøΩ’ºÔøΩ’±ÔøΩ
 		}
 	else 
 		HERO_copter.copter_mixer.motor_duty1 = 0;
@@ -50,7 +53,7 @@ static void matrix_control(void)
 					- HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
     if(temp.motor_spe2 >= propeller_spe_base)
 		{
-			HERO_copter.copter_mixer.motor_duty2 = (__sqrtf(temp.motor_spe2) - propeller_spe_base)/propeller_spe_gain;//º∆À„µ√µΩ’ºø’±»
+			HERO_copter.copter_mixer.motor_duty2 = (__sqrtf(temp.motor_spe2) - propeller_spe_base)/propeller_spe_gain;//ÔøΩÔøΩÔøΩÔøΩ√µÔøΩ’ºÔøΩ’±ÔøΩ
 		}
 	else 
 		HERO_copter.copter_mixer.motor_duty2 = 0;
@@ -61,7 +64,7 @@ static void matrix_control(void)
 					+ HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
 	if(temp.motor_spe3 >= propeller_spe_base)
 		{
-			HERO_copter.copter_mixer.motor_duty3 = (__sqrtf(temp.motor_spe3) - propeller_spe_base)/propeller_spe_gain;//º∆À„µ√µΩ’ºø’±»
+			HERO_copter.copter_mixer.motor_duty3 = (__sqrtf(temp.motor_spe3) - propeller_spe_base)/propeller_spe_gain;//ÔøΩÔøΩÔøΩÔøΩ√µÔøΩ’ºÔøΩ’±ÔøΩ
 		}
 	else 
 		HERO_copter.copter_mixer.motor_duty3 = 0;
@@ -72,46 +75,63 @@ static void matrix_control(void)
 					+ HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
 	if(temp.motor_spe4 >= propeller_spe_base)
 		{
-			HERO_copter.copter_mixer.motor_duty4 = (__sqrtf(temp.motor_spe4) - propeller_spe_base)/propeller_spe_gain;//º∆À„µ√µΩ’ºø’±»
+			HERO_copter.copter_mixer.motor_duty4 = (__sqrtf(temp.motor_spe4) - propeller_spe_base)/propeller_spe_gain;//ÔøΩÔøΩÔøΩÔøΩ√µÔøΩ’ºÔøΩ’±ÔøΩ
 		}
 	else 
 		HERO_copter.copter_mixer.motor_duty4 = 0;
 }
 
-//◊ÀÃ¨øÿ÷∆
+//ÈÄüÂ∫¶ÁéØÊéßÂà∂
+static void velocity_control(float error_x, float error_y, pid_t* x, pid_t* y)
+{
+	PID_Calculate(x,error_x);
+	PID_Calculate(y,error_y);
+}
+
+
+//ÔøΩÔøΩÃ¨ÔøΩÔøΩÔøΩÔøΩ
 static void atti_1ms_entry(void *parameter)
 {
 	rt_sem_take(&atti_1ms_sem,RT_WAITING_FOREVER);
 
-	float error1 = 0,error2 = 0,error3 = 0;
-	if(copter_state.mode == position)
+	/*‰ªéÊï∞ÊçÆÊúçÂä°Âô®Êõ¥Êñ∞Êï∞ÊçÆ*/
+	IMU_t IMU_data;
+
+	float error_p = 0,error_r = 0,error_y = 0;
+	if(!copter_status.emergency)
 	{
-		error1 = HERO_copter.copter_pitch.ang.set - HERO_IMU.pitch ;
-		error2 = HERO_copter.copter_roll.ang.set - HERO_IMU.roll ;
-	}else if( copter_state.mode == height || copter_state.mode == stabilization)
+		switch(copter_status.mode)
+		{
+			case POSITION:
+				error_p = HERO_copter.copter_pitch.ang.set - HERO_IMU.pitch ;
+				error_r = HERO_copter.copter_roll.ang.set - HERO_IMU.roll ;
+			default:
+				error_p = control_data.pitch - HERO_IMU.pitch ;
+				error_r = control_data.roll - HERO_IMU.roll ;
+		}
+
+		PID_Calculate(&HERO_copter.copter_pitch.ang,error_p);
+		error_p = HERO_copter.copter_pitch.ang.out - HERO_IMU.pitch_speed;
+		PID_Calculate(&HERO_copter.copter_pitch.spe,error_p);
+		HERO_copter.copter_mixer.tau_y = HERO_copter.copter_pitch.ang.out;
+
+		PID_Calculate(&HERO_copter.copter_roll.ang,error_r);
+		error_r = HERO_copter.copter_roll.ang.out - HERO_IMU.roll_speed;
+		PID_Calculate(&HERO_copter.copter_roll.spe,error_r);
+		HERO_copter.copter_mixer.tau_x = HERO_copter.copter_roll.ang.out;
+
+		error_y = control_data.yaw - HERO_IMU.yaw_speed;
+		PID_Calculate(&HERO_copter.copter_yaw.spe,error_y);
+		HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.ang.out;
+
+		matrix_control();//Ê∑∑ÊéßÂô®
+	}else
 	{
-		error1 = copter_remote.pitch_deg - HERO_IMU.pitch ;
-		error2 = copter_remote.roll_deg - HERO_IMU.roll ;
+		HERO_copter.copter_mixer.motor_duty1 = 0;
+		HERO_copter.copter_mixer.motor_duty2 = 0;
+		HERO_copter.copter_mixer.motor_duty3 = 0;
+		HERO_copter.copter_mixer.motor_duty4 = 0;
 	}
-
-	PID_Calculate(&HERO_copter.copter_pitch.ang,error1);
-	error1 = HERO_copter.copter_pitch.ang.out - HERO_IMU.pitch_speed;
-	PID_Calculate(&HERO_copter.copter_pitch.spe,error1);
-	HERO_copter.copter_mixer.tau_y = HERO_copter.copter_pitch.ang.out;
-
-	PID_Calculate(&HERO_copter.copter_roll.ang,error2);
-	error2 = HERO_copter.copter_roll.ang.out - HERO_IMU.roll_speed;
-	PID_Calculate(&HERO_copter.copter_roll.spe,error2);
-	HERO_copter.copter_mixer.tau_x = HERO_copter.copter_roll.ang.out;
-
-	error3 = 0 - HERO_IMU.yaw ;
-	PID_Calculate(&HERO_copter.copter_yaw.ang,error3);
-	error3 = HERO_copter.copter_yaw.ang.out - HERO_IMU.yaw_speed;
-	PID_Calculate(&HERO_copter.copter_yaw.spe,error3);
-	HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.ang.out;
-
-	matrix_control();//ªÏøÿ∆˜Ω¯––∂Ø¡¶∑÷≈‰
-
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_1,HERO_copter.copter_mixer.motor_duty1);
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_2,HERO_copter.copter_mixer.motor_duty2);
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_3,HERO_copter.copter_mixer.motor_duty3);
@@ -119,65 +139,53 @@ static void atti_1ms_entry(void *parameter)
 
 }
 
-//Œª÷√øÿ÷∆
+//‰ΩçÁΩÆÁ∫øÁ®ã
 static void pos_20ms_entry(void *parameter)
 {
 	rt_sem_take(&pos_20ms_sem,RT_WAITING_FOREVER);
 
-	float error = 0;
+	/*Êï∞ÊçÆÊúçÂä°Âô®Êï∞ÊçÆÊõ¥Êñ∞*/
+	pos_sensor local_pos;
+
+	float error_x,error_y,error_h = 0;
 	
-	if(copter_state.mode == position )
+	switch (copter_status.mode)
 	{
-		error = 0 - NiMingFlow_data.pos_x;
-		PID_Calculate(&HERO_copter.copter_x.pos,error);
-		error = HERO_copter.copter_x.pos.out - NiMingFlow_data.Vx_Flow;
-		PID_Calculate(&HERO_copter.copter_x.vec,error);
-		
-		error = 0 - NiMingFlow_data.pos_y;
-		PID_Calculate(&HERO_copter.copter_y.pos,error);
-		error = HERO_copter.copter_y.pos.out - NiMingFlow_data.Vy_Flow;
-		PID_Calculate(&HERO_copter.copter_y.vec,error);
-		
-		error = 0 - NiMingFlow_data.distance;
-		PID_Calculate(&HERO_copter.copter_h.pos,error);
-		error = HERO_copter.copter_h.pos.out - - NiMingFlow_data.distance_v;
-		PID_Calculate(&HERO_copter.copter_h.vec,error);
-		HERO_copter.copter_mixer.f =  HERO_copter.copter_h.vec.out + MASS*g;
-
-		earth_body_tranfer();//◊¯±Í±‰ªª
-	}else if(copter_state.mode == height)
+	case POSITION:
 	{
-
-		error = 0 - NiMingFlow_data.distance;
-		PID_Calculate(&HERO_copter.copter_h.pos,error);
-		error = HERO_copter.copter_h.pos.out - NiMingFlow_data.distance_v;
-		PID_Calculate(&HERO_copter.copter_h.vec,error);
-		HERO_copter.copter_mixer.f =  HERO_copter.copter_h.vec.out + MASS*g;
-
-	}else if(copter_state.mode == stabilization)
-	{
-		HERO_copter.copter_mixer.f =  copter_remote.f ;
+		/*ÈÄüÂ∫¶Èó≠ÁéØ*/
+		error_x = control_data.pitch -  local_pos.V_pos_x;
+		error_y = control_data.roll -  local_pos.V_pos_y;
+		velocity_control(error_x,error_y,&HERO_copter.copter_x.vec , &HERO_copter.copter_y.vec );
 	}
-
+	case HEIGHT:
+	{
+		error_h = control_data.throttle - local_pos.V_height;
+		PID_Calculate(&HERO_copter.copter_h.vec,error_h);
+	}
+		break;
+	default:
+		HERO_copter.copter_mixer.f =  control_data.throttle;
+	}
 }
 
 static void atti_1ms_IRQHandler(void *parameter)
 {
 	while (rt_sem_trytake(&atti_1ms_sem) == RT_EOK)
-        continue; // «Âø’∂‡”‡µƒ–≈∫≈¡ø
+        continue; // ÂèñÂÆåÂ§ö‰ΩôÁöÑ‰ø°Âè∑Èáè
     rt_sem_release(&atti_1ms_sem);
 }
 
 static void pos_20ms_IRQHandler(void *parameter)
 {
 	while (rt_sem_trytake(&pos_20ms_sem) == RT_EOK)
-        continue; // «Âø’∂‡”‡µƒ–≈∫≈¡ø
+        continue; // ÂèñÂÆåÂ§ö‰ΩôÁöÑ‰ø°Âè∑Èáè
     rt_sem_release(&pos_20ms_sem);
 }
 
 static void motor_start(void)
 {
-    /*∂® ±∆˜¥¶¿Ìœﬂ≥Ã*/
+    /*ÔøΩÔøΩ ±ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩﬂ≥ÔøΩ*/
     rt_thread_t thread;
     rt_sem_init(&atti_1ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);
 		rt_sem_init(&pos_20ms_sem, "copter_pos", 0, RT_IPC_FLAG_FIFO);
@@ -186,12 +194,12 @@ static void motor_start(void)
     if (thread != RT_NULL)
         rt_thread_startup(thread);
 
-    /*∂® ±∆˜÷–∂œ*/
+    /*ÔøΩÔøΩ ±ÔøΩÔøΩÔøΩ–∂ÔøΩ*/
     rt_timer_init(&atti_1ms_tim, "atti_Tim", atti_1ms_IRQHandler, RT_NULL, 1,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 		 rt_timer_init(&pos_20ms_tim, "pos_Tim", pos_20ms_IRQHandler, RT_NULL, 20,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
-    /* ∆Ù∂Ø∂® ±∆˜ */
+    /* ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ±ÔøΩÔøΩ */
     rt_timer_start(&atti_1ms_tim);
 		rt_timer_start(&pos_20ms_tim);
 }
@@ -200,14 +208,14 @@ void Motor_init(void)
 {
 	
 	MX_TIM1_PWM_Init();
-	//◊ÀÃ¨
+	//ÔøΩÔøΩÃ¨
 	pid_init(&HERO_copter.copter_pitch.ang,PITCHANG_PID);
 	pid_init(&HERO_copter.copter_pitch.spe,PITCHSPE_PID);
 	pid_init(&HERO_copter.copter_roll.ang,ROLLANG_PID);
 	pid_init(&HERO_copter.copter_roll.spe,ROLLSPE_PID);
 	pid_init(&HERO_copter.copter_yaw.ang,YAWANG_PID);
 	pid_init(&HERO_copter.copter_yaw.spe,YAWSPE_PID);
-	//Œª÷√
+	//ŒªÔøΩÔøΩ
 	pid_init(&HERO_copter.copter_h.pos,POS_H_PID);
 	pid_init(&HERO_copter.copter_h.pos,VEC_H_PID);
 	pid_init(&HERO_copter.copter_x.pos,POS_X_PID);

@@ -7,15 +7,42 @@ RC_PPM_data copter_rec_data_last = {0};
 
 uint8_t first_flag = 1;
 
-/*µÍÍ¨ÂË²¨*/
+/*ï¿½ï¿½Í¨ï¿½Ë²ï¿½*/
 static int16_t low_pass_filter(int16_t data_now , int16_t data_last , float param)
 {  
 	return data_now*param + data_last*(1-param);
 }
 
+static void 
+
+static void remote_setpoint(uint8_t mode , RC_PPM_data *data)
+{
+	switch (mode)
+	{
+		case POSITION :
+			copter_remote.throttle = (data->RC_throttle/2000.0f - rocker_middle)/rocker_width/2.0f*HEIGHT_MAX_V;
+			copter_remote.pitch = (data->RC_pitch/2000.0f - rocker_middle)/rocker_width/2.0f*POS_X_MAX_V;
+			copter_remote.roll  = (data->RC_roll/2000.0f - rocker_middle)/rocker_width/2.0f*POS_Y_MAX_V;
+			copter_remote.yaw   = (data->RC_yaw/2000.0f - rocker_middle)/rocker_width/2.0f*YAW_MAX_SPE;
+			break;
+		case HEIGHT :
+			copter_remote.throttle = (data->RC_throttle/2000.0f - rocker_middle)/rocker_width/2.0f*HEIGHT_MAX_V;
+			copter_remote.pitch = (data->RC_pitch/2000.0f - rocker_middle)/rocker_width/2.0f*PITCH_MAX_DEG;
+			copter_remote.roll  = (data->RC_roll/2000.0f - rocker_middle)/rocker_width/2.0f*ROLL_MAX_DEG;
+			copter_remote.yaw   = (data->RC_yaw/2000.0f - rocker_middle)/rocker_width/2.0f*YAW_MAX_SPE;
+			break;
+		case STABILIZATION :
+			copter_remote.throttle = (data->RC_throttle/2000.0f - rocker_min)/rocker_width/2.0f*F_MAX;
+			copter_remote.pitch = (data->RC_pitch/2000.0f - rocker_middle)/rocker_width/2.0f*PITCH_MAX_DEG;
+			copter_remote.roll  = (data->RC_roll/2000.0f - rocker_middle)/rocker_width/2.0f*ROLL_MAX_DEG;
+			copter_remote.yaw   = (data->RC_yaw/2000.0f - rocker_middle)/rocker_width/2.0f*YAW_MAX_SPE;
+			break;
+	}
+}
+
 static void remote_data_process(void)
 {	
-	/*Ò£¿ØÆ÷Ò¡¸ËµÄ·µ»ØÖµÏÈ¹ýÒ»±éµÍÍ¨ÂË²¨Ïû³ý¶¶¶¯*/
+	/*Ò£ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½ËµÄ·ï¿½ï¿½ï¿½Öµï¿½È¹ï¿½Ò»ï¿½ï¿½ï¿½Í¨ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	if(!first_flag)
 	{
 		copter_rec_data.RC_throttle = low_pass_filter(copter_rec_data.RC_throttle , copter_rec_data_last.RC_throttle , LPF_k);
@@ -24,51 +51,59 @@ static void remote_data_process(void)
 		copter_rec_data.RC_yaw = low_pass_filter(copter_rec_data.RC_yaw , copter_rec_data_last.RC_yaw , LPF_k);
 	}
 
-	/*½«Ò¡¸ËµÄÖµ×ª»¯Îª¿ØÖÆÉè¶¨Öµ*/
-	copter_remote.f = (copter_rec_data.RC_throttle/2000.0f - rocker_min)/(rocker_max - rocker_min)*f_max;
-	copter_remote.pitch_deg = (copter_rec_data.RC_pitch/2000.0f - rocker_min)/(rocker_max - rocker_min)*pitch_max_degree;
-	copter_remote.roll_deg  = (copter_rec_data.RC_roll/2000.0f - rocker_min)/(rocker_max - rocker_min)*roll_max_degree;
-	copter_remote.yaw_spe   = (copter_rec_data.RC_yaw/2000.0f - rocker_min)/(rocker_max - rocker_min)*yaw_max_spe;
+	/*ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½È·ï¿½ï¿½ï¿½è¶¨Öµ*/
+	uint8_t flight_mode;
+	uint8_t rc_status;
+
+	if(!rc_status)//é¥æŽ§å™¨ç¦»çº¿ï¼Œä¿æŒå½“å‰çŠ¶æ€ä¸åŠ¨
+	{
+		copter_rec_data.RC_throttle = rocker_middle;
+		copter_rec_data.RC_roll = rocker_middle;
+		copter_rec_data.RC_pitch = rocker_middle;
+		copter_rec_data.RC_yaw = rocker_middle;
+	}
 	
-	/*×óÒ¡¸ËÓÃÓÚ¿ØÖÆ·ÉÐÐÄ£Ê½£¬ÓÒÒ¡¸ËÓÃÓÚ·É»úÆð·ÉÓë¼±Í£*/
+	remote_setpoint(flight_mode , &copter_rec_data );
+			
+	/*ï¿½ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½Æ·ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½Ú·É»ï¿½ï¿½ï¿½ï¿½ï¿½ë¼±Í£*/
 	switch(copter_rec_data.RC_switch_left)
 		{
-			case 500:   copter_remote.switch_mode = stabilization;break;
-			case 1000:  copter_remote.switch_mode = height;break;
-			case 1500:  copter_remote.switch_mode = position;break;
+			case 500:   copter_remote.switch_mode = STABILIZATION;break;
+			case 1000:  copter_remote.switch_mode = HEIGHT;break;
+			case 1500:  copter_remote.switch_mode = POSITION;break;
 		}
 
 	switch(copter_rec_data.RC_switch_right)
 		{
-			case 500:   copter_remote.switch_arm = armed; break;
-			case 1000:  copter_remote.switch_arm = ready;break;//Æð·ÉÓë¼±Í£ÖÐ¼ä¼ä¸ôÒ»¸öÎ»ÖÃ·ÀÖ¹Îó²Ù×÷
-			case 1500:  copter_remote.switch_arm = emergency_stop;break;
+			case 500:   copter_remote.switch_arm = ARMED; break;
+			case 1000:  copter_remote.switch_arm = READY;break;//ï¿½ï¿½ï¿½ï¿½ë¼±Í£ï¿½Ð¼ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½Ã·ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½
+			case 1500:  copter_remote.switch_arm = EMERGENCY_STOP;break;
 		}
 
-	/*Ò£¿ØÆ÷Ò¡¸Ë¸Ä±ä¡¢ÌØÊâÎ»ÖÃ¼ì²â*/
+	/*Ò£ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½Ë¸Ä±ä¡¢ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã¼ï¿½ï¿½*/
 	if(!first_flag)
 	{
-		/*ÓÍÃÅµÍÎ»*/
+		/*ï¿½ï¿½ï¿½Åµï¿½Î»*/
 		if( (copter_rec_data.RC_throttle  >= rocker_min - rocker_inter || copter_rec_data.RC_throttle  <= rocker_min + rocker_inter))			
 			copter_remote.throttle_low_flag = 1;
 	    else copter_remote.throttle_low_flag = 0;
-		/*pitchÖá½Ç¶ÈÖÐ¼äÎ»ÖÃ*/
+		/*pitchï¿½ï¿½Ç¶ï¿½ï¿½Ð¼ï¿½Î»ï¿½ï¿½*/
 		if( (copter_rec_data.RC_pitch  >= rocker_middle - rocker_inter || copter_rec_data.RC_pitch  <= rocker_middle + rocker_inter))
 			copter_remote.pitch_middle_flag = 1;
 		else copter_remote.pitch_middle_flag = 0;
-		/*rollÖá½Ç¶ÈÖÐ¼äÎ»ÖÃ*/
+		/*rollï¿½ï¿½Ç¶ï¿½ï¿½Ð¼ï¿½Î»ï¿½ï¿½*/
 		if( (copter_rec_data.RC_roll  >= rocker_middle - rocker_inter || copter_rec_data.RC_roll  <= rocker_middle + rocker_inter))
 			copter_remote.roll_middle_flag = 1;
 		else copter_remote.roll_middle_flag = 0;
-		/*yawÖá½Ç¶ÈÖÐ¼äÎ»ÖÃ*/
+		/*yawï¿½ï¿½Ç¶ï¿½ï¿½Ð¼ï¿½Î»ï¿½ï¿½*/
 		if( (copter_rec_data.RC_yaw  >= rocker_middle - rocker_inter || copter_rec_data.RC_yaw  <= rocker_middle + rocker_inter))
 			copter_remote.yaw_middle_flag = 1;
 		else copter_remote.yaw_middle_flag = 0;
-		/*×ó¿ª¹Ø·¢Éú¸Ä±ä*/
+		/*ï¿½ó¿ª¹Ø·ï¿½ï¿½ï¿½ï¿½Ä±ï¿½*/
 		if(copter_rec_data.RC_switch_left != copter_rec_data_last.RC_switch_left)
 			copter_remote.switch_mode_change = 1;
 		else copter_remote.switch_mode_change = 0;
-		/*ÓÒ¿ª¹Ø·¢Éú¸Ä±ä*/
+		/*ï¿½Ò¿ï¿½ï¿½Ø·ï¿½ï¿½ï¿½ï¿½Ä±ï¿½*/
 		if(copter_rec_data.RC_switch_right != copter_rec_data_last.RC_switch_right)
 			copter_remote.switch_arm_change = 1;
 		else copter_remote.switch_mode_change = 0;
@@ -76,8 +111,9 @@ static void remote_data_process(void)
 	}
 
 	first_flag = 0;
+	copter_remote.fresh_time = rt_tick_get();//ï¿½ï¿½Â¼ï¿½ï¿½Ç°Ê±ï¿½ï¿½
 
-	/*¼ÇÂ¼ÉÏ´ÎÒ£¿ØÆ÷Êý¾Ý*/
+	/*ï¿½ï¿½Â¼ï¿½Ï´ï¿½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	copter_rec_data_last.RC_throttle = copter_rec_data.RC_throttle;
 	copter_rec_data_last.RC_roll = copter_rec_data.RC_roll;
 	copter_rec_data_last.RC_pitch = copter_rec_data_last.RC_pitch;
@@ -85,9 +121,9 @@ static void remote_data_process(void)
 	copter_rec_data_last.RC_switch_left = copter_rec_data.RC_switch_left;
 	copter_rec_data_last.RC_switch_left = copter_rec_data.RC_switch_left;
 	copter_rec_data_last.RC_roller = copter_rec_data.RC_roller;
-	
-/*ÒÔÏÂÎªÊý¾Ý·þÎñÆ÷Î»ÖÃ*/
 
-//º¯ÊýÖ¸Õë£¬ÔÚÒ£¿ØÆ÷¶ÁÈ¡Ïß³Ì½øÐÐ
+	/*Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½*/
+
+//ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ë£¬ï¿½ï¿½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ß³Ì½ï¿½ï¿½ï¿½
 	Remote_Routine_Set(&remote_data_process);
 }
