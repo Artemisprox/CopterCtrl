@@ -24,7 +24,7 @@ static void Pos_sensor_thread_entry(void *parameter)
         uint32_t height_data_del_time = 0;/*高度数据更新时间*/
         uint32_t pos_data_del_time = 0;/*水平位置数据更新时间*/
 
-        if(NiMingFlow_data.height_data_Valid)//高度数据可用
+        if(NiMingFlow_data.height_data_Valid || TF_mini_data.Data_fresh_time)//高度数据可用
         {
             if(first_flag)
             {
@@ -38,30 +38,57 @@ static void Pos_sensor_thread_entry(void *parameter)
                 first_flag = 0;
             }else
             {   
-                /*如果高度数据未更新，则认为数据不准确*/
-                fresh_time_last.height_time = NiMingFlow_data.height_data_fresh_time;
-                height_data_del_time = NiMingFlow_data.height_data_fresh_time - fresh_time_last.height_time;
-                
-                if( height_data_del_time != 0)
+                if (USING_FLOW)
                 {
-                    if(DATA_FUSE)//启用板载加速度计融合
+                     /*如果高度数据未更新，则认为数据不准确*/
+                    height_data_del_time = NiMingFlow_data.height_data_fresh_time - fresh_time_last.height_time;
+                    
+                    if( height_data_del_time != 0)
                     {
-                        /*高度估计*/
-                        Compensate_filter(&copter_pos.V_height,NiMingFlow_data.distance_v, copter_acc.acc_z,period);
-                        Compensate_filter(&copter_pos.distance,NiMingFlow_data.distance, copter_pos.V_height,period);
+                        if(DATA_FUSE)//启用板载加速度计融合
+                        {
+                            /*高度估计*/
+                            Compensate_filter(&copter_pos.V_height,NiMingFlow_data.distance_v, copter_acc.acc_z,period);
+                            Compensate_filter(&copter_pos.distance,NiMingFlow_data.distance, copter_pos.V_height,period);
+                        }else
+                        {
+                            copter_pos.V_height = NiMingFlow_data.distance_v;
+                            copter_pos.distance = NiMingFlow_data.distance;
+                        }
+                        
+                        copter_pos.height_valid = 1;//更新时间校验和数据校验都通过，认为数据可用
+                        fresh_time_last.height_time = NiMingFlow_data.height_data_fresh_time;
                     }else
                     {
-                        copter_pos.V_height = NiMingFlow_data.distance_v;
-                        copter_pos.distance = NiMingFlow_data.distance;
+                        copter_pos.height_valid = 0;
                     }
-                    
-                    copter_pos.height_valid = 1;//更新时间校验和数据校验都通过，认为数据可用
-                    fresh_time_last.height_time = NiMingFlow_data.height_data_fresh_time;
+                   
                 }else
                 {
-                    copter_pos.height_valid = 0;
+                    /*如果高度数据未更新，则认为数据不准确*/
+                    height_data_del_time = TF_mini_data.Data_fresh_time - fresh_time_last.height_time;
+                    
+                    if( height_data_del_time != 0)
+                    {
+                        if(DATA_FUSE)//启用板载加速度计融合
+                        {
+                            /*高度估计*/
+                            Compensate_filter(&copter_pos.V_height,TF_mini_data.distance, copter_acc.acc_z,period);
+                            Compensate_filter(&copter_pos.distance, TF_mini_data.distance_v, copter_acc.acc_z, period);
+                        }else
+                        {
+                            copter_pos.V_height = TF_mini_data.distance_v;
+                            copter_pos.distance = TF_mini_data.distance;
+                        }
+                        
+                        copter_pos.height_valid = 1;//更新时间校验和数据校验都通过，认为数据可用
+                        fresh_time_last.height_time = TF_mini_data.Data_fresh_time;
+                    }else
+                    {
+                        copter_pos.height_valid = 0;
+                    }
                 }
-
+                
                 if(NiMingFlow_data.pos_data_Valid)
                 {
                     /*如果位置数据未更新，则认为数据不准确*/
@@ -119,6 +146,11 @@ static void Pos_sensor_20ms_IRQHandler(void *parameter)
 
 rt_err_t Sensor_Init(void)
 {
+    if(USING_FLOW)
+        NiMingFlow_Init();
+    else
+        TF_mini_Init();
+        
 	/*定时器处理线程*/
     rt_thread_t thread;
     rt_sem_init(&Pos_20ms_sem, "Position_sem", 0, RT_IPC_FLAG_FIFO);

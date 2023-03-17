@@ -14,9 +14,13 @@ typedef struct
     uint16_t quantity;   //已发射子弹数量
     uint8_t data_valid;  //云台数据是否可用
 
+    Motor_t Yaw;
+    uint32_t yaw_fresh_time;
+    Motor_t Pitch;
+    uint32_t pitch_fresh_time;
+
     uint32_t fresh_time;//数据更新时间
 }gun_data;
 
 
-extern Motor_t Yaw;
-extern Motor_t Pitch;
+extern gun_data copter_gun;

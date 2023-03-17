@@ -3,8 +3,6 @@
 
 struct rt_semaphore gun_rec_sem; /* 用于接收信息的信号量 */
 gun_data copter_gun;
-Motor_t Yaw;
-Motor_t Pitch;
 
 /**
  * @brief  读取can中的发射机构数据

@@ -19,13 +19,6 @@ typedef struct
 	pid_t spe;
 }atti_channel;
 
-typedef struct
-{
-	uint8_t arm;
-	uint8_t mode;
-	uint8_t heath;
-}state;
-
 typedef struct 
 {
 	float f;

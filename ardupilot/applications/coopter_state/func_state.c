@@ -15,8 +15,8 @@ battery copter_power;
 data_check copter_data_valid = {0};
 status copter_status = {0};
 
-struct rt_semaphore State_20ms_sem; /* ���ڽ�����Ϣ���ź��� */
-static struct rt_timer State_decide_tim;/* �ջ��̶߳�ʱ�� */
+struct rt_semaphore State_20ms_sem; /* 定时信号量 */
+static struct rt_timer State_decide_tim;/* 定时器 */
 
 
 static void State_decide_20ms_IRQHandler(void *parameter)
@@ -94,11 +94,15 @@ static uint8_t land_check(void)
     if(copter_remote.throttle_low_flag == 1)
     {
         time_tick ++;
+    }else
+    {
+       time_tick = 0; 
     }
 
     if(time_tick >= 100)
     {
         copter_status.flight_status = LAND;
+        copter_status.emergency = 1;
         time_tick = 0;
         flag = 1;
     }

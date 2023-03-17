@@ -19,9 +19,13 @@ static struct rt_timer atti_1ms_tim;         /* 姿态环定时器 */
 static struct rt_timer pos_20ms_tim;         /* 位置环定时器 */
 
 copter_ctrl HERO_copter;
-state HERO_state;
 remote_data control_data;
 status copter_status;
+
+static void status_check(status* p_status , remote_data* p_data)
+{
+
+}
 
 //机体系变换到大地系
 static void earth_body_tranfer(void)
@@ -82,7 +86,7 @@ static void atti_1ms_entry(void *parameter)
 	IMU_t IMU_data;
 
 	float error_p = 0,error_r = 0,error_y = 0;
-	if(!copter_status.emergency)
+	if(!copter_status.emergency && copter_status.flight_status != READY)
 	{
 		switch(copter_status.mode)
 		{
@@ -130,27 +134,28 @@ static void pos_20ms_entry(void *parameter)
 
 	/*数据服务器数据更新*/
 	pos_sensor local_pos;
-
+	status_check(&copter_status , &control_data);
 	float error_x,error_y,error_h = 0;
 	
-	switch (copter_status.mode)
-	{
-	case POSITION:
-	{
-		/*速度闭环*/
-		error_x = control_data.pitch -  local_pos.V_pos_x;
-		error_y = control_data.roll -  local_pos.V_pos_y;
-		velocity_control(error_x,error_y,&HERO_copter.copter_x.vec , &HERO_copter.copter_y.vec );
-	}
-	case HEIGHT:
-	{
-		error_h = control_data.throttle - local_pos.V_height;
-		PID_Calculate(&HERO_copter.copter_h.vec,error_h);
-	}
-		break;
-	default:
-		HERO_copter.copter_mixer.f =  control_data.throttle;
-	}
+	if(!copter_status.emergency && copter_status.flight_status != READY)
+		switch (copter_status.mode)
+		{
+		case POSITION:
+		{
+			/*速度闭环*/
+			error_x = control_data.pitch -  local_pos.V_pos_x;
+			error_y = control_data.roll -  local_pos.V_pos_y;
+			velocity_control(error_x,error_y,&HERO_copter.copter_x.vec , &HERO_copter.copter_y.vec );
+		}
+		case HEIGHT:
+		{
+			error_h = control_data.throttle - local_pos.V_height;
+			PID_Calculate(&HERO_copter.copter_h.vec,error_h);
+		}
+			break;
+		default:
+			HERO_copter.copter_mixer.f =  control_data.throttle;
+		}
 }
 
 static void atti_1ms_IRQHandler(void *parameter)
