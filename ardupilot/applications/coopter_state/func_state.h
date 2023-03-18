@@ -1,13 +1,15 @@
 #include <rtthread.h>
 
-#define STABILIZATION    1   //×ÔÎÈÄ£Ê½
-#define HEIGHT           2   //¸ß¶ÈÄ£Ê½
-#define POSITION         3   //Î»ÖÃÄ£Ê½
+#define STABILIZATION    1   //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+#define HEIGHT           2   //ï¿½ß¶ï¿½Ä£Ê½
+#define POSITION         3   //Î»ï¿½ï¿½Ä£Ê½
 
-#define READY                 0x01   //¿Õ
-#define ARMED                 0x00   //Æð·É
-#define FLYING                0x11   //Éý¿Õ
-#define LAND                  0x12   //½µÂä
+#define READY                 0x01   //ï¿½ï¿½
+#define ARMED                 0x00   //ï¿½ï¿½ï¿½
+#define FLYING                0x11   //ï¿½ï¿½ï¿½ï¿½
+#define LAND                  0x12   //ï¿½ï¿½ï¿½ï¿½
+
+#define LAND_DELAG_TIME       2000//ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ê±ï¿½ä£¬ï¿½ï¿½Î»ms
 typedef struct 
 {
     uint8_t flight_status;
@@ -26,6 +28,7 @@ typedef struct
     uint8_t atti_valid;
     uint8_t rc_valid;
     uint8_t battery_OK;
+    uint8_t gimbal_OK;
 
     uint8_t copter_OK;
 }data_check;

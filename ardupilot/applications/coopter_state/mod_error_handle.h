@@ -12,11 +12,8 @@
 
 #define CHECK_BATTERY    0x11
 #define GIMBAL_LOST      0x12
-#define YAW_MOTOR_LOST   0x13
-#define PITCH_MOTOR_LOST 0X14
 
 #define THROTTLE_HIGH    0x21
-
 
 extern void error_write(int error_ID);
 extern void error_read(void);

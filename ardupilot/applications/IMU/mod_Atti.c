@@ -12,6 +12,7 @@
 #include "drv_IMU.h"
 
 static rt_thread_t atti_calcu = RT_NULL;
+static uint8_t Package_ID;
 
 /***
  * @brief 欧拉角初始化,yaw->pitch->roll顺规
@@ -141,6 +142,10 @@ static void AttiCalcu_thread(void *parameter)
         }
         // 刷新姿态角数据
         IMU_SetData_Extern(GyroFix.y, GyroFix.z, GyroFix.x, HERO_Eulr.pit, HERO_Eulr.yaw, HERO_Eulr.rol, AttiReady_Flag);
+        /*数据服务器写入*/
+        IMU_t *p =  Package_Pionter_Add(Package_ID,HERO_IMU);
+        *p = HERO_IMU;
+        Package_Write_Pionter_End(Package_ID,HERO_IMU);
         //SWDG_FEED(SWDG_IMU_ID);
     }
 }
@@ -159,6 +164,10 @@ int Atti_init(void)
     TempCTR_init();
     // 尝试从Flash中读取零飘数据 若无数据或需要重测，则会自动重测，完成后函数返回
     LoadGyroOffSet();
+
+    //数据服务器初始化
+    Package_Pionter_Add("IMU", HERO_IMU);
+	Package_ID = Package_Find_Num("IMU");
 
     //初始化姿态解算线程
     atti_calcu = rt_thread_create(

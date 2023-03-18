@@ -22,5 +22,5 @@ typedef struct
     uint32_t fresh_time;//数据更新时间
 }gun_data;
 
-
+extern void gun_readmsg(rt_uint8_t rxmsg[]);
 extern gun_data copter_gun;

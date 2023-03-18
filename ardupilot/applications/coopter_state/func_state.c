@@ -6,24 +6,44 @@
 #include "drv_dataserve.h"
 #include "drv_battery.h"
 #include "mod_error_handle.h"
+#include "mod_recoil_force_compensate.h"
 
 remote_data copter_remote;
 pos_sensor copter_pos;
 IMU_t copter_atti;
 battery copter_power;
+gun_data copter_gun;
 
 data_check copter_data_valid = {0};
 status copter_status = {0};
 
 struct rt_semaphore State_20ms_sem; /* 定时信号量 */
 static struct rt_timer State_decide_tim;/* 定时器 */
-
+static uint8_t remote_ID,IMU_ID,battery_ID,sensor_ID,gun_ID,status_ID;
 
 static void State_decide_20ms_IRQHandler(void *parameter)
 {
      while (rt_sem_trytake(&State_20ms_sem) == RT_EOK)
         continue; //取完多余的信号量
     rt_sem_release(&State_20ms_sem);
+}
+
+//云台状态查询
+static uint8_t gimbal_status_check(gun_data *data)
+{
+    uint32_t now_tick = rt_tick_get();
+    if(now_tick - data->fresh_time >= 200000 )//200ms未接收到云台数据判断为离线
+    {
+        copter_data_valid.gimbal_OK = 0;
+        copter_status.recoil_compensate_enable = 0;
+    }
+    else
+    {
+        copter_data_valid.gimbal_OK = 1;
+        copter_status.recoil_compensate_enable = 1;
+    }
+
+    return copter_status.recoil_compensate_enable;
 }
 
 //遥控器状态查询
@@ -99,7 +119,7 @@ static uint8_t land_check(void)
        time_tick = 0; 
     }
 
-    if(time_tick >= 100)
+    if(time_tick >= LAND_DELAG_TIME/20 )
     {
         copter_status.flight_status = LAND;
         copter_status.emergency = 1;
@@ -110,28 +130,65 @@ static uint8_t land_check(void)
     return flag;
 }
 
-//飞行模式切换
-uint8_t mode_change(data_check *data_valid , remote_data data)
+//提出飞行模式切换申请
+static void mode_change(data_check *data_valid , remote_data data)
 {
-    switch (data.switch_mode)
+    static uint8_t first_flag = 1;
+    if(first_flag = 1)
     {
-    case POSITION:
-        if( data_valid->pos_valid )
+        copter_status.mode =  data.switch_mode;
+        first_flag = 0;
+    }else if (first_flag == 0 && data.switch_mode_change)
+    {
+        copter_status.mode =  data.switch_mode;
+    }   
+}
+
+//检查飞行模式是否能够执行
+static void mode_check(data_check *data_valid)
+{
+    switch (copter_status.mode)
         {
-            copter_status.mode = POSITION;
-            break;
+        case POSITION:
+            if( data_valid->pos_valid )
+            {
+                copter_status.mode = POSITION;
+                break;
+            }
+        case HEIGHT:
+            if( data_valid->height_valid )
+            {
+                copter_status.mode = HEIGHT;
+                break;
+            }
+        default:
+                copter_status.mode = STABILIZATION;
+                break;
         }
-    case HEIGHT:
-        if( data_valid->height_valid )
-        {
-            copter_status.mode = HEIGHT;
-            break;
-        }
-    default:
-            copter_status.mode = STABILIZATION;
-            break;
-    }
-    
+}
+
+static void package_update(void)
+{
+    remote_data *p_1 =  Package_Pionter_Add(remote_ID,copter_remote);
+	copter_remote = *p_1 ;
+	Package_Write_Pionter_End(remote_ID,copter_remote);
+
+    IMU_t *p_2 =  Package_Pionter_Add(IMU_ID,copter_atti);
+	copter_atti = *p_2 ;
+	Package_Write_Pionter_End(IMU_ID,copter_atti);
+
+    pos_sensor *p_3 =  Package_Pionter_Add(sensor_ID,copter_pos);
+	copter_pos = *p_3 ;
+	Package_Write_Pionter_End(sensor_ID,copter_pos);
+
+    battery *p_4 =  Package_Pionter_Add(battery_ID,copter_power);
+	copter_power = *p_4 ;
+	Package_Write_Pionter_End(battery_ID,copter_power);
+
+    gun_data *p_5 =  Package_Pionter_Add(gun_ID,copter_gun);
+	copter_gun = *p_5 ;
+	Package_Write_Pionter_End(gun_ID,copter_gun);
+
 }
 
 //状态决策线程
@@ -141,13 +198,16 @@ static void State_decide_thread_entry(void *parameter)
     while(1)
     {
         /*数据服务器更新*/
-
-        
+        package_update();
         /*数据源检测*/
         if(copter_remote.switch_arm == EMERGENCY_STOP)
             copter_status.emergency = 1;
         else copter_status.emergency = 0;
 
+        if(gimbal_status_check(&copter_gun))
+        {
+            error_write(GIMBAL_LOST);
+        }
         if(!(copter_data_valid.battery_OK = copter_power.Battery_data_rec && copter_power.Battery_status))
             error_write(CHECK_BATTERY);
         if(!(copter_data_valid.pos_valid = copter_pos.pos_valid))
@@ -164,8 +224,9 @@ static void State_decide_thread_entry(void *parameter)
             copter_status.emergency = 1;
         }
         
-        
+        //飞行模式
         mode_change(&copter_data_valid,copter_remote);
+        mode_check(&copter_data_valid);
 
         if(!copter_status.emergency)
         {
@@ -180,7 +241,13 @@ static void State_decide_thread_entry(void *parameter)
             copter_status.flight_status = READY;//每次紧急停止都取消起飞，防止解除紧急停止后起桨叶
         }
 
+        /*数据服务器写入*/
+        status *p =  Package_Pionter_Add(status_ID,copter_status);
+        *p = copter_status;
+        Package_Write_Pionter_End(status_ID,copter_status);
+        
         error_read();
+
     }
 
 }
@@ -191,18 +258,26 @@ void copter_state_init(void)
     copter_status.flight_status = READY;
     copter_status.mode = STABILIZATION;
     copter_status.recoil_compensate_enable = 0;
+    Package_Pionter_Add("status", copter_status);
+	status_ID = Package_Find_Num("status");
 }
 
 rt_err_t StateDecide_Init(void)
-{
+{  
+    /*数据服务器ID查找*/
+    remote_ID = Package_Find_Num("remote");
+    IMU_ID = Package_Find_Num("IMU");
+    battery_ID = Package_Find_Num("battery");
+    sensor_ID = Package_Find_Num("sensor_ID");
+    gun_ID = Package_Find_Num("compensate");
     //初始状态设置
     copter_status_init();
     //错误处理
     error_handle_init();
 	/*决策线程*/
     rt_thread_t thread;
-    rt_sem_init(&State_20ms_sem, "Position_sem", 0, RT_IPC_FLAG_FIFO);
-    thread = rt_thread_create("Pos_message", State_decide_thread_entry, RT_NULL, 2048, THREAD_PRIO_STRIKEPID, 1);
+    rt_sem_init(&State_20ms_sem, "State_sem", 0, RT_IPC_FLAG_FIFO);
+    thread = rt_thread_create("State_message", State_decide_thread_entry, RT_NULL, 2048, THREAD_PRIO_STRIKEPID, 1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);
 

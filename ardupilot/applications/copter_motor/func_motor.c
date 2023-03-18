@@ -8,6 +8,7 @@
 #include "func_remote.h"
 #include "func_sensor.h"
 #include "func_state.h"
+#include "drv_dataserve.h"
 
 //电机模型:W0 + k*duty
 #define propeller_spe_base 1000 //基础转速
@@ -21,6 +22,7 @@ static struct rt_timer pos_20ms_tim;         /* 位置环定时器 */
 copter_ctrl HERO_copter;
 remote_data control_data;
 status copter_status;
+static uint8_t remote_ID,IMU_ID,sensor_ID,status_ID;
 
 static void status_check(status* p_status , remote_data* p_data)
 {
@@ -83,7 +85,9 @@ static void atti_1ms_entry(void *parameter)
 	rt_sem_take(&atti_1ms_sem,RT_WAITING_FOREVER);
 
 	/*从数据服务器更新数据*/
-	IMU_t IMU_data;
+	IMU_t *p_2 =  Package_Pionter_Add(IMU_ID,HERO_IMU);
+	HERO_IMU = *p_2 ;
+	Package_Write_Pionter_End(IMU_ID,HERO_IMU);
 
 	float error_p = 0,error_r = 0,error_y = 0;
 	if(!copter_status.emergency && copter_status.flight_status != READY)
@@ -133,7 +137,19 @@ static void pos_20ms_entry(void *parameter)
 	rt_sem_take(&pos_20ms_sem,RT_WAITING_FOREVER);
 
 	/*数据服务器数据更新*/
+	remote_data *p_1 =  Package_Pionter_Add(remote_ID,control_data);
+	control_data = *p_1 ;
+	Package_Write_Pionter_End(remote_ID,control_data);
+
+	status *p_2 =  Package_Pionter_Add(status_ID,copter_status);
+	copter_status = *p_2 ;
+	Package_Write_Pionter_End(status_ID,copter_status);
+
 	pos_sensor local_pos;
+    pos_sensor *p_3 =  Package_Pionter_Add(sensor_ID,local_pos);
+	local_pos = *p_3 ;
+	Package_Write_Pionter_End(sensor_ID,local_pos);
+
 	status_check(&copter_status , &control_data);
 	float error_x,error_y,error_h = 0;
 	
@@ -174,6 +190,11 @@ static void pos_20ms_IRQHandler(void *parameter)
 
 static void motor_start(void)
 {
+	/*数据服务器ID查找*/
+    remote_ID = Package_Find_Num("remote");
+    IMU_ID = Package_Find_Num("IMU");
+    sensor_ID = Package_Find_Num("pos_sensor");
+	status_ID = Package_Find_Num("status");
     /*线程初始化*/
     rt_thread_t thread;
     rt_sem_init(&atti_1ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);

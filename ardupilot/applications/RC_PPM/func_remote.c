@@ -4,7 +4,7 @@
 
 remote_data copter_remote ={0};
 RC_PPM_data copter_rec_data_last = {0};
-
+uint8_t Package_ID;
 uint8_t first_flag = 1;
 
 /*低通滤波*/
@@ -51,6 +51,7 @@ static void remote_data_process(void)
 	}
 
 	/*数据服务器接收*/
+
 	uint8_t flight_mode;
 	uint8_t rc_status;
 
@@ -123,8 +124,17 @@ static void remote_data_process(void)
 	copter_rec_data_last.RC_roller = copter_rec_data.RC_roller;
 
 	/*数据服务器写入*/
-	
+	remote_data *p =  Package_Pionter_Add(Package_ID,copter_remote);
+	*p = copter_remote;
+	Package_Write_Pionter_End(Package_ID,copter_remote);
 
 //通过函数指针转移至遥控器数据接收线程中进行处理
 	Remote_Routine_Set(&remote_data_process);
+}
+
+void RC_init(void)
+{
+	RC_PPM_Init();
+    Package_Pionter_Add("remote", copter_remote);
+	Package_ID = Package_Find_Num("remote");
 }

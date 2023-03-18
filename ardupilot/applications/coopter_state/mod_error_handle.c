@@ -3,6 +3,7 @@
 
 LoopQueueCTRL_Type error_list;
 
+//错误写入
 void error_write(int error_ID)
 {
     int *p;
@@ -22,7 +23,7 @@ static void error_handle(int error_ID)
         red_blink_slowly();
         rt_kprintf("Remote connection lost");
         break;
-    case BATTERY_LOST:
+    case CHECK_BATTERY:
         red_keepon();
         rt_kprintf("Battery connect lost");
         break;
@@ -49,15 +50,20 @@ static void error_handle(int error_ID)
 
 }
 
+
+//错误集中报错:选取最严重的一个错误进行报错
 void error_read(void)
 {   
-    int* read_p;
+    int* read_p , *terrible_error_p;
+    *terrible_error_p = 0xFF;
     while (error_list.Valid_Data)
     {
         read_p = (int*)Queue_Get_ReadEnd(&error_list);
-        error_handle(*read_p);
+        if( *terrible_error_p <= *read_p)
+            *terrible_error_p = *read_p;
         Queue_Delete_End(&error_list);
     }
+    error_handle(*terrible_error_p);
 }
 
 

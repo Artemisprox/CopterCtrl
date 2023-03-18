@@ -9,15 +9,6 @@ void can1_rec(struct rt_can_msg *msg)
 {
     switch (msg->id)
     {
-    //更新云台电机数据
-    case YAW_ID:
-        motor_readmsg(msg->data, &copter_gun.Yaw.dji);
-        copter_gun.yaw_fresh_time = rt_tick_get();
-        return;
-    case PITCH_ID:
-        motor_readmsg(msg->data, &copter_gun.Pitch.dji);
-        copter_gun.pitch_fresh_time = rt_tick_get();
-        return;
     //发射机构
     case GIMBAL_ID:
         gun_readmsg(msg->data);

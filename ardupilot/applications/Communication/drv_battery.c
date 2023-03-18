@@ -1,12 +1,13 @@
 #include "drv_battery.h"
 #include "drv_dataserve.h"
 #include "drv_thread.h"
+#include "drv_dataserve.h"
 
 battery copter_power = {0};
 struct rt_semaphore battery_100ms_sem; /* 用于定时的信号量 */
 struct rt_semaphore battery_rec_sem; /* 用于接收信息的信号量 */
 static struct rt_timer battery_tim;/* 闭环线程定时器 */
-
+static uint8_t Package_ID;
 /**
  * @brief  读取can中的电池数据
  * @param  rxmsg：反馈报文数据
@@ -47,6 +48,10 @@ static void battery_thread_entry(void *parameter)
         else copter_power.Battery_status = 0;
 
         /*数据服务器写入*/
+        /*数据服务器写入*/
+        battery *p =  Package_Pionter_Add(Package_ID,copter_power);
+        *p = copter_power;
+        Package_Write_Pionter_End(Package_ID,copter_power);
 
         rt_sem_take(&battery_100ms_sem,RT_WAITING_FOREVER);
     }
@@ -55,6 +60,9 @@ static void battery_thread_entry(void *parameter)
 
 rt_err_t Battery_Init(void)
 {
+    /*数据服务器初始化*/
+    Package_Pionter_Add("battery", copter_power);
+	Package_ID = Package_Find_Num("battery");
 	/*定时器处理线程*/
     rt_thread_t thread;
     rt_sem_init(&battery_100ms_sem, "battery_sem", 0, RT_IPC_FLAG_FIFO);
