@@ -944,7 +944,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>DataServer</GroupName>
+          <GroupName>Public/Software/DataServer</GroupName>
           <Files>
             <File>
               <FileName>drv_dataserve.c</FileName>

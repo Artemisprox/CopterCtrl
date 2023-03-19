@@ -20,9 +20,9 @@
 #define HEIGHT           2  
 #define POSITION         3  
 
-#define READY                 1   
-#define ARMED                 0   
-#define EMERGENCY_STOP        2   
+#define READY_T                 1   
+#define ARMED_T                 0   
+#define EMERGENCY_STOP_T        2   
 
 #define LPF_k                0.9f
 

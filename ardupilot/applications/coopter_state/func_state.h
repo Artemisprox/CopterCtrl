@@ -7,7 +7,6 @@
 #define READY                 0x01   //��
 #define ARMED                 0x00   //���
 #define FLYING                0x11   //����
-#define LAND                  0x12   //����
 
 #define LAND_DELAG_TIME       2000//�����ж�ʱ�䣬��λms
 typedef struct 

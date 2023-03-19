@@ -26,9 +26,9 @@ void gun_readmsg(rt_uint8_t rxmsg[])
 void recoil_compensate_calculate(gun_data *gun , Motor_t *yaw , Motor_t *pitch)
 {
     /*数据服务器写入*/
-	gun_data *p =  Package_Pionter_Add(Package_ID,copter_gun);
+	gun_data *p =  Package_Pionter_Single(Package_ID,gun_data);
 	*p = copter_gun;
-	Package_Write_Pionter_End(Package_ID,copter_gun);
+	Package_Write_Pionter_End(Package_ID,gun_data);
 
 };
 

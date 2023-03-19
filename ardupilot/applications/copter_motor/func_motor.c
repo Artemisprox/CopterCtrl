@@ -9,6 +9,7 @@
 #include "func_sensor.h"
 #include "func_state.h"
 #include "drv_dataserve.h"
+#include "drv_utils.h"
 
 //电机模型:W0 + k*duty
 #define propeller_spe_base 1000 //基础转速
@@ -85,9 +86,9 @@ static void atti_1ms_entry(void *parameter)
 	rt_sem_take(&atti_1ms_sem,RT_WAITING_FOREVER);
 
 	/*从数据服务器更新数据*/
-	IMU_t *p_2 =  Package_Pionter_Add(IMU_ID,HERO_IMU);
+	IMU_t *p_2 =  Package_Pionter_Single(IMU_ID,IMU_t);
 	HERO_IMU = *p_2 ;
-	Package_Write_Pionter_End(IMU_ID,HERO_IMU);
+	Package_Write_Pionter_End(IMU_ID,IMU_t);
 
 	float error_p = 0,error_r = 0,error_y = 0;
 	if(!copter_status.emergency && copter_status.flight_status != READY)
@@ -137,18 +138,18 @@ static void pos_20ms_entry(void *parameter)
 	rt_sem_take(&pos_20ms_sem,RT_WAITING_FOREVER);
 
 	/*数据服务器数据更新*/
-	remote_data *p_1 =  Package_Pionter_Add(remote_ID,control_data);
+	remote_data *p_1 =  Package_Pionter_Single(remote_ID,remote_data);
 	control_data = *p_1 ;
-	Package_Write_Pionter_End(remote_ID,control_data);
+	Package_Write_Pionter_End(remote_ID,remote_data);
 
-	status *p_2 =  Package_Pionter_Add(status_ID,copter_status);
+	status *p_2 =  Package_Pionter_Single(status_ID,status);
 	copter_status = *p_2 ;
-	Package_Write_Pionter_End(status_ID,copter_status);
+	Package_Write_Pionter_End(status_ID,status);
 
 	pos_sensor local_pos;
-    pos_sensor *p_3 =  Package_Pionter_Add(sensor_ID,local_pos);
+  pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
 	local_pos = *p_3 ;
-	Package_Write_Pionter_End(sensor_ID,local_pos);
+	Package_Write_Pionter_End(sensor_ID,pos_sensor);
 
 	status_check(&copter_status , &control_data);
 	float error_x,error_y,error_h = 0;

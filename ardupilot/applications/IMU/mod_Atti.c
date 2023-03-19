@@ -1,5 +1,5 @@
 #include "mod_Atti.h"
-
+#include "drv_dataserve.h"
 #include "drv_thread.h"
 #include "drv_HWTimer.h"
 #include "func_bmi088.h"
@@ -12,7 +12,7 @@
 #include "drv_IMU.h"
 
 static rt_thread_t atti_calcu = RT_NULL;
-static uint8_t Package_ID;
+static rt_int8_t Package_ID;
 
 /***
  * @brief 欧拉角初始化,yaw->pitch->roll顺规
@@ -143,9 +143,9 @@ static void AttiCalcu_thread(void *parameter)
         // 刷新姿态角数据
         IMU_SetData_Extern(GyroFix.y, GyroFix.z, GyroFix.x, HERO_Eulr.pit, HERO_Eulr.yaw, HERO_Eulr.rol, AttiReady_Flag);
         /*数据服务器写入*/
-        IMU_t *p =  Package_Pionter_Add(Package_ID,HERO_IMU);
+        IMU_t *p =  Package_Pionter_Single(Package_ID,IMU_t);
         *p = HERO_IMU;
-        Package_Write_Pionter_End(Package_ID,HERO_IMU);
+        Package_Write_Pionter_End(Package_ID,IMU_t);
         //SWDG_FEED(SWDG_IMU_ID);
     }
 }

@@ -1,6 +1,7 @@
 #include "drv_RC_PPM.h"
 #include "func_remote.h"
 #include "drv_utils.h"
+#include "drv_dataserve.h"
 
 remote_data copter_remote ={0};
 RC_PPM_data copter_rec_data_last = {0};
@@ -76,9 +77,9 @@ static void remote_data_process(void)
 
 	switch(copter_rec_data.RC_switch_right)
 		{
-			case 500:   copter_remote.switch_arm = ARMED; break;
-			case 1000:  copter_remote.switch_arm = READY;break;//����뼱ͣ�м���һ��λ�÷�ֹ�����
-			case 1500:  copter_remote.switch_arm = EMERGENCY_STOP;break;
+			case 500:   copter_remote.switch_arm = ARMED_T; break;
+			case 1000:  copter_remote.switch_arm = READY_T;break;//����뼱ͣ�м���һ��λ�÷�ֹ�����
+			case 1500:  copter_remote.switch_arm = EMERGENCY_STOP_T;break;
 		}
 
 	/*进行遥控器摇杆特殊位置检测、开关切换检测*/
@@ -124,9 +125,9 @@ static void remote_data_process(void)
 	copter_rec_data_last.RC_roller = copter_rec_data.RC_roller;
 
 	/*数据服务器写入*/
-	remote_data *p =  Package_Pionter_Add(Package_ID,copter_remote);
+	remote_data *p =  Package_Pionter_Single(Package_ID,remote_data);
 	*p = copter_remote;
-	Package_Write_Pionter_End(Package_ID,copter_remote);
+	Package_Write_Pionter_End(Package_ID,remote_data);
 
 //通过函数指针转移至遥控器数据接收线程中进行处理
 	Remote_Routine_Set(&remote_data_process);
@@ -135,6 +136,6 @@ static void remote_data_process(void)
 void RC_init(void)
 {
 	RC_PPM_Init();
-    Package_Pionter_Add("remote", copter_remote);
+  Package_Pionter_Add("remote", remote_data);
 	Package_ID = Package_Find_Num("remote");
 }

@@ -19,7 +19,7 @@ status copter_status = {0};
 
 struct rt_semaphore State_20ms_sem; /* 定时信号量 */
 static struct rt_timer State_decide_tim;/* 定时器 */
-static uint8_t remote_ID,IMU_ID,battery_ID,sensor_ID,gun_ID,status_ID;
+static rt_int8_t remote_ID,IMU_ID,battery_ID,sensor_ID,gun_ID,status_ID;
 
 static void State_decide_20ms_IRQHandler(void *parameter)
 {
@@ -121,7 +121,7 @@ static uint8_t land_check(void)
 
     if(time_tick >= LAND_DELAG_TIME/20 )
     {
-        copter_status.flight_status = LAND;
+        copter_status.flight_status = READY;
         copter_status.emergency = 1;
         time_tick = 0;
         flag = 1;
@@ -134,7 +134,7 @@ static uint8_t land_check(void)
 static void mode_change(data_check *data_valid , remote_data data)
 {
     static uint8_t first_flag = 1;
-    if(first_flag = 1)
+    if(first_flag == 1)
     {
         copter_status.mode =  data.switch_mode;
         first_flag = 0;
@@ -169,25 +169,25 @@ static void mode_check(data_check *data_valid)
 
 static void package_update(void)
 {
-    remote_data *p_1 =  Package_Pionter_Add(remote_ID,copter_remote);
+    remote_data *p_1 =  Package_Pionter_Single(remote_ID,remote_data);
 	copter_remote = *p_1 ;
-	Package_Write_Pionter_End(remote_ID,copter_remote);
+	Package_Write_Pionter_End(remote_ID,remote_data);
 
-    IMU_t *p_2 =  Package_Pionter_Add(IMU_ID,copter_atti);
+    IMU_t *p_2 =  Package_Pionter_Single(IMU_ID,IMU_t);
 	copter_atti = *p_2 ;
-	Package_Write_Pionter_End(IMU_ID,copter_atti);
+	Package_Write_Pionter_End(IMU_ID,IMU_t);
 
-    pos_sensor *p_3 =  Package_Pionter_Add(sensor_ID,copter_pos);
+    pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
 	copter_pos = *p_3 ;
-	Package_Write_Pionter_End(sensor_ID,copter_pos);
+	Package_Write_Pionter_End(sensor_ID,pos_sensor);
 
-    battery *p_4 =  Package_Pionter_Add(battery_ID,copter_power);
+    battery *p_4 =  Package_Pionter_Single(battery_ID,battery);
 	copter_power = *p_4 ;
-	Package_Write_Pionter_End(battery_ID,copter_power);
+	Package_Write_Pionter_End(battery_ID,battery);
 
-    gun_data *p_5 =  Package_Pionter_Add(gun_ID,copter_gun);
+    gun_data *p_5 =  Package_Pionter_Single(gun_ID,gun_data);
 	copter_gun = *p_5 ;
-	Package_Write_Pionter_End(gun_ID,copter_gun);
+	Package_Write_Pionter_End(gun_ID,gun_data);
 
 }
 
@@ -200,7 +200,7 @@ static void State_decide_thread_entry(void *parameter)
         /*数据服务器更新*/
         package_update();
         /*数据源检测*/
-        if(copter_remote.switch_arm == EMERGENCY_STOP)
+        if(copter_remote.switch_arm == EMERGENCY_STOP_T)
             copter_status.emergency = 1;
         else copter_status.emergency = 0;
 
@@ -242,9 +242,9 @@ static void State_decide_thread_entry(void *parameter)
         }
 
         /*数据服务器写入*/
-        status *p =  Package_Pionter_Add(status_ID,copter_status);
+        status *p =  Package_Pionter_Single(status_ID,status);
         *p = copter_status;
-        Package_Write_Pionter_End(status_ID,copter_status);
+        Package_Write_Pionter_End(status_ID,status);
         
         error_read();
 
@@ -252,14 +252,14 @@ static void State_decide_thread_entry(void *parameter)
 
 }
 
-void copter_state_init(void)
+static void copter_status_init(void)
 {
     copter_status.emergency = 0;
     copter_status.flight_status = READY;
     copter_status.mode = STABILIZATION;
     copter_status.recoil_compensate_enable = 0;
-    Package_Pionter_Add("status", copter_status);
-	status_ID = Package_Find_Num("status");
+    Package_Pionter_Add("status", status);
+		status_ID = Package_Find_Num("status");
 }
 
 rt_err_t StateDecide_Init(void)

@@ -2,12 +2,13 @@
 #include "func_sensor.h"
 #include "drv_NimingFlow.h"
 #include "drv_TF_mini.h"
+#include "drv_dataserve.h"
 
 data_fresh_time fresh_time_last;
 acc_sensor copter_acc;
 pos_sensor copter_pos = {0};
 static uint8_t first_flag = 1;
-uint8_t Package_ID;
+rt_int8_t Package_ID;
 
 struct rt_semaphore Pos_20ms_sem; /* 用于接收消息的信号量 */
 static struct rt_timer Pos_sensor_tim;/* 闭环线程定时器 */
@@ -131,9 +132,9 @@ static void Pos_sensor_thread_entry(void *parameter)
         }
 
         /*数据服务器进行数据更新*/
-        pos_sensor *p = Package_Pionter_Add(Package_ID,copter_pos);
+        pos_sensor *p = Package_Pionter_Single(Package_ID,pos_sensor);
         *p = copter_pos;
-        Package_Write_Pionter_End(Package_ID,copter_pos);
+        Package_Write_Pionter_End(Package_ID,pos_sensor);
 
         rt_sem_take(&Pos_20ms_sem, RT_WAITING_FOREVER);
 
@@ -155,8 +156,8 @@ rt_err_t Sensor_Init(void)
     else
         TF_mini_Init();
     
-    Package_Pionter_Add("pos_sensor", copter_pos);
-	Package_ID = Package_Find_Num("pos_sensor");
+    Package_Pionter_Add("pos_sensor", pos_sensor);
+		Package_ID = Package_Find_Num("pos_sensor");
 
 	/*定时器处理线程*/
     rt_thread_t thread;
