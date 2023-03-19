@@ -3,7 +3,7 @@
 #include "drv_utils.h"
 #include "drv_dataserve.h"
 
-remote_data copter_remote ={0};
+static remote_data copter_remote ={0};
 RC_PPM_data copter_rec_data_last = {0};
 uint8_t Package_ID;
 uint8_t first_flag = 1;

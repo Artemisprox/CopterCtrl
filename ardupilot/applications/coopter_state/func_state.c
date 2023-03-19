@@ -8,14 +8,14 @@
 #include "mod_error_handle.h"
 #include "mod_recoil_force_compensate.h"
 
-remote_data copter_remote;
-pos_sensor copter_pos;
-IMU_t copter_atti;
-battery copter_power;
-gun_data copter_gun;
+static remote_data copter_remote;
+static pos_sensor copter_pos;
+static IMU_t copter_atti;
+static battery copter_power;
+static gun_data copter_gun;
 
 data_check copter_data_valid = {0};
-status copter_status = {0};
+static status copter_status = {0};
 
 struct rt_semaphore State_20ms_sem; /* 定时信号量 */
 static struct rt_timer State_decide_tim;/* 定时器 */

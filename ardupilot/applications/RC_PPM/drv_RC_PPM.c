@@ -1,7 +1,6 @@
 #include "drv_RC_PPM.h"
 #include "drv_tim13.h"
 #include "stm32f4xx_hal.h"
-#include <rtthread.h>
 #include "board.h"
 #include "drv_thread.h"
 

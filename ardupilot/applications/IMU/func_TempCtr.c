@@ -2,9 +2,8 @@
         IMU温度控制
 */
 #include "func_TempCtr.h"
-#include "rtdevice.h"
+#include <rtdevice.h>
 #include "drv_thread.h"
-
 #include <board.h>
 #include "func_bmi088.h"
 #include "mod_Monitor.h"

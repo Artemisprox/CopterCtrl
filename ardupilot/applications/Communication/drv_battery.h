@@ -2,7 +2,7 @@
 
 #define POWER_ID 0x102
 
-#define BATTERY_LOW  11.3f
+#define BATTERY_LOW_V  11.3f
 
 typedef struct
 {

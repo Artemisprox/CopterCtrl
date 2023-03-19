@@ -1,5 +1,4 @@
 #include "drv_NimingFlow.h"
-#include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
 #include "drv_thread.h"

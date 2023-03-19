@@ -28,9 +28,10 @@ void can1_rec(struct rt_can_msg *msg)
         return;
     }
 }
-/*
+
 void can2_rec(struct rt_can_msg *msg)
 {
+/*
     switch (msg->id)
     {
     //视觉通信数据接收ID
@@ -55,5 +56,6 @@ void can2_rec(struct rt_can_msg *msg)
         Last_CANID = msg->id;
         return;
     }
-}
 */
+}
+

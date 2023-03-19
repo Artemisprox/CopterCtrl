@@ -7,7 +7,6 @@
 #include "mod_Monitor.h"
 #include "drv_flash.h"
 #include "drv_utils.h"
-#include <rtthread.h>
 #include <board.h>
 #include "drv_HardWdt.h"
 #include "roboselect.h"

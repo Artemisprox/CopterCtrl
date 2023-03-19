@@ -2,7 +2,7 @@
 #include "drv_dataserve.h"
 
 struct rt_semaphore gun_rec_sem; /* 用于接收信息的信号量 */
-gun_data copter_gun;
+static gun_data copter_gun;
 static uint8_t Package_ID;
 
 /**

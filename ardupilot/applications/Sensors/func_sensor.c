@@ -5,17 +5,17 @@
 #include "drv_dataserve.h"
 
 data_fresh_time fresh_time_last;
-acc_sensor copter_acc;
-pos_sensor copter_pos = {0};
+static acc_sensor copter_acc;
+static pos_sensor copter_pos = {0};
 static uint8_t first_flag = 1;
-rt_int8_t Package_ID;
+static rt_int8_t Package_ID;
 
 struct rt_semaphore Pos_20ms_sem; /* 用于接收消息的信号量 */
 static struct rt_timer Pos_sensor_tim;/* 闭环线程定时器 */
 
 static void Compensate_filter(float* pos , float pos_sensor , float acc , float t)
 {
-    *pos = k*(*pos + acc*period) + (1-k)*pos_sensor;
+    *pos = k*(*pos + acc*PERIOD) + (1-k)*pos_sensor;
 }
 
 //使用互补滤波处理位置信息（加速度计估计速度+光流估计速度）
@@ -50,8 +50,8 @@ static void Pos_sensor_thread_entry(void *parameter)
                         if(DATA_FUSE)//启用板载加速度计融合
                         {
                             /*高度估计*/
-                            Compensate_filter(&copter_pos.V_height,NiMingFlow_data.distance_v, copter_acc.acc_z,period);
-                            Compensate_filter(&copter_pos.distance,NiMingFlow_data.distance, copter_pos.V_height,period);
+                            Compensate_filter(&copter_pos.V_height,NiMingFlow_data.distance_v, copter_acc.acc_z,PERIOD);
+                            Compensate_filter(&copter_pos.distance,NiMingFlow_data.distance, copter_pos.V_height,PERIOD);
                         }else
                         {
                             copter_pos.V_height = NiMingFlow_data.distance_v;
@@ -75,8 +75,8 @@ static void Pos_sensor_thread_entry(void *parameter)
                         if(DATA_FUSE)//启用板载加速度计融合
                         {
                             /*高度估计*/
-                            Compensate_filter(&copter_pos.V_height,TF_mini_data.distance, copter_acc.acc_z,period);
-                            Compensate_filter(&copter_pos.distance, TF_mini_data.distance_v, copter_acc.acc_z, period);
+                            Compensate_filter(&copter_pos.V_height,TF_mini_data.distance, copter_acc.acc_z,PERIOD);
+                            Compensate_filter(&copter_pos.distance, TF_mini_data.distance_v, copter_acc.acc_z, PERIOD);
                         }else
                         {
                             copter_pos.V_height = TF_mini_data.distance_v;
@@ -101,8 +101,8 @@ static void Pos_sensor_thread_entry(void *parameter)
                         if(DATA_FUSE)//启用板载加速度计融合
                         {
                              /*速度估计*/
-                            Compensate_filter(&copter_pos.V_pos_x,NiMingFlow_data.Vx_Flow, copter_acc.acc_x,period);
-                            Compensate_filter(&copter_pos.V_pos_y,NiMingFlow_data.Vy_Flow, copter_acc.acc_y,period);
+                            Compensate_filter(&copter_pos.V_pos_x,NiMingFlow_data.Vx_Flow, copter_acc.acc_x,PERIOD);
+                            Compensate_filter(&copter_pos.V_pos_y,NiMingFlow_data.Vy_Flow, copter_acc.acc_y,PERIOD);
                         }else
                         {
                             copter_pos.V_pos_x = NiMingFlow_data.Vx_Flow;
@@ -110,8 +110,8 @@ static void Pos_sensor_thread_entry(void *parameter)
                         }
 
                         /*位置估计*/
-                        copter_pos.pos_x += copter_pos.V_pos_x*period;
-                        copter_pos.pos_y += copter_pos.V_pos_y*period;
+                        copter_pos.pos_x += copter_pos.V_pos_x*PERIOD;
+                        copter_pos.pos_y += copter_pos.V_pos_y*PERIOD;
                     
                         copter_pos.pos_valid = 1;//更新时间校验和数据校验都通过，认为数据可用
                         fresh_time_last.pos_time = NiMingFlow_data.pos_data_fresh_time;

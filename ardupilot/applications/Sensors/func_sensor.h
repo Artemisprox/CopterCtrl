@@ -1,7 +1,7 @@
 #include <rtthread.h>
 
 #define k 0.98f
-#define period 0.02f
+#define PERIOD 0.02f
 #define DATA_FUSE 0
 #define USING_FLOW 1
 

@@ -3,7 +3,7 @@
 #include "drv_thread.h"
 #include "drv_dataserve.h"
 
-battery copter_power = {0};
+static battery copter_power = {0};
 struct rt_semaphore battery_100ms_sem; /* 用于定时的信号量 */
 struct rt_semaphore battery_rec_sem; /* 用于接收信息的信号量 */
 static struct rt_timer battery_tim;/* 闭环线程定时器 */
@@ -43,7 +43,7 @@ static void battery_thread_entry(void *parameter)
             copter_power.Battery_data_rec = 0;//未收到电池数据
         }
         
-        if( copter_power.voltage >= BATTERY_LOW )//检查电池电量是否过低，过低则不允许起飞/提醒尽快降落
+        if( copter_power.voltage >= BATTERY_LOW_V )//检查电池电量是否过低，过低则不允许起飞/提醒尽快降落
             copter_power.Battery_status = 1;
         else copter_power.Battery_status = 0;
 
