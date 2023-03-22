@@ -11,7 +11,7 @@
 #include <rtthread.h>
 #include "drv_RC_PPM.h"
 #include "drv_PWM_motor.h"
-#include "drv_buzzer.h"
+//#include "drv_buzzer.h"
 #include "mod_Monitor.h"
 #include "func_bmi088.h"
 #include "func_TempCtr.h"

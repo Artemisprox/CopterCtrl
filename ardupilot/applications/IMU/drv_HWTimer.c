@@ -16,15 +16,22 @@ int TIM11_GetCNT(void)
   */
 void MX_TIM11_Init(void)
 {
-    htim11.Instance = TIM11;
-    htim11.Init.Prescaler = 7;
-    htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim11.Init.Period = 65535;
-    htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    htim11.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
-    {
-        while(1);
-    }
-    HAL_TIM_Base_Start(&htim11);
+
+  /* USER CODE BEGIN TIM11_Init 0 */
+
+  /* USER CODE END TIM11_Init 0 */
+
+  /* USER CODE BEGIN TIM11_Init 1 */
+
+  /* USER CODE END TIM11_Init 1 */
+  htim11.Instance = TIM11;
+  htim11.Init.Prescaler = 0;
+  htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim11.Init.Period = 65535;
+  htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim11.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  /* USER CODE BEGIN TIM11_Init 2 */
+
+  /* USER CODE END TIM11_Init 2 */
+
 }

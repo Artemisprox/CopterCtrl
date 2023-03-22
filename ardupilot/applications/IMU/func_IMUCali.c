@@ -1,7 +1,7 @@
 #include "func_IMUCali.h"
 #include "func_bmi088.h"
 #include "drv_thread.h"
-#include "drv_buzzer.h"
+//#include "drv_buzzer.h"
 #include "drv_HWTimer.h"
 #include "func_TempCtr.h"
 #include "mod_Monitor.h"
@@ -81,9 +81,9 @@ void IMU_GyroCali_Thread(void *Para)
 
     Gyro_Cali_State = (IMU_GyroCali_State_e)1; // 开始进行第一步
 
-    set_buzzer(2000, 1);
+    //set_buzzer(2000, 1);
     rt_thread_delay(3000); // 等3秒，防止按键等操作带来扰动
-    set_buzzer(0, 1);
+//    set_buzzer(0, 1);
 
     // 记录数据的过程在这个while中完成
     while (1)
@@ -133,9 +133,9 @@ void IMU_GyroCali_Thread(void *Para)
                 // 等待10S后进行下一步
                 TimeCount = 0;
                 Gyro_Cali_State++;
-                set_buzzer(950, 1);
+//                set_buzzer(950, 1);
                 rt_thread_delay(80);
-                set_buzzer(0, 1);
+//                set_buzzer(0, 1);
             }
             break;
         case Cali_Recording:
@@ -168,20 +168,20 @@ void IMU_GyroCali_Thread(void *Para)
                 Gyro_OffSet.x = Cali_Out.x;
                 Gyro_OffSet.y = Cali_Out.y;
                 Gyro_OffSet.z = Cali_Out.z;
-                set_buzzer(800, 1);
+//                set_buzzer(800, 1);
                 rt_thread_delay(50);
-                set_buzzer(950, 1);
+//                set_buzzer(950, 1);
                 rt_thread_delay(80);
-                set_buzzer(0, 1);
+//                set_buzzer(0, 1);
                 break;
             }
             else
             { // 如果测量失败则本次放弃，发出提示音
-                set_buzzer(800, 1);
+//                set_buzzer(800, 1);
                 rt_thread_delay(50);
-                set_buzzer(500, 1);
+//                set_buzzer(500, 1);
                 rt_thread_delay(80);
-                set_buzzer(0, 1);
+//                set_buzzer(0, 1);
                 break;
             }
         }
@@ -258,7 +258,7 @@ static int CaliKeyCheck(void)
     }
     // 上电后的第一秒内按键一直保持按下，此时开蜂鸣器并等待按键松开
     Time = 0; // 重新计时
-    set_buzzer(1500, 1);
+//    set_buzzer(1500, 1);
     while (1)
     {
         if (!rt_pin_read(FLASH_ERASE_PIN))
@@ -272,7 +272,7 @@ static int CaliKeyCheck(void)
             if (ConfirmCount < 0)
             {
                 // 按键松开了，此时松开说明需要重测零飘
-                set_buzzer(0, 1);
+//                set_buzzer(0, 1);
                 return 1;
             }
         }
@@ -282,7 +282,7 @@ static int CaliKeyCheck(void)
             break;
     }
     // 到这里说明可能是误触，不进行零飘重测，直接跳过
-    set_buzzer(0, 1);
+//    set_buzzer(0, 1);
     return 0;
 }
 
@@ -329,15 +329,15 @@ int LoadGyroOffSet(void)
                 Gyro_OffSet.y = 0.f;
                 Gyro_OffSet.z = 0.f;
                 // 发出报警提示
-                set_buzzer(3500, 1);
+//                set_buzzer(3500, 1);
                 rt_thread_mdelay(200);
-                set_buzzer(2800, 1);
+//                set_buzzer(2800, 1);
                 rt_thread_mdelay(150);
-                set_buzzer(1000, 1);
+//                set_buzzer(1000, 1);
                 rt_thread_mdelay(200);
-                set_buzzer(1800, 1);
+//                set_buzzer(1800, 1);
                 rt_thread_mdelay(400);
-                set_buzzer(0, 1);
+//                set_buzzer(0, 1);
                 return 0;
             }
         }

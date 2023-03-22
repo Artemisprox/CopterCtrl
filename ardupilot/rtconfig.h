@@ -195,9 +195,6 @@
 
 /* Whether to use the HardWare Libraries */
 
-#define BSP_USING_BUZZER
-#define BUZZER_PWM_DEVICE_NAME "pwm4"
-#define BUZZER_PWM_CHANNEL 3
 #define BSP_USING_REMOTE_DT7
 #define REMOTE_UART_DEVICE_NAME "uart3"
 
@@ -230,11 +227,10 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_STM32F407IG
+#define SOC_STM32F446RE
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_CAN168M
 #define CORE_USING_MONITOR
 #define BSP_USING_WDT
 
