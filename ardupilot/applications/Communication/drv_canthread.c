@@ -18,6 +18,9 @@ rt_device_t can1_dev;                   // CAN 设备句柄
 static struct rt_semaphore can2_rx_sem; //用于接收消息的信号量
 rt_device_t can2_dev;                   // CAN 设备句柄
 
+struct rt_can_msg msg = {0};           /* CAN 消息 */
+
+
 //用户需要在can_receive.c里重新定义这两个函数
 
 // can1数据接收函数
@@ -124,7 +127,10 @@ int can1_init(void)
     res = rt_device_control(can1_dev, RT_CAN_CMD_SET_BAUD, (void *)CAN1MBaud);
     //设置接收回调函数
     rt_device_set_rx_indicate(can1_dev, can1_rx_call);
-
+			
+		
+		//static int size = 0;
+		//size = rt_device_write(can1_dev, 0, &msg, sizeof(msg));
     return res;
 }
 // INIT_APP_EXPORT(can1_init);
@@ -168,7 +174,27 @@ int can2_init(void)
     res = rt_device_control(can2_dev, RT_CAN_CMD_SET_BAUD, (void *)CAN1MBaud);
     //设置接收回调函数
     rt_device_set_rx_indicate(can2_dev, can2_rx_call);
-
+		
+		while(1)
+		{
+			msg.id = 0x78;              /* ID 为 0x78 */
+msg.ide = RT_CAN_STDID;     /* 标准格式 */
+msg.rtr = RT_CAN_DTR;       /* 数据帧 */
+msg.len = 8;                /* 数据长度为 8 */
+/* 待发送的 8 字节数据 */
+msg.data[0] = 0x00;
+msg.data[1] = 0x11;
+msg.data[2] = 0x22;
+msg.data[3] = 0x33;
+msg.data[4] = 0x44;
+msg.data[5] = 0x55;
+msg.data[6] = 0x66;
+msg.data[7] = 0x77;
+			static int size1 = 0 , size2 = 0;
+		  size1 = rt_device_write(can1_dev, 0, &msg, sizeof(msg));
+			size2 = rt_device_write(can2_dev, 0, &msg, sizeof(msg));
+		}
+		
     return res;
 }
 // INIT_APP_EXPORT(can2_init);

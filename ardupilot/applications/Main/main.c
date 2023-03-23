@@ -22,6 +22,7 @@
 #include "mod_Atti.h"
 #include "drv_TF_mini.h"
 #include "drv_NimingFlow.h"
+#include "drv_canthread.h"
 #if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO) && (!defined CORE_USING_COPTER)
 #error "Please specify the robot type!"
 #endif
@@ -44,7 +45,9 @@ int main(void)
     if (IMU_WaitForInit() != RT_EOK)
         Robot_Reset_Gimbal();
 */
-	  NiMingFlow_Init();
+	 // NiMingFlow_Init();
+	can1_init();
+	can2_init();
 	//TF_mini_Init();
 /*
     if (remote_uart_init() != RT_EOK) // 遥控器初始化
