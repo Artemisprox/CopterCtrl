@@ -8,6 +8,8 @@
  * 2018-11-06     SummerGift   first version
  */
 
+#define TEST 1
+
 #include <rtthread.h>
 #include "drv_RC_PPM.h"
 #include "drv_PWM_motor.h"
@@ -23,12 +25,26 @@
 #include "drv_TF_mini.h"
 #include "drv_NimingFlow.h"
 #include "drv_canthread.h"
+
+#if (TEST)
+#include "CAN_TEST.h"
+#include "RGB_TEST.h"
+#endif
+
 #if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO) && (!defined CORE_USING_COPTER)
 #error "Please specify the robot type!"
 #endif
 
 int main(void)
 {
+
+#if (CAN_TEST)
+    TEST_CAN_init();
+#endif
+
+#if (RGB_TEST)
+    RGB_Init();
+#endif
     // 上电提示音
 /*    set_buzzer(4200, 1);
     rt_thread_mdelay(20);
@@ -46,8 +62,6 @@ int main(void)
         Robot_Reset_Gimbal();
 */
 	 // NiMingFlow_Init();
-	can1_init();
-	can2_init();
 	//TF_mini_Init();
 /*
     if (remote_uart_init() != RT_EOK) // 遥控器初始化
