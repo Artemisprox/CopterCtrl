@@ -648,6 +648,11 @@
               <FilePath>applications\TEST\CAN_TEST.c</FilePath>
             </File>
             <File>
+              <FileName>KEY_TEST.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\TEST\KEY_TEST.c</FilePath>
+            </File>
+            <File>
               <FileName>RGB_TEST.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\TEST\RGB_TEST.c</FilePath>

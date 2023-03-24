@@ -27,8 +27,12 @@
 #include "drv_canthread.h"
 
 #if (TEST)
+#define KEY_TEST 1
+#define CAN_TEST 0
+#define RGB_TEST 0
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
+#include "KEY_TEST.h"
 #endif
 
 #if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO) && (!defined CORE_USING_COPTER)
@@ -44,6 +48,10 @@ int main(void)
 
 #if (RGB_TEST)
     RGB_Init();
+#endif
+
+#if (KEY_TEST)
+    KEY_Init();
 #endif
     // 上电提示音
 /*    set_buzzer(4200, 1);

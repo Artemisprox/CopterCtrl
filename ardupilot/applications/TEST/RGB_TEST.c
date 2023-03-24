@@ -8,9 +8,9 @@
 #define RGB_R     2       /* PWM通道 */
 #define RGB_B     3       /* PWM通道 */
 
-rt_uint32_t period_R, pulse_R,period_G,pulse_G,period_B,pulse_B;
+static rt_uint32_t period_R, pulse_R,period_G,pulse_G,period_B,pulse_B;
 
-struct rt_device_pwm *pwm_dev;      /* PWM设备句柄 */
+static struct rt_device_pwm *pwm_dev;      /* PWM设备句柄 */
 
 static void TEST_RGB_Ctrl(void *parameter)
 {

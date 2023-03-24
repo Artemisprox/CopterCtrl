@@ -158,7 +158,6 @@ static int TEST_can2_init(void)
 static void TEST_CAN_Ctrl(void *parameter)
 {
     struct rt_can_msg can_msg = {0};
-    rt_int32_t size = 0;
     rt_int32_t count = 0;
 
     can_msg.id = 0x78;              /* ID 为 0x78 */
@@ -198,7 +197,7 @@ static rt_err_t TEST_CANCtrl_init(void)
     return RT_EOK;
 }
 
-rt_err_t TEST_CAN_init(void)
+rt_err_t TEST_CAN_Init(void)
 {
     TEST_can1_init();
     TEST_can2_init();
