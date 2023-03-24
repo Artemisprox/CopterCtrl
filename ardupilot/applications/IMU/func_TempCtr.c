@@ -5,7 +5,7 @@
 #include <rtdevice.h>
 #include "drv_thread.h"
 #include <board.h>
-#include "func_bmi088.h"
+#include "func_SensorRAW.h"
 #include "mod_Monitor.h"
 #include <arm_math.h>
 
@@ -85,7 +85,7 @@ static void TempCTR_thread(void *parameter)
 
         HERO_TPctr.TempCTR_pid.set = IMUTempSet; // 更新设定值
 
-        Error = HERO_TPctr.TempCTR_pid.set - HERO_BMI088_DEV.Temperature;
+        Error = HERO_TPctr.TempCTR_pid.set - Sensor_RAW.Temperature;
         PIDTemp_Calculate(&HERO_TPctr.TempCTR_pid, Error);
 
         rt_pwm_set(IMUtemp_pwm, IMUTEMP_PWMCHANNEL, 1 * 1000 * 1000, (rt_uint32_t)HERO_TPctr.TempCTR_pid.out * 1000);

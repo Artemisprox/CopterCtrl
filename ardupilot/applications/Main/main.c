@@ -15,7 +15,7 @@
 #include "drv_PWM_motor.h"
 //#include "drv_buzzer.h"
 #include "mod_Monitor.h"
-#include "func_bmi088.h"
+#include "func_SensorRAW.h"
 #include "func_TempCtr.h"
 #include "drv_IMU.h"
 #include "drv_remote.h"

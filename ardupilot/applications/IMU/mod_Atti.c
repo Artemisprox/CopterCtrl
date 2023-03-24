@@ -2,7 +2,7 @@
 #include "drv_dataserve.h"
 #include "drv_thread.h"
 #include "drv_HWTimer.h"
-#include "func_bmi088.h"
+#include "func_SensorRAW.h"
 #include "func_ahrs.h"
 #include "func_IMUCali.h"
 #include "func_TempCtr.h"
@@ -55,7 +55,7 @@ static void Fresh_Beta(void)
     float Beta_Filter;
 
     // 计算加速度矢量模长
-    Accl_Len_2 = SQUARE(HERO_BMI088_DEV.Accl_Raw.x) + SQUARE(HERO_BMI088_DEV.Accl_Raw.y) + SQUARE(HERO_BMI088_DEV.Accl_Raw.z);
+    Accl_Len_2 = SQUARE(Sensor_RAW.Accl_Raw.x) + SQUARE(Sensor_RAW.Accl_Raw.y) + SQUARE(Sensor_RAW.Accl_Raw.z);
     if (Accl_Len_2 < 0)
         Accl_Len_2 = 0;
     Accl_Filter = 10 * sqrtf(Accl_Len_2);
@@ -98,10 +98,10 @@ static void AttiCalcu_thread(void *parameter)
 		
     while (1)
     {
-        BMI088_WaitForRawData();
+        Sensor_WaitForRawData();
 
         // 坐标换算，零飘校正
-        GetCaliIMUData(&HERO_BMI088_DEV.Accl_Raw, &HERO_BMI088_DEV.Gyro_Raw, &AcclFix, &GyroFix);
+        GetCaliIMUData(&Sensor_RAW.Accl_Raw, &Sensor_RAW.Gyro_Raw, &AcclFix, &GyroFix);
 
         if (first_flag)
         { // 初始位置还没确定
@@ -123,7 +123,7 @@ static void AttiCalcu_thread(void *parameter)
         }
         else
         { // 初始位置确定完成
-            inv_sample_freq = 1 / HERO_BMI088_DEV.DataRate;
+            inv_sample_freq = 1 / Sensor_RAW.DataRate;
             Fresh_Beta();
 
             HERO_AHRS.inv_sample_freq = inv_sample_freq;
