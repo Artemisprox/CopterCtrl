@@ -543,6 +543,11 @@
               <FilePath>applications\IMU\drv_IMU.c</FilePath>
             </File>
             <File>
+              <FileName>drv_icm20602.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\IMU\drv_icm20602.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_spithread.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\IMU\drv_spithread.c</FilePath>
@@ -553,6 +558,11 @@
               <FilePath>applications\IMU\func_IMUCali.c</FilePath>
             </File>
             <File>
+              <FileName>func_SensorRAW.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\IMU\func_SensorRAW.c</FilePath>
+            </File>
+            <File>
               <FileName>func_TempCtr.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\IMU\func_TempCtr.c</FilePath>
@@ -561,11 +571,6 @@
               <FileName>func_ahrs.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\IMU\func_ahrs.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_bmi088.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\func_bmi088.c</FilePath>
             </File>
             <File>
               <FileName>mod_Atti.c</FileName>

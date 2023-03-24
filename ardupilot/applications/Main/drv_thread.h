@@ -24,5 +24,6 @@
 #define THREAD_PRIO_RC_RX (21)
 #define THREAD_PRIO_CAN1RX (22)
 
+#define THREAD_PRIO_RAW_DATA_PROCESS (12)
 
 #endif

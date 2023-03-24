@@ -1,27 +1,34 @@
 #include "func_IMUCali.h"
-#include "func_bmi088.h"
+
 #include "drv_thread.h"
-//#include "drv_buzzer.h"
 #include "drv_HWTimer.h"
+#include "func_SensorRAW.h"
 #include "func_TempCtr.h"
-#include "mod_Monitor.h"
-#include "drv_flash.h"
-#include "drv_utils.h"
-#include <board.h>
-#include "drv_HardWdt.h"
-#include "roboselect.h"
 
-#define FLASH_ERASE_PIN GET_PIN(A, 0)
-#define GYRO_SUM_MAX 60000 // æ ¡å‡†é™€èºä»ªç§¯åˆ†æ—¶éœ€è¦æ”¶é›†æ•°æ®çš„ä¸ªæ•°
+#define FLASH_ERASE_PIN GET_PIN(C, 6)
+#define GYRO_SUM_MAX 60000 // Ğ£×¼ÍÓÂİÒÇ»ı·ÖÊ±ĞèÒªÊÕ¼¯Êı¾İµÄ¸öÊı
 
-#define GYRO_RAWDATA(Axis) (HERO_BMI088_DEV.Gyro_Raw.Axis - Gyro_OffSet.Axis)
-#define ACCL_RAWDATA(Axis) (HERO_BMI088_DEV.Accl_Raw.Axis)
+#define GYRO_RAWDATA(Axis) (Sensor_RAW.Gyro_Raw.Axis - Gyro_OffSet.Axis)
+#define ACCL_RAWDATA(Axis) (Sensor_RAW.Accl_Raw.Axis)
 
-// åç§»é‡ä¸ºRawæ•°æ®çš„åç§»é‡ï¼Œä¸å®‰è£…ä½ç½®æ— å…³
-// ä½¿ç”¨åç§»é‡æ—¶ï¼Œå…ˆç”¨Rawæ•°æ®å‡å»åç§»é‡ï¼Œå†è¿›è¡Œå®‰è£…ä½ç½®æ ¡æ­£
-AHRS_Gyro_t Gyro_OffSet = {0}; // é»˜è®¤ä¸º0
+// ÒÔÔÆÌ¨ÎªÀı£ºÇ¹¿Ú·½ÏòÎªÇ°·½£¬´¹Ö±µØÃæÏòÉÏÎªÉÏ·½£¬ÀàËÆÓÚµÚÒ»ÊÓ½Ç
+// XÎª ºó·½(Ç¹¹Ü·´·½ÏòÖá)
+// GYRO_X_SOURCE -GYRO_RAWDATA(y)±íÊ¾ ÔÆÌ¨ºó·½Êı¾İ=(-1*Ô­Ê¼yÖáÊı¾İ)
+// ½ÇËÙ¶È·½Ïò×ñÑ­ÓÒÊÖÂİĞı
+#define GYRO_X_SOURCE -GYRO_RAWDATA(y)
+#define ACCL_X_SOURCE -ACCL_RAWDATA(y)
+// YÎª ÓÒ·½
+#define GYRO_Y_SOURCE -GYRO_RAWDATA(x)
+#define ACCL_Y_SOURCE -ACCL_RAWDATA(x)
+// ZÎª ÉÏ·½
+#define GYRO_Z_SOURCE -GYRO_RAWDATA(z)
+#define ACCL_Z_SOURCE -ACCL_RAWDATA(z)
 
-// è¾“å…¥IMUåŸå§‹æ•°æ®ï¼ŒæŒ‰ç…§è®¾ç½®è·å–ç»å®‰è£…ä½ç½®æ ¡æ­£å’Œé›¶é£˜æ ¡æ­£åçš„å…­è½´æ•°æ®
+// Æ«ÒÆÁ¿ÎªRawÊı¾İµÄÆ«ÒÆÁ¿£¬Óë°²×°Î»ÖÃÎŞ¹Ø
+// Ê¹ÓÃÆ«ÒÆÁ¿Ê±£¬ÏÈÓÃRawÊı¾İ¼õÈ¥Æ«ÒÆÁ¿£¬ÔÙ½øĞĞ°²×°Î»ÖÃĞ£Õı
+AHRS_Gyro_t Gyro_OffSet = {0}; // Ä¬ÈÏÎª0
+
+// ÊäÈëIMUÔ­Ê¼Êı¾İ£¬°´ÕÕÉèÖÃ»ñÈ¡¾­°²×°Î»ÖÃĞ£ÕıºÍÁãÆ®Ğ£ÕıºóµÄÁùÖáÊı¾İ
 void GetCaliIMUData(AHRS_Accl_t *AcclRaw, AHRS_Gyro_t *GyroRaw, AHRS_Accl_t *Accl, AHRS_Gyro_t *Gyro)
 {
     Accl->x = ACCL_X_SOURCE;
@@ -32,12 +39,7 @@ void GetCaliIMUData(AHRS_Accl_t *AcclRaw, AHRS_Gyro_t *GyroRaw, AHRS_Accl_t *Acc
     Gyro->z = GYRO_Z_SOURCE;
 }
 
-// ä¸ºäº†é˜²æ­¢å‡ºç°æŠ¥é”™è€Œè®¾ç½®çš„å‡½æ•°
-__weak void Hwdt_Feed_Slowly(rt_bool_t if_slow)
-{
-}
-
-// Flashå­˜å‚¨å‡½æ•°
+// Flash´æ´¢º¯Êı
 static void FlashRecord(AHRS_Gyro_t *CaliData)
 {
     rt_uint8_t temp_data[13];
@@ -53,70 +55,67 @@ static void FlashRecord(AHRS_Gyro_t *CaliData)
     temp_data[9] = ((rt_uint8_t *)(&CaliData->z))[1];
     temp_data[10] = ((rt_uint8_t *)(&CaliData->z))[2];
     temp_data[11] = ((rt_uint8_t *)(&CaliData->z))[3];
-    temp_data[12] = IMU_CALI_FLAG;
-    /* æµ‹é‡å®Œæ¯•, å¼€å§‹è¯»å†™ Flash */
-    Hwdt_Feed_Slowly(RT_TRUE); // å¼€å§‹æ“ä½œ Flash æ•°æ®, éœ€è¦å¼€å§‹ç¼“æ…¢å–‚ç‹—
+    temp_data[12] = 0x0F;
+    /* ²âÁ¿Íê±Ï, ¿ªÊ¼¶ÁĞ´ Flash */
+//    Hwdt_Feed_Slowly(RT_TRUE); // ¿ªÊ¼²Ù×÷ Flash Êı¾İ, ĞèÒª¿ªÊ¼»ºÂıÎ¹¹·
+    rt_enter_critical();       // ½øÈëÁÙ½çÇø·ÀÖ¹²Ù×÷ÏµÍ³µ÷¶È
     stm32_flash_erase(IMU_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
-    rt_exit_critical();    // é€€å‡ºä¸´ç•ŒåŒºç»§ç»­å¯åŠ¨è°ƒåº¦å™¨
-    rt_thread_mdelay(500); // æ“¦é™¤ä¸å†™å…¥éœ€è¦é—´éš”ä¸€æ®µæ—¶é—´
-    rt_enter_critical();   // è¿›å…¥ä¸´ç•ŒåŒºé˜²æ­¢æ“ä½œç³»ç»Ÿè°ƒåº¦
+    rt_exit_critical();    // ÍË³öÁÙ½çÇø¼ÌĞøÆô¶¯µ÷¶ÈÆ÷
+    rt_thread_mdelay(500); // ²Á³ıÓëĞ´ÈëĞèÒª¼ä¸ôÒ»¶ÎÊ±¼ä
+    rt_enter_critical();   // ½øÈëÁÙ½çÇø·ÀÖ¹²Ù×÷ÏµÍ³µ÷¶È
     stm32_flash_write(IMU_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
-    Hwdt_Feed_Slowly(RT_FALSE); // æ“ä½œ Flash æ•°æ®ç»“æŸ, é‡æ–°å¼€å§‹æ­£å¸¸å–‚ç‹—
+    rt_exit_critical();         // ÍË³öÁÙ½çÇø¼ÌĞøÆô¶¯µ÷¶ÈÆ÷
+//    Hwdt_Feed_Slowly(RT_FALSE); // ²Ù×÷ Flash Êı¾İ½áÊø, ÖØĞÂ¿ªÊ¼Õı³£Î¹¹·
 }
 
-IMU_GyroCali_State_e Gyro_Cali_State = Cali_Error; // è®°å½•å½“å‰æ ¡å‡†çŠ¶æ€
+IMU_GyroCali_State_e Gyro_Cali_State = Cali_Error; // ¼ÇÂ¼µ±Ç°Ğ£×¼×´Ì¬
 
-static struct rt_semaphore IMU_CaliFinish_Sem; // é€šä¿¡ç»“æŸåé€šçŸ¥æ•°æ®å¤„ç†çº¿ç¨‹å¤„ç†æ•°æ®
-static rt_thread_t IMU_GyroCali_Tid = RT_NULL; // IMUæ ¡å‡†çº¿ç¨‹
+static struct rt_semaphore IMU_CaliFinish_Sem; // Í¨ĞÅ½áÊøºóÍ¨ÖªÊı¾İ´¦ÀíÏß³Ì´¦ÀíÊı¾İ
+static rt_thread_t IMU_GyroCali_Tid = RT_NULL; // IMUĞ£×¼Ïß³Ì
 
-static double Gyro_Sum[3] = {0};         // xã€yã€zä¸‰è½´çš„æ ¡å‡†æ±‚å’Œæ•°å€¼
-static int GyroSum_Count;                // è®°å½•å‚ä¸æ±‚å’Œçš„æ•°æ®ä¸ªæ•°
-static AHRS_Gyro_t GyroRawNow, Cali_Out; // å½“å‰é™€èºä»ªRawæ•°æ®ã€æœ€ç»ˆè¾“å‡ºçš„æµ‹å®šç»“æœ
+static double Gyro_Sum[3] = {0};         // x¡¢y¡¢zÈıÖáµÄĞ£×¼ÇóºÍÊıÖµ
+static int GyroSum_Count;                // ¼ÇÂ¼²ÎÓëÇóºÍµÄÊı¾İ¸öÊı
+static AHRS_Gyro_t GyroRawNow, Cali_Out; // µ±Ç°ÍÓÂİÒÇRawÊı¾İ¡¢×îÖÕÊä³öµÄ²â¶¨½á¹û
 
-// æ ¡å‡†çº¿ç¨‹
+#define X2CAL(x) ((x) * (x))
+
+// Ğ£×¼Ïß³Ì
 void IMU_GyroCali_Thread(void *Para)
 {
-    float GyroSumNow;  // ä¸‰è½´è§’é€Ÿåº¦å¹³æ–¹å’Œï¼Œç”¨äºåˆ¤æ–­å½“å‰IMUæ˜¯å¦è¢«æ„å¤–è½¬åŠ¨
-    int TimeCount = 0; // ç”¨æ¥è®°å½•æ—¶é—´
+    float GyroSumNow;  // ÈıÖá½ÇËÙ¶ÈÆ½·½ºÍ£¬ÓÃÓÚÅĞ¶Ïµ±Ç°IMUÊÇ·ñ±»ÒâÍâ×ª¶¯
+    int TimeCount = 0; // ÓÃÀ´¼ÇÂ¼Ê±¼ä
 
-    Gyro_Cali_State = (IMU_GyroCali_State_e)1; // å¼€å§‹è¿›è¡Œç¬¬ä¸€æ­¥
+    Gyro_Cali_State = (IMU_GyroCali_State_e)1; // ¿ªÊ¼½øĞĞµÚÒ»²½
 
-    //set_buzzer(2000, 1);
-    rt_thread_delay(3000); // ç­‰3ç§’ï¼Œé˜²æ­¢æŒ‰é”®ç­‰æ“ä½œå¸¦æ¥æ‰°åŠ¨
-//    set_buzzer(0, 1);
-
-    // è®°å½•æ•°æ®çš„è¿‡ç¨‹åœ¨è¿™ä¸ªwhileä¸­å®Œæˆ
+    // ¼ÇÂ¼Êı¾İµÄ¹ı³ÌÔÚÕâ¸öwhileÖĞÍê³É
     while (1)
     {
-        // ç­‰å¾…æ–°æ•°æ®
-        BMI088_WaitForRawData();
+        // µÈ´ıĞÂÊı¾İ
+        Sensor_WaitForRawData();
 
-        // è¯»æ•°æ®
-        GyroRawNow.x = HERO_BMI088_DEV.Gyro_Raw.x;
-        GyroRawNow.y = HERO_BMI088_DEV.Gyro_Raw.y;
-        GyroRawNow.z = HERO_BMI088_DEV.Gyro_Raw.z;
+        // ¶ÁÊı¾İ
+        GyroRawNow.x = Sensor_RAW.Gyro_Raw.x;
+        GyroRawNow.y = Sensor_RAW.Gyro_Raw.y;
+        GyroRawNow.z = Sensor_RAW.Gyro_Raw.z;
 
-        GyroSumNow = SQUARE(GyroRawNow.x) + SQUARE(GyroRawNow.y) + SQUARE(GyroRawNow.z);
+        GyroSumNow = X2CAL(GyroRawNow.x) + X2CAL(GyroRawNow.y) + X2CAL(GyroRawNow.z);
         if (GyroSumNow > 1.0f)
-            // äº‘å°å‘ç”Ÿäº†ç§»åŠ¨ï¼Œé‡æ–°å¼€å§‹
-            Gyro_Cali_State = (IMU_GyroCali_State_e)1; // å¼€å§‹è¿›è¡Œç¬¬ä¸€æ­¥
+        {
+            // ÔÆÌ¨·¢ÉúÁËÒÆ¶¯£¬ÖØĞÂ¿ªÊ¼
+            Gyro_Cali_State = (IMU_GyroCali_State_e)1; // ¿ªÊ¼½øĞĞµÚÒ»²½
+        }
 #if GYROCALI_WAIT_FOR_TEMPERATURE
         if (IfTempOK == RT_ERROR)
         {
-            // æ¸©åº¦è¾¾ä¸åˆ°è®¾å®šå€¼ï¼Œé‡æ–°å¼€å§‹
-            Gyro_Cali_State = (IMU_GyroCali_State_e)1; // å¼€å§‹è¿›è¡Œç¬¬ä¸€æ­¥
-/*
-            set_buzzer(1000, 1);
-            rt_thread_delay(200);
-            set_buzzer(0, 1);
-            rt_thread_delay(200);
-*/
+            // ÎÂ¶È´ï²»µ½Éè¶¨Öµ£¬ÖØĞÂ¿ªÊ¼
+            Gyro_Cali_State = (IMU_GyroCali_State_e)1; // ¿ªÊ¼½øĞĞµÚÒ»²½
+            rt_thread_delay(50);
         }
 #endif
         switch (Gyro_Cali_State)
         {
         case Cali_Start:
-            // æ¸…ç©ºæ±‚å’Œå˜é‡
+            // Çå¿ÕÇóºÍ±äÁ¿
             Gyro_Sum[0] = 0;
             Gyro_Sum[1] = 0;
             Gyro_Sum[2] = 0;
@@ -128,18 +127,16 @@ void IMU_GyroCali_Thread(void *Para)
         case Cali_Wait:
             rt_thread_delay(10);
             TimeCount++;
-            if (TimeCount > 1000)
+            if (TimeCount > 500)
             {
-                // ç­‰å¾…10Såè¿›è¡Œä¸‹ä¸€æ­¥
+                // µÈ´ı5Sºó½øĞĞÏÂÒ»²½
                 TimeCount = 0;
                 Gyro_Cali_State++;
-//                set_buzzer(950, 1);
                 rt_thread_delay(80);
-//                set_buzzer(0, 1);
             }
             break;
         case Cali_Recording:
-            // æ±‚å’Œè¿‡ç¨‹
+            // ÇóºÍ¹ı³Ì
             Gyro_Sum[0] += GyroRawNow.x;
             Gyro_Sum[1] += GyroRawNow.y;
             Gyro_Sum[2] += GyroRawNow.z;
@@ -150,199 +147,190 @@ void IMU_GyroCali_Thread(void *Para)
             break;
 
         default:
-            Gyro_Cali_State = (IMU_GyroCali_State_e)1; // å¼€å§‹è¿›è¡Œç¬¬ä¸€æ­¥
+            Gyro_Cali_State = (IMU_GyroCali_State_e)1; // ¿ªÊ¼½øĞĞµÚÒ»²½
             break;
         }
 
         if (GyroSum_Count >= GYRO_SUM_MAX)
         {
-            // è¿™æ—¶æ“¦é™¤Flashå¹¶è¿›è¡Œæ•°æ®ä¿å­˜
+            // ÕâÊ±²Á³ıFlash²¢½øĞĞÊı¾İ±£´æ
             Cali_Out.x = Gyro_Sum[0] / GyroSum_Count;
             Cali_Out.y = Gyro_Sum[1] / GyroSum_Count;
             Cali_Out.z = Gyro_Sum[2] / GyroSum_Count;
-            GyroSumNow = SQUARE(Cali_Out.x) + SQUARE(Cali_Out.y) + SQUARE(Cali_Out.z);
+            GyroSumNow = X2CAL(Cali_Out.x) + X2CAL(Cali_Out.y) + X2CAL(Cali_Out.z);
             if (GyroSumNow < 2.0f)
             {
-                // æ•°æ®è®°å½•å®Œæˆï¼Œå‡†å¤‡ä¿å­˜æ•°æ®
+                // Êı¾İ¼ÇÂ¼Íê³É£¬×¼±¸±£´æÊı¾İ
                 FlashRecord(&Cali_Out);
                 Gyro_OffSet.x = Cali_Out.x;
                 Gyro_OffSet.y = Cali_Out.y;
                 Gyro_OffSet.z = Cali_Out.z;
-//                set_buzzer(800, 1);
-                rt_thread_delay(50);
-//                set_buzzer(950, 1);
-                rt_thread_delay(80);
-//                set_buzzer(0, 1);
                 break;
             }
             else
-            { // å¦‚æœæµ‹é‡å¤±è´¥åˆ™æœ¬æ¬¡æ”¾å¼ƒï¼Œå‘å‡ºæç¤ºéŸ³
-//                set_buzzer(800, 1);
-                rt_thread_delay(50);
-//                set_buzzer(500, 1);
-                rt_thread_delay(80);
-//                set_buzzer(0, 1);
+            { // Èç¹û²âÁ¿Ê§°ÜÔò±¾´Î·ÅÆú
                 break;
             }
         }
     }
     rt_sem_release(&IMU_CaliFinish_Sem);
     while (1)
+    {
         rt_thread_delay(100);
+    }
 }
 
-// è§’é€Ÿåº¦è®¡æ ¡å‡†å‡½æ•°ï¼Œæ­¤å‡½æ•°åˆå§‹åŒ–æ ¡å‡†çº¿ç¨‹ï¼Œå¹¶æŒ‚èµ·ç­‰å¾…æ ¡å‡†çº¿ç¨‹ç»“æŸï¼Œçº¿ç¨‹è¿è¡Œç»“æŸåæ­¤å‡½æ•°é€€å‡º
+// ½ÇËÙ¶È¼ÆĞ£×¼º¯Êı£¬´Ëº¯Êı³õÊ¼»¯Ğ£×¼Ïß³Ì£¬²¢¹ÒÆğµÈ´ıĞ£×¼Ïß³Ì½áÊø£¬Ïß³ÌÔËĞĞ½áÊøºó´Ëº¯ÊıÍË³ö
 static void Gyro_Cali()
 {
-    // ç”¨æ¥æŒ‚èµ·çš„ä¿¡å·é‡ï¼Œæ ¡å‡†çº¿ç¨‹è¿è¡Œç»“æŸåä¼šé‡Šæ”¾
+    // ÓÃÀ´¹ÒÆğµÄĞÅºÅÁ¿£¬Ğ£×¼Ïß³ÌÔËĞĞ½áÊøºó»áÊÍ·Å
     rt_sem_init(&IMU_CaliFinish_Sem, "IMUTriS", 0, RT_IPC_FLAG_PRIO);
 
-    // åˆå§‹åŒ–é›¶é£˜æ ¡å‡†çº¿ç¨‹
+    // ³õÊ¼»¯ÁãÆ®Ğ£×¼Ïß³Ì
     IMU_GyroCali_Tid = rt_thread_create(
-        "INTSPI",                 // çº¿ç¨‹å
-        IMU_GyroCali_Thread,      // çº¿ç¨‹å…¥å£
-        RT_NULL,                  // å…¥å£å‚æ•°æ— 
-        512,                      // çº¿ç¨‹æ ˆ
-        THREAD_PRIO_IMU_GYROCALI, // çº¿ç¨‹ä¼˜å…ˆçº§
-        1);                       // çº¿ç¨‹æ—¶é—´ç‰‡å¤§å°
+        "INTSPI",                 // Ïß³ÌÃû
+        IMU_GyroCali_Thread,      // Ïß³ÌÈë¿Ú
+        RT_NULL,                  // Èë¿Ú²ÎÊıÎŞ
+        512,                      // Ïß³ÌÕ»
+        THREAD_PRIO_IMU_GYROCALI, // Ïß³ÌÓÅÏÈ¼¶
+        1);                       // Ïß³ÌÊ±¼äÆ¬´óĞ¡
 
-    // çº¿ç¨‹åˆ›å»ºå¤±è´¥è¿”å›false
+    // Ïß³Ì´´½¨Ê§°Ü·µ»Øfalse
     if (IMU_GyroCali_Tid == RT_NULL)
+    {
         return;
+    }
 
-    // çº¿ç¨‹å¯åŠ¨å¤±è´¥è¿”å›false
+    // Ïß³ÌÆô¶¯Ê§°Ü·µ»Øfalse
     if (rt_thread_startup(IMU_GyroCali_Tid) != RT_EOK)
+    {
         return;
+    }
 
-    // æŒ‚èµ·ç­‰å¾…æ ¡å‡†ç»“æŸ
+    // ¹ÒÆğµÈ´ıĞ£×¼½áÊø
     rt_sem_take(&IMU_CaliFinish_Sem, RT_WAITING_FOREVER);
     rt_thread_delete(IMU_GyroCali_Tid);
 }
 
-// å…¨ç‰‡æ“¦é™¤ååº”ä¸º0xFFï¼Œæ ¡å‡†å®Œæˆåä¸º0x0F
-static uint8_t Caliutils_read_bit;
+// È«Æ¬²Á³ıºóÓ¦Îª0xFF£¬Ğ£×¼Íê³ÉºóÎª0x0F
+static uint8_t CaliFlag_Read;
 static uint8_t OffSetRST_KeyFlag;
 
-// ä»ä¸Šç”µå‰å¼€å§‹æŒ‰ä½æŒ‰é”®ï¼Œä¸Šç”µçº¦1såèœ‚é¸£å™¨å“èµ·1sï¼Œå“èµ·æœŸé—´æ¾æ‰‹å¯ä»¥è§¦å‘é›¶é£˜é‡æµ‹ï¼Œå…¶å®ƒæƒ…å†µæ— æ³•è§¦å‘é›¶é£˜é‡æµ‹
-// ä¸æ»¡è¶³æŒ‰é”®è§¦å‘è§„åˆ™æ—¶è¿”å›0ï¼Œæ»¡è¶³è§¦å‘è§„åˆ™è¿”å›1ï¼Œè¿”å›1æ„å‘³ç€éœ€è¦æ¸…é™¤Flashå’Œé‡æµ‹é›¶é£˜
-static int CaliKeyCheck(void)
+// ´ÓÉÏµçÇ°¿ªÊ¼°´×¡°´¼ü£¬ÉÏµçÔ¼1sºó·äÃùÆ÷ÏìÆğ1s£¬ÏìÆğÆÚ¼äËÉÊÖ¿ÉÒÔ´¥·¢ÁãÆ®ÖØ²â£¬ÆäËüÇé¿öÎŞ·¨´¥·¢ÁãÆ®ÖØ²â
+// ²»Âú×ã°´¼ü´¥·¢¹æÔòÊ±·µ»Ø0£¬Âú×ã´¥·¢¹æÔò·µ»Ø1£¬·µ»Ø1ÒâÎ¶×ÅĞèÒªÇå³ıFlashºÍÖØ²âÁãÆ®
+static int CaliKeyCheck()
 {
     int Time;
     int ConfirmCount;
 
-    // åˆå§‹åŒ–Cæ¿å·¦ä¾§æŒ‰é”®
+    // ³õÊ¼»¯ÁãÆ®Ğ£×¼´¥·¢°´¼ü
     rt_pin_mode(FLASH_ERASE_PIN, PIN_MODE_INPUT);
 
     ConfirmCount = 15;
     Time = 0;
 
-    // ä¸Šç”µåçš„ç¬¬ä¸€ç§’å†…åœ¨ä¸‹é¢è¿™ä¸ªWhileä¸­è¿è¡Œ
+    // ÉÏµçºóµÄµÚÒ»ÃëÄÚÔÚÏÂÃæÕâ¸öWhileÖĞÔËĞĞ
     while (1)
     {
         if (!rt_pin_read(FLASH_ERASE_PIN))
-        { // æŒ‰ä¸‹æŒ‰é”®
+        {                              // °´ÏÂ°´¼ü
             if (ConfirmCount < 30)
+            {
                 ConfirmCount++;
-        }
-        else
-        {
-            ConfirmCount -= 2;
-            if (ConfirmCount < 0)
-                // æŒ‰é”®æ¾å¼€äº†ï¼Œæ­¤æ—¶æ¾å¼€è¯´æ˜ä¸éœ€è¦é‡æµ‹é›¶é£˜
-                return 0;
-        }
-        rt_thread_delay(1);
-        Time++;
-        if (Time > 900)
-            break;
-    }
-    // ä¸Šç”µåçš„ç¬¬ä¸€ç§’å†…æŒ‰é”®ä¸€ç›´ä¿æŒæŒ‰ä¸‹ï¼Œæ­¤æ—¶å¼€èœ‚é¸£å™¨å¹¶ç­‰å¾…æŒ‰é”®æ¾å¼€
-    Time = 0; // é‡æ–°è®¡æ—¶
-//    set_buzzer(1500, 1);
-    while (1)
-    {
-        if (!rt_pin_read(FLASH_ERASE_PIN))
-        { // æŒ‰ä¸‹æŒ‰é”®
-            if (ConfirmCount < 30)
-                ConfirmCount++;
+            }
         }
         else
         {
             ConfirmCount -= 2;
             if (ConfirmCount < 0)
             {
-                // æŒ‰é”®æ¾å¼€äº†ï¼Œæ­¤æ—¶æ¾å¼€è¯´æ˜éœ€è¦é‡æµ‹é›¶é£˜
-//                set_buzzer(0, 1);
+                // °´¼üËÉ¿ªÁË£¬´ËÊ±ËÉ¿ªËµÃ÷²»ĞèÒªÖØ²âÁãÆ®
+                return 0;
+            }
+        }
+        rt_thread_delay(1);
+        Time++;
+        if (Time > 900)
+        {
+            break;
+        }
+    }
+    // ÉÏµçºóµÄµÚÒ»ÃëÄÚ°´¼üÒ»Ö±±£³Ö°´ÏÂ£¬´ËÊ±¿ª·äÃùÆ÷²¢µÈ´ı°´¼üËÉ¿ª
+    Time = 0; // ÖØĞÂ¼ÆÊ±
+    while (1)
+    {
+        if (!rt_pin_read(FLASH_ERASE_PIN))
+        { // °´ÏÂ°´¼ü
+            if (ConfirmCount < 30)
+            {
+                ConfirmCount++;
+            }
+        }
+        else
+        {
+            ConfirmCount -= 2;
+            if (ConfirmCount < 0)
+            {
+                // °´¼üËÉ¿ªÁË£¬´ËÊ±ËÉ¿ªËµÃ÷ĞèÒªÖØ²âÁãÆ®
                 return 1;
             }
         }
         rt_thread_delay(1);
         Time++;
         if (Time > 1000)
+        {
             break;
+        }
     }
-    // åˆ°è¿™é‡Œè¯´æ˜å¯èƒ½æ˜¯è¯¯è§¦ï¼Œä¸è¿›è¡Œé›¶é£˜é‡æµ‹ï¼Œç›´æ¥è·³è¿‡
-//    set_buzzer(0, 1);
+    // µ½ÕâÀïËµÃ÷¿ÉÄÜÊÇÎó´¥£¬²»½øĞĞÁãÆ®ÖØ²â£¬Ö±½ÓÌø¹ı
     return 0;
 }
 
-// å°è¯•ä»Flashä¸­è¯»å– è‹¥æ— æ•°æ®æˆ–éœ€è¦é‡æµ‹ï¼Œåˆ™ä¼šè‡ªåŠ¨é‡æµ‹ï¼Œå®Œæˆåå‡½æ•°è¿”å›
-int LoadGyroOffSet(void)
+// ³¢ÊÔ´ÓFlashÖĞ¶ÁÈ¡ ÈôÎŞÊı¾İ»òĞèÒªÖØ²â£¬Ôò»á×Ô¶¯ÖØ²â£¬Íê³Éºóº¯Êı·µ»Ø
+int LoadGyroOffSet()
 {
     uint8_t ReadTemp[12];
 
-    // è¯»å–Flashä¸­çš„æ ‡è®°
-    Hwdt_Feed_Slowly(RT_TRUE); // æ“ä½œ Flash æ•°æ®ç»“æŸ, é‡æ–°å¼€å§‹æ­£å¸¸å–‚ç‹—
-    rt_enter_critical();       // é€€å‡ºä¸´ç•ŒåŒºç»§ç»­å¯åŠ¨è°ƒåº¦å™¨
-    stm32_flash_read(IMU_CALI_FLAG_ADDR, &Caliutils_read_bit, sizeof(rt_uint8_t));
-    stm32_flash_read(IMU_BIAS_DATA_ADDR, ReadTemp, sizeof(float) * 3);
-    rt_exit_critical();         // é€€å‡ºä¸´ç•ŒåŒºç»§ç»­å¯åŠ¨è°ƒåº¦å™¨
-    Hwdt_Feed_Slowly(RT_FALSE); // æ“ä½œ Flash æ•°æ®ç»“æŸ, é‡æ–°å¼€å§‹æ­£å¸¸å–‚ç‹—
+    // ¶ÁÈ¡FlashÖĞµÄ±ê¼Ç
+    rt_enter_critical();
+//    Hwdt_Feed_Slowly(RT_TRUE);
+    stm32_flash_read(IMU_CALI_FLAG_ADDR, &CaliFlag_Read, sizeof(rt_uint8_t));
+    stm32_flash_read(IMU_BIAS_DATA_ADDR, &ReadTemp[0], sizeof(ReadTemp));
+//    Hwdt_Feed_Slowly(RT_FALSE);
+    rt_exit_critical();
 
-    // æ£€æŸ¥æŒ‰é”®ï¼Œåˆ¤æ–­æ˜¯å¦éœ€è¦é‡æµ‹é›¶é£˜
+    // ¼ì²é°´¼ü£¬ÅĞ¶ÏÊÇ·ñĞèÒªÖØ²âÁãÆ®
     OffSetRST_KeyFlag = CaliKeyCheck();
 
-    // æ²¡æœ‰æ‰‹åŠ¨é‡æµ‹æŒ‡ä»¤
-    if (!OffSetRST_KeyFlag)
-    {
-        if (Caliutils_read_bit == IMU_CALI_FLAG)
-        { // Flashä¸­çš„æ ‡è®°è¡¨æ˜æœ‰æ­£å¸¸çš„é›¶é£˜æ•°æ®ä¸”ä¸éœ€è¦é‡æµ‹é›¶é£˜
-            if (!(((ReadTemp[0] == 0xFF) && (ReadTemp[1] == 0xFF) && (ReadTemp[2] == 0xFF) && (ReadTemp[3] == 0xFF)) ||
-                  ((ReadTemp[4] == 0xFF) && (ReadTemp[5] == 0xFF) && (ReadTemp[6] == 0xFF) && (ReadTemp[7] == 0xFF)) ||
-                  ((ReadTemp[8] == 0xFF) && (ReadTemp[9] == 0xFF) && (ReadTemp[10] == 0xFF) && (ReadTemp[11] == 0xFF))))
-            { // æ•°æ®ä¸ä¸ºç©º
-                Gyro_OffSet.x = *((float *)&ReadTemp[0]);
-                Gyro_OffSet.y = *((float *)&ReadTemp[4]);
-                Gyro_OffSet.z = *((float *)&ReadTemp[8]);
-                // æ­£å¸¸åŠ è½½å·²æœ‰é›¶é£˜æ•°æ®
-                return 0;
-            }
-        }
-        else
-        {
-            // å¦‚æœæ ‡å¿—ä½ä¸æ­£ç¡®, å…ˆæ£€æŸ¥å‰æ–¹æ•°æ®æ˜¯ä¸æ˜¯å…¨éƒ¨ä¸º 0xFF æ­¤æ—¶åªæœ‰è¢«å…¨ç‰‡æ“¦é™¤æ‰ä¼šå¼€å§‹è‡ªåŠ¨é‡æ–°æ ‡å®š
-            if (!((ReadTemp[0] == 0xFF) && (ReadTemp[1] == 0xFF) && (ReadTemp[2] == 0xFF) && (ReadTemp[3] == 0xFF) &&
-                  (ReadTemp[4] == 0xFF) && (ReadTemp[5] == 0xFF) && (ReadTemp[6] == 0xFF) && (ReadTemp[7] == 0xFF) &&
-                  (ReadTemp[8] == 0xFF) && (ReadTemp[9] == 0xFF) && (ReadTemp[10] == 0xFF) && (ReadTemp[11] == 0xFF)))
-            { // æ ‡å¿—ä½å¼‚å¸¸å¼‚å¸¸ä½†æ˜¯å†…å­˜å‰æ–¹å­˜åœ¨éƒ¨åˆ†æ•°æ®, å°†é›¶æ¼‚è½½å…¥ä¸º 0 åŒæ—¶æŠ¥è­¦
-                Gyro_OffSet.x = 0.f;
-                Gyro_OffSet.y = 0.f;
-                Gyro_OffSet.z = 0.f;
-                // å‘å‡ºæŠ¥è­¦æç¤º
-//                set_buzzer(3500, 1);
-                rt_thread_mdelay(200);
-//                set_buzzer(2800, 1);
-                rt_thread_mdelay(150);
-//                set_buzzer(1000, 1);
-                rt_thread_mdelay(200);
-//                set_buzzer(1800, 1);
-                rt_thread_mdelay(400);
-//                set_buzzer(0, 1);
-                return 0;
-            }
+    if ((CaliFlag_Read == 0x0F) && (OffSetRST_KeyFlag == 0))
+    { // FlashÖĞµÄ±ê¼Ç±íÃ÷ÓĞÕı³£µÄÁãÆ®Êı¾İÇÒ²»ĞèÒªÖØ²âÁãÆ®
+        if (!(((ReadTemp[0] == 0xFF) && (ReadTemp[1] == 0xFF) && (ReadTemp[2] == 0xFF) && (ReadTemp[3] == 0xFF)) ||
+              ((ReadTemp[4] == 0xFF) && (ReadTemp[5] == 0xFF) && (ReadTemp[6] == 0xFF) && (ReadTemp[7] == 0xFF)) ||
+              ((ReadTemp[8] == 0xFF) && (ReadTemp[9] == 0xFF) && (ReadTemp[10] == 0xFF) && (ReadTemp[11] == 0xFF))))
+        { // Êı¾İ²»Îª¿Õ
+            Gyro_OffSet.x = *((float *)&ReadTemp[0]);
+            Gyro_OffSet.y = *((float *)&ReadTemp[4]);
+            Gyro_OffSet.z = *((float *)&ReadTemp[8]);
+            // Õı³£¼ÓÔØÒÑÓĞÁãÆ®Êı¾İ
+            return 0;
         }
     }
-    // FLASH æœªå†™å…¥æ•°æ®æˆ–éœ€è¦é‡æµ‹é›¶é£˜
+    else
+    {
+        // Èç¹û±êÖ¾Î»²»ÕıÈ·, ÏÈ¼ì²éÇ°·½Êı¾İÊÇ²»ÊÇÈ«²¿Îª 0xFF ´ËÊ±Ö»ÓĞ±»È«Æ¬²Á³ı²Å»á¿ªÊ¼×Ô¶¯ÖØĞÂ±ê¶¨
+        if (!((ReadTemp[0] == 0xFF) && (ReadTemp[1] == 0xFF) && (ReadTemp[2] == 0xFF) && (ReadTemp[3] == 0xFF) &&
+              (ReadTemp[4] == 0xFF) && (ReadTemp[5] == 0xFF) && (ReadTemp[6] == 0xFF) && (ReadTemp[7] == 0xFF) &&
+              (ReadTemp[8] == 0xFF) && (ReadTemp[9] == 0xFF) && (ReadTemp[10] == 0xFF) && (ReadTemp[11] == 0xFF)))
+        { // ±êÖ¾Î»Òì³£Òì³£µ«ÊÇÄÚ´æÇ°·½´æÔÚ²¿·ÖÊı¾İ, ½«ÁãÆ¯ÔØÈëÎª 0 Í¬Ê±±¨¾¯
+            Gyro_OffSet.x = 0.f;
+            Gyro_OffSet.y = 0.f;
+            Gyro_OffSet.z = 0.f;
+            // ·¢³ö±¨¾¯ÌáÊ¾
+            rt_thread_mdelay(1000);
+            return 0;
+        }
+    }
+    // FLASH Î´Ğ´ÈëÊı¾İ»òĞèÒªÖØ²âÁãÆ®
     Gyro_Cali();
     return 1;
 }

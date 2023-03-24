@@ -185,7 +185,7 @@ static void package_update(void)
 	copter_power = *p_4 ;
 	Package_Write_Pionter_End(battery_ID,battery);
 
-    gun_data *p_5 =  Package_Pionter_Single(gun_ID,gun_data);
+  gun_data *p_5 =  Package_Pionter_Single(gun_ID,gun_data);
 	copter_gun = *p_5 ;
 	Package_Write_Pionter_End(gun_ID,gun_data);
 

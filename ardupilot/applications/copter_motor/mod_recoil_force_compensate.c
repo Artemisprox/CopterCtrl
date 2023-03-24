@@ -3,7 +3,7 @@
 
 struct rt_semaphore gun_rec_sem; /* 用于接收信息的信号量 */
 static gun_data copter_gun;
-static uint8_t Package_ID;
+static rt_int8_t Package_ID;
 
 /**
  * @brief  读取can中的发射机构数据
