@@ -33,7 +33,7 @@ void spi_ICM20602_init(void)
     rt_hw_spi_device_attach("spi1", name0, GPIOB, GPIO_PIN_1);
     rt_hw_spi_device_attach("spi1", name1, GPIOC, GPIO_PIN_11);
 
-    /* 查找 spi 设备获取设备句柄 */
+    /* spi设备初始化 */
     spi_dev_IMU1 = (struct rt_spi_device *)rt_device_find(name0);
     spi_dev_IMU2 = (struct rt_spi_device *)rt_device_find(name1);
     if ((!spi_dev_IMU1) || (!spi_dev_IMU2))

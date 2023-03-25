@@ -3,12 +3,10 @@
 #include "drv_thread.h"
 #include "drv_HWTimer.h"
 #include "func_SensorRAW.h"
-#include "func_ahrs.h"
 #include "func_IMUCali.h"
 #include "func_TempCtr.h"
 #include "mod_Monitor.h"
 #include "drv_utils.h"
-#include "func_EKF.h"
 #include "drv_IMU.h"
 
 static rt_thread_t atti_calcu = RT_NULL;
@@ -55,7 +53,7 @@ static void Fresh_Beta(void)
     float Beta_Filter;
 
     // 计算加速度矢量模长
-    Accl_Len_2 = SQUARE(Sensor_RAW.Accl_Raw.x) + SQUARE(Sensor_RAW.Accl_Raw.y) + SQUARE(Sensor_RAW.Accl_Raw.z);
+    Accl_Len_2 = SQUARE(copter_IMU_RAW.Accl_Raw.x) + SQUARE(copter_IMU_RAW.Accl_Raw.y) + SQUARE(copter_IMU_RAW.Accl_Raw.z);
     if (Accl_Len_2 < 0)
         Accl_Len_2 = 0;
     Accl_Filter = 10 * sqrtf(Accl_Len_2);
@@ -98,10 +96,10 @@ static void AttiCalcu_thread(void *parameter)
 		
     while (1)
     {
-        Sensor_WaitForRawData();
+       // Sensor_WaitForRawData();
 
         // 坐标换算，零飘校正
-        GetCaliIMUData(&Sensor_RAW.Accl_Raw, &Sensor_RAW.Gyro_Raw, &AcclFix, &GyroFix);
+        GetCaliIMUData(&copter_IMU_RAW.Accl_Raw, &copter_IMU_RAW.Gyro_Raw, &AcclFix, &GyroFix);
 
         if (first_flag)
         { // 初始位置还没确定
@@ -123,7 +121,7 @@ static void AttiCalcu_thread(void *parameter)
         }
         else
         { // 初始位置确定完成
-            inv_sample_freq = 1 / Sensor_RAW.DataRate;
+            inv_sample_freq = 1 / copter_IMU_RAW.DataRate;
             Fresh_Beta();
 
             HERO_AHRS.inv_sample_freq = inv_sample_freq;
@@ -161,13 +159,15 @@ int Atti_init(void)
 {
     AHRS_Init(&HERO_AHRS, NULL, 1000);
 
-    TempCTR_init();
+    IMU1_TempCTR_init();
+	  IMU2_TempCTR_init();
     // 尝试从Flash中读取零飘数据 若无数据或需要重测，则会自动重测，完成后函数返回
-    LoadGyroOffSet();
+    LoadGyroOffSet(IMU1_set);
+		LoadGyroOffSet(IMU1_set);
 
     //数据服务器初始化
     Package_Pionter_Add("IMU", HERO_IMU);
-	Package_ID = Package_Find_Num("IMU");
+	  Package_ID = Package_Find_Num("IMU");
 
     //初始化姿态解算线程
     atti_calcu = rt_thread_create(
