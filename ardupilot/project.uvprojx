@@ -558,6 +558,11 @@
               <FilePath>applications\IMU\func_IMUCali.c</FilePath>
             </File>
             <File>
+              <FileName>func_IMU_redundancy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\IMU\func_IMU_redundancy.c</FilePath>
+            </File>
+            <File>
               <FileName>func_SensorRAW.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\IMU\func_SensorRAW.c</FilePath>

@@ -11,14 +11,17 @@
 
 static rt_thread_t temp_ctr = RT_NULL;
 
-struct rt_semaphore temp_pid_sem;
+struct rt_semaphore imu1_temp_pid_sem;
+struct rt_semaphore imu2_temp_pid_sem;
 
-TempCTR_t HERO_TPctr;
+TempCTR_t IMU1_TPctr;
+TempCTR_t IMU2_TPctr;
 int16_t IMUTempSet = 45; // 温度设定值
 
 // IMU控温PWM
 static struct rt_device_pwm *IMUtemp_pwm = RT_NULL;
-#define IMUTEMP_PWMCHANNEL 1
+#define IMU1TEMP_PWMCHANNEL 1
+#define IMU2TEMP_PWMCHANNEL 2
 
 int k_id = 70;           // pid中 用d补偿i 的系数
 float ivalue_init = 350; // ivalue叠加的常值
@@ -64,14 +67,14 @@ static void PIDTemp_Calculate(pid_t *target, float Error)
         target->out = target->out_limit_down;
 }
 
-int IfTempOK = RT_ERROR;
+int IMU1_IfTempOK = RT_ERROR;
 /**
- * @brief：IMU温度控制线程
+ * @brief：IMU1温度控制线程
  * @param [in]	parameter:该参数不会被使用
  * @return：		无
  * @author：zzj
  */
-static void TempCTR_thread(void *parameter)
+static void IMU1_TempCTR_thread(void *parameter)
 {
     float Error;
     int ifsemOK;
@@ -81,14 +84,14 @@ static void TempCTR_thread(void *parameter)
     {
         /* 读取信号量 */
 //        SWDG_FEED(SWDG_TEMPCTRL_ID);
-        ifsemOK = rt_sem_take(&temp_pid_sem, 1400);
+        ifsemOK = rt_sem_take(&imu1_temp_pid_sem, 1400);
 
-        HERO_TPctr.TempCTR_pid.set = IMUTempSet; // 更新设定值
+        IMU1_TPctr.TempCTR_pid.set = IMUTempSet; // 更新设定值
 
-        Error = HERO_TPctr.TempCTR_pid.set - Sensor_RAW.Temperature;
-        PIDTemp_Calculate(&HERO_TPctr.TempCTR_pid, Error);
+        Error = IMU1_TPctr.TempCTR_pid.set - Sensor_RAW_IMU1.Temperature;
+        PIDTemp_Calculate(&IMU1_TPctr.TempCTR_pid, Error);
 
-        rt_pwm_set(IMUtemp_pwm, IMUTEMP_PWMCHANNEL, 1 * 1000 * 1000, (rt_uint32_t)HERO_TPctr.TempCTR_pid.out * 1000);
+        rt_pwm_set(IMUtemp_pwm, IMU1TEMP_PWMCHANNEL, 1 * 1000 * 1000, (rt_uint32_t)IMU1_TPctr.TempCTR_pid.out * 1000);
 
         if (TempCTR_count < 2)
         { // 温度还没稳定
@@ -103,7 +106,7 @@ static void TempCTR_thread(void *parameter)
         }
         else
             // 温度已稳定达到设定值
-            IfTempOK = RT_EOK;
+            IMU1_IfTempOK = RT_EOK;
 
         if (ifsemOK == -RT_ETIMEOUT)
         { // 由于超时进入的该线程
@@ -113,8 +116,50 @@ static void TempCTR_thread(void *parameter)
     }
 }
 
+int IMU2_IfTempOK = RT_ERROR;
+static void IMU2_TempCTR_thread(void *parameter)
+{
+    float Error;
+    int ifsemOK;
+    static int TempCTR_count = 0;
+//    SWDG_START(SWDG_TEMPCTRL_ID);
+    while (1)
+    {
+        /* 读取信号量 */
+//        SWDG_FEED(SWDG_TEMPCTRL_ID);
+        ifsemOK = rt_sem_take(&imu2_temp_pid_sem, 1400);
+
+        IMU1_TPctr.TempCTR_pid.set = IMUTempSet; // 更新设定值
+
+        Error = IMU2_TPctr.TempCTR_pid.set - Sensor_RAW_IMU2.Temperature;
+        PIDTemp_Calculate(&IMU2_TPctr.TempCTR_pid, Error);
+
+        rt_pwm_set(IMUtemp_pwm, IMU2TEMP_PWMCHANNEL, 1 * 1000 * 1000, (rt_uint32_t)IMU2_TPctr.TempCTR_pid.out * 1000);
+
+        if (TempCTR_count < 2)
+        { // 温度还没稳定
+            if (fabsf(Error) < 0.5f)
+                TempCTR_count++;
+            else
+            {
+                TempCTR_count--;
+                if (TempCTR_count < 0)
+                    TempCTR_count = 0;
+            }
+        }
+        else
+            // 温度已稳定达到设定值
+            IMU2_IfTempOK = RT_EOK;
+
+        if (ifsemOK == -RT_ETIMEOUT)
+        { // 由于超时进入的该线程
+//            SWDG_FEED(SWDG_TEMPCTRL_ID);
+            rt_thread_delay(1000);
+        }
+    }
+}
 /**
-* @brief：初始化IMU的控温PWM（TIME10 CH1 PF6）
+* @brief：初始化IMU的控温PWM（TIME2 CH1 CH2）
 * @param [in] 无
 * @return：RT_EOK：初始化成功
                 RT_ERROR：初始化失败
@@ -123,11 +168,14 @@ static void TempCTR_thread(void *parameter)
 int IMUtempPWM_init(void)
 {
     //尝试查找设备，查找失败时返回
-    IMUtemp_pwm = (struct rt_device_pwm *)rt_device_find("pwm10");
+    IMUtemp_pwm = (struct rt_device_pwm *)rt_device_find("pwm2");
     if (IMUtemp_pwm == RT_NULL)
         return RT_ERROR;
-    rt_pwm_set(IMUtemp_pwm, IMUTEMP_PWMCHANNEL, 1000000, 0);
-    rt_pwm_enable(IMUtemp_pwm, IMUTEMP_PWMCHANNEL);
+    rt_pwm_set(IMUtemp_pwm, IMU1TEMP_PWMCHANNEL, 1000000, 0);
+    rt_pwm_enable(IMUtemp_pwm, IMU1TEMP_PWMCHANNEL);
+
+    rt_pwm_set(IMUtemp_pwm, IMU2TEMP_PWMCHANNEL, 1000000, 0);
+    rt_pwm_enable(IMUtemp_pwm, IMU2TEMP_PWMCHANNEL);
 
     return RT_EOK;
 }
@@ -140,14 +188,38 @@ INIT_APP_EXPORT(IMUtempPWM_init);
                 0:初始化失败
 * @author：zzj
 */
-int TempCTR_init(void)
+int IMU1_TempCTR_init(void)
 {
-    pid_init(&HERO_TPctr.TempCTR_pid, 300, 15, 500, 250, 1000, 0);
+    pid_init(&IMU1_TPctr.TempCTR_pid, 300, 15, 500, 250, 1000, 0);
 
     //初始化IMU温度控制线程
     temp_ctr = rt_thread_create(
-        "TP_CTR",            //线程名
-        TempCTR_thread,      //线程入口
+        "IMU1_TP_CTR",            //线程名
+        IMU1_TempCTR_thread,      //线程入口
+        RT_NULL,             //入口参数无
+        4096,                //线程栈
+        THREAD_PRIO_TEMPCTR, //线程优先级
+        1);                  //线程时间片大小
+
+    //线程创建失败返回false
+    if (temp_ctr == RT_NULL)
+        return RT_ERROR;
+
+    //线程启动失败返回false
+    if (rt_thread_startup(temp_ctr) != RT_EOK)
+        return RT_ERROR;
+
+    return RT_EOK;
+}
+
+int IMU2_TempCTR_init(void)
+{
+    pid_init(&IMU2_TPctr.TempCTR_pid, 300, 15, 500, 250, 1000, 0);
+
+    //初始化IMU温度控制线程
+    temp_ctr = rt_thread_create(
+        "IMU2_TP_CTR",            //线程名
+        IMU2_TempCTR_thread,      //线程入口
         RT_NULL,             //入口参数无
         4096,                //线程栈
         THREAD_PRIO_TEMPCTR, //线程优先级

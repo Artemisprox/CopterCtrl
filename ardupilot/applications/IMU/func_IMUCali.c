@@ -1,15 +1,14 @@
 #include "func_IMUCali.h"
-
 #include "drv_thread.h"
 #include "drv_HWTimer.h"
 #include "func_SensorRAW.h"
 #include "func_TempCtr.h"
 
-#define FLASH_ERASE_PIN GET_PIN(C, 6)
+#define FLASH_ERASE_PIN GET_PIN(B, 6)
 #define GYRO_SUM_MAX 60000 // 校准陀螺仪积分时需要收集数据的个数
 
-#define GYRO_RAWDATA(Axis) (Sensor_RAW.Gyro_Raw.Axis - Gyro_OffSet.Axis)
-#define ACCL_RAWDATA(Axis) (Sensor_RAW.Accl_Raw.Axis)
+#define GYRO_RAWDATA(Axis) (copter_IMU_RAW.Gyro_Raw.Axis)
+#define ACCL_RAWDATA(Axis) (copter_IMU_RAW.Accl_Raw.Axis)
 
 // 以云台为例：枪口方向为前方，垂直地面向上为上方，类似于第一视角
 // X为 后方(枪管反方向轴)
@@ -26,7 +25,10 @@
 
 // 偏移量为Raw数据的偏移量，与安装位置无关
 // 使用偏移量时，先用Raw数据减去偏移量，再进行安装位置校正
-AHRS_Gyro_t Gyro_OffSet = {0}; // 默认为0
+AHRS_Gyro_t IMU1_OffSet = {0}; // 默认为0
+AHRS_Gyro_t IMU2_OffSet = {0}; // 默认为0
+
+IMU_set_e IMU_Cali_set;
 
 // 输入IMU原始数据，按照设置获取经安装位置校正和零飘校正后的六轴数据
 void GetCaliIMUData(AHRS_Accl_t *AcclRaw, AHRS_Gyro_t *GyroRaw, AHRS_Accl_t *Accl, AHRS_Gyro_t *Gyro)
@@ -40,7 +42,7 @@ void GetCaliIMUData(AHRS_Accl_t *AcclRaw, AHRS_Gyro_t *GyroRaw, AHRS_Accl_t *Acc
 }
 
 // Flash存储函数
-static void FlashRecord(AHRS_Gyro_t *CaliData)
+static void FlashRecord(AHRS_Gyro_t *CaliData , rt_uint8_t IMU_set)
 {
     rt_uint8_t temp_data[13];
     temp_data[0] = ((rt_uint8_t *)(&CaliData->x))[0];
@@ -59,11 +61,21 @@ static void FlashRecord(AHRS_Gyro_t *CaliData)
     /* 测量完毕, 开始读写 Flash */
 //    Hwdt_Feed_Slowly(RT_TRUE); // 开始操作 Flash 数据, 需要开始缓慢喂狗
     rt_enter_critical();       // 进入临界区防止操作系统调度
-    stm32_flash_erase(IMU_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
+    
+    if(IMU_set == 1)
+        stm32_flash_erase(IMU1_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
+    else if(IMU_set == 2)
+        stm32_flash_erase(IMU2_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
+
     rt_exit_critical();    // 退出临界区继续启动调度器
     rt_thread_mdelay(500); // 擦除与写入需要间隔一段时间
     rt_enter_critical();   // 进入临界区防止操作系统调度
-    stm32_flash_write(IMU_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
+
+    if(IMU_set == 1)
+        stm32_flash_erase(IMU1_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
+    else if(IMU_set == 2)
+        stm32_flash_erase(IMU2_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
+        
     rt_exit_critical();         // 退出临界区继续启动调度器
 //    Hwdt_Feed_Slowly(RT_FALSE); // 操作 Flash 数据结束, 重新开始正常喂狗
 }
@@ -89,15 +101,30 @@ void IMU_GyroCali_Thread(void *Para)
 
     // 记录数据的过程在这个while中完成
     while (1)
-    {
+    {   
+        int TempOK = 0;
         // 等待新数据
-        Sensor_WaitForRawData();
-
-        // 读数据
-        GyroRawNow.x = Sensor_RAW.Gyro_Raw.x;
-        GyroRawNow.y = Sensor_RAW.Gyro_Raw.y;
-        GyroRawNow.z = Sensor_RAW.Gyro_Raw.z;
-
+        switch (IMU_Cali_set)
+        {
+        case IMU1_set:
+            Sensor_WaitFor_IMU1_RawData();
+            // 读数据
+            GyroRawNow.x = Sensor_RAW_IMU1.Gyro_Raw.x;
+            GyroRawNow.y = Sensor_RAW_IMU1.Gyro_Raw.y;
+            GyroRawNow.z = Sensor_RAW_IMU1.Gyro_Raw.z;
+            TempOK = IMU1_IfTempOK;
+            break;
+        
+        case IMU2_set:
+            Sensor_WaitFor_IMU2_RawData();
+            // 读数据
+            GyroRawNow.x = Sensor_RAW_IMU2.Gyro_Raw.x;
+            GyroRawNow.y = Sensor_RAW_IMU2.Gyro_Raw.y;
+            GyroRawNow.z = Sensor_RAW_IMU2.Gyro_Raw.z;
+            TempOK = IMU1_IfTempOK;
+            break;
+        }
+        
         GyroSumNow = X2CAL(GyroRawNow.x) + X2CAL(GyroRawNow.y) + X2CAL(GyroRawNow.z);
         if (GyroSumNow > 1.0f)
         {
@@ -105,7 +132,7 @@ void IMU_GyroCali_Thread(void *Para)
             Gyro_Cali_State = (IMU_GyroCali_State_e)1; // 开始进行第一步
         }
 #if GYROCALI_WAIT_FOR_TEMPERATURE
-        if (IfTempOK == RT_ERROR)
+        if (TempOK == RT_ERROR)
         {
             // 温度达不到设定值，重新开始
             Gyro_Cali_State = (IMU_GyroCali_State_e)1; // 开始进行第一步
@@ -160,12 +187,26 @@ void IMU_GyroCali_Thread(void *Para)
             GyroSumNow = X2CAL(Cali_Out.x) + X2CAL(Cali_Out.y) + X2CAL(Cali_Out.z);
             if (GyroSumNow < 2.0f)
             {
-                // 数据记录完成，准备保存数据
-                FlashRecord(&Cali_Out);
-                Gyro_OffSet.x = Cali_Out.x;
-                Gyro_OffSet.y = Cali_Out.y;
-                Gyro_OffSet.z = Cali_Out.z;
-                break;
+                switch (IMU_Cali_set)
+                {
+                case IMU1_set:
+                    // 数据记录完成，准备保存数据
+                    FlashRecord(&Cali_Out,IMU_Cali_set);
+                    IMU1_OffSet.x = Cali_Out.x;
+                    IMU1_OffSet.y = Cali_Out.y;
+                    IMU1_OffSet.z = Cali_Out.z;
+                    break;
+                
+                case IMU2_set:
+                    Sensor_WaitFor_IMU2_RawData();
+                    // 读数据
+                    FlashRecord(&Cali_Out,IMU_Cali_set);
+                    IMU2_OffSet.x = Cali_Out.x;
+                    IMU2_OffSet.y = Cali_Out.y;
+                    IMU2_OffSet.z = Cali_Out.z;
+                    break;
+                }
+               break;
             }
             else
             { // 如果测量失败则本次放弃
@@ -181,8 +222,16 @@ void IMU_GyroCali_Thread(void *Para)
 }
 
 // 角速度计校准函数，此函数初始化校准线程，并挂起等待校准线程结束，线程运行结束后此函数退出
-static void Gyro_Cali()
+static void Gyro_Cali(IMU_set_e IMU_set)
 {
+    switch(IMU_set)
+    {
+        case IMU1_set:
+            IMU_Cali_set = IMU1_set;
+        case IMU2_set:
+            IMU_Cali_set = IMU2_set;
+    }  
+
     // 用来挂起的信号量，校准线程运行结束后会释放
     rt_sem_init(&IMU_CaliFinish_Sem, "IMUTriS", 0, RT_IPC_FLAG_PRIO);
 
@@ -287,15 +336,25 @@ static int CaliKeyCheck()
 }
 
 // 尝试从Flash中读取 若无数据或需要重测，则会自动重测，完成后函数返回
-int LoadGyroOffSet()
+int LoadGyroOffSet(IMU_set_e IMU_set)
 {
     uint8_t ReadTemp[12];
 
     // 读取Flash中的标记
     rt_enter_critical();
 //    Hwdt_Feed_Slowly(RT_TRUE);
-    stm32_flash_read(IMU_CALI_FLAG_ADDR, &CaliFlag_Read, sizeof(rt_uint8_t));
-    stm32_flash_read(IMU_BIAS_DATA_ADDR, &ReadTemp[0], sizeof(ReadTemp));
+    switch (IMU_set)
+    {
+    case IMU1_set:
+        stm32_flash_read(IMU1_CALI_FLAG_ADDR, &CaliFlag_Read, sizeof(rt_uint8_t));
+        stm32_flash_read(IMU1_BIAS_DATA_ADDR, &ReadTemp[0], sizeof(ReadTemp));
+        break;
+    
+    case IMU2_set:
+        stm32_flash_read(IMU2_CALI_FLAG_ADDR, &CaliFlag_Read, sizeof(rt_uint8_t));
+        stm32_flash_read(IMU2_BIAS_DATA_ADDR, &ReadTemp[0], sizeof(ReadTemp));
+        break;
+    }
 //    Hwdt_Feed_Slowly(RT_FALSE);
     rt_exit_critical();
 
@@ -308,10 +367,23 @@ int LoadGyroOffSet()
               ((ReadTemp[4] == 0xFF) && (ReadTemp[5] == 0xFF) && (ReadTemp[6] == 0xFF) && (ReadTemp[7] == 0xFF)) ||
               ((ReadTemp[8] == 0xFF) && (ReadTemp[9] == 0xFF) && (ReadTemp[10] == 0xFF) && (ReadTemp[11] == 0xFF))))
         { // 数据不为空
-            Gyro_OffSet.x = *((float *)&ReadTemp[0]);
-            Gyro_OffSet.y = *((float *)&ReadTemp[4]);
-            Gyro_OffSet.z = *((float *)&ReadTemp[8]);
             // 正常加载已有零飘数据
+            switch (IMU_set)
+                    {
+                    case IMU1_set:
+                        IMU1_OffSet.x = *((float *)&ReadTemp[0]);
+                        IMU1_OffSet.y = *((float *)&ReadTemp[4]);
+                        IMU1_OffSet.z = *((float *)&ReadTemp[8]);
+                        break;
+                    
+                    case IMU2_set:
+                        // 读数据
+                        FlashRecord(&Cali_Out,IMU_set);
+                        IMU2_OffSet.x = *((float *)&ReadTemp[0]);
+                        IMU2_OffSet.y = *((float *)&ReadTemp[4]);
+                        IMU2_OffSet.z = *((float *)&ReadTemp[8]);
+                        break;
+                    }
             return 0;
         }
     }
@@ -322,15 +394,30 @@ int LoadGyroOffSet()
               (ReadTemp[4] == 0xFF) && (ReadTemp[5] == 0xFF) && (ReadTemp[6] == 0xFF) && (ReadTemp[7] == 0xFF) &&
               (ReadTemp[8] == 0xFF) && (ReadTemp[9] == 0xFF) && (ReadTemp[10] == 0xFF) && (ReadTemp[11] == 0xFF)))
         { // 标志位异常异常但是内存前方存在部分数据, 将零漂载入为 0 同时报警
-            Gyro_OffSet.x = 0.f;
-            Gyro_OffSet.y = 0.f;
-            Gyro_OffSet.z = 0.f;
+
+            switch (IMU_set)
+                {
+                case IMU1_set:
+                    IMU1_OffSet.x = 0.f;
+                    IMU1_OffSet.y = 0.f;
+                    IMU1_OffSet.z = 0.f;                        
+                    break;
+                
+                case IMU2_set:
+                    // 读数据
+                    FlashRecord(&Cali_Out,IMU_set);
+                    IMU2_OffSet.x = 0.f;
+                    IMU2_OffSet.y = 0.f;                        
+                    IMU2_OffSet.z = 0.f;
+                    break;
+                }
+
             // 发出报警提示
             rt_thread_mdelay(1000);
             return 0;
         }
     }
     // FLASH 未写入数据或需要重测零飘
-    Gyro_Cali();
+    Gyro_Cali(IMU_set);
     return 1;
 }

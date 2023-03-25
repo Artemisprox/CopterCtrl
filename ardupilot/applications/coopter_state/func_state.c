@@ -248,6 +248,7 @@ static void State_decide_thread_entry(void *parameter)
         
         error_read();
 
+        rt_sem_take(&State_20ms_sem,RT_WAITING_FOREVER);
     }
 
 }

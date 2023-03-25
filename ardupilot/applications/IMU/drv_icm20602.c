@@ -140,9 +140,9 @@
 
 #define SPI_DEVICE_NAME     "spi20"
 
-struct  rt_spi_device *spi_dev;		/* spi 设备句柄 */
+//struct  rt_spi_device *spi_dev;		/* spi 设备句柄 */
 
-static uint8_t icm20602_write_reg(uint8_t reg, uint8_t val)
+static uint8_t icm20602_write_reg(uint8_t reg, uint8_t val , struct  rt_spi_device *spi_dev)
 {
 
     static uint8_t ICM_Tx1, ICM_Tx2;
@@ -155,7 +155,7 @@ static uint8_t icm20602_write_reg(uint8_t reg, uint8_t val)
     return 0;
 }
 
-static uint8_t icm20602_read_reg(uint8_t reg)
+static uint8_t icm20602_read_reg(uint8_t reg , struct  rt_spi_device *spi_dev)
 {
     static uint8_t ICM_Tx, ICM_Rx;
 
@@ -165,7 +165,7 @@ static uint8_t icm20602_read_reg(uint8_t reg)
     return ICM_Rx;
 }
 
-static uint8_t icm20602_read_buffer(uint8_t reg, void *buffer, uint8_t len)
+static uint8_t icm20602_read_buffer(uint8_t reg, void *buffer, uint8_t len , struct  rt_spi_device *spi_dev)
 {
     static uint8_t ICM_Tx_buff[14] = {0xff};
 
@@ -182,7 +182,7 @@ static float _accel_scale = 0, _gyro_scale = 0;
 //ICM20_ACCEL_FS_4G
 //ICM20_ACCEL_FS_8G
 //ICM20_ACCEL_FS_16G
-static uint8_t icm20602_set_accel_fullscale(uint8_t fs)
+static uint8_t icm20602_set_accel_fullscale(uint8_t fs , struct  rt_spi_device *spi_dev)
 {
     switch(fs)
     {
@@ -205,14 +205,14 @@ static uint8_t icm20602_set_accel_fullscale(uint8_t fs)
 
     }
     _accel_scale *= GRAVITY_MSS;
-    return icm20602_write_reg(ICM20_ACCEL_CONFIG,fs);
+    return icm20602_write_reg(ICM20_ACCEL_CONFIG,fs,spi_dev);
 }
 
 //ICM20_GYRO_FS_250
 //ICM20_GYRO_FS_500
 //ICM20_GYRO_FS_1000
 //ICM20_GYRO_FS_2000
-static uint8_t icm20602_set_gyro_fullscale(uint8_t fs)
+static uint8_t icm20602_set_gyro_fullscale(uint8_t fs , struct  rt_spi_device *spi_dev)
 {
     switch(fs)
     {
@@ -235,15 +235,15 @@ static uint8_t icm20602_set_gyro_fullscale(uint8_t fs)
 
     }
     _gyro_scale *= DEG_TO_RAD;
-    return icm20602_write_reg(ICM20_GYRO_CONFIG,fs);
+    return icm20602_write_reg(ICM20_GYRO_CONFIG,fs,spi_dev);
 
 }
 
-int icm20602_get_accel(float *accel)
+int icm20602_get_accel_IMU1(float *accel)
 {
     uint8_t buf[6];
 
-    if(icm20602_read_buffer(ICM20_ACCEL_XOUT_H,buf,6))
+    if(icm20602_read_buffer(ICM20_ACCEL_XOUT_H,buf,6,spi_dev_IMU1))
     {
         return 1;
     }
@@ -254,11 +254,41 @@ int icm20602_get_accel(float *accel)
     return 0;
 }
 
-int icm20602_get_gyro(float *gyro)
+int icm20602_get_accel_IMU2(float *accel)
 {
     uint8_t buf[6];
 
-    if(icm20602_read_buffer(ICM20_GYRO_XOUT_H,buf,6))
+    if(icm20602_read_buffer(ICM20_ACCEL_XOUT_H,buf,6,spi_dev_IMU2))
+    {
+        return 1;
+    }
+
+    accel[0] = ((int16_t)((buf[0] << 8) + buf[1])) * _accel_scale;
+    accel[1] = ((int16_t)((buf[2] << 8) + buf[3])) * _accel_scale;
+    accel[2] = ((int16_t)((buf[4] << 8) + buf[5])) * _accel_scale;
+    return 0;
+}
+
+int icm20602_get_gyro_IMU1(float *gyro)
+{
+    uint8_t buf[6];
+
+    if(icm20602_read_buffer(ICM20_GYRO_XOUT_H,buf,6,spi_dev_IMU1))
+    {
+        return 1;
+    }
+    
+    gyro[0] = ((int16_t)((buf[0] << 8) + buf[1])) * _gyro_scale;
+    gyro[1] = ((int16_t)((buf[2] << 8) + buf[3])) * _gyro_scale;
+    gyro[2] = ((int16_t)((buf[4] << 8) + buf[5])) * _gyro_scale;
+    return 0;
+}
+
+int icm20602_get_gyro_IMU2(float *gyro)
+{
+    uint8_t buf[6];
+
+    if(icm20602_read_buffer(ICM20_GYRO_XOUT_H,buf,6,spi_dev_IMU2))
     {
         return 1;
     }
@@ -270,12 +300,12 @@ int icm20602_get_gyro(float *gyro)
 }
 
 // 单位摄氏度
-int icm20602_get_temper(float *temper)
+int icm20602_get_temper_IMU1(float *temper)
 {
     int16_t temp_adc;
     uint8_t buf[2];
 
-    if(icm20602_read_buffer(ICM20_TEMP_OUT_H,buf,2))
+    if(icm20602_read_buffer(ICM20_TEMP_OUT_H,buf,2,spi_dev_IMU1))
     {
         return 1;
     }
@@ -286,41 +316,78 @@ int icm20602_get_temper(float *temper)
     return 0;
 }
 
+int icm20602_get_temper_IMU2(float *temper)
+{
+    int16_t temp_adc;
+    uint8_t buf[2];
+
+    if(icm20602_read_buffer(ICM20_TEMP_OUT_H,buf,2,spi_dev_IMU2))
+    {
+        return 1;
+    }
+
+    temp_adc = (((int16_t)buf[0])<<8)+buf[1];
+
+    temper[0] = (25.0f + (float)temp_adc/326.8f);
+    return 0;
+}
+
+int icm20602_Reginit(struct  rt_spi_device *spi_dev)
+{
+    rt_uint8_t id;
+    icm20602_write_reg(ICM20_PWR_MGMT_1, 0x80 , spi_dev); //复位，复位后位0x41,睡眠模式
+    rt_thread_mdelay(10);
+    icm20602_write_reg(ICM20_PWR_MGMT_1, 0x01 , spi_dev); //关闭睡眠，自动选择时钟
+    rt_thread_mdelay(10);
+
+    id = icm20602_read_reg(ICM20_WHO_AM_I , spi_dev); //读取ID
+    if (id != 0x12)
+    {
+        rt_kprintf("icm init failed! error id is %x !\n", id);
+        return 1;
+    }
+
+    icm20602_write_reg(ICM20_PWR_MGMT_2, 0x00 , spi_dev);
+    icm20602_write_reg(ICM20_SMPLRT_DIV, 0 , spi_dev);                                  //分频数=为0+1，数据输出速率为内部采样速率
+    icm20602_write_reg(ICM20_CONFIG, DLPF_BW_41 , spi_dev);                             // GYRO低通滤波设置  1k rate
+    icm20602_write_reg(ICM20_ACCEL_CONFIG2, ACCEL_AVER_4 | ACCEL_DLPF_BW_44 , spi_dev); // ACCEL低通滤波设置
+
+    //设置量程
+    icm20602_set_accel_fullscale(ICM20_ACCEL_FS_16G , spi_dev);   //±8g
+    icm20602_set_gyro_fullscale(ICM20_GYRO_FS_2000DPS , spi_dev); //±2000dps
+
+    icm20602_write_reg(ICM20_LP_MODE_CFG, 0x00 , spi_dev); //关闭低功耗
+    icm20602_write_reg(ICM20_FIFO_EN, 0x00 , spi_dev);     //关闭FIFO
+
+    icm20602_write_reg(ICM20_INT_PIN_CFG, (uint8_t)(1 << 4) , spi_dev); // INT输出设置
+    icm20602_write_reg(ICM20_INT_ENABLE, (uint8_t)(1 << 0) , spi_dev);  // INT输出使能
+
+    rt_thread_mdelay(10);
+
+    return 0;
+}
+
 // 初始化SPI和ICM20602芯片
 void ICM_init()
 {
-        // 配置 SPI 设备
-        spi_ICM20602_init();
+    rt_int8_t flag = 0 ;
 
-        rt_uint8_t id;
-        icm20602_write_reg(ICM20_PWR_MGMT_1, 0x80); //复位，复位后位0x41,睡眠模式
-        rt_thread_mdelay(10);
-        icm20602_write_reg(ICM20_PWR_MGMT_1, 0x01); //关闭睡眠，自动选择时钟
-        rt_thread_mdelay(10);
-
-        id = icm20602_read_reg(ICM20_WHO_AM_I); //读取ID
-        if (id != 0x12)
-        {
-            rt_kprintf("icm init failed! error id is %x !\n", id);
-            while(1)
-                ;
-        }
-
-        icm20602_write_reg(ICM20_PWR_MGMT_2, 0x00);
-        icm20602_write_reg(ICM20_SMPLRT_DIV, 0);                                  //分频数=为0+1，数据输出速率为内部采样速率
-        icm20602_write_reg(ICM20_CONFIG, DLPF_BW_41);                             // GYRO低通滤波设置  1k rate
-        icm20602_write_reg(ICM20_ACCEL_CONFIG2, ACCEL_AVER_4 | ACCEL_DLPF_BW_44); // ACCEL低通滤波设置
-
-        //设置量程
-        icm20602_set_accel_fullscale(ICM20_ACCEL_FS_16G);   //±8g
-        icm20602_set_gyro_fullscale(ICM20_GYRO_FS_2000DPS); //±2000dps
-
-        icm20602_write_reg(ICM20_LP_MODE_CFG, 0x00); //关闭低功耗
-        icm20602_write_reg(ICM20_FIFO_EN, 0x00);     //关闭FIFO
-
-        icm20602_write_reg(ICM20_INT_PIN_CFG, (uint8_t)(1 << 4)); // INT输出设置
-        icm20602_write_reg(ICM20_INT_ENABLE, (uint8_t)(1 << 0));  // INT输出使能
-
-        rt_thread_mdelay(10);
+    // 配置 SPI 设备
+    spi_ICM20602_init();
     
+    if(icm20602_Reginit(spi_dev_IMU1))
+    {
+        rt_kprintf("IMU1 error");
+        flag ++ ;
+    }
+
+    if(icm20602_Reginit(spi_dev_IMU2))
+    {
+        rt_kprintf("IMU2 error");
+        flag ++ ;
+    }
+
+    if(flag == 2)
+        while(1);
+
 }
