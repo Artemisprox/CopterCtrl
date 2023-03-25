@@ -28,7 +28,7 @@
 
 #if (TEST)
 #define KEY_TEST 1
-#define CAN_TEST 0
+#define CAN_TEST 1
 #define RGB_TEST 0
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
@@ -43,7 +43,7 @@ int main(void)
 {
 
 #if (CAN_TEST)
-    TEST_CAN_init();
+    TEST_CAN_Init();
 #endif
 
 #if (RGB_TEST)
