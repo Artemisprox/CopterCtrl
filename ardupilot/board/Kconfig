@@ -103,6 +103,16 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_PWM1
                     config BSP_USING_PWM1_CH1
                         bool "Enable PWM1 channel1"
+                        default y
+                    config BSP_USING_PWM1_CH2
+                        bool "Enable PWM1 channel2"
+                        default y
+                    config BSP_USING_PWM1_CH3
+                        bool "Enable PWM1 channel3"
+                        default y
+                    config BSP_USING_PWM1_CH4
+                        bool "Enable PWM1 channel4"
+                        default y
                 endif
 
             menuconfig BSP_USING_PWM3

@@ -658,6 +658,11 @@
               <FilePath>applications\TEST\KEY_TEST.c</FilePath>
             </File>
             <File>
+              <FileName>PWM_TEST.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\TEST\PWM_TEST.c</FilePath>
+            </File>
+            <File>
               <FileName>RGB_TEST.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\TEST\RGB_TEST.c</FilePath>

@@ -7,6 +7,7 @@
 /* 引脚编号，通过查看设备驱动文件drv_gpio.c确定 */
 #define KEY1_PIN_NUM            GET_PIN(B,7)
 #define KEY2_PIN_NUM            GET_PIN(B,6)
+#define BEEP_PIN_NUM            GET_PIN(B,9)
 
 #define PWM_DEV_NAME        "pwm3"  /* PWM设备名称 */
 
@@ -27,8 +28,9 @@ static void RGB_R_TEST(void *args)
 static void RGB_B_TEST(void *args)
 {
     static rt_int32_t a=1;
-    pulse_B = (++a % 2)>0 ? 0 :1000;
-    rt_pwm_set(pwm_dev, RGB_B, period_B, pulse_B);
+    rt_int8_t Beep_Status;
+    Beep_Status = (++a % 2)>0 ? PIN_LOW :PIN_HIGH;
+    rt_pin_write(BEEP_PIN_NUM, Beep_Status);
 }
 
 void KEY_Init(void)
@@ -43,6 +45,11 @@ void KEY_Init(void)
     /* 使能设备 */
     rt_pwm_enable(pwm_dev, RGB_R);
     rt_pwm_enable(pwm_dev, RGB_B);
+
+    /* 蜂鸣器引脚为输出模式 */
+    rt_pin_mode(BEEP_PIN_NUM, PIN_MODE_OUTPUT);
+    /* 默认低电平 */
+    rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
 
     /* 按键0引脚为输入模式 */
     rt_pin_mode(KEY1_PIN_NUM, PIN_MODE_INPUT_PULLUP);
