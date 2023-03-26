@@ -31,10 +31,12 @@
 #define CAN_TEST 0
 #define RGB_TEST 0
 #define PWM_TEST 1
+#define UART_TEST 1
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
 #include "KEY_TEST.h"
 #include "PWM_TEST.h"
+#include "UART_TEST.h"
 #endif
 
 #if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO) && (!defined CORE_USING_COPTER)
@@ -45,7 +47,7 @@ int main(void)
 {
 
 #if (CAN_TEST)
-    TEST_CAN_Init();
+    CAN_Init();
 #endif
 
 #if (RGB_TEST)
@@ -58,6 +60,10 @@ int main(void)
 
 #if (PWM_TEST)
     PWM_Init();
+#endif
+
+#if (UART_TEST)
+    UART_Init();
 #endif
     // 上电提示音
     /*    set_buzzer(4200, 1);

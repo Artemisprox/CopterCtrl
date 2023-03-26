@@ -197,7 +197,7 @@ static rt_err_t TEST_CANCtrl_init(void)
     return RT_EOK;
 }
 
-rt_err_t TEST_CAN_Init(void)
+rt_err_t CAN_Init(void)
 {
     TEST_can1_init();
     TEST_can2_init();
