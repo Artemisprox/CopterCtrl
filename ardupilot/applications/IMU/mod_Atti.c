@@ -96,7 +96,7 @@ static void AttiCalcu_thread(void *parameter)
 		
     while (1)
     {
-       // Sensor_WaitForRawData();
+        IMU_WaitForRawData();
 
         // 坐标换算，零飘校正
         GetCaliIMUData(&copter_IMU_RAW.Accl_Raw, &copter_IMU_RAW.Gyro_Raw, &AcclFix, &GyroFix);
