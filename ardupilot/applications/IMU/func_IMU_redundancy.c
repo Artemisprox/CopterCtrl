@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
 #include "drv_thread.h"
 #include "func_IMUCali.h"
 #include <rtthread.h>
@@ -176,7 +173,3 @@ void IMU_redundancy_init(void)
 
 
 }
-<<<<<<< Updated upstream
-=======
->>>>>>> 1fd7eb8ca870c0bbf1d38229d317ead000e81871
->>>>>>> Stashed changes

@@ -1,6 +1,4 @@
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
+
 #include <rtthread.h>
 #include "func_SensorRAW.h"
 
@@ -21,8 +19,7 @@ typedef struct
 
 extern void IMU_WaitForRawData(void);
 extern Sensor_RAW_t copter_IMU_RAW;
-=======
->>>>>>> Stashed changes
+
 #include <rtthread.h>
 #include "func_SensorRAW.h"
 
@@ -42,7 +39,3 @@ typedef struct
 }IMU_redun;
 
 extern Sensor_RAW_t copter_IMU_RAW;
-<<<<<<< Updated upstream
-=======
->>>>>>> 1fd7eb8ca870c0bbf1d38229d317ead000e81871
->>>>>>> Stashed changes
