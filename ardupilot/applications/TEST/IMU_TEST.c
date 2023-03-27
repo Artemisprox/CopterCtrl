@@ -6,6 +6,7 @@
 
 struct rt_spi_message msgACCLRead1, msgACCLRead2, msgACCLRead3;
 
+//读取ID: reg = 0x75
 static uint8_t ReadSingle(uint8_t reg)
 {
     static uint8_t Accl_Rbuffer[2];
