@@ -672,6 +672,16 @@
               <FileType>1</FileType>
               <FilePath>applications\TEST\RGB_TEST.c</FilePath>
             </File>
+            <File>
+              <FileName>UART_TEST.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\TEST\UART_TEST.c</FilePath>
+            </File>
+            <File>
+              <FileName>IMU_TEST.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\TEST\IMU_TEST.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
