@@ -7,5 +7,9 @@
 rt_err_t IMU_TEST_Init(void)
 {
     ICM_init();
-    icm20602_get_gyro_IMU2();
+    while (1)
+    {
+        icm20602_get_gyro_IMU2();
+        rt_thread_mdelay(10);
+    }
 }
