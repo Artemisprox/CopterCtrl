@@ -30,8 +30,8 @@
 #define KEY_TEST 1
 #define CAN_TEST 0
 #define RGB_TEST 0
-#define PWM_TEST 1
-#define UART_TEST 1
+#define PWM_TEST 0
+#define UART_TEST 0
 #define IMU_TEST 1
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
