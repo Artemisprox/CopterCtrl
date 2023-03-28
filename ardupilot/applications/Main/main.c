@@ -32,11 +32,13 @@
 #define RGB_TEST 0
 #define PWM_TEST 1
 #define UART_TEST 1
+#define IMU_TEST 1
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
 #include "KEY_TEST.h"
 #include "PWM_TEST.h"
 #include "UART_TEST.h"
+#include "IMU_TEST.h"
 #endif
 
 #if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO) && (!defined CORE_USING_COPTER)
@@ -64,6 +66,10 @@ int main(void)
 
 #if (UART_TEST)
     UART_Init();
+#endif
+
+#if (IMU_TEST)
+    IMU_Init();
 #endif
     // 上电提示音
     /*    set_buzzer(4200, 1);

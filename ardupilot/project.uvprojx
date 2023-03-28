@@ -658,6 +658,11 @@
               <FilePath>applications\TEST\CAN_TEST.c</FilePath>
             </File>
             <File>
+              <FileName>IMU_TEST.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\TEST\IMU_TEST.c</FilePath>
+            </File>
+            <File>
               <FileName>KEY_TEST.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\TEST\KEY_TEST.c</FilePath>
@@ -676,11 +681,6 @@
               <FileName>UART_TEST.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\TEST\UART_TEST.c</FilePath>
-            </File>
-            <File>
-              <FileName>IMU_TEST.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\TEST\IMU_TEST.c</FilePath>
             </File>
           </Files>
         </Group>

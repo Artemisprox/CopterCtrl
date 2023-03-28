@@ -1,5 +1,7 @@
 #include "rtdevice.h"
 #include "drv_spithread.h"
+#include "IMU_TEST.h"
+
 #include <rtdevice.h>
 
 #include "drv_icm20602.h"
@@ -23,7 +25,7 @@ static uint8_t ReadSingle(uint8_t reg)
 }
 
 float gyro[3];
-rt_err_t IMU_TEST_Init(void)
+rt_err_t IMU_Init(void)
 {
     ICM_init();
     while (1)
