@@ -45,13 +45,13 @@ void spi_ICM20602_init(void)
 		/* config spi */
 		struct rt_spi_configuration cfg;
         cfg.data_width = 8;
-        cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible: Mode 0 and Mode 3 */
+        cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB;; /* SPI Compatible: Mode 0 and Mode 3 */
         cfg.max_hz = 10 * 1000 * 1000; /* 10M */
 		rt_spi_configure(spi_dev_IMU1, &cfg);
 		rt_spi_configure(spi_dev_IMU2, &cfg);
 
 		/* GYRO WRITE */
-        msgGYROWrite1.recv_buf   = RT_NULL;
+/*        msgGYROWrite1.recv_buf   = RT_NULL;
         msgGYROWrite1.length     = 1;
         msgGYROWrite1.cs_take    = 1;
         msgGYROWrite1.cs_release = 0;
@@ -62,8 +62,8 @@ void spi_ICM20602_init(void)
         msgGYROWrite2.cs_take    = 0;
         msgGYROWrite2.cs_release = 1;
         msgGYROWrite2.next       = RT_NULL;
-		
-		/* ACCL WRITE */
+*/		
+		/* ACCL WRITE 
         msgACCLWrite1.recv_buf   = RT_NULL;
         msgACCLWrite1.length     = 1;
         msgACCLWrite1.cs_take    = 1;
@@ -75,8 +75,8 @@ void spi_ICM20602_init(void)
         msgACCLWrite2.cs_take    = 0;
         msgACCLWrite2.cs_release = 1;
         msgACCLWrite2.next       = RT_NULL;
-
-		/* GYRO READ */
+*/
+		/* GYRO READ 
         msgGYRORead1.recv_buf   = RT_NULL;
         msgGYRORead1.length     = 1;
         msgGYRORead1.cs_take    = 1;
@@ -88,8 +88,8 @@ void spi_ICM20602_init(void)
         msgGYRORead2.cs_take    = 0;
         msgGYRORead2.cs_release = 1;
         msgGYRORead2.next       = RT_NULL;
-
-		/* ACCL READ */
+*/
+		/* ACCL READ 
         msgACCLRead1.recv_buf   = RT_NULL;
         msgACCLRead1.length     = 1;
         msgACCLRead1.cs_take    = 1;
@@ -108,5 +108,5 @@ void spi_ICM20602_init(void)
         msgACCLRead3.cs_take    = 0;
         msgACCLRead3.cs_release = 1;
         msgACCLRead3.next       = RT_NULL;
-	}
+*/	}
 }
