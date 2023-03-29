@@ -67,7 +67,7 @@ rt_err_t Battery_Init(void)
     rt_thread_t thread;
     rt_sem_init(&battery_100ms_sem, "battery_sem", 0, RT_IPC_FLAG_FIFO);
     rt_sem_init(&battery_rec_sem, "battery_rec_sem", 0, RT_IPC_FLAG_FIFO);
-    thread = rt_thread_create("battery_message", battery_thread_entry, RT_NULL, 2048, THREAD_PRIO_STRIKEPID, 1);
+    thread = rt_thread_create("battery_message", battery_thread_entry, RT_NULL, 2048, THREAD_PRIO_CAN1RX, 1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);
 

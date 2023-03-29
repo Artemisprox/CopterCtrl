@@ -1,4 +1,3 @@
-
 #include <rtthread.h>
 #include "func_SensorRAW.h"
 
@@ -19,3 +18,4 @@ typedef struct
 
 extern void IMU_WaitForRawData(void);
 extern Sensor_RAW_t copter_IMU_RAW;
+extern void IMU_redundancy_init(void);
