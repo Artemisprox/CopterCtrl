@@ -28,15 +28,15 @@ static void error_handle(int error_ID)
         rt_kprintf("Battery connect lost");
         break;
     case HEIGHT_LOST:
-        yellow_quickly();
+        blue_quickly();
         rt_kprintf("No height data");
         break;
     case POS_LOST:
-        yellow_slowly();
+        blue_slowly();
         rt_kprintf("No height data");
         break;
     case BATTERY_LOW:
-        yellow_keepon();
+        blue_keepon();
         rt_kprintf("Battery capacity low");
         break;
     case THROTTLE_HIGH:
@@ -70,5 +70,5 @@ void error_read(void)
 void error_handle_init(void)
 {
     QueueCtrl_Init(&error_list , LIST_LEN);
-    RGB_init();
+    MainRGB_init();
 }
