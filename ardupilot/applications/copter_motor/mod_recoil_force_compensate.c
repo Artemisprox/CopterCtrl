@@ -35,7 +35,6 @@ void recoil_compensate_calculate(gun_data *gun , Motor_t *yaw , Motor_t *pitch)
 
 void recoil_compensate_init(void)
 {
-
     Package_Pionter_Add("compensate", copter_gun);
 	Package_ID = Package_Find_Num("compensate");
     rt_sem_init(&gun_rec_sem, "gun_sem", 0, RT_IPC_FLAG_FIFO);

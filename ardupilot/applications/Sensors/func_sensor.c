@@ -162,7 +162,7 @@ rt_err_t Sensor_Init(void)
 	/*定时器处理线程*/
     rt_thread_t thread;
     rt_sem_init(&Pos_20ms_sem, "Position_sem", 0, RT_IPC_FLAG_FIFO);
-    thread = rt_thread_create("Pos_message", Pos_sensor_thread_entry, RT_NULL, 2048, THREAD_PRIO_STRIKEPID, 1);
+    thread = rt_thread_create("Pos_message", Pos_sensor_thread_entry, RT_NULL, 2048, THREAD_PRIO_SENSOR_DATA, 1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);
 

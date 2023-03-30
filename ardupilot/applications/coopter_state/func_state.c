@@ -278,7 +278,7 @@ rt_err_t StateDecide_Init(void)
 	/*决策线程*/
     rt_thread_t thread;
     rt_sem_init(&State_20ms_sem, "State_sem", 0, RT_IPC_FLAG_FIFO);
-    thread = rt_thread_create("State_message", State_decide_thread_entry, RT_NULL, 2048, THREAD_PRIO_STRIKEPID, 1);
+    thread = rt_thread_create("State_message", State_decide_thread_entry, RT_NULL, 2048, THREAD_PRIO_STATE, 1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);
 

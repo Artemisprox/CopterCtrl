@@ -135,21 +135,8 @@
 
 /* language packages */
 
-/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
-
-
-/* XML: Extensible Markup Language */
-
 
 /* multimedia packages */
-
-/* LVGL: powerful and easy-to-use embedded GUI library */
-
-
-/* u8g2: a monochrome graphic library */
-
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
@@ -192,77 +179,14 @@
 
 /* system packages */
 
-/* enhanced kernel services */
-
-
-/* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
-
-
-/* Micrium: Micrium software products porting for RT-Thread */
-
 
 /* peripheral libraries and drivers */
-
-/* sensors drivers */
-
-
-/* touch drivers */
-
-
-/* Kendryte SDK */
-
-
-/* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
 
-/* project laboratory */
 
 /* samples: kernel and components samples */
-
-
-/* entertainment: terminal games and other interesting software packages */
-
-
-/* Arduino libraries */
-
-
-/* Projects */
-
-
-/* Sensors */
-
-
-/* Display */
-
-
-/* Timing */
-
-
-/* Data Processing */
-
-
-/* Data Storage */
-
-/* Communication */
-
-
-/* Device Control */
-
-
-/* Other */
-
-/* Signal IO */
-
-
-/* Uncategorized */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4
@@ -271,8 +195,18 @@
 
 /* Whether to use the HardWare Libraries */
 
+#define BSP_USING_BUZZER
+#define BUZZER_PWM_DEVICE_NAME "pwm4"
+#define BUZZER_PWM_CHANNEL 3
 #define BSP_USING_REMOTE_DT7
 #define REMOTE_UART_DEVICE_NAME "uart3"
+#define BSP_USING_RGB_LIGHT
+#define RLIGHT_PWM_DEVICE_NAME "pwm3"
+#define RLIGHT_PWM_CHANNEL 2
+#define GLIGHT_PWM_DEVICE_NAME "pwm3"
+#define GLIGHT_PWM_CHANNEL 1
+#define BLIGHT_PWM_DEVICE_NAME "pwm3"
+#define BLIGHT_PWM_CHANNEL 3
 
 /* Whether to use the SoftWare Libraries */
 
@@ -294,8 +228,6 @@
 
 /* Use the key-menu module(s) */
 
-#define BSP_USING_KEY_CALLBACK
-#define BSP_USING_KEY_MENU
 
 /* Monitor Settings */
 
