@@ -129,6 +129,18 @@ menu "On-chip Peripheral Drivers"
                         default y
                 endif
 
+            menuconfig BSP_USING_PWM2
+                bool "Enable timer2 output pwm"
+                default y
+                if BSP_USING_PWM2
+                    config BSP_USING_PWM2_CH1
+                        bool "Enable PWM2 channel1"
+                        default y
+                    config BSP_USING_PWM2_CH2
+                        bool "Enable PWM2 channel2"
+                        default y
+                endif
+
             menuconfig BSP_USING_PWM3
                 bool "Enable timer3 output pwm(RGB)"
                 default y
