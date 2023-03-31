@@ -6,13 +6,28 @@
 #include "stm32f4xx_hal.h"
 
 #define IMU1_IS_USING 1
-#define IMU2_IS_USING 0
+#define IMU2_IS_USING 1
 
 #define ICM20_PWR_MGMT_1 0x6B
 #define ICM20_PWR_MGMT_2 0x6C
 
 #define CS1_PIN GET_PIN(B, 1)
 #define CS2_PIN GET_PIN(C, 11)
+
+#define RGB_DEV_NAME "pwm3" /* PWM设备名称 */
+
+#define RGB_R 2 /* PWM通道 */
+#define RGB_B 3 /* PWM通道 */
+
+#define TVCC_DEV_NAME "pwm2" /* PWM设备名称 */
+
+#define T_VCC_1 1 /* PWM通道 */
+#define T_VCC_2 2 /* PWM通道 */
+
+static struct rt_device_pwm *RGB_dev; /* PWM设备句柄 */
+static struct rt_device_pwm *TVCC_dev; /* PWM设备句柄 */
+
+static rt_uint32_t period_R, pulse_R, period_B, pulse_B;
 
 SPI_HandleTypeDef hspi1;
 
@@ -74,16 +89,40 @@ static uint8_t icm20602_read_reg(uint8_t reg, rt_base_t CS_Pin_Num)
     return rx;
 }
 
-static uint8_t ID[2];
+static uint8_t ID[2]={0};
 rt_err_t IMU_Init(void)
 {
+	
+	period_R = 200000;
+    period_B = 200000;
+
+    RGB_dev = (struct rt_device_pwm *)rt_device_find(RGB_DEV_NAME);
+
+    rt_pwm_set(RGB_dev, RGB_R, period_R, pulse_R);
+    rt_pwm_set(RGB_dev, RGB_B, period_B, pulse_B);
+    /* 使能设备 */
+    rt_pwm_enable(RGB_dev, RGB_R);
+    rt_pwm_enable(RGB_dev, RGB_B);
+	
+	TVCC_dev = (struct rt_device_pwm *)rt_device_find(TVCC_DEV_NAME);
+
+    rt_pwm_set(TVCC_dev, T_VCC_1, 200000, 0);
+    rt_pwm_set(TVCC_dev, T_VCC_2, 200000, 0);
+    /* 使能设备 */
+    rt_pwm_enable(TVCC_dev, T_VCC_1);
+    rt_pwm_enable(TVCC_dev, T_VCC_2);
+	// 片选引脚初始化
+	rt_pin_mode(CS1_PIN, PIN_MODE_OUTPUT);
+    rt_pin_write(CS1_PIN, PIN_HIGH);
+	
+	
+    rt_pin_mode(CS2_PIN, PIN_MODE_OUTPUT);
+    rt_pin_write(CS2_PIN, PIN_HIGH);
+	// SPI1初始化
+    MX_SPI1_Init();
 
 #if (IMU1_IS_USING)
-    // 片选引脚初始化
-    rt_pin_mode(CS1_PIN, PIN_MODE_OUTPUT);
-    rt_pin_write(CS1_PIN, PIN_HIGH);
-    // SPI1初始化
-    MX_SPI1_Init();
+    
     // 读取陀螺仪1的ID
     icm20602_write_reg(ICM20_PWR_MGMT_1, 0x80, CS1_PIN);
     rt_thread_mdelay(10);
@@ -94,11 +133,9 @@ rt_err_t IMU_Init(void)
     ID[0] = icm20602_read_reg(0x75, CS1_PIN);
 
     RT_ASSERT(ID[0] == 0x12);
+	rt_pwm_set(RGB_dev, RGB_R, period_R, 1000);
 #endif
 #if (IMU2_IS_USING)
-    // 片选引脚初始化
-    rt_pin_mode(CS2_PIN, PIN_MODE_OUTPUT);
-    rt_pin_write(CS2_PIN, PIN_HIGH);
 
     // 读取陀螺仪2的ID
     icm20602_write_reg(ICM20_PWR_MGMT_1, 0x80, CS2_PIN);
@@ -110,6 +147,7 @@ rt_err_t IMU_Init(void)
     ID[1] = icm20602_read_reg(0x75, CS2_PIN);
 
     RT_ASSERT(ID[1] == 0x12);
+	rt_pwm_set(RGB_dev, RGB_B, period_B, 1000);
 #endif
     return 0;
 }
