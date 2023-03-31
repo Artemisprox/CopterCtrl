@@ -185,9 +185,9 @@ static void package_update(void)
 	copter_power = *p_4 ;
 	Package_Write_Pionter_End(battery_ID,battery);
 
-  gun_data *p_5 =  Package_Pionter_Single(gun_ID,gun_data);
+    recoil_data *p_5 =  Package_Pionter_Single(gun_ID,recoil_data);
 	copter_gun = *p_5 ;
-	Package_Write_Pionter_End(gun_ID,gun_data);
+	Package_Write_Pionter_End(gun_ID,recoil_data);
 
 }
 
@@ -260,7 +260,7 @@ static void copter_status_init(void)
     copter_status.mode = STABILIZATION;
     copter_status.recoil_compensate_enable = 0;
     Package_Pionter_Add("status", status);
-		status_ID = Package_Find_Num("status");
+	status_ID = Package_Find_Num("status");
 }
 
 rt_err_t StateDecide_Init(void)

@@ -5,6 +5,9 @@
 #define PITCH_ID     0x202
 #define GIMBAL_ID 	 0x101
 
+#define BULLET_MASS 0.0017f
+#define BULLET_INITAL_NUM 1000
+#define GIMBAL_DIS  0.3f
 typedef struct 
 {
 
@@ -15,12 +18,22 @@ typedef struct
     uint8_t data_valid;  //云台数据是否可用
 
     Motor_t Yaw;
-    uint32_t yaw_fresh_time;
     Motor_t Pitch;
-    uint32_t pitch_fresh_time;
 
     uint32_t fresh_time;//数据更新时间
 }gun_data;
+
+typedef struct 
+{
+    float bullet_num;//当前弹丸数量
+    float pitch_angle;//pitch角度补偿
+    float x_torque;//x轴力矩补偿
+    float roll_angle;//roll角度补偿
+    float y_torque;//y轴力矩补偿
+
+    uint32_t fresh_time;//数据更新时间
+    rt_uint8_t en_flag;//根据发弹指示判断是否执行后坐力补偿 
+}recoil_data;
 
 extern void gun_readmsg(rt_uint8_t rxmsg[]);
 extern gun_data copter_gun;
