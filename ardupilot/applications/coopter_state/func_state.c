@@ -12,8 +12,7 @@ static remote_data copter_remote;
 static pos_sensor copter_pos;
 static IMU_t copter_atti;
 static battery copter_power;
-static gun_data copter_gun;
-
+static recoil_data copter_gimbal;
 data_check copter_data_valid = {0};
 static status copter_status = {0};
 
@@ -29,7 +28,7 @@ static void State_decide_20ms_IRQHandler(void *parameter)
 }
 
 //云台状态查询
-static uint8_t gimbal_status_check(gun_data *data)
+static uint8_t gimbal_status_check(recoil_data *data)
 {
     uint32_t now_tick = rt_tick_get();
     if(now_tick - data->fresh_time >= 200000 )//200ms未接收到云台数据判断为离线
@@ -186,7 +185,7 @@ static void package_update(void)
 	Package_Write_Pionter_End(battery_ID,battery);
 
     recoil_data *p_5 =  Package_Pionter_Single(gun_ID,recoil_data);
-	copter_gun = *p_5 ;
+	copter_gimbal = *p_5 ;
 	Package_Write_Pionter_End(gun_ID,recoil_data);
 
 }
@@ -204,7 +203,7 @@ static void State_decide_thread_entry(void *parameter)
             copter_status.emergency = 1;
         else copter_status.emergency = 0;
 
-        if(gimbal_status_check(&copter_gun))
+        if(gimbal_status_check(&copter_gimbal))
         {
             error_write(GIMBAL_LOST);
         }

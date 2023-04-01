@@ -33,13 +33,13 @@ void recoil_compensate_calculate(gun_data *gun , recoil_data *recoil_force)
 
     float f = (MASS + recoil_force->bullet_num*BULLET_MASS)*g;//通过当前自重估计升力
 
-    float F_recoil = cosf(gun->Pitch.ang)*gun->frequency*gun->speed*BULLET_MASS;//计算平均后坐力
-    recoil_force->pitch_angle = F_recoil*cosf(gun->Yaw.ang)/f/360*2*3.1415926f;//pitch轴角度补偿
-    recoil_force->roll_angle = -F_recoil*sinf(gun->Yaw.ang)/f/360*2*3.1415926f;//roll轴角度补偿
+    float F_recoil = cosf(gun->Pitch.dji.angle)*gun->frequency*gun->speed*BULLET_MASS;//计算平均后坐力
+    recoil_force->pitch_angle = F_recoil*cosf(gun->Yaw.dji.angle)/f/360*2*3.1415926f;//pitch轴角度补偿
+    recoil_force->roll_angle = -F_recoil*sinf(gun->Yaw.dji.angle)/f/360*2*3.1415926f;//roll轴角度补偿
 
     float torque = 0.8*F_recoil*GIMBAL_DIS;//计算平均总后坐力力矩。0.8为参量，根据实际进行调节
-    recoil_force->x_torque = sin(gun->Yaw.ang)*torque;//计算补偿力矩
-    recoil_force->y_torque = -cos(gun->Yaw.ang)*torque;
+    recoil_force->x_torque = sinf(gun->Yaw.dji.angle)*torque;//计算补偿力矩
+    recoil_force->y_torque = -cosf(gun->Yaw.dji.angle)*torque;
 
     recoil_force->en_flag = gun->shooting_flag;
 };
