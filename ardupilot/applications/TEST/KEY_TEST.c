@@ -7,7 +7,7 @@
 /* 引脚编号，通过查看设备驱动文件drv_gpio.c确定 */
 #define KEY1_PIN_NUM GET_PIN(B, 7)
 #define KEY2_PIN_NUM GET_PIN(B, 6)
-#define BEEP_PIN_NUM GET_PIN(B, 9)
+#define BEEP_PIN_NUM GET_PIN(B, 10)
 
 #define PWM_DEV_NAME "pwm3" /* PWM设备名称 */
 
