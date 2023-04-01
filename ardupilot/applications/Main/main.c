@@ -71,6 +71,8 @@ int main(void)
 #if (IMU_TEST)
     IMU_Init();
 #endif
+
+	RC_PPM_Init();
     // 上电提示音
     /*    set_buzzer(4200, 1);
         rt_thread_mdelay(20);
