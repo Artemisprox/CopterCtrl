@@ -20,8 +20,8 @@
 #include "func_MonitorCfg.h"
 #include "drv_thread.h"
 #include "mod_Atti.h"
-#include "drv_TF_mini.h"
-#include "drv_NimingFlow.h"
+#include "func_remote.h"
+#include "func_sensor.h"
 #include "drv_canthread.h"
 
 #define TEST 1
@@ -57,7 +57,7 @@ int main(void)
 #endif
 
 #if (KEY_TEST)
-    KEY_Init();
+   // KEY_Init();
 #endif
 
 #if (PWM_TEST)
@@ -72,7 +72,7 @@ int main(void)
     IMU_Init();
 #endif
 
-	RC_PPM_Init();
+	RC_init();
     // 上电提示音
     /*    set_buzzer(4200, 1);
         rt_thread_mdelay(20);

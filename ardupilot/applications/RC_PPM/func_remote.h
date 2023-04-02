@@ -9,11 +9,11 @@
 #define ROLL_MAX_DEG     10 //最大翻滚角
 #define YAW_MAX_SPE      30 //最大偏航角角度度
 
-#define rocker_min       36.0f  //遥控器摇杆低位
-#define rocker_max       72.0f  //遥控器摇杆高位
-#define rocker_middle    50.0f  //遥控器摇杆低位
-#define rocker_width     36.0f  //遥控器信号占空比总宽度
-#define rocker_inter     2.0f	//遥控器信号
+#define rocker_min       0.553f  //遥控器摇杆低位
+#define rocker_max       0.965f  //遥控器摇杆高位
+#define rocker_middle    0.759f  //遥控器摇杆低位
+#define rocker_width     0.412f  //遥控器信号占空比总宽度
+#define rocker_inter     0.010f	//遥控器信号
 
 
 #define STABILIZATION    1   

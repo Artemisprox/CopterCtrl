@@ -17,25 +17,26 @@ static int16_t low_pass_filter(int16_t data_now , int16_t data_last , float para
 /*将遥控器数据转化为控制数据*/
 static void remote_setpoint(uint8_t mode , RC_PPM_data *data)
 {
+	mode = POSITION;
 	switch (mode)
 	{
 		case POSITION ://定点模式：高度速度、x轴速度、y轴速度、yaw轴角速度
-			copter_remote.throttle = (data->RC_throttle/2000.0f - rocker_middle)/rocker_width/2.0f*HEIGHT_MAX_V;
-			copter_remote.pitch = (data->RC_pitch/2000.0f - rocker_middle)/rocker_width/2.0f*POS_X_MAX_V;
-			copter_remote.roll  = (data->RC_roll/2000.0f - rocker_middle)/rocker_width/2.0f*POS_Y_MAX_V;
-			copter_remote.yaw   = (data->RC_yaw/2000.0f - rocker_middle)/rocker_width/2.0f*YAW_MAX_SPE;
+			copter_remote.throttle = (data->RC_throttle/2000.0f - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
+			copter_remote.pitch = (data->RC_pitch/2000.0f - rocker_middle)/rocker_width*2.0f*POS_X_MAX_V;
+			copter_remote.roll  = (data->RC_roll/2000.0f - rocker_middle)/rocker_width*2.0f*POS_Y_MAX_V;
+			copter_remote.yaw   = (data->RC_yaw/2000.0f - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
 			break;
 		case HEIGHT ://定高模式：高度速度、pitch轴角度、roll轴角度、yaw轴角速度
-			copter_remote.throttle = (data->RC_throttle/2000.0f - rocker_middle)/rocker_width/2.0f*HEIGHT_MAX_V;
-			copter_remote.pitch = (data->RC_pitch/2000.0f - rocker_middle)/rocker_width/2.0f*PITCH_MAX_DEG;
-			copter_remote.roll  = (data->RC_roll/2000.0f - rocker_middle)/rocker_width/2.0f*ROLL_MAX_DEG;
-			copter_remote.yaw   = (data->RC_yaw/2000.0f - rocker_middle)/rocker_width/2.0f*YAW_MAX_SPE;
+			copter_remote.throttle = (data->RC_throttle/2000.0f - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
+			copter_remote.pitch = (data->RC_pitch/2000.0f - rocker_middle)/rocker_width*2.0f*PITCH_MAX_DEG;
+			copter_remote.roll  = (data->RC_roll/2000.0f - rocker_middle)/rocker_width*2.0f*ROLL_MAX_DEG;
+			copter_remote.yaw   = (data->RC_yaw/2000.0f - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
 			break;
 		case STABILIZATION ://自稳模式：推力、pitch轴角度、roll轴角度、yaw轴角速度
-			copter_remote.throttle = (data->RC_throttle/2000.0f - rocker_min)/rocker_width/2.0f*F_MAX;
-			copter_remote.pitch = (data->RC_pitch/2000.0f - rocker_middle)/rocker_width/2.0f*PITCH_MAX_DEG;
-			copter_remote.roll  = (data->RC_roll/2000.0f - rocker_middle)/rocker_width/2.0f*ROLL_MAX_DEG;
-			copter_remote.yaw   = (data->RC_yaw/2000.0f - rocker_middle)/rocker_width/2.0f*YAW_MAX_SPE;
+			copter_remote.throttle = (data->RC_throttle/2000.0f - rocker_min)/rocker_width*2.0f*F_MAX;
+			copter_remote.pitch = (data->RC_pitch/2000.0f - rocker_middle)/rocker_width*2.0f*PITCH_MAX_DEG;
+			copter_remote.roll  = (data->RC_roll/2000.0f - rocker_middle)/rocker_width*2.0f*ROLL_MAX_DEG;
+			copter_remote.yaw   = (data->RC_yaw/2000.0f - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
 			break;
 	}
 }
@@ -58,10 +59,10 @@ static void remote_data_process(void)
 
 	if(!rc_status)//遥控器离线，保持当前状态不动
 	{
-		copter_rec_data.RC_throttle = rocker_middle;
-		copter_rec_data.RC_roll = rocker_middle;
-		copter_rec_data.RC_pitch = rocker_middle;
-		copter_rec_data.RC_yaw = rocker_middle;
+		copter_rec_data.RC_throttle = 1519;
+		copter_rec_data.RC_roll = 1519;
+		copter_rec_data.RC_pitch = 1519;
+		copter_rec_data.RC_yaw = 1519;
 	}
 	
 	//根据当前飞行模式设置遥控数据
@@ -118,8 +119,8 @@ static void remote_data_process(void)
 	/*进行数据存储*/
 	copter_rec_data_last.RC_throttle = copter_rec_data.RC_throttle;
 	copter_rec_data_last.RC_roll = copter_rec_data.RC_roll;
-	copter_rec_data_last.RC_pitch = copter_rec_data_last.RC_pitch;
-	copter_rec_data_last.RC_yaw = copter_rec_data_last.RC_yaw;
+	copter_rec_data_last.RC_pitch = copter_rec_data.RC_pitch;
+	copter_rec_data_last.RC_yaw = copter_rec_data.RC_yaw;
 	copter_rec_data_last.RC_switch_left = copter_rec_data.RC_switch_left;
 	copter_rec_data_last.RC_switch_left = copter_rec_data.RC_switch_left;
 	copter_rec_data_last.RC_roller = copter_rec_data.RC_roller;
@@ -129,12 +130,12 @@ static void remote_data_process(void)
 	*p = copter_remote;
 	Package_Write_Pionter_End(Package_ID,remote_data);
 
-//通过函数指针转移至遥控器数据接收线程中进行处理
-	Remote_Routine_Set(&remote_data_process);
 }
 
 void RC_init(void)
 {
+	//通过函数指针转移至遥控器数据接收线程中进行处理
+	Remote_Routine_Set(&remote_data_process);
 	RC_PPM_Init();
   Package_Pionter_Add("remote", remote_data);
 	Package_ID = Package_Find_Num("remote");

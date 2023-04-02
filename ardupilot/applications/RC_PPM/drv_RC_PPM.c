@@ -4,11 +4,12 @@
 #include "board.h"
 #include "drv_thread.h"
 
-static int channel_duty[8]={0};//换算得到的各个通道的占空比
+static int16_t channel_duty[20]={0};//换算得到的各个通道的占空比
 static int	pulse_width_us;//用于计算脉冲宽度
 static int Now_Tick;
 static int Last_Tick;
 static int pulse_flag = 0;
+static int header_flag = 0;
 
 RC_PPM_data copter_rec_data;
 
@@ -30,6 +31,8 @@ rt_err_t RC_PPM_Init(void)
         THREAD_PRIO_IMU_DATA_COLLECT, //线程优先级
         1);                           //线程时间片大小
 	
+	rt_thread_startup(RC_PPM);
+	
 	rt_pin_mode(PPM_PIN,PIN_MODE_INPUT_PULLDOWN);
 	rt_pin_attach_irq(PPM_PIN,PIN_IRQ_MODE_RISING,pulse_process,RT_NULL);
 	rt_pin_irq_enable(PPM_PIN,ENABLE);
@@ -43,12 +46,6 @@ static void pulse_process(void *args)
 	
 	Now_Tick = TIM13_GetCnt();//获取当前时刻信息
 	
-	if(pulse_flag == 0)
-	{
-		Last_Tick = Now_Tick;//第一次捕获
-		pulse_flag++;
-	}else
-	{
 		Delt_Tick = Now_Tick - Last_Tick; 
 		Last_Tick = Now_Tick;
 		
@@ -59,29 +56,38 @@ static void pulse_process(void *args)
 		
 		pulse_width_us = Delt_Tick/2;//脉冲的时间长度（us）
 
-
-/*	在未知遥控器通道数的情况下可使用该方法
+//	在未知遥控器通道数的情况下可使用该方法
 		if(pulse_width_us > 2000.0)//长间隔脉冲视为下一信号的起始位
 			pulse_flag = 0;
 		else if(pulse_width_us > 0 && pulse_width_us < 2000)
 		{
-			channel_duty[pulse_flag-1] = pulse_width_us/2000.0;//换算为占空比形式
+			channel_duty[pulse_flag] = pulse_width_us;//换算为占空比形式
+			pulse_flag++;
 		}
-*/
+		
+		
+		if(pulse_flag == 8)
+		{
+			if(header_flag <= 5)
+				header_flag ++;
+			if(header_flag >= 5)
+				rt_sem_release(&RC_PPM_rec);
+		}	
+			
 		
 //在已知通道数的情况下可以直接根据通道数量解析信号
-		if(pulse_width_us > 0 && pulse_width_us <= 2000 )
-		{	
-			channel_duty[pulse_flag-1] = pulse_width_us;//换算为占空比形式
-		}
-		pulse_flag++;
-		
-		if(pulse_flag == 8)//长间隔脉冲视为下一信号的起始位
-		{
-			pulse_flag = 0;
-			rt_sem_release(&RC_PPM_rec);
-		}
-	}
+//		if(pulse_width_us > 0 && pulse_width_us <= 2000 )
+//		{	
+//			channel_duty[pulse_flag-1] = pulse_width_us;//换算为占空比形式
+//		}
+//		pulse_flag++;
+//		
+//		if(pulse_flag == 8)//长间隔脉冲视为下一信号的起始位
+//		{
+//			pulse_flag = 0;
+//			rt_sem_release(&RC_PPM_rec);
+//		}
+	
 }
 
 static void (*Remote_Routine)(void);
@@ -95,18 +101,20 @@ static int RC_S1_now = 0 ,RC_S2_now = 0 ;
 
 void RC_PPM_REC_Thread(void *Para)
 {
+	while(1)
+	{	
 	rt_sem_take(&RC_PPM_rec,RT_WAITING_FOREVER);
 
 	//以下为无级变化通道，实时更新
 	copter_rec_data.RC_roll 					= channel_duty[0];
 	copter_rec_data.RC_pitch 					= channel_duty[1];
-	copter_rec_data.RC_yaw 						= channel_duty[2];
-	copter_rec_data.RC_throttle 			= channel_duty[3];
-	copter_rec_data.RC_roller 				= channel_duty[6];
+	copter_rec_data.RC_yaw 						= channel_duty[3];
+	copter_rec_data.RC_throttle 			= channel_duty[2];
+	copter_rec_data.RC_roller 				= channel_duty[4];
 	
 	//以下为开关通道，开关改变触发事件
-	RC_S1_now 	= channel_duty[4];
-	RC_S2_now 	= channel_duty[5];
+	RC_S1_now 	= channel_duty[5];
+	RC_S2_now 	= channel_duty[6];
 		
 	//三档开关
 	if(RC_S1_now <= s1_low )
@@ -147,7 +155,7 @@ void RC_PPM_REC_Thread(void *Para)
 //			}
 //	}
 
-	Remote_Routine();//遥控器数据处理
-
+  	Remote_Routine();//遥控器数据处理
+}
 }
 

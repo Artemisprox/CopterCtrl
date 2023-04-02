@@ -1,10 +1,10 @@
 #include <rtthread.h>
 
 #define PPM_PIN GET_PIN(C,6)
-#define s1_low			800
-#define s1_high		1200
-#define s2_low			800
-#define s2_high		1200
+#define s1_low			1300
+#define s1_high		1700
+#define s2_low			1300
+#define s2_high		1700
 
 
 void pulse_process(void *args);
@@ -24,6 +24,6 @@ typedef struct
 }RC_PPM_data;
 
 void Remote_Routine_Set(void (*Func)(void));
-
+void RC_init(void);
 extern RC_PPM_data copter_rec_data;
 
