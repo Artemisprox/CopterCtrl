@@ -47,7 +47,7 @@
 
 int main(void)
 {
-
+	
 #if (CAN_TEST)
     CAN_Init();
 #endif
@@ -69,10 +69,11 @@ int main(void)
 #endif
 
 #if (IMU_TEST)
-    IMU_Init();
+  //  IMU_Init();
 #endif
 
-	RC_init();
+	//RC_init();
+	remote_uart_init();
     // 上电提示音
     /*    set_buzzer(4200, 1);
         rt_thread_mdelay(20);

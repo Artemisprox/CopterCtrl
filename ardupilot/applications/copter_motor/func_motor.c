@@ -6,6 +6,7 @@
 #include "drv_IMU.h"
 #include "arm_math.h"
 #include "func_remote.h"
+#include "mod_recoil_force_compensate.h"
 #include "func_sensor.h"
 #include "func_state.h"
 #include "drv_dataserve.h"
@@ -20,15 +21,13 @@ static struct rt_semaphore pos_20ms_sem; /* 位置环 */
 static struct rt_timer atti_1ms_tim;         /* 姿态环定时器 */
 static struct rt_timer pos_20ms_tim;         /* 位置环定时器 */
 
-copter_ctrl HERO_copter;
-remote_data control_data;
-status copter_status;
-static uint8_t remote_ID,IMU_ID,sensor_ID,status_ID;
+static recoil_data copter_gimbal;
+static copter_ctrl HERO_copter;
+static remote_data control_data;
+static status copter_status;
 
-static void status_check(status* p_status , remote_data* p_data)
-{
+static uint8_t remote_ID,IMU_ID,sensor_ID,status_ID,recoil_ID;
 
-}
 
 //机体系变换到大地系
 static void earth_body_tranfer(void)
@@ -102,7 +101,13 @@ static void atti_1ms_entry(void *parameter)
 				error_p = control_data.pitch - HERO_IMU.pitch ;
 				error_r = control_data.roll - HERO_IMU.roll ;
 		}
-
+	
+		if( copter_gimbal.en_flag )
+		{
+			error_p += copter_gimbal.pitch_angle;
+			error_r += copter_gimbal.roll_angle;
+		}
+		
 		PID_Calculate(&HERO_copter.copter_pitch.ang,error_p);
 		error_p = HERO_copter.copter_pitch.ang.out - HERO_IMU.pitch_speed;
 		PID_Calculate(&HERO_copter.copter_pitch.spe,error_p);
@@ -116,6 +121,12 @@ static void atti_1ms_entry(void *parameter)
 		error_y = control_data.yaw - HERO_IMU.yaw_speed;
 		PID_Calculate(&HERO_copter.copter_yaw.spe,error_y);
 		HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.ang.out;
+		
+		if( copter_gimbal.en_flag )
+		{
+			HERO_copter.copter_mixer.tau_x += copter_gimbal.x_torque;
+			HERO_copter.copter_mixer.tau_y += copter_gimbal.y_torque;
+		}
 
 		matrix_control();//混控器
 	}else
@@ -150,8 +161,11 @@ static void pos_20ms_entry(void *parameter)
   pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
 	local_pos = *p_3 ;
 	Package_Write_Pionter_End(sensor_ID,pos_sensor);
-
-	status_check(&copter_status , &control_data);
+	
+	recoil_data *p_4 =  Package_Pionter_Single(recoil_ID,recoil_data);
+	copter_gimbal = *p_4 ;
+	Package_Write_Pionter_End(recoil_ID,recoil_data);
+	
 	float error_x,error_y,error_h = 0;
 	
 	if(!copter_status.emergency && copter_status.flight_status != READY)
@@ -195,7 +209,8 @@ static void motor_start(void)
     remote_ID = Package_Find_Num("remote");
     IMU_ID = Package_Find_Num("IMU");
     sensor_ID = Package_Find_Num("pos_sensor");
-	status_ID = Package_Find_Num("status");
+		status_ID = Package_Find_Num("status");
+		recoil_ID = Package_Find_Num("compensate");
     /*线程初始化*/
     rt_thread_t thread;
     rt_sem_init(&atti_1ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);

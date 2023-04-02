@@ -33,5 +33,7 @@ void MX_TIM11_Init(void)
   /* USER CODE BEGIN TIM11_Init 2 */
 
   /* USER CODE END TIM11_Init 2 */
+	HAL_TIM_Base_Init(&htim11);
+	HAL_TIM_Base_Start(&htim11);
 
 }

@@ -1,5 +1,9 @@
 #include <rtthread.h>
 #include "drv_motor.h"
+#include "arm_math.h"
+
+#define sinf(a)  arm_sin_f32(a)
+#define cosf(a)  arm_cos_f32(a)
 
 #define YAW_ID       0x201
 #define PITCH_ID     0x202
@@ -8,6 +12,8 @@
 #define BULLET_MASS 0.0017f
 #define BULLET_INITAL_NUM 1000
 #define GIMBAL_DIS  0.3f
+
+#define COMPENSATE_OPEN 0
 typedef struct 
 {
 

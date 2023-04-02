@@ -149,7 +149,7 @@ void NiMingFlow_DataProcess(uint8_t *pData,uint8_t rec_length)
 
 
 
-static void serial_thread_entry(void *parameter)
+static void NM_serial_thread_entry(void *parameter)
 {
     struct rx_msg msg;
     rt_err_t result;
@@ -218,7 +218,7 @@ rt_err_t NiMingFlow_Init(void)
     rt_sem_init(&NiMingFlow_sem, "NiMingFlow_rec", 0, RT_IPC_FLAG_FIFO);
 
     /* 创建 serial 线程 */
-    rt_thread_t thread = rt_thread_create("serial", serial_thread_entry, RT_NULL, 2048, THREAD_PRIO_SENSOR_UART_RX, 5);
+    rt_thread_t thread = rt_thread_create("serial", NM_serial_thread_entry, RT_NULL, 2048, THREAD_PRIO_SENSOR_UART_RX, 5);
     /* 创建成功则启动线程 */
     if (thread != RT_NULL)
     {

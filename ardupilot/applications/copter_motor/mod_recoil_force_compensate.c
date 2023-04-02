@@ -37,11 +37,13 @@ void recoil_compensate_calculate(gun_data *gun , recoil_data *recoil_force)
     recoil_force->pitch_angle = F_recoil*cosf(gun->Yaw.dji.angle)/f/360*2*3.1415926f;//pitch轴角度补偿
     recoil_force->roll_angle = -F_recoil*sinf(gun->Yaw.dji.angle)/f/360*2*3.1415926f;//roll轴角度补偿
 
-    float torque = 0.8*F_recoil*GIMBAL_DIS;//计算平均总后坐力力矩。0.8为参量，根据实际进行调节
+    float torque = 0.8f*F_recoil*GIMBAL_DIS;//计算平均总后坐力力矩。0.8为参量，根据实际进行调节
     recoil_force->x_torque = sinf(gun->Yaw.dji.angle)*torque;//计算补偿力矩
     recoil_force->y_torque = -cosf(gun->Yaw.dji.angle)*torque;
-
-    recoil_force->en_flag = gun->shooting_flag;
+		
+		if(COMPENSATE_OPEN)
+			recoil_force->en_flag = gun->shooting_flag;
+		else recoil_force->en_flag = 0;
 };
 
 void recoil_force_thread(void * param)
@@ -65,7 +67,7 @@ void recoil_force_thread(void * param)
 void recoil_compensate_init(void)
 {
     Package_Pionter_Add("compensate", recoil_data);
-	Package_ID = Package_Find_Num("compensate");
+		Package_ID = Package_Find_Num("compensate");
     rt_sem_init(&gun_rec_sem, "gun_sem", 0, RT_IPC_FLAG_FIFO);
 
 }
