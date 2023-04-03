@@ -82,6 +82,8 @@ static void velocity_control(float error_x, float error_y, pid_t* x, pid_t* y)
 //姿态环线程
 static void atti_1ms_entry(void *parameter)
 {
+	while(1)
+	{
 	rt_sem_take(&atti_1ms_sem,RT_WAITING_FOREVER);
 
 	/*从数据服务器更新数据*/
@@ -140,12 +142,14 @@ static void atti_1ms_entry(void *parameter)
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_2,HERO_copter.copter_mixer.motor_duty2);
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_3,HERO_copter.copter_mixer.motor_duty3);
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_4,HERO_copter.copter_mixer.motor_duty4);
-
+	}
 }
 
 //位置线程
 static void pos_20ms_entry(void *parameter)
 {
+	while(1)
+	{
 	rt_sem_take(&pos_20ms_sem,RT_WAITING_FOREVER);
 
 	/*数据服务器数据更新*/
@@ -157,14 +161,14 @@ static void pos_20ms_entry(void *parameter)
 	copter_status = *p_2 ;
 	Package_Write_Pionter_End(status_ID,status);
 
-	pos_sensor local_pos;
-  pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
-	local_pos = *p_3 ;
-	Package_Write_Pionter_End(sensor_ID,pos_sensor);
-	
-	recoil_data *p_4 =  Package_Pionter_Single(recoil_ID,recoil_data);
-	copter_gimbal = *p_4 ;
-	Package_Write_Pionter_End(recoil_ID,recoil_data);
+   	pos_sensor local_pos;
+//  pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
+//	local_pos = *p_3 ;
+//	Package_Write_Pionter_End(sensor_ID,pos_sensor);
+//	
+//	recoil_data *p_4 =  Package_Pionter_Single(recoil_ID,recoil_data);
+//	copter_gimbal = *p_4 ;
+//	Package_Write_Pionter_End(recoil_ID,recoil_data);
 	
 	float error_x,error_y,error_h = 0;
 	
@@ -187,6 +191,7 @@ static void pos_20ms_entry(void *parameter)
 		default:
 			HERO_copter.copter_mixer.f =  control_data.throttle;
 		}
+	}
 }
 
 static void atti_1ms_IRQHandler(void *parameter)
@@ -208,14 +213,16 @@ static void motor_start(void)
 	/*数据服务器ID查找*/
     remote_ID = Package_Find_Num("remote");
     IMU_ID = Package_Find_Num("IMU");
-    sensor_ID = Package_Find_Num("pos_sensor");
+//    sensor_ID = Package_Find_Num("pos_sensor");
 		status_ID = Package_Find_Num("status");
-		recoil_ID = Package_Find_Num("compensate");
+//		recoil_ID = Package_Find_Num("compensate");
     /*线程初始化*/
     rt_thread_t thread;
     rt_sem_init(&atti_1ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);
 		rt_sem_init(&pos_20ms_sem, "copter_pos", 0, RT_IPC_FLAG_FIFO);
     thread = rt_thread_create("atti_ctrl", atti_1ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_ATTI_CONTROL, 1);
+		if (thread != RT_NULL)
+        rt_thread_startup(thread);
 		thread = rt_thread_create("pos_ctrl", pos_20ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_POS_CONTROL, 1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);

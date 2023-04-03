@@ -31,3 +31,5 @@ typedef struct
 
     uint8_t copter_OK;
 }data_check;
+
+extern rt_err_t StateDecide_Init(void);

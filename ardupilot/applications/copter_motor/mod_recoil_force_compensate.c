@@ -63,11 +63,9 @@ void recoil_force_thread(void * param)
     }
 }
 
-
 void recoil_compensate_init(void)
 {
     Package_Pionter_Add("compensate", recoil_data);
 		Package_ID = Package_Find_Num("compensate");
     rt_sem_init(&gun_rec_sem, "gun_sem", 0, RT_IPC_FLAG_FIFO);
-
 }

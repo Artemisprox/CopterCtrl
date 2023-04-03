@@ -49,7 +49,7 @@ static uint8_t gimbal_status_check(recoil_data *data)
 static uint8_t rc_status_check(remote_data *data)
 {
     uint32_t now_tick = rt_tick_get();
-    if(now_tick - data->fresh_time >= 100000 )//100ms未接收到遥控器数据判断为离线
+    if(now_tick - data->fresh_time >= 100 )//100ms未接收到遥控器数据判断为离线
     {
         copter_data_valid.rc_valid = 0;
         copter_status.rc_status = 0;
@@ -60,7 +60,7 @@ static uint8_t rc_status_check(remote_data *data)
         copter_status.rc_status = 0;
     }
 
-    if(now_tick - data->fresh_time >= 2000000 )//2s后仍未恢复通信飞机断电
+    if(now_tick - data->fresh_time >= 2000 )//2s后仍未恢复通信飞机断电
         copter_status.emergency =1;
 
     return copter_data_valid.rc_valid;
@@ -176,17 +176,17 @@ static void package_update(void)
 	copter_atti = *p_2 ;
 	Package_Write_Pionter_End(IMU_ID,IMU_t);
 
-    pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
-	copter_pos = *p_3 ;
-	Package_Write_Pionter_End(sensor_ID,pos_sensor);
+//    pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
+//	copter_pos = *p_3 ;
+//	Package_Write_Pionter_End(sensor_ID,pos_sensor);
 
-    battery *p_4 =  Package_Pionter_Single(battery_ID,battery);
-	copter_power = *p_4 ;
-	Package_Write_Pionter_End(battery_ID,battery);
+//    battery *p_4 =  Package_Pionter_Single(battery_ID,battery);
+//	copter_power = *p_4 ;
+//	Package_Write_Pionter_End(battery_ID,battery);
 
-    recoil_data *p_5 =  Package_Pionter_Single(gun_ID,recoil_data);
-	copter_gimbal = *p_5 ;
-	Package_Write_Pionter_End(gun_ID,recoil_data);
+//    recoil_data *p_5 =  Package_Pionter_Single(gun_ID,recoil_data);
+//	copter_gimbal = *p_5 ;
+//	Package_Write_Pionter_End(gun_ID,recoil_data);
 
 }
 
@@ -259,7 +259,7 @@ static void copter_status_init(void)
     copter_status.mode = STABILIZATION;
     copter_status.recoil_compensate_enable = 0;
     Package_Pionter_Add("status", status);
-	status_ID = Package_Find_Num("status");
+	  status_ID = Package_Find_Num("status");
 }
 
 rt_err_t StateDecide_Init(void)
@@ -267,9 +267,9 @@ rt_err_t StateDecide_Init(void)
     /*数据服务器ID查找*/
     remote_ID = Package_Find_Num("remote");
     IMU_ID = Package_Find_Num("IMU");
-    battery_ID = Package_Find_Num("battery");
-    sensor_ID = Package_Find_Num("sensor_ID");
-    gun_ID = Package_Find_Num("compensate");
+//    battery_ID = Package_Find_Num("battery");
+//    sensor_ID = Package_Find_Num("sensor_ID");
+//    gun_ID = Package_Find_Num("compensate");
     //初始状态设置
     copter_status_init();
     //错误处理

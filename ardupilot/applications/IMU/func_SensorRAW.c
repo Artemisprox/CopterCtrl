@@ -372,7 +372,7 @@ void SensorRawProcess_Init()
     Sensor_RAW_IMU2.RawDataReady = 0;
 
     // 初始化用于控温的信号量，信号量在每次检测到温度数据变化后释放一个
-	rt_sem_init(&imu1_temp_pid_sem, "TP1_Sem", 0, RT_IPC_FLAG_FIFO);
+	  rt_sem_init(&imu1_temp_pid_sem, "TP1_Sem", 0, RT_IPC_FLAG_FIFO);
     rt_sem_init(&imu2_temp_pid_sem, "TP2_Sem", 0, RT_IPC_FLAG_FIFO);
 
     // 初始化传感芯片
@@ -380,4 +380,6 @@ void SensorRawProcess_Init()
 
     // 启动硬触发数据接收
     HWTrig_init();
+	
+		
 }

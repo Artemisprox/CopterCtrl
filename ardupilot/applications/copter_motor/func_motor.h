@@ -53,3 +53,5 @@ typedef struct
 	
 	mixer copter_mixer;
 }copter_ctrl;
+
+extern void Motor_init(void);

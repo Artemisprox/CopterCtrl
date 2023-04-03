@@ -59,11 +59,25 @@ void IMU_redundancy_Thread(void *para)
             copter_IMU_RAW.Gyro_Raw.x = Sensor_RAW_IMU1.Gyro_Raw.x - IMU1_OffSet.x;
             copter_IMU_RAW.Gyro_Raw.y = Sensor_RAW_IMU1.Gyro_Raw.x - IMU1_OffSet.y;
             copter_IMU_RAW.Gyro_Raw.z = Sensor_RAW_IMU1.Gyro_Raw.x - IMU1_OffSet.z;
+						copter_IMU_RAW.Accl_Raw.x = Sensor_RAW_IMU1.Accl_Raw.x;
+            copter_IMU_RAW.Accl_Raw.y = Sensor_RAW_IMU1.Accl_Raw.y;
+						copter_IMU_RAW.Accl_Raw.z = Sensor_RAW_IMU1.Accl_Raw.z;
+						copter_IMU_RAW.DataRate = Sensor_RAW_IMU1.DataRate;
+						copter_IMU_RAW.Temperature = Sensor_RAW_IMU1.Temperature;
+						copter_IMU_RAW.DataFreshtime = Sensor_RAW_IMU1.DataFreshtime;
+						copter_IMU_RAW.RawDataReady = 1;
             break;
         case IMU2_set:
             copter_IMU_RAW.Gyro_Raw.x = Sensor_RAW_IMU2.Gyro_Raw.x - IMU2_OffSet.x;
             copter_IMU_RAW.Gyro_Raw.y = Sensor_RAW_IMU2.Gyro_Raw.x - IMU2_OffSet.y;
             copter_IMU_RAW.Gyro_Raw.z = Sensor_RAW_IMU2.Gyro_Raw.x - IMU2_OffSet.z;
+						copter_IMU_RAW.Accl_Raw.x = Sensor_RAW_IMU2.Accl_Raw.x;
+            copter_IMU_RAW.Accl_Raw.y = Sensor_RAW_IMU2.Accl_Raw.y;
+						copter_IMU_RAW.Accl_Raw.z = Sensor_RAW_IMU2.Accl_Raw.z;
+						copter_IMU_RAW.DataRate = Sensor_RAW_IMU2.DataRate;
+						copter_IMU_RAW.Temperature = Sensor_RAW_IMU2.Temperature;
+						copter_IMU_RAW.DataFreshtime = Sensor_RAW_IMU2.DataFreshtime;
+						copter_IMU_RAW.RawDataReady = 1;
             break;
         }
         while (rt_sem_trytake(&IMU_redun_sem) == RT_EOK)
@@ -88,7 +102,7 @@ void IMU_redundancy_init(void)
         rt_thread_startup(thread);
 
     /*定时器线程*/
-    rt_timer_init(&IMU_redundancy_tim, "State_decide_tim", IMU_redundancy_1ms_IRQHandler, RT_NULL, 20,
+    rt_timer_init(&IMU_redundancy_tim, "IMU_redundancy_tim", IMU_redundancy_1ms_IRQHandler, RT_NULL, 20,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
     /* 定时器开始 */
     rt_timer_start(&IMU_redundancy_tim);

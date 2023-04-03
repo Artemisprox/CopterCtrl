@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include "drv_RC_PPM.h"
-#include "drv_PWM_motor.h"
+#include "func_motor.h"
 // #include "drv_buzzer.h"
 #include "mod_Monitor.h"
 #include "func_SensorRAW.h"
@@ -23,7 +23,7 @@
 #include "func_remote.h"
 #include "func_sensor.h"
 #include "drv_canthread.h"
-
+#include "func_state.h"
 #define TEST 1
 
 #if (TEST)
@@ -72,8 +72,16 @@ int main(void)
   //  IMU_Init();
 #endif
 
-	//RC_init();
-	remote_uart_init();
+	RC_init();
+	//remote_uart_init();
+	SensorRawProcess_Init();
+	Atti_init();
+	IMU_WaitForInit();
+	
+	StateDecide_Init();
+	
+	Motor_init();
+	
     // 上电提示音
     /*    set_buzzer(4200, 1);
         rt_thread_mdelay(20);
@@ -89,16 +97,10 @@ int main(void)
             Robot_Reset_Gimbal();
         if (IMU_WaitForInit() != RT_EOK)
             Robot_Reset_Gimbal();
-    */
-    // NiMingFlow_Init();
-    // TF_mini_Init();
-    /*
+ 
         if (remote_uart_init() != RT_EOK) // 遥控器初始化
             Robot_Reset_Gimbal();
-    */
-    //	MX_TIM1_PWM_Init();
-    //	RC_PPM_Init();
-
+*/
     //		while(1);
 
     //    return RT_EOK;
