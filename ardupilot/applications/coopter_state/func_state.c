@@ -209,6 +209,7 @@ static void State_decide_thread_entry(void *parameter)
         }
         if(!(copter_data_valid.battery_OK = copter_power.Battery_data_rec && copter_power.Battery_status))
             error_write(CHECK_BATTERY);
+        copter_status.power_ready =  copter_power.Battery_status;
         if(!(copter_data_valid.pos_valid = copter_pos.pos_valid))
             error_write(POS_LOST);
         if(!(copter_data_valid.height_valid = copter_pos.height_valid))

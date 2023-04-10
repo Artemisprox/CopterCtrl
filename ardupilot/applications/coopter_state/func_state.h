@@ -18,6 +18,8 @@ typedef struct
 
     uint8_t rc_status;
 
+    uint8_t power_ready;
+
 }status;
 
 typedef struct 

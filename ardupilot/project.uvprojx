@@ -503,6 +503,11 @@
               <FilePath>applications\copter_motor\drv_PWM_motor.c</FilePath>
             </File>
             <File>
+              <FileName>func_ESC_cali.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\copter_motor\func_ESC_cali.c</FilePath>
+            </File>
+            <File>
               <FileName>func_motor.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\copter_motor\func_motor.c</FilePath>

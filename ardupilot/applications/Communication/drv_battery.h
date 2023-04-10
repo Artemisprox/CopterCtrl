@@ -7,7 +7,7 @@
 typedef struct
 {
 	float voltage;
-  float current;
+  	float current;
 	uint8_t Battery_data_rec;//是否有电池数据接收
 	uint8_t Battery_status;//电池状态是否正常
 	uint32_t fresh_time;

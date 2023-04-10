@@ -4,8 +4,8 @@
 #define sinf(a)  arm_sin_f32(a)
 #define cosf(a)  arm_cos_f32(a)
 
-#define MAX_DUTY   0.8
-#define MIN_DUTY   0.2
+#define MAX_DUTY   0.8f
+#define MIN_DUTY   0.2f
 
 typedef struct
 {

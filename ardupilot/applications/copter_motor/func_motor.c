@@ -214,7 +214,7 @@ static void motor_start(void)
     remote_ID = Package_Find_Num("remote");
     IMU_ID = Package_Find_Num("IMU");
 //    sensor_ID = Package_Find_Num("pos_sensor");
-		status_ID = Package_Find_Num("status");
+	status_ID = Package_Find_Num("status");
 //		recoil_ID = Package_Find_Num("compensate");
     /*线程初始化*/
     rt_thread_t thread;
