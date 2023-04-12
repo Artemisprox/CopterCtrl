@@ -157,7 +157,7 @@ rt_err_t Sensor_Init(void)
         TF_mini_Init();
     
     Package_Pionter_Add("pos_sensor", pos_sensor);
-		Package_ID = Package_Find_Num("pos_sensor");
+	Package_ID = Package_Find_Num("pos_sensor");
 
 	/*定时器处理线程*/
     rt_thread_t thread;

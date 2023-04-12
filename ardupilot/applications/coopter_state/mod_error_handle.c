@@ -70,5 +70,5 @@ void error_read(void)
 void error_handle_init(void)
 {
     QueueCtrl_Init(&error_list , LIST_LEN);
-    MainRGB_init();
+   // MainRGB_init();
 }

@@ -25,7 +25,7 @@ extern Sensor_RAW_t Sensor_RAW_IMU2;
 // 传感器初始化
 // 初始化后可通过 Sensor_RAW 获取已有最新数据
 // 调用 Sensor_WaitForRawData 可以挂起等待新数据产生
-extern void SensorRawProcess_Init(void);
+extern int SensorRawProcess_Init(void);
 
 // 调用函数后会挂起在信号量上，等待新的一组数据产生
 extern void Sensor_WaitFor_IMU1_RawData(void);

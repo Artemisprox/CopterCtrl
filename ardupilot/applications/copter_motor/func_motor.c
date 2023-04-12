@@ -92,7 +92,7 @@ static void atti_1ms_entry(void *parameter)
 	Package_Write_Pionter_End(IMU_ID,IMU_t);
 
 	float error_p = 0,error_r = 0,error_y = 0;
-	if(!copter_status.emergency && copter_status.flight_status != READY)
+	if((!copter_status.emergency) && (copter_status.flight_status != READY))
 	{
 		switch(copter_status.mode)
 		{
@@ -133,10 +133,10 @@ static void atti_1ms_entry(void *parameter)
 		matrix_control();//混控器
 	}else
 	{
-		HERO_copter.copter_mixer.motor_duty1 = 0;
-		HERO_copter.copter_mixer.motor_duty2 = 0;
-		HERO_copter.copter_mixer.motor_duty3 = 0;
-		HERO_copter.copter_mixer.motor_duty4 = 0;
+		HERO_copter.copter_mixer.motor_duty1 = MIN_DUTY;
+		HERO_copter.copter_mixer.motor_duty2 = MIN_DUTY;
+		HERO_copter.copter_mixer.motor_duty3 = MIN_DUTY;
+		HERO_copter.copter_mixer.motor_duty4 = MIN_DUTY;
 	}
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_1,HERO_copter.copter_mixer.motor_duty1);
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_2,HERO_copter.copter_mixer.motor_duty2);

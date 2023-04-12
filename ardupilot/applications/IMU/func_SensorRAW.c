@@ -366,7 +366,7 @@ static void HWTrig_init(void)
 }
 
 // ICM20602设备初始化 初始化后可通过接口读取已有最新数据，通过接口可以挂起等待新数据产生
-void SensorRawProcess_Init()
+int SensorRawProcess_Init()
 {
     Sensor_RAW_IMU1.RawDataReady = 0;
     Sensor_RAW_IMU2.RawDataReady = 0;
@@ -381,5 +381,5 @@ void SensorRawProcess_Init()
     // 启动硬触发数据接收
     HWTrig_init();
 	
-		
+	return RT_EOK;
 }

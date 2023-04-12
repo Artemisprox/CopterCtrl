@@ -52,6 +52,7 @@ static void RGB_B_TEST(void *args)
 	    Package_Write_Pionter_End(status_ID,status);
 			
 			//仅有在电池未接入的情况下允许进行电调校准
+      //第一次按下置PWM于最大占空比，蜂鸣器响起。第二次按下PWM置于最低占空比，蜂鸣器关闭。
         if((!copter_status.power_ready)&&(a == 1))
         {
            ESC_set_high();
@@ -65,7 +66,6 @@ static void RGB_B_TEST(void *args)
         }           
     }
 }
-
 
 void ESC_cali_Init(void)
 {

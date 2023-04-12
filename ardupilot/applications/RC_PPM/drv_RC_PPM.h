@@ -24,6 +24,5 @@ typedef struct
 }RC_PPM_data;
 
 void Remote_Routine_Set(void (*Func)(void));
-void RC_init(void);
+int RC_init(void);
 extern RC_PPM_data copter_rec_data;
-

@@ -132,11 +132,13 @@ static void remote_data_process(void)
 
 }
 
-void RC_init(void)
+int RC_init(void)
 {
 	//通过函数指针转移至遥控器数据接收线程中进行处理
 	Remote_Routine_Set(&remote_data_process);
 	RC_PPM_Init();
   Package_Pionter_Add("remote", remote_data);
 	Package_ID = Package_Find_Num("remote");
+
+	return RT_EOK;
 }

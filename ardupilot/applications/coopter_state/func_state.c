@@ -78,10 +78,10 @@ static uint8_t arm_confirm(data_check *data_valid , remote_data data)
         {
             //检查各个数据是否齐全
             if( data_valid->atti_valid && data_valid->battery_OK && data_valid->rc_valid )
-                {
-                    copter_status.flight_status = ARMED;
-                    flag = 1;
-                }
+            {
+                copter_status.flight_status = ARMED;
+                flag = 1;
+            }
 
         }else
         {
@@ -147,7 +147,7 @@ static void mode_change(data_check *data_valid , remote_data data)
 static void mode_check(data_check *data_valid)
 {
     switch (copter_status.mode)
-        {
+    {
         case POSITION:
             if( data_valid->pos_valid )
             {
@@ -163,7 +163,7 @@ static void mode_check(data_check *data_valid)
         default:
                 copter_status.mode = STABILIZATION;
                 break;
-        }
+    }
 }
 
 static void package_update(void)
@@ -265,6 +265,8 @@ static void copter_status_init(void)
 
 rt_err_t StateDecide_Init(void)
 {  
+    Battery_Init();
+    recoil_compensate_init();
     /*数据服务器ID查找*/
     remote_ID = Package_Find_Num("remote");
     IMU_ID = Package_Find_Num("IMU");
