@@ -2,6 +2,8 @@
 #include "drv_dataserve.h"
 #include "drv_thread.h"
 #include "drv_dataserve.h"
+#include <rtdevice.h>
+#include <rtthread.h>
 
 static battery copter_power = {0};
 struct rt_semaphore battery_100ms_sem; /* 用于定时的信号量 */
@@ -58,8 +60,45 @@ static void battery_thread_entry(void *parameter)
 
 }
 
+rt_err_t Battery_adc_Init(rt_uint32_t adc_channel)
+{
+    rt_adc_device_t adc_dev;
+    rt_uint32_t value, vol;
+    rt_err_t ret = RT_EOK;
+
+    /* 查找设备 */
+    adc_dev = (rt_adc_device_t)rt_device_find(ADC_DEV_NAME);
+    if (adc_dev == RT_NULL)
+    {
+        return RT_ERROR;
+    }
+
+    /* 使能设备 */
+    ret = rt_adc_enable(adc_dev, adc_channel);
+
+    /* 读取采样值 */
+    value = rt_adc_read(adc_dev, adc_channel);
+    rt_kprintf("the value is :%d \n", value);
+
+    /* 转换为对应电压值 */
+    vol = value * REFER_VOLTAGE / CONVERT_BITS;
+
+    /* 关闭通道 */
+    ret = rt_adc_disable(adc_dev, adc_channel);
+
+    return ret;
+}
+
+
 rt_err_t Battery_Init(void)
 {
+    /*adc初始化*/
+    Battery_adc_Init(ADC_BATTERY1);
+    Battery_adc_Init(ADC_BATTERY2);
+    Battery_adc_Init(ADC_BATTERY3);
+    Battery_adc_Init(ADC_BATTERY4);
+    Battery_adc_Init(ADC_BATTERY5);
+    Battery_adc_Init(ADC_BATTERY6);
     /*数据服务器初始化*/
     Package_Pionter_Add("battery", battery);
 	  Package_ID = Package_Find_Num("battery");

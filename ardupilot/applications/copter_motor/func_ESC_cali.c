@@ -6,6 +6,7 @@
 #include "func_motor.h"
 #include "func_state.h"
 #include "drv_dataserve.h"
+#include "drv_utils.h"
 
 static rt_uint8_t status_ID;
 static status copter_status;
@@ -27,15 +28,21 @@ static void ESC_set_low(void)
 
 static void RGB_R_TEST(void *args)
 {
-//    static rt_uint32_t a = 1;
+  static float duty = 0;
 	rt_thread_mdelay(10);
 	uint8_t p;
 	p = rt_pin_read(KEY1_PIN_NUM);
-	
     if (!p)
     {
-		//pulse_R = (++a % 2) > 0 ? 0 : 1000;
+		  duty += 0.1;
     }
+  utils_truncate_number(&duty,0,1);
+  float duty_set = utils_map(duty,0,1,MIN_DUTY,MAX_DUTY);
+  MX_TIM_DUTY(TIM1,TIM_CHANNEL_ALL,duty_set);
+  //调节完成提示
+  rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
+  rt_thread_mdelay(100);
+  rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
 }
 
 static void RGB_B_TEST(void *args)
@@ -47,18 +54,19 @@ static void RGB_B_TEST(void *args)
 	if (!p)
     {
 			//更新无人机实时状态
-      status *p_2 =  Package_Pionter_Single(status_ID,status);
-	    copter_status = *p_2 ;
-	    Package_Write_Pionter_End(status_ID,status);
+//      status *p_2 =  Package_Pionter_Single(status_ID,status);
+//	    copter_status = *p_2 ;
+//	    Package_Write_Pionter_End(status_ID,status);
 			
 			//仅有在电池未接入的情况下允许进行电调校准
       //第一次按下置PWM于最大占空比，蜂鸣器响起。第二次按下PWM置于最低占空比，蜂鸣器关闭。
-        if((!copter_status.power_ready)&&(a == 1))
+        //if((!copter_status.power_ready)&&(a == 1))
+			if(a == 1)
         {
            ESC_set_high();
 					 a = 2;
 					 rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
-				}else if(copter_status.power_ready && (a == 2))
+				}else if(a == 2)
         {
            ESC_set_low();
 					 a = 1;
@@ -88,5 +96,5 @@ void ESC_cali_Init(void)
     /* 使能中断 */
     rt_pin_irq_enable(KEY2_PIN_NUM, PIN_IRQ_ENABLE);
 
-    status_ID = Package_Find_Num("status");
+    //status_ID = Package_Find_Num("status");
 }

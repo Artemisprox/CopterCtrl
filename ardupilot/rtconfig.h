@@ -83,6 +83,7 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CAN
 #define RT_USING_PIN
+#define RT_USING_ADC
 #define RT_USING_PWM
 #define RT_USING_SPI
 #define RT_USING_WDT
@@ -199,7 +200,7 @@
 #define BUZZER_PWM_DEVICE_NAME "pwm4"
 #define BUZZER_PWM_CHANNEL 3
 #define BSP_USING_REMOTE_DT7
-#define REMOTE_UART_DEVICE_NAME "uart4"
+#define REMOTE_UART_DEVICE_NAME "uart3"
 #define BSP_USING_RGB_LIGHT
 #define RLIGHT_PWM_DEVICE_NAME "pwm5"
 #define RLIGHT_PWM_CHANNEL 3
@@ -289,6 +290,8 @@
 #define BSP_USING_CAN2
 #define BSP_USING_SPI
 #define BSP_USING_SPI1
+#define BSP_USING_ADC
+#define BSP_USING_ADC1
 #define BSP_USING_DSP
 
 /* Board extended module Drivers */

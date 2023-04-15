@@ -14,7 +14,6 @@ struct rt_spi_message msgACCLRead1, msgACCLRead2, msgACCLRead3;
 struct rt_spi_message msgACCLWrite1, msgACCLWrite2;
 struct rt_spi_message msgGYRORead1, msgGYRORead2;
 struct rt_spi_message msgGYROWrite1, msgGYROWrite2;
-static uint8_t read3buffer;
 
 void spi_ICM20602_init(void)
 {

@@ -1,8 +1,20 @@
 #include <rtthread.h>
 
+#define ADC_DEV_NAME "adc1"
+#define REFER_VOLTAGE 5
+#define CONVERT_BITS (1 << 12)
+
+#define ADC_BATTERY1 1
+#define ADC_BATTERY2 2
+#define ADC_BATTERY3 3
+#define ADC_BATTERY4 4
+#define ADC_BATTERY5 5
+#define ADC_BATTERY6 6
+
 #define POWER_ID 0x102
 
 #define BATTERY_LOW_V  11.3f
+
 
 typedef struct
 {
