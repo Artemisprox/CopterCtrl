@@ -41,5 +41,6 @@ typedef struct
     rt_uint8_t en_flag;//根据发弹指示判断是否执行后坐力补偿 
 }recoil_data;
 
+extern void recoil_compensate_init(void);
 extern void gun_readmsg(rt_uint8_t rxmsg[]);
 extern gun_data copter_gun;

@@ -74,38 +74,38 @@ static void RGB_thread(void *para)
             {
                 if(times < SLOW_TIMES )
                 {
-                    RGB_con.blue = 0.0f;
-                    RGB_con.green = 0.0f;
-                    RGB_con.red = 0.8f;
+                    RGB_con.blue = 1.0f;
+                    RGB_con.green = 1.0f;
+                    RGB_con.red = 0.5f;
                     times++;
                 }else if(times < 2*SLOW_TIMES )
                 {
-                    RGB_con.blue = 0.0f;
-                    RGB_con.green = 0.0f;
-                    RGB_con.red = 0.0f;
+                    RGB_con.blue = 1.0f;
+                    RGB_con.green = 1.0f;
+                    RGB_con.red = 1.0f;
                     times++;
                 }else
                     times = 0;
             }
                 break;
 	        case red_keep : 
-                RGB_con.blue = 0.0f;
-                RGB_con.green = 0.0f;
-                RGB_con.red = 0.8f;
+                RGB_con.blue = 1.0f;
+                RGB_con.green = 1.0f;
+                RGB_con.red = 0.5f;
                 break;
 	        case blue_quick : 
             {
                 if(times < QUICK_TIMES )
                 {
                     RGB_con.blue = 0.8f;
-                    RGB_con.green = 0.0f;
-                    RGB_con.red = 0.8f;
+                    RGB_con.green = 1.0f;
+                    RGB_con.red = 1.0f;
                     times++;
                 }else if(times < 2*QUICK_TIMES )
                 {
-                    RGB_con.blue = 0.0f;
-                    RGB_con.green = 0.0f;
-                    RGB_con.red = 0.0f;
+                    RGB_con.blue = 1.0f;
+                    RGB_con.green = 1.0f;
+                    RGB_con.red = 1.0f;
                     times++;
                 }else
                     times = 0;
@@ -115,15 +115,15 @@ static void RGB_thread(void *para)
             {
                 if(times < SLOW_TIMES )
                 {
-                    RGB_con.blue = 0.0f;
-                    RGB_con.green = 0.0f;
-                    RGB_con.red = 0.8f;
+                    RGB_con.blue = 0.5f;
+                    RGB_con.green = 1.0f;
+                    RGB_con.red = 1.0f;
                     times++;
                 }else if(times < 2*SLOW_TIMES )
                 {
-                    RGB_con.blue = 0.0f;
-                    RGB_con.green = 0.0f;
-                    RGB_con.red = 0.0f;
+                    RGB_con.blue = 1.0f;
+                    RGB_con.green = 1.0f;
+                    RGB_con.red = 1.0f;
                     times++;
                 }else
                     times = 0;
@@ -131,27 +131,27 @@ static void RGB_thread(void *para)
                 break;
             case blue_keep:
                 RGB_con.blue = 0.8f;
-                RGB_con.green = 0.0f;
-                RGB_con.red = 0.0f;
+                RGB_con.green = 1.0f;
+                RGB_con.red = 1.0f;
                 break;
 	        case green_keep : 
-                RGB_con.blue = 0.0f;
+                RGB_con.blue = 1.0f;
                 RGB_con.green = 0.8f;
-                RGB_con.red = 0.0f;
+                RGB_con.red = 1.0f;
                 break;
 	        case green_quick : 
             {
-                if(times < SLOW_TIMES )
+                if(times < QUICK_TIMES )
                 {
-                    RGB_con.blue = 0.0f;
-                    RGB_con.green = 0.0f;
-                    RGB_con.red = 0.8f;
+                    RGB_con.blue = 1.0f;
+                    RGB_con.green = 0.5f;
+                    RGB_con.red = 1.0f;
                     times++;
-                }else if(times < 2*SLOW_TIMES )
+                }else if(times < 2*QUICK_TIMES )
                 {
-                    RGB_con.blue = 0.0f;
-                    RGB_con.green = 0.0f;
-                    RGB_con.red = 0.0f;
+                    RGB_con.blue = 1.0f;
+                    RGB_con.green = 1.0f;
+                    RGB_con.red = 1.0f;
                     times++;
                 }else
                     times = 0;

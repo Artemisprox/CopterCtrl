@@ -5,7 +5,7 @@
 #define cosf(a)  arm_cos_f32(a)
 
 #define MAX_DUTY   0.8f
-#define MIN_DUTY   0.2f
+#define MIN_DUTY   0.36f
 
 typedef struct
 {

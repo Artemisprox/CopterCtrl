@@ -56,8 +56,8 @@ static uint8_t rc_status_check(remote_data *data)
     }
     else
     {
-        copter_data_valid.rc_valid = 0;
-        copter_status.rc_status = 0;
+        copter_data_valid.rc_valid = 1;
+        copter_status.rc_status = 1;
     }
 
     if(now_tick - data->fresh_time >= 2000 )//2s后仍未恢复通信飞机断电
@@ -176,17 +176,17 @@ static void package_update(void)
 	copter_atti = *p_2 ;
 	Package_Write_Pionter_End(IMU_ID,IMU_t);
 
-//    pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
-//	copter_pos = *p_3 ;
-//	Package_Write_Pionter_End(sensor_ID,pos_sensor);
+    pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
+	copter_pos = *p_3 ;
+	Package_Write_Pionter_End(sensor_ID,pos_sensor);
 
-//    battery *p_4 =  Package_Pionter_Single(battery_ID,battery);
-//	copter_power = *p_4 ;
-//	Package_Write_Pionter_End(battery_ID,battery);
+    battery *p_4 =  Package_Pionter_Single(battery_ID,battery);
+	copter_power = *p_4 ;
+	Package_Write_Pionter_End(battery_ID,battery);
 
-//    recoil_data *p_5 =  Package_Pionter_Single(gun_ID,recoil_data);
-//	copter_gimbal = *p_5 ;
-//	Package_Write_Pionter_End(gun_ID,recoil_data);
+    recoil_data *p_5 =  Package_Pionter_Single(gun_ID,recoil_data);
+	copter_gimbal = *p_5 ;
+	Package_Write_Pionter_End(gun_ID,recoil_data);
 
 }
 
@@ -214,7 +214,7 @@ static void State_decide_thread_entry(void *parameter)
             error_write(POS_LOST);
         if(!(copter_data_valid.height_valid = copter_pos.height_valid))
             error_write(HEIGHT_LOST);
-        if(rc_status_check(&copter_remote))
+        if(!rc_status_check(&copter_remote))
         {
             error_write(RC_LOST);
         }
@@ -270,9 +270,9 @@ rt_err_t StateDecide_Init(void)
     /*数据服务器ID查找*/
     remote_ID = Package_Find_Num("remote");
     IMU_ID = Package_Find_Num("IMU");
-//    battery_ID = Package_Find_Num("battery");
-//    sensor_ID = Package_Find_Num("sensor_ID");
-//    gun_ID = Package_Find_Num("compensate");
+    battery_ID = Package_Find_Num("battery");
+    sensor_ID = Package_Find_Num("pos_sensor");
+    gun_ID = Package_Find_Num("compensate");
     //初始状态设置
     copter_status_init();
     //错误处理

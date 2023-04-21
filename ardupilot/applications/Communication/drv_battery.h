@@ -25,4 +25,7 @@ typedef struct
 	uint32_t fresh_time;
 }battery;
 
-void battery_readmsg(rt_uint8_t rxmsg[]);
+extern void battery_readmsg(rt_uint8_t rxmsg[]);
+extern rt_err_t Battery_Init(void);
+
+

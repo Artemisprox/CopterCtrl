@@ -17,12 +17,18 @@ static status copter_status;
 
 static void ESC_set_high(void)
 {
-    MX_TIM_DUTY(TIM1,TIM_CHANNEL_ALL,MAX_DUTY);
+    MX_TIM_DUTY(TIM1,TIM_CHANNEL_1,MAX_DUTY);
+	  MX_TIM_DUTY(TIM1,TIM_CHANNEL_2,MAX_DUTY);
+		MX_TIM_DUTY(TIM1,TIM_CHANNEL_3,MAX_DUTY);
+		MX_TIM_DUTY(TIM1,TIM_CHANNEL_4,MAX_DUTY);
 }
 
 static void ESC_set_low(void)
 {
-    MX_TIM_DUTY(TIM1,TIM_CHANNEL_ALL,MIN_DUTY);
+    MX_TIM_DUTY(TIM1,TIM_CHANNEL_1,MIN_DUTY);
+		MX_TIM_DUTY(TIM1,TIM_CHANNEL_2,MIN_DUTY);
+		MX_TIM_DUTY(TIM1,TIM_CHANNEL_3,MIN_DUTY);
+		MX_TIM_DUTY(TIM1,TIM_CHANNEL_4,MIN_DUTY);
 }
 
 
@@ -34,7 +40,7 @@ static void RGB_R_TEST(void *args)
 	p = rt_pin_read(KEY1_PIN_NUM);
     if (!p)
     {
-		  duty += 0.1;
+		  duty += 0.05;
     }
   utils_truncate_number(&duty,0,1);
   float duty_set = utils_map(duty,0,1,MIN_DUTY,MAX_DUTY);

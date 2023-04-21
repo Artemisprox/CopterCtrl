@@ -1,6 +1,7 @@
 #include "mod_recoil_force_compensate.h"
 #include "drv_dataserve.h"
 #include "roboselect.h"
+#include "drv_thread.h"
 
 struct rt_semaphore gun_rec_sem; /* 用于接收信息的信号量 */
 static gun_data copter_gun;
@@ -66,6 +67,13 @@ void recoil_force_thread(void * param)
 void recoil_compensate_init(void)
 {
     Package_Pionter_Add("compensate", recoil_data);
-	Package_ID = Package_Find_Num("compensate");
+		Package_ID = Package_Find_Num("compensate");
+	
+		/*线程初始化*/
+    rt_thread_t thread;
+    thread = rt_thread_create("compensate_calculate", recoil_force_thread, RT_NULL, 2048, THREAD_PRIO_RECOIL_FORCE, 1);
+		if (thread != RT_NULL)
+        rt_thread_startup(thread);
+		
     rt_sem_init(&gun_rec_sem, "gun_sem", 0, RT_IPC_FLAG_FIFO);
 }

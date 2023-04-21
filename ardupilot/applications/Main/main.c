@@ -24,21 +24,24 @@
 #include "func_sensor.h"
 #include "drv_canthread.h"
 #include "func_state.h"
+#include "func_ESC_Cali.h"
 #define TEST 1
 
 #if (TEST)
-#define KEY_TEST 1
+#define KEY_TEST 0
 #define CAN_TEST 0
 #define RGB_TEST 0
 #define PWM_TEST 0
 #define UART_TEST 0
-#define IMU_TEST 1
+#define IMU_TEST 0
+#define ESC_CALI 0
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
 #include "KEY_TEST.h"
 #include "PWM_TEST.h"
 #include "UART_TEST.h"
 #include "IMU_TEST.h"
+#include "drv_RGB.h"
 #endif
 
 #if (!defined CORE_USING_INFANTRY) && (!defined CORE_USING_HERO) && (!defined CORE_USING_COPTER)
@@ -72,6 +75,11 @@ int main(void)
   //  IMU_Init();
 #endif
 
+#if (ESC_CALI)
+	MX_TIM1_PWM_Init();
+  ESC_cali_Init();
+#endif
+/*
 	RC_init();
 	//remote_uart_init();
 	
@@ -81,17 +89,18 @@ int main(void)
 	StateDecide_Init();
 	
 	Motor_init();
-	
+*/	
     // 上电提示音
     /*    set_buzzer(4200, 1);
-        rt_thread_mdelay(20);
-        set_buzzer(0, 1);
+        rt_thread_mdelay(20);*/
+      //  set_buzzer(0, 1);
         MainRGB_init();
-        green_quickly();
-    */
+        //red_keepon();
+				//red_keepon();
+    
     // 所有程序注意, 如果初始化函数存在非 RT_EOK 的返回值单片机会直接复位
-/*        if (MONITOR_INIT(1024, 1, THREAD_PRIO_MONITOR) != RT_EOK)
-            Robot_Reset_Gimbal();
+//        if (MONITOR_INIT(1024, 1, THREAD_PRIO_MONITOR) != RT_EOK)
+//            Robot_Reset_Gimbal();
 
         if (SensorRawProcess_Init() != RT_EOK)
             Robot_Reset_Gimbal();
@@ -100,7 +109,7 @@ int main(void)
         if (IMU_WaitForInit() != RT_EOK)
             Robot_Reset_Gimbal();
 
-        if(Sensor_Init() != RT_EOK)
+        if( Sensor_Init() != RT_EOK)
             Robot_Reset_Gimbal();
         if (RC_init() != RT_EOK) // 遥控器初始化
             Robot_Reset_Gimbal();
@@ -109,7 +118,7 @@ int main(void)
             Robot_Reset_Gimbal();
         
         Motor_init();
-*/
+
     //		while(1);
 
     //    return RT_EOK;

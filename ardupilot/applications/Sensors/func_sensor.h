@@ -31,4 +31,5 @@ typedef struct
     uint32_t height_time;
 }data_fresh_time;
 
+extern rt_err_t Sensor_Init(void);
 //extern pos_sensor copter_pos;

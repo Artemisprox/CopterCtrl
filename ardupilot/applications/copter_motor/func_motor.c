@@ -162,13 +162,13 @@ static void pos_20ms_entry(void *parameter)
 	Package_Write_Pionter_End(status_ID,status);
 
    	pos_sensor local_pos;
-//  pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
-//	local_pos = *p_3 ;
-//	Package_Write_Pionter_End(sensor_ID,pos_sensor);
-//	
-//	recoil_data *p_4 =  Package_Pionter_Single(recoil_ID,recoil_data);
-//	copter_gimbal = *p_4 ;
-//	Package_Write_Pionter_End(recoil_ID,recoil_data);
+  pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
+	local_pos = *p_3 ;
+	Package_Write_Pionter_End(sensor_ID,pos_sensor);
+	
+	recoil_data *p_4 =  Package_Pionter_Single(recoil_ID,recoil_data);
+	copter_gimbal = *p_4 ;
+	Package_Write_Pionter_End(recoil_ID,recoil_data);
 	
 	float error_x,error_y,error_h = 0;
 	
@@ -213,9 +213,9 @@ static void motor_start(void)
 	/*数据服务器ID查找*/
     remote_ID = Package_Find_Num("remote");
     IMU_ID = Package_Find_Num("IMU");
-//    sensor_ID = Package_Find_Num("pos_sensor");
-	status_ID = Package_Find_Num("status");
-//		recoil_ID = Package_Find_Num("compensate");
+    sensor_ID = Package_Find_Num("pos_sensor");
+	  status_ID = Package_Find_Num("status");
+		recoil_ID = Package_Find_Num("compensate");
     /*线程初始化*/
     rt_thread_t thread;
     rt_sem_init(&atti_1ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);

@@ -2,7 +2,7 @@
 
 #define SLOW_TIMES    100
 #define QUICK_TIMES   30
-typedef enum 
+typedef enum
 {
 	red_slow = 1,
 	red_keep ,
