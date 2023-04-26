@@ -29,11 +29,11 @@
 
 #if (TEST)
 #define KEY_TEST 0
-#define CAN_TEST 0
+#define CAN_TEST 1
 #define RGB_TEST 0
 #define PWM_TEST 0
 #define UART_TEST 0
-#define IMU_TEST 0
+#define IMU_TEST 1
 #define ESC_CALI 0
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
@@ -60,7 +60,7 @@ int main(void)
 #endif
 
 #if (KEY_TEST)
-   // KEY_Init();
+    KEY_Init();
 #endif
 
 #if (PWM_TEST)
@@ -72,7 +72,7 @@ int main(void)
 #endif
 
 #if (IMU_TEST)
-  //  IMU_Init();
+    IMU_Init();
 #endif
 
 #if (ESC_CALI)
@@ -86,38 +86,38 @@ int main(void)
 	Atti_init();
 	IMU_WaitForInit();
 	
-	StateDecide_Init();
-	
-	Motor_init();
-*/	
-    // 上电提示音
-    /*    set_buzzer(4200, 1);
-        rt_thread_mdelay(20);*/
-      //  set_buzzer(0, 1);
-        MainRGB_init();
-        //red_keepon();
-				//red_keepon();
-    
-    // 所有程序注意, 如果初始化函数存在非 RT_EOK 的返回值单片机会直接复位
-//        if (MONITOR_INIT(1024, 1, THREAD_PRIO_MONITOR) != RT_EOK)
+//	StateDecide_Init();
+//	
+//	Motor_init();
+//	
+//    // 上电提示音
+//        set_buzzer(4200, 1);
+//        rt_thread_mdelay(20);*/
+//      //  set_buzzer(0, 1);
+//        MainRGB_init();
+//        //red_keepon();
+//				//red_keepon();
+//    
+//    // 所有程序注意, 如果初始化函数存在非 RT_EOK 的返回值单片机会直接复位
+////        if (MONITOR_INIT(1024, 1, THREAD_PRIO_MONITOR) != RT_EOK)
+////            Robot_Reset_Gimbal();
+
+//        if (SensorRawProcess_Init() != RT_EOK)
+//            Robot_Reset_Gimbal();
+//        if (Atti_init() != RT_EOK)
+//            Robot_Reset_Gimbal();
+//        if (IMU_WaitForInit() != RT_EOK)
 //            Robot_Reset_Gimbal();
 
-        if (SensorRawProcess_Init() != RT_EOK)
-            Robot_Reset_Gimbal();
-        if (Atti_init() != RT_EOK)
-            Robot_Reset_Gimbal();
-        if (IMU_WaitForInit() != RT_EOK)
-            Robot_Reset_Gimbal();
+//        if( Sensor_Init() != RT_EOK)
+//            Robot_Reset_Gimbal();
+//        if (RC_init() != RT_EOK) // 遥控器初始化
+//            Robot_Reset_Gimbal();
 
-        if( Sensor_Init() != RT_EOK)
-            Robot_Reset_Gimbal();
-        if (RC_init() != RT_EOK) // 遥控器初始化
-            Robot_Reset_Gimbal();
-
-        if(StateDecide_Init() != RT_EOK)
-            Robot_Reset_Gimbal();
-        
-        Motor_init();
+//        if(StateDecide_Init() != RT_EOK)
+//            Robot_Reset_Gimbal();
+//        
+//        Motor_init();
 
     //		while(1);
 

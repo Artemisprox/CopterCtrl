@@ -60,7 +60,7 @@ menu "On-chip Peripheral Drivers"
                     depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                     default n
             endif
-
+            #光流计
             config BSP_USING_UART2
                 bool "Enable UART2"
                 default y
@@ -74,7 +74,7 @@ menu "On-chip Peripheral Drivers"
                     depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                     default n
             endif
-
+            #激光测距仪
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default y
@@ -88,7 +88,7 @@ menu "On-chip Peripheral Drivers"
                     depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                     default n
             endif
-
+            #DBUS
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default y
@@ -97,12 +97,8 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable UART4 RX DMA"
                     depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                     default n
-                config BSP_UART4_TX_USING_DMA
-                    bool "Enable UART4 TX DMA"
-                    depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
-                    default n
             endif
-
+            #无线数传
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default y
@@ -116,29 +112,15 @@ menu "On-chip Peripheral Drivers"
                     depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
                     default n
             endif
-
-            config BSP_USING_UART6
-                bool "Enable UART6"
-                default y
-            if BSP_USING_UART6
-                config BSP_UART6_RX_USING_DMA
-                    bool "Enable UART6 RX DMA"
-                    depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                    default n
-                config BSP_UART6_TX_USING_DMA
-                    bool "Enable UART6 TX DMA"
-                    depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                    default n
-            endif
         endif
-
-        
+    
+    #测试使用
     menuconfig BSP_USING_PWM
         bool "Enable pwm"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
-
+            #电机控制
             menuconfig BSP_USING_PWM1
                 bool "Enable timer1 output pwm"
                 default y
@@ -156,7 +138,7 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM1 channel4"
                         default y
                 endif
-
+            #陀螺仪加热控制
             menuconfig BSP_USING_PWM2
                 bool "Enable timer2 output pwm"
                 default y
@@ -168,7 +150,7 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM2 channel2"
                         default y
                 endif
-
+            #RGB控制
             menuconfig BSP_USING_PWM3
                 bool "Enable timer3 output pwm(RGB)"
                 default y
@@ -183,39 +165,6 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM3 channel3"
                         default y
                 endif
-
-            menuconfig BSP_USING_PWM4
-                bool "Enable timer4 output pwm"
-                default n
-                if BSP_USING_PWM4
-                    config BSP_USING_PWM4_CH3
-                        bool "Enable PWM4 channel3"
-                endif
-
-            menuconfig BSP_USING_PWM5
-                bool "Enable timer5 output PWM"
-                default n
-                if BSP_USING_PWM5
-                    config BSP_USING_PWM5_CH1
-                        bool "Enable PWM5 channel1"
-                        default n
-                    config BSP_USING_PWM5_CH2
-                        bool "Enable PWM5 channel2"
-                        default n
-                    config BSP_USING_PWM5_CH3
-                        bool "Enable PWM5 channel3"
-                        default n
-                endif
-
-            menuconfig BSP_USING_PWM10
-                bool "Enable timer10 output PWM"
-                default n
-                if BSP_USING_PWM10
-                    config BSP_USING_PWM10_CH1
-                        bool "Enable PWM10 channel1"
-                        default n
-                endif
-
         endif
         
     menuconfig BSP_USING_CAN
@@ -249,13 +198,13 @@ menu "On-chip Peripheral Drivers"
             config BSP_SPI1_TX_USING_DMA
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
-                #select BSP_SPI1_TX_USING_DMA
+                select BSP_SPI1_TX_USING_DMA
                 default n
                 
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
-                #select BSP_SPI1_RX_USING_DMA
+                select BSP_SPI1_RX_USING_DMA
                 default n
         endif
 

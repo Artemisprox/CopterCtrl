@@ -14,16 +14,16 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F446RETx</Device>
+          <Device>STM32F103C6</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.15.0</PackID>
+          <PackID>Keil.STM32F1xx_DFP.2.1.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
-          <Cpu>IRAM(0x20000000,0x00020000) IROM(0x08000000,0x00080000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000,0x2800) IROM(0x08000000,0x8000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_512 -FS08000000 -FL080000 -FP0($$Device:STM32F446RETx$CMSIS\Flash\STM32F4xx_512.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F10x_128 -FS08000000 -FL020000 -FP0($$Device:STM32F103C6$Flash\STM32F10x_128.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32F446RETx$Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h</RegisterFile>
+          <RegisterFile>$$Device:STM32F103C6$Device\Include\stm32f10x.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32F446RETx$CMSIS\SVD\STM32F446x.svd</SFDFile>
+          <SFDFile>$$Device:STM32F103C6$SVD\STM32F103xx.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -110,13 +110,13 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments> -REMAP -MPU</SimDllArguments>
+          <SimDllArguments> -REMAP</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
+          <SimDlgDllArguments>-pCM3</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
+          <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
+          <TargetDlgDllArguments>-pCM3</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -174,7 +174,7 @@
             <AdsLsxf>1</AdsLsxf>
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
-            <AdsCpuType>"Cortex-M4"</AdsCpuType>
+            <AdsCpuType>"Cortex-M3"</AdsCpuType>
             <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
@@ -183,7 +183,7 @@
             <hadIRAM>1</hadIRAM>
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
-            <RvdsVP>2</RvdsVP>
+            <RvdsVP>0</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
@@ -245,12 +245,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x2800</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x8000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -275,7 +275,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -300,7 +300,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x2800</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>__TARGET_FPU_VFP, USE_HAL_DRIVER, __FPU_PRESENT=1U, STM32F446xx, __ARM_FEATURE_DSP=1, ARM_MATH_ROUNDING, ARM_MATH_MATRIX_CHECK, __FPU_USED=1U, ARM_MATH_CM4</Define>
+              <Define>USE_HAL_DRIVER, STM32F103x6</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\..\include;applications\Communication;applications\coopter_state;applications\copter_motor;applications\EKF;applications\IMU;applications\Main;applications\RC_PPM;applications\Sensors;applications\TEST;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\libraries\HAL_Drivers\drv_flash;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\Remote;..\..\PublicLib\Hardware\RGBLight;..\..\PublicLib\Monitor;..\..\PublicLib\Software\CPU_Usage;..\..\PublicLib\Software\DataServer;..\..\PublicLib\Software\Filter;..\..\PublicLib\Software\Motor;..\..\PublicLib\Software\Pid;..\..\PublicLib\Software\Queue;..\..\PublicLib\Software\SetPlanning;..\..\PublicLib\Software\Utils;..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\..\include;applications\EnergyOrganCtrl;.;applications\KEY;.;applications\Main;.;applications\RGB;.;applications\SPI;.;applications\Tools;.;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\..\libraries\STM32F1xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -455,137 +455,22 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Communication</GroupName>
+          <GroupName>EnergyOrganCtrl</GroupName>
           <Files>
             <File>
-              <FileName>can_receive.c</FileName>
+              <FileName>EnergyOrgan_Ctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\Communication\can_receive.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_battery.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Communication\drv_battery.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_canthread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Communication\drv_canthread.c</FilePath>
+              <FilePath>applications\EnergyOrganCtrl\EnergyOrgan_Ctrl.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>copter_state</GroupName>
+          <GroupName>KEY</GroupName>
           <Files>
             <File>
-              <FileName>drv_RGB.c</FileName>
+              <FileName>drv_Key.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\coopter_state\drv_RGB.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_state.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\coopter_state\func_state.c</FilePath>
-            </File>
-            <File>
-              <FileName>mod_error_handle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\coopter_state\mod_error_handle.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>copter_motor</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_PWM_motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\copter_motor\drv_PWM_motor.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_ESC_cali.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\copter_motor\func_ESC_cali.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\copter_motor\func_motor.c</FilePath>
-            </File>
-            <File>
-              <FileName>mod_recoil_force_compensate.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\copter_motor\mod_recoil_force_compensate.c</FilePath>
-            </File>
-            <File>
-              <FileName>copter_motor_drv_PWM_motor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>applications\copter_motor\drv_PWM_motor.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>EKF</GroupName>
-          <Files>
-            <File>
-              <FileName>func_EKF.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\EKF\func_EKF.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>IMU</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_HWTimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\drv_HWTimer.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_IMU.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\drv_IMU.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_icm20602.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\drv_icm20602.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_spithread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\drv_spithread.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_IMUCali.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\func_IMUCali.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_IMU_redundancy.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\func_IMU_redundancy.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_SensorRAW.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\func_SensorRAW.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_TempCtr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\func_TempCtr.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_ahrs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\func_ahrs.c</FilePath>
-            </File>
-            <File>
-              <FileName>mod_Atti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\IMU\mod_Atti.c</FilePath>
+              <FilePath>applications\KEY\drv_Key.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -593,9 +478,9 @@
           <GroupName>Main</GroupName>
           <Files>
             <File>
-              <FileName>func_MonitorCfg.c</FileName>
+              <FileName>drv_HAL_main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\Main\func_MonitorCfg.c</FilePath>
+              <FilePath>applications\Main\drv_HAL_main.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -607,85 +492,45 @@
               <FileType>5</FileType>
               <FilePath>applications\Main\drv_thread.h</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>RGB</GroupName>
+          <Files>
             <File>
-              <FileName>roboselect.h</FileName>
+              <FileName>drv_HW_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\RGB\drv_HW_pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_RGB.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\RGB\drv_RGB.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SPI</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_HW_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\SPI\drv_HW_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\SPI\drv_SPI.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Tools</GroupName>
+          <Files>
+            <File>
+              <FileName>Reg_Ops.h</FileName>
               <FileType>5</FileType>
-              <FilePath>applications\Main\roboselect.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>RC_PPM</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_RC_PPM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\RC_PPM\drv_RC_PPM.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_tim13.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\RC_PPM\drv_tim13.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_remote.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\RC_PPM\func_remote.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Sensors</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_NimingFlow.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Sensors\drv_NimingFlow.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_TF_mini.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Sensors\drv_TF_mini.c</FilePath>
-            </File>
-            <File>
-              <FileName>func_sensor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\Sensors\func_sensor.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>TEST</GroupName>
-          <Files>
-            <File>
-              <FileName>CAN_TEST.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\TEST\CAN_TEST.c</FilePath>
-            </File>
-            <File>
-              <FileName>IMU_TEST.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\TEST\IMU_TEST.c</FilePath>
-            </File>
-            <File>
-              <FileName>KEY_TEST.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\TEST\KEY_TEST.c</FilePath>
-            </File>
-            <File>
-              <FileName>PWM_TEST.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\TEST\PWM_TEST.c</FilePath>
-            </File>
-            <File>
-              <FileName>RGB_TEST.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\TEST\RGB_TEST.c</FilePath>
-            </File>
-            <File>
-              <FileName>UART_TEST.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\TEST\UART_TEST.c</FilePath>
+              <FilePath>applications\Tools\Reg_Ops.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -698,14 +543,14 @@
               <FilePath>board\board.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_msp.c</FileName>
+              <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\CubeMX_Config\Src\stm32f4xx_hal_msp.c</FilePath>
+              <FilePath>board\CubeMX_Config\Src\stm32f1xx_hal_msp.c</FilePath>
             </File>
             <File>
-              <FileName>startup_stm32f446xx.s</FileName>
+              <FileName>startup_stm32f103xb.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f446xx.s</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Source\Templates\arm\startup_stm32f103xb.s</FilePath>
             </File>
             <File>
               <FileName>drv_gpio.c</FileName>
@@ -726,21 +571,6 @@
               <FileName>drv_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libraries\HAL_Drivers\drv_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\HAL_Drivers\drv_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\HAL_Drivers\drv_can.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_flash_f4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\HAL_Drivers\drv_flash\drv_flash_f4.c</FilePath>
             </File>
             <File>
               <FileName>drv_common.c</FileName>
@@ -770,12 +600,12 @@
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -852,19 +682,9 @@
           </GroupOption>
           <Files>
             <File>
-              <FileName>can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\can\can.c</FilePath>
-            </File>
-            <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\misc\pin.c</FilePath>
-            </File>
-            <File>
-              <FileName>adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\misc\adc.c</FilePath>
             </File>
             <File>
               <FileName>rt_drv_pwm.c</FileName>
@@ -921,11 +741,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
-            <File>
-              <FileName>watchdog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\watchdog\watchdog.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -959,323 +774,107 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Public/Hardware/Buzzer</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_buzzer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Hardware\Buzzer\drv_buzzer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Hardware/Remote</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_remote.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Hardware\Remote\drv_remote.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Hardware/Light</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_rgblight.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Hardware\RGBLight\drv_rgblight.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Monitor</GroupName>
-          <Files>
-            <File>
-              <FileName>app_monitor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\PublicLib\Monitor\NoMonitor\app_monitor.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Hardware/Cpu_Usage</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_cpuusage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\CPU_Usage\drv_cpuusage.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/DataServer</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_dataserve.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\DataServer\drv_dataserve.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Filter</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_ExactSmooth.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Filter\drv_ExactSmooth.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_AccClamp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Filter\drv_AccClamp.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Motor</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Motor\drv_motor.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Pid</GroupName>
-          <Files>
-            <File>
-              <FileName>pid.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Pid\pid.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Queue</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_Queue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Queue\drv_Queue.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/SetPlanning</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_SetPlanning.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\SetPlanning\drv_SetPlanning.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Software/Utils</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Software\Utils\drv_utils.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>STM32_HAL</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32f4xx.c</FileName>
+              <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Source\Templates\system_stm32f1xx.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal.c</FileName>
+              <FileName>stm32f1xx_hal_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_dma.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_cec.c</FileName>
+              <FileName>stm32f1xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cec.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cortex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_cortex.c</FileName>
+              <FileName>stm32f1xx_hal_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_crc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_crc.c</FileName>
+              <FileName>stm32f1xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_crc.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_pwr.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_cryp.c</FileName>
+              <FileName>stm32f1xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cryp.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_cryp_ex.c</FileName>
+              <FileName>stm32f1xx_hal_rcc_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cryp_ex.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_dma.c</FileName>
+              <FileName>stm32f1xx_hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_dma_ex.c</FileName>
+              <FileName>stm32f1xx_hal_cec.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cec.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_pwr.c</FileName>
+              <FileName>stm32f1xx_hal_sram.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_sram.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_pwr_ex.c</FileName>
+              <FileName>stm32f1xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_rcc.c</FileName>
+              <FileName>stm32f1xx_hal_gpio_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_rcc_ex.c</FileName>
+              <FileName>stm32f1xx_hal_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_uart.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_rng.c</FileName>
+              <FileName>stm32f1xx_hal_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rng.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_usart.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_gpio.c</FileName>
+              <FileName>stm32f1xx_hal_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_uart.c</FileName>
+              <FileName>stm32f1xx_ll_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_spi.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_usart.c</FileName>
+              <FileName>stm32f1xx_hal_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_usart.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_spi.c</FileName>
+              <FileName>stm32f1xx_hal_tim_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_qspi.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_can.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_tim_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_lptim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_lptim.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_adc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_iwdg.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_wwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_wwdg.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_flash_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_flash_ramfunc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ramfunc.c</FilePath>
+              <FilePath>..\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim_ex.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>
   </Targets>
 
   <RTE>
-    <packages>
-      <filter>
-        <targetInfos/>
-      </filter>
-      <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.5.1">
-        <targetInfos>
-          <targetInfo name="rt-thread" versionMatchMode="fixed"/>
-        </targetInfos>
-      </package>
-      <package name="STM32F4xx_DFP" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="2.15.0">
-        <targetInfos>
-          <targetInfo name="rt-thread" versionMatchMode="fixed"/>
-        </targetInfos>
-      </package>
-    </packages>
     <apis/>
-    <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.2.0" condition="ARMv6_7_8-M Device">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.5.1"/>
-        <targetInfos>
-          <targetInfo name="rt-thread"/>
-        </targetInfos>
-      </component>
-      <component Cclass="CMSIS" Cgroup="DSP" Cvariant="Library" Cvendor="ARM" Cversion="1.6.0" condition="CMSIS DSP">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.5.1"/>
-        <targetInfos>
-          <targetInfo name="rt-thread"/>
-        </targetInfos>
-      </component>
-    </components>
+    <components/>
     <files/>
   </RTE>
 

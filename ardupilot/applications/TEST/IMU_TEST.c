@@ -5,14 +5,14 @@
 
 #include "stm32f4xx_hal.h"
 
-#define IMU1_IS_USING 1
+#define IMU1_IS_USING 0
 #define IMU2_IS_USING 1
 
 #define ICM20_PWR_MGMT_1 0x6B
 #define ICM20_PWR_MGMT_2 0x6C
 
-#define CS1_PIN GET_PIN(B, 1)
-#define CS2_PIN GET_PIN(C, 11)
+#define CS1_PIN GET_PIN(C, 11)
+#define CS2_PIN GET_PIN(A, 4)
 
 #define RGB_DEV_NAME "pwm3" /* PWM设备名称 */
 

@@ -60,6 +60,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BEEP_C13_Pin GPIO_PIN_13
+#define BEEP_C13_GPIO_Port GPIOC
+#define SPI1_CS2_Pin GPIO_PIN_4
+#define SPI1_CS2_GPIO_Port GPIOA
+#define IMU_EXTI_B14_Pin GPIO_PIN_14
+#define IMU_EXTI_B14_GPIO_Port GPIOB
+#define IMU_EXTI_B15_Pin GPIO_PIN_15
+#define IMU_EXTI_B15_GPIO_Port GPIOB
+#define SW2_C10_Pin GPIO_PIN_10
+#define SW2_C10_GPIO_Port GPIOC
+#define SPI1_CS1_Pin GPIO_PIN_11
+#define SPI1_CS1_GPIO_Port GPIOC
+#define SW1_B9_Pin GPIO_PIN_9
+#define SW1_B9_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

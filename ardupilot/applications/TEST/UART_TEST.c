@@ -1,6 +1,6 @@
 #include "UART_TEST.h"
 
-#define SAMPLE_UART_NAME "uart3"
+#define SAMPLE_UART_NAME "uart5"
 
 /* 用于接收消息的信号量 */
 static struct rt_semaphore rx_sem;

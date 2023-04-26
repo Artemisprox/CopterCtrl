@@ -2,59 +2,61 @@
 
 #include <rtdevice.h>
 
-#define PWM_DEV_NAME        "pwm3"  /* PWM设备名称 */
+#define PWM_DEV_NAME "pwm3" /* PWM设备名称 */
 
-#define RGB_G     1       /* PWM通道 */
-#define RGB_R     2       /* PWM通道 */
-#define RGB_B     3       /* PWM通道 */
+#define RGB_G 1 /* PWM通道 */
+#define RGB_R 2 /* PWM通道 */
+#define RGB_B 3 /* PWM通道 */
 
-static rt_uint32_t period_R, pulse_R,period_G,pulse_G,period_B,pulse_B;
+#define RGB_LIGHT 4000
 
-static struct rt_device_pwm *pwm_dev;      /* PWM设备句柄 */
+static rt_uint32_t period_R, pulse_R, period_G, pulse_G, period_B, pulse_B;
+
+static struct rt_device_pwm *pwm_dev; /* PWM设备句柄 */
 
 static void TEST_RGB_Ctrl(void *parameter)
 {
-    rt_int32_t count=0;
-    while(1)
+    rt_int32_t count = 0;
+    while (1)
     {
-        switch (count%3)
+        switch (count % 3)
         {
         case 0:
-            period_R = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-            pulse_R = 1000;          /* PWM脉冲宽度值，单位为纳秒ns */
-//            period_G = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-//            pulse_G = 0;          /* PWM脉冲宽度值，单位为纳秒ns */
-            period_B = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-            pulse_B = 0;          /* PWM脉冲宽度值，单位为纳秒ns */
-//            rt_pwm_set(pwm_dev, RGB_G, period_G, pulse_G);
+            period_R = 200000; /* 周期为0.2ms，单位为纳秒ns */
+            pulse_R = RGB_LIGHT;    /* PWM脉冲宽度值，单位为纳秒ns */
+            period_G = 200000; /* 周期为0.2ms，单位为纳秒ns */
+            pulse_G = 0;       /* PWM脉冲宽度值，单位为纳秒ns */
+            period_B = 200000; /* 周期为0.2ms，单位为纳秒ns */
+            pulse_B = 0;       /* PWM脉冲宽度值，单位为纳秒ns */
+            rt_pwm_set(pwm_dev, RGB_G, period_G, pulse_G);
             rt_pwm_set(pwm_dev, RGB_R, period_R, pulse_R);
             rt_pwm_set(pwm_dev, RGB_B, period_B, pulse_B);
             break;
 
         case 1:
-            period_R = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-            pulse_R = 0;          /* PWM脉冲宽度值，单位为纳秒ns */
-//            period_G = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-//            pulse_G = 5000;          /* PWM脉冲宽度值，单位为纳秒ns */
-            period_B = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-            pulse_B = 0;          /* PWM脉冲宽度值，单位为纳秒ns */
-//            rt_pwm_set(pwm_dev, RGB_G, period_G, pulse_G);
+            period_R = 200000; /* 周期为0.2ms，单位为纳秒ns */
+            pulse_R = 0;       /* PWM脉冲宽度值，单位为纳秒ns */
+            period_G = 200000; /* 周期为0.2ms，单位为纳秒ns */
+            pulse_G = RGB_LIGHT;    /* PWM脉冲宽度值，单位为纳秒ns */
+            period_B = 200000; /* 周期为0.2ms，单位为纳秒ns */
+            pulse_B = 0;       /* PWM脉冲宽度值，单位为纳秒ns */
+            rt_pwm_set(pwm_dev, RGB_G, period_G, pulse_G);
             rt_pwm_set(pwm_dev, RGB_R, period_R, pulse_R);
             rt_pwm_set(pwm_dev, RGB_B, period_B, pulse_B);
             break;
 
         case 2:
-            period_R = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-            pulse_R = 0;          /* PWM脉冲宽度值，单位为纳秒ns */
-//            period_G = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-//            pulse_G = 0;          /* PWM脉冲宽度值，单位为纳秒ns */
-            period_B = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-            pulse_B = 1000;          /* PWM脉冲宽度值，单位为纳秒ns */
-//            rt_pwm_set(pwm_dev, RGB_G, period_G, pulse_G);
+            period_R = 200000; /* 周期为0.2ms，单位为纳秒ns */
+            pulse_R = 0;       /* PWM脉冲宽度值，单位为纳秒ns */
+            period_G = 200000; /* 周期为0.2ms，单位为纳秒ns */
+            pulse_G = 0;       /* PWM脉冲宽度值，单位为纳秒ns */
+            period_B = 200000; /* 周期为0.2ms，单位为纳秒ns */
+            pulse_B = RGB_LIGHT;    /* PWM脉冲宽度值，单位为纳秒ns */
+            rt_pwm_set(pwm_dev, RGB_G, period_G, pulse_G);
             rt_pwm_set(pwm_dev, RGB_R, period_R, pulse_R);
             rt_pwm_set(pwm_dev, RGB_B, period_B, pulse_B);
             break;
-        
+
         default:
             break;
         }
@@ -68,12 +70,12 @@ rt_err_t RGB_Init(void)
     rt_thread_t thread;
     rt_err_t res = RT_EOK;
 
-    period_R = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-    pulse_R = 0;          /* PWM脉冲宽度值，单位为纳秒ns */
-    period_G = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-    pulse_G = 0;          /* PWM脉冲宽度值，单位为纳秒ns */
-    period_B = 200000;    /* 周期为0.2ms，单位为纳秒ns */
-    pulse_B = 0;          /* PWM脉冲宽度值，单位为纳秒ns */
+    period_R = 200000; /* 周期为0.2ms，单位为纳秒ns */
+    pulse_R = 0;       /* PWM脉冲宽度值，单位为纳秒ns */
+    period_G = 200000; /* 周期为0.2ms，单位为纳秒ns */
+    pulse_G = 0;       /* PWM脉冲宽度值，单位为纳秒ns */
+    period_B = 200000; /* 周期为0.2ms，单位为纳秒ns */
+    pulse_B = 0;       /* PWM脉冲宽度值，单位为纳秒ns */
 
     /* 查找设备 */
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
