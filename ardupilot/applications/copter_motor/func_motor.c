@@ -16,7 +16,7 @@
 #define propeller_spe_base 1000 //基础转速
 #define propeller_spe_gain 6374 //转速增益
 
-static struct rt_semaphore atti_1ms_sem; /* 姿态环 */
+static struct rt_semaphore atti_5ms_sem; /* 姿态环 */
 static struct rt_semaphore pos_20ms_sem; /* 位置环 */
 static struct rt_timer atti_1ms_tim;         /* 姿态环定时器 */
 static struct rt_timer pos_20ms_tim;         /* 位置环定时器 */
@@ -84,7 +84,7 @@ static void atti_1ms_entry(void *parameter)
 {
 	while(1)
 	{
-	rt_sem_take(&atti_1ms_sem,RT_WAITING_FOREVER);
+	rt_sem_take(&atti_5ms_sem,RT_WAITING_FOREVER);
 
 	/*从数据服务器更新数据*/
 	IMU_t *p_2 =  Package_Pionter_Single(IMU_ID,IMU_t);
@@ -196,9 +196,9 @@ static void pos_20ms_entry(void *parameter)
 
 static void atti_1ms_IRQHandler(void *parameter)
 {
-	while (rt_sem_trytake(&atti_1ms_sem) == RT_EOK)
+	while (rt_sem_trytake(&atti_5ms_sem) == RT_EOK)
         continue; // 取完多余的信号量
-    rt_sem_release(&atti_1ms_sem);
+    rt_sem_release(&atti_5ms_sem);
 }
 
 static void pos_20ms_IRQHandler(void *parameter)
@@ -218,7 +218,7 @@ static void motor_start(void)
 		recoil_ID = Package_Find_Num("compensate");
     /*线程初始化*/
     rt_thread_t thread;
-    rt_sem_init(&atti_1ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&atti_5ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);
 		rt_sem_init(&pos_20ms_sem, "copter_pos", 0, RT_IPC_FLAG_FIFO);
     thread = rt_thread_create("atti_ctrl", atti_1ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_ATTI_CONTROL, 1);
 		if (thread != RT_NULL)
@@ -228,7 +228,7 @@ static void motor_start(void)
         rt_thread_startup(thread);
 
     /*定时线程*/
-    rt_timer_init(&atti_1ms_tim, "atti_Tim", atti_1ms_IRQHandler, RT_NULL, 1,
+    rt_timer_init(&atti_1ms_tim, "atti_Tim", atti_1ms_IRQHandler, RT_NULL, 5,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 		 rt_timer_init(&pos_20ms_tim, "pos_Tim", pos_20ms_IRQHandler, RT_NULL, 20,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);

@@ -77,7 +77,8 @@ static uint8_t arm_confirm(data_check *data_valid , remote_data data)
         if(data.pitch_middle_flag && data.roll_middle_flag && data.throttle_low_flag && data.yaw_middle_flag)
         {
             //检查各个数据是否齐全
-            if( data_valid->atti_valid && data_valid->battery_OK && data_valid->rc_valid )
+            //if( data_valid->atti_valid && data_valid->battery_OK && data_valid->rc_valid )
+						if( data_valid->atti_valid && data_valid->rc_valid )
             {
                 copter_status.flight_status = ARMED;
                 flag = 1;
@@ -267,16 +268,18 @@ rt_err_t StateDecide_Init(void)
 {  
     Battery_Init();
     recoil_compensate_init();
+		//初始状态设置
+    copter_status_init();
+    //错误处理
+    error_handle_init();
+		/*遥控器初始化*/
+		RC_init();
     /*数据服务器ID查找*/
     remote_ID = Package_Find_Num("remote");
     IMU_ID = Package_Find_Num("IMU");
     battery_ID = Package_Find_Num("battery");
     sensor_ID = Package_Find_Num("pos_sensor");
     gun_ID = Package_Find_Num("compensate");
-    //初始状态设置
-    copter_status_init();
-    //错误处理
-    error_handle_init();
 	/*决策线程*/
     rt_thread_t thread;
     rt_sem_init(&State_20ms_sem, "State_sem", 0, RT_IPC_FLAG_FIFO);

@@ -7,13 +7,13 @@
 #include "func_state.h"
 #include "drv_dataserve.h"
 #include "drv_utils.h"
+#include "rtconfig.h"
 
 static rt_uint8_t status_ID;
 static status copter_status;
 /* 引脚编号，通过查看设备驱动文件drv_gpio.c确定 */
 #define KEY1_PIN_NUM GET_PIN(B, 7)
 #define KEY2_PIN_NUM GET_PIN(B, 6)
-#define BEEP_PIN_NUM GET_PIN(B, 9)
 
 static void ESC_set_high(void)
 {
@@ -40,7 +40,7 @@ static void RGB_R_TEST(void *args)
 	p = rt_pin_read(KEY1_PIN_NUM);
     if (!p)
     {
-		  duty += 0.05;
+		  duty += 0.05f;
     }
   utils_truncate_number(&duty,0,1);
   float duty_set = utils_map(duty,0,1,MIN_DUTY,MAX_DUTY);

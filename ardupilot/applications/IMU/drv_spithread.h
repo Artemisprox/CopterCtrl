@@ -6,8 +6,8 @@
 
 #include <board.h>
 
-#define IMU1_CS_Pin GET_PIN(B,1)
-#define IMU2_CS_Pin GET_PIN(C,11)
+#define IMU1_CS_Pin GET_PIN(C,11)
+#define IMU2_CS_Pin GET_PIN(A,4)
 
 extern struct rt_spi_device *spi_dev_IMU1;
 extern struct rt_spi_device *spi_dev_IMU2;

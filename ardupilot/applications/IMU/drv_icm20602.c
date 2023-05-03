@@ -138,7 +138,7 @@
 #define DEG_TO_RAD    0.0174532f 							//度转弧度
 #define RAD_TO_DEG    57.29578f								//度转弧度
 
-#define SPI_DEVICE_NAME     "spi20"
+#define SPI_DEVICE_NAME     "spi10"
 
 //struct  rt_spi_device *spi_dev;		/* spi 设备句柄 */
 
@@ -149,7 +149,6 @@ static uint8_t icm20602_write_reg(uint8_t reg, uint8_t val , struct  rt_spi_devi
 
     ICM_Tx1 = reg&0x7f;
     ICM_Tx2 = val;
-
     rt_spi_send_then_send(spi_dev, &ICM_Tx1, 1, &ICM_Tx2, 1);
 
     return 0;
@@ -277,10 +276,13 @@ int icm20602_get_gyro_IMU1(float *gyro)
     {
         return 1;
     }
+		
+		gyro[2] = ((int16_t)((buf[4] << 8) + buf[5])) * _gyro_scale;
+
+		gyro[1] = ((int16_t)((buf[2] << 8) + buf[3])) * _gyro_scale;
+		
+		gyro[0] = ((int16_t)((buf[0] << 8) + buf[1])) * _gyro_scale;
     
-    gyro[0] = ((int16_t)((buf[0] << 8) + buf[1])) * _gyro_scale;
-    gyro[1] = ((int16_t)((buf[2] << 8) + buf[3])) * _gyro_scale;
-    gyro[2] = ((int16_t)((buf[4] << 8) + buf[5])) * _gyro_scale;
     return 0;
 }
 
@@ -387,7 +389,7 @@ void ICM_init()
         flag ++ ;
     }
 
-    if(flag == 2)
-        while(1);
+//    if(flag == 2)
+//        while(1);
 
 }

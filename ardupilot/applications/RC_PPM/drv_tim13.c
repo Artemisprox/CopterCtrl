@@ -19,15 +19,16 @@ void MX_TIM13_Init(void)
 
   /* USER CODE END TIM13_Init 1 */
   htim13.Instance = TIM13;
-  htim13.Init.Prescaler = 45 - 1;
+  htim13.Init.Prescaler = 90 -1;
   htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim13.Init.Period = 65535;
+  htim13.Init.Period = 65536 - 1;
   htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim13.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  HAL_TIM_Base_Init(&htim13);
+  HAL_TIM_Base_Start(&htim13);
   /* USER CODE BEGIN TIM13_Init 2 */
 
   /* USER CODE END TIM13_Init 2 */
-	HAL_TIM_Base_Init(&htim13);
-	HAL_TIM_Base_Start(&htim13);
 
 }
+

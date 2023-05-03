@@ -129,7 +129,7 @@ static void IMU2_TempCTR_thread(void *parameter)
 //        SWDG_FEED(SWDG_TEMPCTRL_ID);
         ifsemOK = rt_sem_take(&imu2_temp_pid_sem, 1400);
 
-        IMU1_TPctr.TempCTR_pid.set = IMUTempSet; // 更新设定值
+        IMU2_TPctr.TempCTR_pid.set = IMUTempSet; // 更新设定值
 
         Error = IMU2_TPctr.TempCTR_pid.set - Sensor_RAW_IMU2.Temperature;
         PIDTemp_Calculate(&IMU2_TPctr.TempCTR_pid, Error);

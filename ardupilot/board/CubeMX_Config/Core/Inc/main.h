@@ -64,10 +64,10 @@ void Error_Handler(void);
 #define BEEP_C13_GPIO_Port GPIOC
 #define SPI1_CS2_Pin GPIO_PIN_4
 #define SPI1_CS2_GPIO_Port GPIOA
-#define IMU_EXTI_B14_Pin GPIO_PIN_14
-#define IMU_EXTI_B14_GPIO_Port GPIOB
-#define IMU_EXTI_B15_Pin GPIO_PIN_15
-#define IMU_EXTI_B15_GPIO_Port GPIOB
+#define IMU1_EXTI_Pin GPIO_PIN_14
+#define IMU1_EXTI_GPIO_Port GPIOB
+#define IMU2_EXTI_Pin GPIO_PIN_15
+#define IMU2_EXTI_GPIO_Port GPIOB
 #define SW2_C10_Pin GPIO_PIN_10
 #define SW2_C10_GPIO_Port GPIOC
 #define SPI1_CS1_Pin GPIO_PIN_11

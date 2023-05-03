@@ -1,6 +1,6 @@
 #include <rtthread.h>
 
-#define NiMingFlow_device "uart6"
+#define NiMingFlow_device "uart2"
 
 
 typedef struct

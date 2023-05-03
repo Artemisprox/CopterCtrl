@@ -160,11 +160,11 @@ int Atti_init(void)
     AHRS_Init(&HERO_AHRS, NULL, 1000);
 
     //陀螺仪加热初始化
-    //IMU1_TempCTR_init();
-	  //IMU2_TempCTR_init();
+    IMU1_TempCTR_init();
+	  IMU2_TempCTR_init();
     // 尝试从Flash中读取零飘数据 若无数据或需要重测，则会自动重测，完成后函数返回
-    //LoadGyroOffSet(IMU1_set);
-	  //LoadGyroOffSet(IMU2_set);
+    LoadGyroOffSet(IMU1_set);
+	  LoadGyroOffSet(IMU2_set);
     
     //陀螺仪冗余调度初始化
     IMU_redundancy_init();

@@ -40,7 +40,7 @@ int MX_TIM1_PWM_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 18 - 1 ;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 25000 - 1 ;
+  htim1.Init.Period = 25000 - 1 ;//400Hz
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;

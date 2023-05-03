@@ -4,6 +4,7 @@
 #include "func_SensorRAW.h"
 #include "func_TempCtr.h"
 
+
 #define FLASH_ERASE_PIN GET_PIN(B, 6)
 #define GYRO_SUM_MAX 60000 // 校准陀螺仪积分时需要收集数据的个数
 
@@ -72,9 +73,9 @@ static void FlashRecord(AHRS_Gyro_t *CaliData , rt_uint8_t IMU_set)
     rt_enter_critical();   // 进入临界区防止操作系统调度
 
     if(IMU_set == 1)
-        stm32_flash_erase(IMU1_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
+        stm32_flash_write(IMU1_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
     else if(IMU_set == 2)
-        stm32_flash_erase(IMU2_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
+        stm32_flash_write(IMU2_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
         
     rt_exit_critical();         // 退出临界区继续启动调度器
 //    Hwdt_Feed_Slowly(RT_FALSE); // 操作 Flash 数据结束, 重新开始正常喂狗
@@ -82,7 +83,8 @@ static void FlashRecord(AHRS_Gyro_t *CaliData , rt_uint8_t IMU_set)
 
 IMU_GyroCali_State_e Gyro_Cali_State = Cali_Error; // 记录当前校准状态
 
-static struct rt_semaphore IMU_CaliFinish_Sem; // 通信结束后通知数据处理线程处理数据
+static struct rt_semaphore IMU1_CaliFinish_Sem; // 通信结束后通知数据处理线程处理数据
+static struct rt_semaphore IMU2_CaliFinish_Sem; // 通信结束后通知数据处理线程处理数据
 static rt_thread_t IMU_GyroCali_Tid = RT_NULL; // IMU校准线程
 
 static double Gyro_Sum[3] = {0};         // x、y、z三轴的校准求和数值
@@ -102,7 +104,7 @@ void IMU_GyroCali_Thread(void *Para)
     // 记录数据的过程在这个while中完成
     while (1)
     {   
-        int TempOK = 0;
+        int TempOK = 1;
         // 等待新数据
         switch (IMU_Cali_set)
         {
@@ -111,7 +113,7 @@ void IMU_GyroCali_Thread(void *Para)
             // 读数据
             GyroRawNow.x = Sensor_RAW_IMU1.Gyro_Raw.x;
             GyroRawNow.y = Sensor_RAW_IMU1.Gyro_Raw.y;
-            GyroRawNow.z = Sensor_RAW_IMU1.Gyro_Raw.z;
+						GyroRawNow.z = Sensor_RAW_IMU1.Gyro_Raw.z;
             TempOK = IMU1_IfTempOK;
             break;
         
@@ -121,9 +123,10 @@ void IMU_GyroCali_Thread(void *Para)
             GyroRawNow.x = Sensor_RAW_IMU2.Gyro_Raw.x;
             GyroRawNow.y = Sensor_RAW_IMU2.Gyro_Raw.y;
             GyroRawNow.z = Sensor_RAW_IMU2.Gyro_Raw.z;
-            TempOK = IMU1_IfTempOK;
+            TempOK = IMU2_IfTempOK;
             break;
         }
+					
         
         GyroSumNow = X2CAL(GyroRawNow.x) + X2CAL(GyroRawNow.y) + X2CAL(GyroRawNow.z);
         if (GyroSumNow > 1.0f)
@@ -190,6 +193,7 @@ void IMU_GyroCali_Thread(void *Para)
                 switch (IMU_Cali_set)
                 {
                 case IMU1_set:
+										Sensor_WaitFor_IMU1_RawData();
                     // 数据记录完成，准备保存数据
                     FlashRecord(&Cali_Out,IMU_Cali_set);
                     IMU1_OffSet.x = Cali_Out.x;
@@ -214,7 +218,21 @@ void IMU_GyroCali_Thread(void *Para)
             }
         }
     }
-    rt_sem_release(&IMU_CaliFinish_Sem);
+		switch(IMU_Cali_set)
+		{
+			case IMU1_set:
+				rt_sem_release(&IMU1_CaliFinish_Sem);
+				break;
+			case IMU2_set:
+				rt_sem_release(&IMU2_CaliFinish_Sem);
+				break;
+		}
+    
+		
+		rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
+    rt_thread_mdelay(20);
+		rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
+		
     while (1)
     {
         rt_thread_delay(100);
@@ -228,12 +246,15 @@ static void Gyro_Cali(IMU_set_e IMU_set)
     {
         case IMU1_set:
             IMU_Cali_set = IMU1_set;
+						// 用来挂起的信号量，校准线程运行结束后会释放
+						rt_sem_init(&IMU1_CaliFinish_Sem, "IMU1TriS", 0, RT_IPC_FLAG_PRIO);
+						break;
         case IMU2_set:
             IMU_Cali_set = IMU2_set;
+						// 用来挂起的信号量，校准线程运行结束后会释放
+						rt_sem_init(&IMU2_CaliFinish_Sem, "IMU2TriS", 0, RT_IPC_FLAG_PRIO);
+						break;
     }  
-
-    // 用来挂起的信号量，校准线程运行结束后会释放
-    rt_sem_init(&IMU_CaliFinish_Sem, "IMUTriS", 0, RT_IPC_FLAG_PRIO);
 
     // 初始化零飘校准线程
     IMU_GyroCali_Tid = rt_thread_create(
@@ -257,7 +278,15 @@ static void Gyro_Cali(IMU_set_e IMU_set)
     }
 
     // 挂起等待校准结束
-    rt_sem_take(&IMU_CaliFinish_Sem, RT_WAITING_FOREVER);
+		switch(IMU_Cali_set)
+		{
+			case IMU1_set:
+				rt_sem_take(&IMU1_CaliFinish_Sem,RT_WAITING_FOREVER);
+				break;
+			case IMU2_set:
+				rt_sem_take(&IMU2_CaliFinish_Sem,RT_WAITING_FOREVER);
+				break;
+		}
     rt_thread_delete(IMU_GyroCali_Tid);
 }
 
@@ -360,7 +389,6 @@ int LoadGyroOffSet(IMU_set_e IMU_set)
 
     // 检查按键，判断是否需要重测零飘
     OffSetRST_KeyFlag = CaliKeyCheck();
-
     if ((CaliFlag_Read == 0x0F) && (OffSetRST_KeyFlag == 0))
     { // Flash中的标记表明有正常的零飘数据且不需要重测零飘
         if (!(((ReadTemp[0] == 0xFF) && (ReadTemp[1] == 0xFF) && (ReadTemp[2] == 0xFF) && (ReadTemp[3] == 0xFF)) ||
@@ -417,7 +445,17 @@ int LoadGyroOffSet(IMU_set_e IMU_set)
             return 0;
         }
     }
+		rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
+    rt_thread_mdelay(20);
+		rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
+		
+		rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
+    rt_thread_mdelay(20);
+		rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
+		
     // FLASH 未写入数据或需要重测零飘
     Gyro_Cali(IMU_set);
+		
+		
     return 1;
 }

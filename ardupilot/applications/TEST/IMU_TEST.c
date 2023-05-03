@@ -5,8 +5,8 @@
 
 #include "stm32f4xx_hal.h"
 
-#define IMU1_IS_USING 0
-#define IMU2_IS_USING 1
+#define IMU1_IS_USING 1
+#define IMU2_IS_USING 0
 
 #define ICM20_PWR_MGMT_1 0x6B
 #define ICM20_PWR_MGMT_2 0x6C

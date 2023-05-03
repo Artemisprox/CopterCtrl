@@ -4,7 +4,7 @@
 #include "board.h"
 #include "drv_thread.h"
 
-static int16_t channel_duty[20]={0};//换算得到的各个通道的占空比
+static int16_t channel_duty[30]={0};//换算得到的各个通道的占空比
 static int	pulse_width_us;//用于计算脉冲宽度
 static int Now_Tick;
 static int Last_Tick;
@@ -25,7 +25,7 @@ rt_err_t RC_PPM_Init(void)
 	
 	RC_PPM = rt_thread_create(
         "RC_PPM_receive",                     //线程名
-        RC_PPM_REC_Thread,       //线程入口
+        RC_PPM_REC_Thread,       			//线程入口
         RT_NULL,                      //入口参数无
         1024,                         //线程栈
         THREAD_PRIO_IMU_DATA_COLLECT, //线程优先级
@@ -54,31 +54,36 @@ static void pulse_process(void *args)
 			Delt_Tick += 65536;//跨圈解算
 		}
 		
-		pulse_width_us = Delt_Tick/2;//脉冲的时间长度（us）
+		pulse_width_us = Delt_Tick;//脉冲的时间长度（us）
 
 //	在未知遥控器通道数的情况下可使用该方法
 		if(pulse_width_us > 2000.0)//长间隔脉冲视为下一信号的起始位
+		{
 			pulse_flag = 0;
+			if(header_flag <= 5)
+				header_flag++;
+			else if( header_flag > 5)
+				rt_sem_release(&RC_PPM_rec);
+		}
+		
 		else if(pulse_width_us > 0 && pulse_width_us < 2000)
 		{
 			channel_duty[pulse_flag] = pulse_width_us;//换算为占空比形式
 			pulse_flag++;
 		}
-		
-		
-		if(pulse_flag == 8)
-		{
-			if(header_flag <= 5)
-				header_flag ++;
-			if(header_flag >= 5)
-				rt_sem_release(&RC_PPM_rec);
-		}	
+//		if(pulse_flag == 8)
+//		{
+//			if(header_flag <= 5)
+//				header_flag ++;
+//			if(header_flag >= 5)
+//				rt_sem_release(&RC_PPM_rec);
+//		}	
 			
 		
 //在已知通道数的情况下可以直接根据通道数量解析信号
 //		if(pulse_width_us > 0 && pulse_width_us <= 2000 )
 //		{	
-//			channel_duty[pulse_flag-1] = pulse_width_us;//换算为占空比形式
+//			channel_duty[pulse_flag] = pulse_width_us;//换算为占空比形式
 //		}
 //		pulse_flag++;
 //		
