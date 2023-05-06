@@ -148,9 +148,10 @@ static struct rt_semaphore IMU1_CALTrig_Sem; // 通信结束后通知数据处�
 static struct rt_semaphore IMU2_CALTrig_Sem; // 通信结束后通知数据处理线程处理数据
 static struct rt_semaphore IMU_Read_Sem;//防止IMU1和IMU2读取互相打断
 // 用于计算中断触发频率的相关变量
-static int LastCount, NowCount, FirstRecFlag, FirstFilterFlag;
-static float IMUFrqNow, IMUFrqFilter;
-
+static int LastCount1, NowCount1, FirstRecFlag1, FirstFilterFlag1;
+static int LastCount2, NowCount2, FirstRecFlag2, FirstFilterFlag2;
+static float IMU1FrqNow, IMU1FrqFilter;
+static float IMU2FrqNow, IMU2FrqFilter;
 // 中断与事件的对应关系
 //（暂时只使用EVT_GYRO，因为当前仅使用陀螺仪进行触发读取）
 #define EVT_IMU1 1 << 1
@@ -161,33 +162,33 @@ static void IMU1_irq(void *Para)
 {
     int DeltaCount;
 
-    NowCount = TIM11_GetCNT();
-    if (FirstRecFlag)
+    NowCount1 = TIM11_GetCNT();
+    if (FirstRecFlag1)
     {
-        LastCount = NowCount;
-        FirstRecFlag = 0;
+        LastCount1 = NowCount1;
+        FirstRecFlag1 = 0;
         return;
     }
 
-    DeltaCount = NowCount - LastCount;
+    DeltaCount = NowCount1 - LastCount1;
     if (DeltaCount <= 0)
     { // 计数值跨圈处理
         DeltaCount += 65536;
     }
-    IMUFrqFilter = 20000000.0f / DeltaCount;
-    LastCount = NowCount;
+    IMU1FrqFilter = 20000000.0f / DeltaCount;
+    LastCount1 = NowCount1;
 
-    if (FirstFilterFlag || UTILS_IS_NAN(IMUFrqNow))
+    if (FirstFilterFlag1 || UTILS_IS_NAN(IMU1FrqNow))
     {
-        FirstFilterFlag = 0;
-        IMUFrqNow = IMUFrqFilter;
+        FirstFilterFlag1 = 0;
+        IMU1FrqNow = IMU1FrqFilter;
         Sensor_RAW_IMU1.RawDataReady = 0;
     }
     else
     {
-        IMUFrqNow = IMUFrqNow * 0.96f + IMUFrqFilter * 0.04f; // 滞后滤波
-        Sensor_RAW_IMU1.DataRate = IMUFrqNow;
-        Sensor_RAW_IMU1.DataFreshtime = NowCount;
+        IMU1FrqNow = IMU1FrqNow * 0.96f + IMU1FrqFilter * 0.04f; // 滞后滤波
+        Sensor_RAW_IMU1.DataRate = IMU1FrqNow;
+        Sensor_RAW_IMU1.DataFreshtime = NowCount1;
         rt_event_send(&IMU_Event, EVT_IMU1 );
     }
 }
@@ -197,33 +198,33 @@ static void IMU2_irq(void *Para)
 {
     int DeltaCount;
 
-    NowCount = TIM11_GetCNT();
-    if (FirstRecFlag)
+    NowCount2 = TIM11_GetCNT();
+    if (FirstRecFlag2)
     {
-        LastCount = NowCount;
-        FirstRecFlag = 0;
+        LastCount2 = NowCount2;
+        FirstRecFlag2 = 0;
         return;
     }
 
-    DeltaCount = NowCount - LastCount;
+    DeltaCount = NowCount2 - LastCount2;
     if (DeltaCount <= 0)
     { // 计数值跨圈处理
         DeltaCount += 65536;
     }
-    IMUFrqFilter = 20000000.0f / DeltaCount;
-    LastCount = NowCount;
+    IMU2FrqFilter = 20000000.0f / DeltaCount;
+    LastCount2 = NowCount2;
 
-    if (FirstFilterFlag || UTILS_IS_NAN(IMUFrqNow))
+    if (FirstFilterFlag2 || UTILS_IS_NAN(IMU2FrqNow))
     {
-        FirstFilterFlag = 0;
-        IMUFrqNow = IMUFrqFilter;
+        FirstFilterFlag2 = 0;
+        IMU2FrqNow = IMU2FrqFilter;
         Sensor_RAW_IMU2.RawDataReady = 0;
     }
     else
     {
-        IMUFrqNow = IMUFrqNow * 0.96f + IMUFrqFilter * 0.04f; // 滞后滤波
-        Sensor_RAW_IMU2.DataRate = IMUFrqNow;
-        Sensor_RAW_IMU2.DataFreshtime = NowCount;
+        IMU2FrqNow = IMU2FrqNow * 0.96f + IMU2FrqFilter * 0.04f; // 滞后滤波
+        Sensor_RAW_IMU2.DataRate = IMU2FrqNow;
+        Sensor_RAW_IMU2.DataFreshtime = NowCount2;
         rt_event_send(&IMU_Event, EVT_IMU2 );
     }
 }
@@ -328,9 +329,13 @@ static void HWTrig_init(void)
 {
     // 初始化用于计算中断频率的定时器
     MX_TIM11_Init();
-    FirstFilterFlag = 1;
-    FirstRecFlag = 1;
-    LastCount = 0;
+    FirstFilterFlag1 = 1;
+    FirstRecFlag1 = 1;
+    LastCount1 = 0;
+	
+		FirstFilterFlag2 = 1;
+    FirstRecFlag2 = 1;
+    LastCount2 = 0;
 
     // 初始化中断读取用的事件集
     rt_event_init(&IMU_Event, "IMU_EVT", RT_IPC_FLAG_PRIO);

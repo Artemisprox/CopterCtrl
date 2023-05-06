@@ -36,8 +36,8 @@
 #define RGB_TEST 0
 #define PWM_TEST 0
 #define UART_TEST 0
-#define IMU_TEST 1
-#define ESC_CALI 0
+#define IMU_TEST 0
+#define ESC_CALI 1
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
 #include "KEY_TEST.h"
@@ -80,6 +80,7 @@ int main(void)
 
 #if (ESC_CALI)
 	MX_TIM1_PWM_Init();
+	MainRGB_init();
   ESC_cali_Init();
 #endif
 #else
@@ -93,7 +94,7 @@ int main(void)
 				rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
         rt_thread_mdelay(20);
 				rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
-      //  MainRGB_init();
+        MainRGB_init();
         //red_keepon();
 				//red_keepon();
 //所有程序注意, 如果初始化函数存在非 RT_EOK 的返回值单片机会直接复位

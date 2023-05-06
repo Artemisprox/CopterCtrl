@@ -350,22 +350,22 @@
  * *************************************************************************/
 #if defined CORE_USING_COPTER
 // IMU 坐标系相关设置
-#define GYRO_X_SOURCE -GYRO_RAWDATA(y)
-#define ACCL_X_SOURCE -ACCL_RAWDATA(y)
-#define GYRO_Y_SOURCE +GYRO_RAWDATA(x)
-#define ACCL_Y_SOURCE +ACCL_RAWDATA(x)
-#define GYRO_Z_SOURCE +GYRO_RAWDATA(z)
-#define ACCL_Z_SOURCE +ACCL_RAWDATA(z)
+//#define GYRO_X_SOURCE -GYRO_RAWDATA(y)
+//#define ACCL_X_SOURCE -ACCL_RAWDATA(y)
+//#define GYRO_Y_SOURCE +GYRO_RAWDATA(x)
+//#define ACCL_Y_SOURCE +ACCL_RAWDATA(x)
+//#define GYRO_Z_SOURCE +GYRO_RAWDATA(z)
+//#define ACCL_Z_SOURCE +ACCL_RAWDATA(z)
 //四旋翼控制相关设置
 #define COPTER_MOTOR_1 TIM_CHANNEL_1                    //右上角电机，逆时针        
 #define COPTER_MOTOR_2 TIM_CHANNEL_2                    //左下角电机，逆时针          
 #define COPTER_MOTOR_3 TIM_CHANNEL_3        	          //右下角电机，顺时针        
 #define COPTER_MOTOR_4 TIM_CHANNEL_4                    //左上角电机，顺时针            
-#define MASS 					 14.70f                         			//整机重量
+#define MASS 					 1.3f                         			//整机重量
 #define g              9.8f       												//重力加速度
-#define COPTER_ARM_LENGTH   1														//升力作用长度，单位m
-#define Ct    6.214751f/10000000                                                    //升力力矩常数
-#define Cm    9.7658f/1000000000                                                    //扭转力矩常数
+#define COPTER_ARM_LENGTH   0.15766f														//升力作用长度，单位m
+#define Ct    (1.07f/10000000)                                                    //升力力矩常数
+#define Cm    (1.68f/1000000000)                                                    //扭转力矩常数
 #define POS_X_PID 0,0,0,0,0,0														//X轴位置控制，单P
 #define VEC_X_PID 0.14f,0.03f,0.01f,100,2,-2														//X轴速度控制
 #define POS_Y_PID 0,0,0,0,0,0 													//Y轴位置控制，单P

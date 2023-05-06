@@ -3,6 +3,10 @@
 
 #define sinf(a)  arm_sin_f32(a)
 #define cosf(a)  arm_cos_f32(a)
+//#define sqrt(a,b) arm_sqrt_f32_t(a,b)
+
+#define CTRL_LIMIT_UP 0.90f
+#define CTRL_LIMIT_DOWN 0.15f
 
 #define MAX_DUTY   0.8f
 #define MIN_DUTY   0.36f

@@ -7,7 +7,7 @@
 
 #define YAW_ID       0x201
 #define PITCH_ID     0x202
-#define GIMBAL_ID 	 0x101
+#define GIMBAL_ID 	 0x206
 
 #define BULLET_MASS 0.0017f
 #define BULLET_INITAL_NUM 1000

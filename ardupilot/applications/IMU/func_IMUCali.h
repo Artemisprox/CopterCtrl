@@ -5,7 +5,7 @@
 
 #define IMU1_BIAS_DATA_ADDR ((uint32_t)(0x08070000))
 #define IMU1_CALI_FLAG_ADDR ((uint32_t)(IMU1_BIAS_DATA_ADDR + 4*3))
-#define IMU2_BIAS_DATA_ADDR ((uint32_t)(0x08040000))
+#define IMU2_BIAS_DATA_ADDR ((uint32_t)(0x08071000))
 #define IMU2_CALI_FLAG_ADDR ((uint32_t)(IMU2_BIAS_DATA_ADDR + 4*3))
 
 // 经过坐标换算和零飘校准后的数据

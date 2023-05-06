@@ -15,14 +15,14 @@
 // X为 后方(枪管反方向轴)
 // GYRO_X_SOURCE -GYRO_RAWDATA(y)表示 云台后方数据=(-1*原始y轴数据)
 // 角速度方向遵循右手螺旋
-#define GYRO_X_SOURCE -GYRO_RAWDATA(y)
-#define ACCL_X_SOURCE -ACCL_RAWDATA(y)
+#define GYRO_X_SOURCE GYRO_RAWDATA(y)
+#define ACCL_X_SOURCE ACCL_RAWDATA(y)
 // Y为 右方
 #define GYRO_Y_SOURCE -GYRO_RAWDATA(x)
 #define ACCL_Y_SOURCE -ACCL_RAWDATA(x)
 // Z为 上方
-#define GYRO_Z_SOURCE -GYRO_RAWDATA(z)
-#define ACCL_Z_SOURCE -ACCL_RAWDATA(z)
+#define GYRO_Z_SOURCE GYRO_RAWDATA(z)
+#define ACCL_Z_SOURCE ACCL_RAWDATA(z)
 
 // 偏移量为Raw数据的偏移量，与安装位置无关
 // 使用偏移量时，先用Raw数据减去偏移量，再进行安装位置校正
@@ -45,7 +45,9 @@ void GetCaliIMUData(AHRS_Accl_t *AcclRaw, AHRS_Gyro_t *GyroRaw, AHRS_Accl_t *Acc
 // Flash存储函数
 static void FlashRecord(AHRS_Gyro_t *CaliData , rt_uint8_t IMU_set)
 {
+		/*待写入数据*/
     rt_uint8_t temp_data[13];
+		rt_uint8_t read_data[13];
     temp_data[0] = ((rt_uint8_t *)(&CaliData->x))[0];
     temp_data[1] = ((rt_uint8_t *)(&CaliData->x))[1];
     temp_data[2] = ((rt_uint8_t *)(&CaliData->x))[2];
@@ -59,23 +61,37 @@ static void FlashRecord(AHRS_Gyro_t *CaliData , rt_uint8_t IMU_set)
     temp_data[10] = ((rt_uint8_t *)(&CaliData->z))[2];
     temp_data[11] = ((rt_uint8_t *)(&CaliData->z))[3];
     temp_data[12] = 0x0F;
+		
     /* 测量完毕, 开始读写 Flash */
 //    Hwdt_Feed_Slowly(RT_TRUE); // 开始操作 Flash 数据, 需要开始缓慢喂狗
     rt_enter_critical();       // 进入临界区防止操作系统调度
     
     if(IMU_set == 1)
+		{
+				/*flash中原有的零飘数据进行备份*/
+				stm32_flash_read(IMU2_BIAS_DATA_ADDR , read_data , sizeof(read_data));
         stm32_flash_erase(IMU1_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
+		}
     else if(IMU_set == 2)
+		{
+				stm32_flash_read(IMU1_BIAS_DATA_ADDR , read_data , sizeof(read_data));
         stm32_flash_erase(IMU2_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
+		}
 
     rt_exit_critical();    // 退出临界区继续启动调度器
     rt_thread_mdelay(500); // 擦除与写入需要间隔一段时间
     rt_enter_critical();   // 进入临界区防止操作系统调度
 
     if(IMU_set == 1)
-        stm32_flash_write(IMU1_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
+		{
+			stm32_flash_write(IMU1_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
+			stm32_flash_write(IMU2_BIAS_DATA_ADDR, read_data, sizeof(float) * 3 + 1);
+		}       
     else if(IMU_set == 2)
-        stm32_flash_write(IMU2_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
+    {
+			stm32_flash_write(IMU1_BIAS_DATA_ADDR, read_data, sizeof(float) * 3 + 1);
+			stm32_flash_write(IMU2_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
+		} 
         
     rt_exit_critical();         // 退出临界区继续启动调度器
 //    Hwdt_Feed_Slowly(RT_FALSE); // 操作 Flash 数据结束, 重新开始正常喂狗

@@ -97,7 +97,7 @@ static uint8_t arm_confirm(data_check *data_valid , remote_data data)
 static uint8_t flying_check(void)
 {
     uint8_t flag = 0;
-    if(copter_status.flight_status == 0 && copter_remote.throttle_low_flag == 1 )
+    if(copter_status.flight_status == ARMED && (copter_remote.throttle_low_flag == 0) )
     {
         copter_status.flight_status = FLYING;
         flag = 1;

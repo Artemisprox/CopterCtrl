@@ -4,7 +4,7 @@
 #define POS_X_MAX_V     1.0f //最大X轴速度
 #define POS_Y_MAX_V     1.0f //最大Y轴速度
 
-#define F_MAX            30 //最大升力
+#define F_MAX            28.06f //最大升力
 #define PITCH_MAX_DEG    10 //最大俯仰角
 #define ROLL_MAX_DEG     10 //最大翻滚角
 #define YAW_MAX_SPE      30 //最大偏航角角度度
@@ -13,7 +13,7 @@
 #define rocker_max       1930  //遥控器摇杆高位
 #define rocker_middle    1520  //遥控器摇杆低位
 #define rocker_width     823.0f  //遥控器信号占空比总宽度
-#define rocker_inter     3	//遥控器信号
+#define rocker_inter     10	//遥控器信号
 
 
 #define STABILIZATION    1   
@@ -24,7 +24,7 @@
 #define ARMED_T                 0   
 #define EMERGENCY_STOP_T        2   
 
-#define LPF_k                0.9f
+#define LPF_k                0.7f
 
 typedef struct
 {

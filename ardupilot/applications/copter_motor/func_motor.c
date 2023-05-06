@@ -13,12 +13,12 @@
 #include "drv_utils.h"
 
 //电机模型:W0 + k*duty
-#define propeller_spe_base 1000 //基础转速
-#define propeller_spe_gain 6374 //转速增益
+#define propeller_spe_base 1201 //基础转速
+#define propeller_spe_gain 7309 //转速增益
 
 static struct rt_semaphore atti_5ms_sem; /* 姿态环 */
 static struct rt_semaphore pos_20ms_sem; /* 位置环 */
-static struct rt_timer atti_1ms_tim;         /* 姿态环定时器 */
+static struct rt_timer atti_5ms_tim;         /* 姿态环定时器 */
 static struct rt_timer pos_20ms_tim;         /* 位置环定时器 */
 
 static recoil_data copter_gimbal;
@@ -38,37 +38,57 @@ static void earth_body_tranfer(void)
 										+ sinf(HERO_IMU.yaw)*HERO_copter.copter_y.vec.out;
 }
 
+static mixer_spe temp;
 //混控器
+float temp_data[20];
 static void matrix_control(void)
 {
-	mixer_spe temp;
-	temp.motor_spe1 = HERO_copter.copter_mixer.f/Ct
-					- HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
-					- HERO_copter.copter_mixer.tau_y*COPTER_ARM_LENGTH/Ct
-					- HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
-	HERO_copter.copter_mixer.motor_duty1 = (__sqrtf(temp.motor_spe1) - propeller_spe_base)/propeller_spe_gain;//最终占空比
-	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty1,MIN_DUTY,MAX_DUTY);
-
-	temp.motor_spe2 = HERO_copter.copter_mixer.f/Ct
-					+ HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
-					+ HERO_copter.copter_mixer.tau_y*COPTER_ARM_LENGTH/Ct
-					- HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
-	HERO_copter.copter_mixer.motor_duty2 = (__sqrtf(temp.motor_spe2) - propeller_spe_base)/propeller_spe_gain;//最终占空比
-	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty2,MIN_DUTY,MAX_DUTY);
-
-    temp.motor_spe3 = HERO_copter.copter_mixer.f/Ct
-					+ HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
-					- HERO_copter.copter_mixer.tau_y*COPTER_ARM_LENGTH/Ct
-					+ HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
-	HERO_copter.copter_mixer.motor_duty3 = (__sqrtf(temp.motor_spe3) - propeller_spe_base)/propeller_spe_gain;//最终占空比
-	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty3,MIN_DUTY,MAX_DUTY);
+//	temp_data[0] = 0.5*HERO_copter.copter_mixer.f/Ct;
+//	temp_data[1] = 0.5*HERO_copter.copter_mixer.tau_x/COPTER_ARM_LENGTH/Ct ;
+//	temp_data[2] = 0.5*HERO_copter.copter_mixer.tau_y/COPTER_ARM_LENGTH/Ct ;
+//	temp_data[3] = 0.5*HERO_copter.copter_mixer.tau_z/COPTER_ARM_LENGTH/Cm;
+	temp.motor_spe1 = 0.25f*HERO_copter.copter_mixer.f/Ct
+					- 0.25f*HERO_copter.copter_mixer.tau_x/COPTER_ARM_LENGTH/Ct 
+					- 0.25f*HERO_copter.copter_mixer.tau_y/COPTER_ARM_LENGTH/Ct
+					+ 0.25f*HERO_copter.copter_mixer.tau_z/COPTER_ARM_LENGTH/Cm;
+	if(temp.motor_spe1 < 0)
+		temp.motor_spe1 = 0;
 	
-	temp.motor_spe4 = HERO_copter.copter_mixer.f/Ct
-					- HERO_copter.copter_mixer.tau_x*COPTER_ARM_LENGTH/Ct 
-					+ HERO_copter.copter_mixer.tau_y*COPTER_ARM_LENGTH/Ct
-					+ HERO_copter.copter_mixer.tau_z*COPTER_ARM_LENGTH/Cm;
-	HERO_copter.copter_mixer.motor_duty4 = (__sqrtf(temp.motor_spe4) - propeller_spe_base)/propeller_spe_gain;//最终占空比
-	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty4,MIN_DUTY,MAX_DUTY);
+//	temp_data[4] = sqrtf(temp.motor_spe1);
+	
+	HERO_copter.copter_mixer.motor_duty1 = (sqrtf(temp.motor_spe1) - propeller_spe_base)/propeller_spe_gain;//最终占空比
+	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty1,CTRL_LIMIT_DOWN,CTRL_LIMIT_UP);
+	HERO_copter.copter_mixer.motor_duty1 = utils_map(HERO_copter.copter_mixer.motor_duty1,0.0f,1.0f,MIN_DUTY,MAX_DUTY);
+
+	temp.motor_spe2 = 0.25f*HERO_copter.copter_mixer.f/Ct
+					+ 0.25f*HERO_copter.copter_mixer.tau_x/COPTER_ARM_LENGTH/Ct 
+					+ 0.25f*HERO_copter.copter_mixer.tau_y/COPTER_ARM_LENGTH/Ct
+					+ 0.25f*HERO_copter.copter_mixer.tau_z/COPTER_ARM_LENGTH/Cm;
+	if(temp.motor_spe2 < 0)
+		temp.motor_spe2 = 0;
+	HERO_copter.copter_mixer.motor_duty2 = (sqrtf(temp.motor_spe2) - propeller_spe_base)/propeller_spe_gain;//最终占空比
+	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty2,CTRL_LIMIT_DOWN,CTRL_LIMIT_UP);
+	HERO_copter.copter_mixer.motor_duty2 = utils_map(HERO_copter.copter_mixer.motor_duty2,0.0f,1.0f,MIN_DUTY,MAX_DUTY);
+
+    temp.motor_spe3 = 0.25f*HERO_copter.copter_mixer.f/Ct
+					+ 0.25f*HERO_copter.copter_mixer.tau_x/COPTER_ARM_LENGTH/Ct 
+					- 0.25f*HERO_copter.copter_mixer.tau_y/COPTER_ARM_LENGTH/Ct
+					- 0.25f*HERO_copter.copter_mixer.tau_z/COPTER_ARM_LENGTH/Cm;
+	if(temp.motor_spe3 < 0)
+		temp.motor_spe3 = 0;
+	HERO_copter.copter_mixer.motor_duty3 = (sqrtf(temp.motor_spe3) - propeller_spe_base)/propeller_spe_gain;//最终占空比
+	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty3,CTRL_LIMIT_DOWN,CTRL_LIMIT_UP);
+	HERO_copter.copter_mixer.motor_duty3 = utils_map(HERO_copter.copter_mixer.motor_duty3,0.0f,1.0f,MIN_DUTY,MAX_DUTY);
+	
+	temp.motor_spe4 = 0.25f*HERO_copter.copter_mixer.f/Ct
+					- 0.25f*HERO_copter.copter_mixer.tau_x/COPTER_ARM_LENGTH/Ct 
+					+ 0.25f*HERO_copter.copter_mixer.tau_y/COPTER_ARM_LENGTH/Ct
+					- 0.25f*HERO_copter.copter_mixer.tau_z/COPTER_ARM_LENGTH/Cm;
+	if(temp.motor_spe4 < 0)
+		temp.motor_spe4 = 0;
+	HERO_copter.copter_mixer.motor_duty4 = (sqrtf(temp.motor_spe4) - propeller_spe_base)/propeller_spe_gain;//最终占空比
+	utils_truncate_number(&HERO_copter.copter_mixer.motor_duty4,CTRL_LIMIT_DOWN,CTRL_LIMIT_UP);
+	HERO_copter.copter_mixer.motor_duty4 = utils_map(HERO_copter.copter_mixer.motor_duty4,0.0f,1.0f,MIN_DUTY,MAX_DUTY);
 }
 
 //速度环控制
@@ -80,7 +100,7 @@ static void velocity_control(float error_x, float error_y, pid_t* x, pid_t* y)
 
 
 //姿态环线程
-static void atti_1ms_entry(void *parameter)
+static void atti_5ms_entry(void *parameter)
 {
 	while(1)
 	{
@@ -113,16 +133,17 @@ static void atti_1ms_entry(void *parameter)
 		PID_Calculate(&HERO_copter.copter_pitch.ang,error_p);
 		error_p = HERO_copter.copter_pitch.ang.out - HERO_IMU.pitch_speed;
 		PID_Calculate(&HERO_copter.copter_pitch.spe,error_p);
-		HERO_copter.copter_mixer.tau_y = HERO_copter.copter_pitch.ang.out;
+		HERO_copter.copter_mixer.tau_y = HERO_copter.copter_pitch.spe.out;
 
 		PID_Calculate(&HERO_copter.copter_roll.ang,error_r);
 		error_r = HERO_copter.copter_roll.ang.out - HERO_IMU.roll_speed;
 		PID_Calculate(&HERO_copter.copter_roll.spe,error_r);
-		HERO_copter.copter_mixer.tau_x = HERO_copter.copter_roll.ang.out;
+		HERO_copter.copter_mixer.tau_x = HERO_copter.copter_roll.spe.out;
 
-		error_y = control_data.yaw - HERO_IMU.yaw_speed;
-		PID_Calculate(&HERO_copter.copter_yaw.spe,error_y);
-		HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.ang.out;
+//		error_y = control_data.yaw - HERO_IMU.yaw_speed;
+//		PID_Calculate(&HERO_copter.copter_yaw.spe,error_y);
+//		HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.spe.out;
+			HERO_copter.copter_mixer.tau_z = 0.0f;
 		
 		if( copter_gimbal.en_flag )
 		{
@@ -194,7 +215,7 @@ static void pos_20ms_entry(void *parameter)
 	}
 }
 
-static void atti_1ms_IRQHandler(void *parameter)
+static void atti_5ms_IRQHandler(void *parameter)
 {
 	while (rt_sem_trytake(&atti_5ms_sem) == RT_EOK)
         continue; // 取完多余的信号量
@@ -220,7 +241,7 @@ static void motor_start(void)
     rt_thread_t thread;
     rt_sem_init(&atti_5ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);
 		rt_sem_init(&pos_20ms_sem, "copter_pos", 0, RT_IPC_FLAG_FIFO);
-    thread = rt_thread_create("atti_ctrl", atti_1ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_ATTI_CONTROL, 1);
+    thread = rt_thread_create("atti_ctrl", atti_5ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_ATTI_CONTROL, 1);
 		if (thread != RT_NULL)
         rt_thread_startup(thread);
 		thread = rt_thread_create("pos_ctrl", pos_20ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_POS_CONTROL, 1);
@@ -228,12 +249,12 @@ static void motor_start(void)
         rt_thread_startup(thread);
 
     /*定时线程*/
-    rt_timer_init(&atti_1ms_tim, "atti_Tim", atti_1ms_IRQHandler, RT_NULL, 5,
+    rt_timer_init(&atti_5ms_tim, "atti_Tim", atti_5ms_IRQHandler, RT_NULL, 5,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 		 rt_timer_init(&pos_20ms_tim, "pos_Tim", pos_20ms_IRQHandler, RT_NULL, 20,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
     /* 开启定时器 */
-    rt_timer_start(&atti_1ms_tim);
+    rt_timer_start(&atti_5ms_tim);
 		rt_timer_start(&pos_20ms_tim);
 }
 

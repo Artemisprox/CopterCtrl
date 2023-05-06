@@ -203,12 +203,12 @@
 #define BSP_USING_REMOTE_DT7
 #define REMOTE_UART_DEVICE_NAME "uart3"
 #define BSP_USING_RGB_LIGHT
-#define RLIGHT_PWM_DEVICE_NAME "pwm5"
-#define RLIGHT_PWM_CHANNEL 3
-#define GLIGHT_PWM_DEVICE_NAME "pwm5"
-#define GLIGHT_PWM_CHANNEL 2
-#define BLIGHT_PWM_DEVICE_NAME "pwm5"
-#define BLIGHT_PWM_CHANNEL 1
+#define RLIGHT_PWM_DEVICE_NAME "pwm3"
+#define RLIGHT_PWM_CHANNEL 2
+#define GLIGHT_PWM_DEVICE_NAME "pwm3"
+#define GLIGHT_PWM_CHANNEL 1
+#define BLIGHT_PWM_DEVICE_NAME "pwm3"
+#define BLIGHT_PWM_CHANNEL 3
 
 /* Whether to use the SoftWare Libraries */
 

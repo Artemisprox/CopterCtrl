@@ -35,7 +35,7 @@ static void remote_setpoint(uint8_t mode , RC_PPM_data *data)
 			copter_remote.yaw   = (data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
 			break;
 		case STABILIZATION ://自稳模式：推力、pitch轴角度、roll轴角度、yaw轴角速度
-			copter_remote.throttle = (data->RC_throttle - rocker_min)/rocker_width*2.0f*F_MAX;
+			copter_remote.throttle = (data->RC_throttle - rocker_min)/rocker_width*F_MAX;
 			copter_remote.pitch = (data->RC_pitch - rocker_middle)/rocker_width*2.0f*PITCH_MAX_DEG;
 			copter_remote.roll  = (data->RC_roll - rocker_middle)/rocker_width*2.0f*ROLL_MAX_DEG;
 			copter_remote.yaw   = (data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
@@ -113,7 +113,7 @@ static void remote_data_process(void)
 		/*右开关切换*/
 		if(copter_rec_data.RC_switch_right != copter_rec_data_last.RC_switch_right)
 			copter_remote.switch_arm_change = 1;
-		else copter_remote.switch_mode_change = 0;
+		else copter_remote.switch_arm_change = 0;
 
 	}
 
@@ -126,7 +126,7 @@ static void remote_data_process(void)
 	copter_rec_data_last.RC_pitch = copter_rec_data.RC_pitch;
 	copter_rec_data_last.RC_yaw = copter_rec_data.RC_yaw;
 	copter_rec_data_last.RC_switch_left = copter_rec_data.RC_switch_left;
-	copter_rec_data_last.RC_switch_left = copter_rec_data.RC_switch_left;
+	copter_rec_data_last.RC_switch_right = copter_rec_data.RC_switch_right;
 	copter_rec_data_last.RC_roller = copter_rec_data.RC_roller;
 
 	/*数据服务器写入*/

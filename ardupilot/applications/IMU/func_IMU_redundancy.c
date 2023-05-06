@@ -52,13 +52,13 @@ void IMU_redundancy_Thread(void *para)
             copter_IMU_redun.IMU_using = IMU2_set;
         else if ((copter_IMU_redun.IMU_using == IMU2_set) && (copter_IMU_redun.IMU2_state == 0) && (copter_IMU_redun.IMU1_state == 1))
             copter_IMU_redun.IMU_using = IMU1_set;
-
+				//copter_IMU_redun.IMU_using = IMU2_set;
         switch (copter_IMU_redun.IMU_using)//根据使用的陀螺仪将数据写入结构体，进入姿态解算部分
         {
         case IMU1_set:
             copter_IMU_RAW.Gyro_Raw.x = Sensor_RAW_IMU1.Gyro_Raw.x - IMU1_OffSet.x;
-            copter_IMU_RAW.Gyro_Raw.y = Sensor_RAW_IMU1.Gyro_Raw.x - IMU1_OffSet.y;
-            copter_IMU_RAW.Gyro_Raw.z = Sensor_RAW_IMU1.Gyro_Raw.x - IMU1_OffSet.z;
+            copter_IMU_RAW.Gyro_Raw.y = Sensor_RAW_IMU1.Gyro_Raw.y - IMU1_OffSet.y;
+            copter_IMU_RAW.Gyro_Raw.z = Sensor_RAW_IMU1.Gyro_Raw.z - IMU1_OffSet.z;
 						copter_IMU_RAW.Accl_Raw.x = Sensor_RAW_IMU1.Accl_Raw.x;
             copter_IMU_RAW.Accl_Raw.y = Sensor_RAW_IMU1.Accl_Raw.y;
 						copter_IMU_RAW.Accl_Raw.z = Sensor_RAW_IMU1.Accl_Raw.z;
@@ -69,8 +69,8 @@ void IMU_redundancy_Thread(void *para)
             break;
         case IMU2_set:
             copter_IMU_RAW.Gyro_Raw.x = Sensor_RAW_IMU2.Gyro_Raw.x - IMU2_OffSet.x;
-            copter_IMU_RAW.Gyro_Raw.y = Sensor_RAW_IMU2.Gyro_Raw.x - IMU2_OffSet.y;
-            copter_IMU_RAW.Gyro_Raw.z = Sensor_RAW_IMU2.Gyro_Raw.x - IMU2_OffSet.z;
+            copter_IMU_RAW.Gyro_Raw.y = Sensor_RAW_IMU2.Gyro_Raw.y - IMU2_OffSet.y;
+            copter_IMU_RAW.Gyro_Raw.z = Sensor_RAW_IMU2.Gyro_Raw.z - IMU2_OffSet.z;
 						copter_IMU_RAW.Accl_Raw.x = Sensor_RAW_IMU2.Accl_Raw.x;
             copter_IMU_RAW.Accl_Raw.y = Sensor_RAW_IMU2.Accl_Raw.y;
 						copter_IMU_RAW.Accl_Raw.z = Sensor_RAW_IMU2.Accl_Raw.z;
@@ -102,7 +102,7 @@ void IMU_redundancy_init(void)
         rt_thread_startup(thread);
 
     /*定时器线程*/
-    rt_timer_init(&IMU_redundancy_tim, "IMU_redundancy_tim", IMU_redundancy_1ms_IRQHandler, RT_NULL, 20,
+    rt_timer_init(&IMU_redundancy_tim, "IMU_redundancy_tim", IMU_redundancy_1ms_IRQHandler, RT_NULL, 1,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
     /* 定时器开始 */
     rt_timer_start(&IMU_redundancy_tim);

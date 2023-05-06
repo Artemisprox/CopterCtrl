@@ -8,49 +8,49 @@ static rt_int32_t times = 0;
 
 void red_threetimes(void)
 {
-    times = 0;
+//    times = 0;
 }
 
 void red_blink_slowly(void)
 {
     RGB_status = red_slow;
-    times = 0;
+//    times = 0;
 }
 
 void red_keepon(void)
 {
     RGB_status = red_keep;    
-    times = 0;
+//    times = 0;
 }
 
 void blue_quickly(void)
 {
     RGB_status = blue_quick;
-    times = 0;
+//    times = 0;
 }
 
 void blue_slowly(void)
 {
     RGB_status = blue_slow;
-    times = 0;
+//    times = 0;
 }
 
 void blue_keepon(void)
 {
     RGB_status = blue_keep;
-    times = 0;
+//    times = 0;
 }
 
 void green_keepon(void)
 {
     RGB_status = green_keep;
-    times = 0;
+//    times = 0;
 }
 
 void green_quickly(void)
 {
     RGB_status = green_quick;
-    times = 0;
+//    times = 0;
 }
 
 struct rt_semaphore RGB_10ms_sem; /* 定时信号量 */
