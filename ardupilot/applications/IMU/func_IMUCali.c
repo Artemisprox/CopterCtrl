@@ -66,17 +66,16 @@ static void FlashRecord(AHRS_Gyro_t *CaliData , rt_uint8_t IMU_set)
 //    Hwdt_Feed_Slowly(RT_TRUE); // 开始操作 Flash 数据, 需要开始缓慢喂狗
     rt_enter_critical();       // 进入临界区防止操作系统调度
     
-    if(IMU_set == 1)
+    if(IMU_set == IMU1_set)
 		{
 				/*flash中原有的零飘数据进行备份*/
 				stm32_flash_read(IMU2_BIAS_DATA_ADDR , read_data , sizeof(read_data));
-        stm32_flash_erase(IMU1_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
 		}
-    else if(IMU_set == 2)
+    else if(IMU_set == IMU2_set)
 		{
 				stm32_flash_read(IMU1_BIAS_DATA_ADDR , read_data , sizeof(read_data));
-        stm32_flash_erase(IMU2_BIAS_DATA_ADDR, sizeof(float) * 3 + 1);
 		}
+		stm32_flash_erase(IMU1_BIAS_DATA_ADDR, sizeof(float) * 6 + 2);//擦除旧有数据
 
     rt_exit_critical();    // 退出临界区继续启动调度器
     rt_thread_mdelay(500); // 擦除与写入需要间隔一段时间
@@ -422,7 +421,6 @@ int LoadGyroOffSet(IMU_set_e IMU_set)
                     
                     case IMU2_set:
                         // 读数据
-                        FlashRecord(&Cali_Out,IMU_set);
                         IMU2_OffSet.x = *((float *)&ReadTemp[0]);
                         IMU2_OffSet.y = *((float *)&ReadTemp[4]);
                         IMU2_OffSet.z = *((float *)&ReadTemp[8]);
@@ -448,8 +446,6 @@ int LoadGyroOffSet(IMU_set_e IMU_set)
                     break;
                 
                 case IMU2_set:
-                    // 读数据
-                    FlashRecord(&Cali_Out,IMU_set);
                     IMU2_OffSet.x = 0.f;
                     IMU2_OffSet.y = 0.f;                        
                     IMU2_OffSet.z = 0.f;
