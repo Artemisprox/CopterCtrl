@@ -11,6 +11,7 @@
 #include "func_state.h"
 #include "drv_dataserve.h"
 #include "drv_utils.h"
+#include "drv_IMUPosCali.h"
 
 //电机模型:W0 + k*duty
 #define propeller_spe_base 1201 //基础转速
@@ -117,11 +118,11 @@ static void atti_5ms_entry(void *parameter)
 		switch(copter_status.mode)
 		{
 			case POSITION:
-				error_p = HERO_copter.copter_pitch.ang.set - HERO_IMU.pitch ;
-				error_r = HERO_copter.copter_roll.ang.set - HERO_IMU.roll ;
+				error_p = IMU1_pos.Pitch + HERO_copter.copter_pitch.ang.set - HERO_IMU.pitch ;
+				error_r = IMU1_pos.Roll + HERO_copter.copter_roll.ang.set - HERO_IMU.roll ;
 			default:
-				error_p = control_data.pitch - HERO_IMU.pitch ;
-				error_r = control_data.roll - HERO_IMU.roll ;
+				error_p = IMU1_pos.Pitch + control_data.pitch - HERO_IMU.pitch ;
+				error_r = IMU1_pos.Roll + control_data.roll - HERO_IMU.roll ;
 		}
 	
 		if( copter_gimbal.en_flag )
@@ -251,16 +252,17 @@ static void motor_start(void)
     /*定时线程*/
     rt_timer_init(&atti_5ms_tim, "atti_Tim", atti_5ms_IRQHandler, RT_NULL, 5,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
-		 rt_timer_init(&pos_20ms_tim, "pos_Tim", pos_20ms_IRQHandler, RT_NULL, 20,
+	rt_timer_init(&pos_20ms_tim, "pos_Tim", pos_20ms_IRQHandler, RT_NULL, 20,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
     /* 开启定时器 */
     rt_timer_start(&atti_5ms_tim);
-		rt_timer_start(&pos_20ms_tim);
+	rt_timer_start(&pos_20ms_tim);
 }
 
 void Motor_init(void)
 {
-	
+	IMU_PosCali_Init();
+
 	MX_TIM1_PWM_Init();
 	//姿态环
 	pid_init(&HERO_copter.copter_pitch.ang,PITCHANG_PID);

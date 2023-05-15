@@ -9,8 +9,8 @@
 #include "drv_utils.h"
 #include "rtconfig.h"
 
-static rt_uint8_t status_ID;
-static status copter_status;
+//static rt_uint8_t status_ID;
+//static status copter_status;
 /* 引脚编号，通过查看设备驱动文件drv_gpio.c确定 */
 #define KEY1_PIN_NUM GET_PIN(B, 9)
 #define KEY2_PIN_NUM GET_PIN(C, 10)
@@ -45,13 +45,12 @@ static void RGB_R_TEST(void *args)
   utils_truncate_number(&duty,0,1);
   float duty_set = utils_map(duty,0,1,MIN_DUTY,MAX_DUTY);
   MX_TIM_DUTY(TIM1,TIM_CHANNEL_1,duty_set);
-		MX_TIM_DUTY(TIM1,TIM_CHANNEL_2,duty_set);
-		MX_TIM_DUTY(TIM1,TIM_CHANNEL_3,duty_set);
-		MX_TIM_DUTY(TIM1,TIM_CHANNEL_4,duty_set);
+	MX_TIM_DUTY(TIM1,TIM_CHANNEL_2,duty_set);
+	MX_TIM_DUTY(TIM1,TIM_CHANNEL_3,duty_set);
+	MX_TIM_DUTY(TIM1,TIM_CHANNEL_4,duty_set);
   //调节完成提示
   rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
-  int i;
-		for(i = 0; i < 0xffff ; i++);
+  rt_thread_mdelay(100);
   rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
 }
 

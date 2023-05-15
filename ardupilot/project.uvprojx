@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -546,6 +546,11 @@
               <FileName>drv_IMU.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\IMU\drv_IMU.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_IMUPosCail.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\IMU\drv_IMUPosCail.c</FilePath>
             </File>
             <File>
               <FileName>drv_icm20602.c</FileName>

@@ -372,10 +372,10 @@
 #define VEC_Y_PID	0.14f,0.03f,0.01f,100,2,-2 													//Y轴速度控制
 #define POS_H_PID 1.2f,0,0.3f,0,20,-20 													//高度控制，单P
 #define VEC_H_PID 28.0f,8.0f,0.6f,0,40,-40                        	  //高度速度控制
-#define PITCHSPE_PID 5.0f,0.8f,0.08f,1000.0f,100.0f,-100.0f												//PITCH角度控制
-#define PITCHANG_PID 2.0f,0.1f,0.03f,1000.0f,20.0f,-20.0f												//PITCH角速度控制
-#define ROLLSPE_PID  5.0f,0.8f,0.08f,1000.0f,100.0f,-100.0f												//ROLL角度控制
-#define ROLLANG_PID  2.0f,0.1f,0.03f,1000.0f,20.0f,-20.0f												//ROLL角速度控制
+#define PITCHSPE_PID 0.012f,0.0007f,0.001f,20.0f,1000.0f,-1000.0f												//PITCH角度控制
+#define PITCHANG_PID 0.8f,0.0f,0.08f,0.0f,200.0f,-200.0f												//PITCH角速度控制
+#define ROLLSPE_PID  0.012f,0.0007f,0.001f,20.0f,1000.0f,-1000.0f												//ROLL角度控制
+#define ROLLANG_PID  0.8f,0.0f,0.09f,5.0f,200.0f,-200.0f												//ROLL角速度控制
 #define YAWSPE_PID 	 1,0,0,0,100,-100												//YAW角度控制
 #define YAWANG_PID   1,0,0,0,100,-100												//YAW角速度控制
 #endif

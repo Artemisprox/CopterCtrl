@@ -128,7 +128,7 @@ void IMU_GyroCali_Thread(void *Para)
             // ¶ÁÊý¾Ý
             GyroRawNow.x = Sensor_RAW_IMU1.Gyro_Raw.x;
             GyroRawNow.y = Sensor_RAW_IMU1.Gyro_Raw.y;
-						GyroRawNow.z = Sensor_RAW_IMU1.Gyro_Raw.z;
+			GyroRawNow.z = Sensor_RAW_IMU1.Gyro_Raw.z;
             TempOK = IMU1_IfTempOK;
             break;
         
@@ -245,7 +245,7 @@ void IMU_GyroCali_Thread(void *Para)
     
 		
 		rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
-    rt_thread_mdelay(20);
+        rt_thread_mdelay(20);
 		rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
 		
     while (1)

@@ -121,7 +121,7 @@ int main(void)
 //					MX_TIM_DUTY(TIM1,TIM_CHANNEL_4,0.1f);
         Motor_init();
 					
-		//			RC_init();
+		//		RC_init();
     //		while(1);
 
     //    return RT_EOK;

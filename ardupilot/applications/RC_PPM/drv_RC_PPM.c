@@ -28,7 +28,7 @@ rt_err_t RC_PPM_Init(void)
         RC_PPM_REC_Thread,       			//线程入口
         RT_NULL,                      //入口参数无
         1024,                         //线程栈
-        THREAD_PRIO_IMU_DATA_COLLECT, //线程优先级
+        THREAD_PRIO_RC_RX, //线程优先级
         1);                           //线程时间片大小
 	
 	rt_thread_startup(RC_PPM);

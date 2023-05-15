@@ -19,6 +19,8 @@ static void IMU_redundancy_1ms_IRQHandler(void *parameter)
 
 void IMU_redundancy_Thread(void *para)
 {   
+		rt_int16_t IMU1_times_flag = 0;
+		rt_int16_t IMU2_times_flag = 0;
     //记录陀螺仪数据更新时间
     copter_IMU_redun.IMU1_fresh_last = Sensor_RAW_IMU1.DataFreshtime;
     copter_IMU_redun.IMU2_fresh_last = Sensor_RAW_IMU2.DataFreshtime;
@@ -30,19 +32,29 @@ void IMU_redundancy_Thread(void *para)
 
         if(copter_IMU_redun.IMU1_fresh_last == Sensor_RAW_IMU1.DataFreshtime)//若该时间段内陀螺仪未更新，则认为通信断开
         {
-            copter_IMU_redun.IMU1_state = 0;
+						if(IMU1_times_flag > 5)
+							copter_IMU_redun.IMU1_state = 0;
+						else
+							IMU1_times_flag ++;
         }else
         {
             copter_IMU_redun.IMU1_state = 1;
+						IMU1_times_flag = 0;
         }
+				copter_IMU_redun.IMU1_fresh_last = Sensor_RAW_IMU1.DataFreshtime;
 
         if(copter_IMU_redun.IMU2_fresh_last == Sensor_RAW_IMU2.DataFreshtime)//若该时间段内陀螺仪未更新，则认为通信断开
         {
-            copter_IMU_redun.IMU2_state = 0;
+						if(IMU2_times_flag > 5)
+							copter_IMU_redun.IMU2_state = 0;
+						else
+							IMU2_times_flag ++;
         }else
         {
             copter_IMU_redun.IMU2_state = 1;
+						IMU2_times_flag = 0;
         }
+				copter_IMU_redun.IMU2_fresh_last = Sensor_RAW_IMU2.DataFreshtime;
 
         //两个陀螺仪都寄了，判定没救了
         if((copter_IMU_redun.IMU1_state == 0) && (copter_IMU_redun.IMU2_state == 0))
@@ -97,7 +109,7 @@ void IMU_redundancy_init(void)
     rt_thread_t thread;
     rt_sem_init(&IMU_1ms_sem, "IMU_tim_sem", 0, RT_IPC_FLAG_FIFO);
     rt_sem_init(&IMU_redun_sem, "IMU_redundancy_sem", 0, RT_IPC_FLAG_FIFO);
-    thread = rt_thread_create("State_message", IMU_redundancy_Thread, RT_NULL, 2048, THREAD_PRIO_ATTICALCU, 1);
+    thread = rt_thread_create("State_message", IMU_redundancy_Thread, RT_NULL, 2048, THREAD_PRIO_IMU_REDUNCE,1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);
 
