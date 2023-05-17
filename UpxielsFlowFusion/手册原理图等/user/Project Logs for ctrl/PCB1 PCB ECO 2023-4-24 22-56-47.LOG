@@ -1,0 +1,28 @@
+Add Component: Footprint Not Found IND-SMD_L7.3-W7.3
+Added Component: Designator=Q1(SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR)
+Add component (AddParameter): Name = "Add into BOM"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Continuous Drain Current (Id)"; Value = "4.4A"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Convert to PCB"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet"; Value = "https://atta.szlcsc.com/upload/public/pdf/source/20190516/C393520_7481F6972A00CA4C56A9B9A98BC8DB32.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Device"; Value = "YJL3401A"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Drain Source On Resistance (RDS(on)@Vgs,Id)"; Value = "55m¦¸@10V,4.4A"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Drain Source Voltage (Vdss)"; Value = "30V"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Gate Threshold Voltage (Vgs(th)@Id)"; Value = "1.4V@250¦ÌA"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "JLCPCB Part Class"; Value = "Extended Part"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LCSC Part Name"; Value = "P¹µµÀ 30V 4.4A"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "YANGJIE(Ñï½Ü)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer Part"; Value = "YJL3401A"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Name"; Value = "YJL3401A"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Power Dissipation (Pd)"; Value = "1.2W"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Footprint"; Value = "SOT-23"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part"; Value = "C393520"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Symbol"; Value = "YJL3401A"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Type"; Value = "P¹µµÀ"; VariantName = "[No Variations]"
+Add Pin To Net: Unknown Pin: Pin L?-1
+Add Pin To Net: Unknown Pin: Pin L?-2
+Added Pin To Net: NetName=NetQ1_1 Pin=Q1-1
+Added Pin To Net: NetName=NetC19_1 Pin=Q1-2
+Added Pin To Net: NetName=7V4 Pin=Q1-3
+Add Class Member: Failed to add class member : Component L? 33uF/1.5A
+Added Member To Class: ClassName=Sheet1 Member=Component Q1 YJL3401A

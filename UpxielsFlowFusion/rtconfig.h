@@ -81,6 +81,7 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_CAN
 #define RT_USING_PIN
 
 /* Using USB */
@@ -195,6 +196,8 @@
 #define BSP_UART4_RX_USING_DMA
 #define BSP_USING_UART5
 #define BSP_UART5_RX_USING_DMA
+#define BSP_USING_CAN
+#define BSP_USING_CAN1
 
 /* Board extended module Drivers */
 

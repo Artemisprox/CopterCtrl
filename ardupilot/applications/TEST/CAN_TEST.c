@@ -160,7 +160,7 @@ static void TEST_CAN_Ctrl(void *parameter)
     struct rt_can_msg can_msg = {0};
     rt_int32_t count = 0;
 
-    can_msg.id = 0x1FF;              /* ID 为 0x78 */
+    can_msg.id = 0x001;              /* ID 为 0x78 */
     can_msg.ide = RT_CAN_STDID;     /* 标准格式 */
     can_msg.rtr = RT_CAN_DTR;       /* 数据帧 */
     can_msg.len = 8;                /* 数据长度为 8 */
@@ -180,7 +180,7 @@ static void TEST_CAN_Ctrl(void *parameter)
         {
             rt_device_write(TEST_can1_dev, 0, &can_msg, sizeof(can_msg));
             rt_device_write(TEST_can2_dev, 0, &can_msg, sizeof(can_msg));
-            can_msg.data[0] ++;
+            //can_msg.data[0] ++;
             //++count;
         }
         rt_thread_mdelay(1);

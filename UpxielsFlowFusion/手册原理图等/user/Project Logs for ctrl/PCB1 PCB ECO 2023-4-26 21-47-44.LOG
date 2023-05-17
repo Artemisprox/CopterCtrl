@@ -1,0 +1,5 @@
+Removed Pin From Net: NetName=USART2_RX Pin=R21-2
+Removed Pin From Net: NetName=USART2_TX Pin=R24-2
+Added Pin To Net: NetName=USART2_TX Pin=R21-2
+Added Pin To Net: NetName=USART2_RX Pin=R24-2
+Added Room: Name=Sheet1

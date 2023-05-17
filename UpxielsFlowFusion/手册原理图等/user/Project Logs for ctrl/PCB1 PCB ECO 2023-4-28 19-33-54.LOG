@@ -1,0 +1,31 @@
+Change Component Comment : Designator=R4 Old Comment=10K/0603 New Comment=40K/0603
+Change Component Designator: OldDesignator=R14 NewDesignator=R16
+Change Component Designator: OldDesignator=R16 NewDesignator=R17
+Change Component Designator: OldDesignator=R17 NewDesignator=R18
+Change Component Designator: OldDesignator=R18 NewDesignator=R19
+Change Component Designator: OldDesignator=R19 NewDesignator=R20
+Change Component Designator: OldDesignator=R20 NewDesignator=R21
+Change Component Designator: OldDesignator=R21 NewDesignator=R22
+Change Component Designator: OldDesignator=R22 NewDesignator=R23
+Change Component Designator: OldDesignator=R23 NewDesignator=R24
+Change Component Designator: OldDesignator=R24 NewDesignator=R25
+Change Component Designator: OldDesignator=R25 NewDesignator=R26
+Change Component Designator: OldDesignator=R26 NewDesignator=R27
+Change Component Designator: OldDesignator=R27 NewDesignator=R28
+Change Component Designator: OldDesignator=R28 NewDesignator=R29
+Change Component Designator: OldDesignator=R29 NewDesignator=R30
+Change Component Designator: OldDesignator=R30 NewDesignator=R31
+Change Component Designator: OldDesignator=R31 NewDesignator=R32
+Added Component: Designator=R14(R 0603_S)
+Added Pin To Net: NetName=7V4 Pin=R14-1
+Added Pin To Net: NetName=NetQ1_1 Pin=R14-2
+Change Net Name : Old Net Name=7V4 New Net Name=24V
+Change Net Name : Old Net Name=7V4_IN New Net Name=24V_IN
+Change Net Name : Old Net Name=NetR16_2 New Net Name=NetR17_2
+Added Member To Class: ClassName=Sheet1 Member=Component D8 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D9 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D10 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D11 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D12 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component R32 10K/0603
+Added Room: Name=Sheet1

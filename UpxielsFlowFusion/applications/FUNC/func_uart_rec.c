@@ -1,61 +1,54 @@
 #include "func_uart_rec.h"
 #include "drv_thread.h"
-#include "drv_Resolve.h"
-#include "drv_CustCtrler_Data.h"
 #include <board.h>
 
-// 磁编码器数据接收缓存区
+//光流数据接收缓存区
 uint8_t Rec_DataBuff[3][Data_len];
 // 接收错误计数
 uint16_t Rec_err_count[3];
 
 /* 串口设备句柄 */
-static rt_device_t Encoder_1_UartDev;
-static rt_device_t Encoder_2_UartDev;
-static rt_device_t Encoder_3_UartDev;
+static rt_device_t Flow_front_UartDev;
+static rt_device_t Flow_behind_UartDev;
 
-static rt_sem_t encoder_1_sem;
-static rt_sem_t encoder_2_sem;
-static rt_sem_t encoder_3_sem;
+static rt_sem_t flow_front_sem;
+static rt_sem_t flow_behind_sem;
 
-EncoderData_s Encoder1;
-EncoderData_s Encoder2;
-EncoderData_s Encoder3;
+/*光流数据*/
+upxiels_rawdata flow_front_data;
+upxiels_rawdata flow_behind_data;
+
+
 
 // 串口接收中断回调函数
-static rt_err_t encoder_1_RecCallback(rt_device_t dev, rt_size_t size)
+static rt_err_t flowfront_RecCallback(rt_device_t dev, rt_size_t size)
 {
-    rt_sem_release(encoder_1_sem);
+    rt_sem_release(flow_front_sem);
     return RT_EOK;
 }
-static rt_err_t encoder_2_RecCallback(rt_device_t dev, rt_size_t size)
+static rt_err_t flowbehind_RecCallback(rt_device_t dev, rt_size_t size)
 {
-    rt_sem_release(encoder_2_sem);
+    rt_sem_release(flow_behind_sem);
     return RT_EOK;
 }
-static rt_err_t encoder_3_RecCallback(rt_device_t dev, rt_size_t size)
-{
-    rt_sem_release(encoder_3_sem);
-    return RT_EOK;
-}
+
 
 /**
  * @brief 错误计数
  * @param encoder_num
  */
-static void IncErrCount(Encoder_Num encoder_num)
+static void IncErrCount(flow_num flow_num)
 {
-    switch (encoder_num)
+    switch (flow_num)
     {
-    case encoder_1:
+    case flow_front:
         Rec_err_count[0]++;
         break;
-    case encoder_2:
+    case flow_behind:
         Rec_err_count[1]++;
         break;
-    case encoder_3:
-        Rec_err_count[2]++;
-        break;
+		default:
+			break;
     }
 }
 
@@ -63,19 +56,18 @@ static void IncErrCount(Encoder_Num encoder_num)
  * @brief 错误计数清零
  * @param encoder_num
  */
-static void IncErrCountClear(Encoder_Num encoder_num)
+static void IncErrCountClear(flow_num flow_num)
 {
-    switch (encoder_num)
+    switch (flow_num)
     {
-    case encoder_1:
+    case flow_front:
         Rec_err_count[0] = 0;
         break;
-    case encoder_2:
+    case flow_behind:
         Rec_err_count[1] = 0;
         break;
-    case encoder_3:
-        Rec_err_count[2] = 0;
-        break;
+		default:
+				break;
     }
 }
 
@@ -83,154 +75,98 @@ static void IncErrCountClear(Encoder_Num encoder_num)
  * @brief
  * @param encoder_num
  */
-void *EncoderData_Get(Encoder_Num encoder_num)
+void *FlowData_Get(flow_num flow_num)
 {
-    switch (encoder_num)
+    switch (flow_num)
     {
-    case encoder_1:
-        return (void *)&Encoder1;
-    case encoder_2:
-        return (void *)&Encoder2;
-    case encoder_3:
-        return (void *)&Encoder3;
+    case flow_front:
+        return (void *)&flow_front_data;
+    case flow_behind:
+        return (void *)&flow_behind_data;
     default:
-        return NULL;
+        return RT_NULL;
     }
 }
 
-/**
- * @brief 磁编码器接收数据处理函数
- * @param RecData_buff
- * @param encoder_num
- * @return rt_err_t
- */
-rt_err_t RecData_Process(SendData_t *RecData_buff, Encoder_Num encoder_num)
-{
-    float data_temp;
-
-    // 帧头帧尾校验
-    if (RecData_buff->head[0] != 0xFD || RecData_buff->head[1] != 0xFE || RecData_buff->end != 0xFC)
-    {
-        // 相应错误计数+1
-        IncErrCount(encoder_num);
-        //方式DMA搬运错位后一直错位
-	    if(Rec_err_count[0]>30||Rec_err_count[1]>30||Rec_err_count[2]>30)
-		{
-            __set_FAULTMASK(1);
-            NVIC_SystemReset();
-		}
-        return RT_ERROR;
-    }
-    else
-			{		//这里不能删
-        IncErrCountClear(encoder_num);
-    }
-    /*换算编码器长度*/
-    EncoderData_raw2L(RecData_buff->raw_angle,
-                      EncoderData_Get(encoder_num));
-    /*滤波*/
-    data_temp = EncoderData_LowPass(EncoderData_Get(encoder_num));
-    /*存入数据服务器*/
-    CustCtrler_Data_L_Write_Single(data_temp, encoder_num);
-    return RT_EOK;
-}
-
-// 磁编码器数据处理线程
-static void encoder_1_thread(void *parameter)
+//光流数据处理线程
+static void flow_front_thread(void *parameter)
 {
     while (1)
     {
-        rt_sem_take(encoder_1_sem, RT_WAITING_FOREVER);
-        rt_device_read(Encoder_1_UartDev, 0, Rec_DataBuff[0], Data_len);
+        rt_sem_take(flow_front_sem, RT_WAITING_FOREVER);
+        rt_device_read(Flow_front_UartDev, 0, Rec_DataBuff[0], Data_len);
         // 接收数据的处理
-        RecData_Process((SendData_t *)Rec_DataBuff[0], encoder_1);
+				UP_Flow_Process(Rec_DataBuff[0],Data_len,FlowData_Get(flow_front));
     }
 }
-static void encoder_2_thread(void *parameter)
+static void flow_behind_thread(void  *parameter)
 {
     while (1)
     {
-        rt_sem_take(encoder_2_sem, RT_WAITING_FOREVER);
-        rt_device_read(Encoder_2_UartDev, 0, Rec_DataBuff[1], Data_len);
+        rt_sem_take(flow_behind_sem, RT_WAITING_FOREVER);
+        rt_device_read(Flow_behind_UartDev, 0, Rec_DataBuff[1], Data_len);
         // 接收数据的处理
-        RecData_Process((SendData_t *)Rec_DataBuff[1], encoder_2);
-    }
-}
-static void encoder_3_thread(void *parameter)
-{
-    while (1)
-    {
-        rt_sem_take(encoder_3_sem, RT_WAITING_FOREVER);
-        rt_device_read(Encoder_3_UartDev, 0, Rec_DataBuff[2], Data_len);
-        // 接收数据的处理
-        RecData_Process((SendData_t *)Rec_DataBuff[2], encoder_3);
+				UP_Flow_Process(Rec_DataBuff[1],Data_len,FlowData_Get(flow_behind));
+
     }
 }
 
+struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;  /* 初始化配置参数 */
 // 串口接收数据初始化
 rt_err_t UART_REC_Init(void)
 {
     rt_err_t res;
     rt_thread_t thread;
 
-    EncoderData_Init(&Encoder1,
-                     forward,
-                     ENCODER1_FILTERRATE);
-    EncoderData_Init(&Encoder2,
-                     forward,
-                     ENCODER2_FILTERRATE);
-    EncoderData_Init(&Encoder3,
-                     forward,
-                     ENCODER3_FILTERRATE);
-
     // 电机接收数据信号量
-    encoder_1_sem = rt_sem_create("encoder_1_sem", 0, RT_IPC_FLAG_PRIO);
-    encoder_2_sem = rt_sem_create("encoder_2_sem", 0, RT_IPC_FLAG_PRIO);
-    encoder_3_sem = rt_sem_create("encoder_3_sem", 0, RT_IPC_FLAG_PRIO);
+    flow_front_sem = rt_sem_create("flow_front_sem", 0, RT_IPC_FLAG_PRIO);
+    flow_behind_sem = rt_sem_create("flow_behind_sem", 0, RT_IPC_FLAG_PRIO);
 
     // 查找串口设备
-    Encoder_1_UartDev = rt_device_find(Encoder_1_DevName);
-    if (Encoder_1_UartDev == RT_NULL)
+    Flow_front_UartDev = rt_device_find(Flow_front_DevName);
+    if (Flow_front_UartDev == RT_NULL)
     {
         while (1)
             continue;
     }
-    Encoder_2_UartDev = rt_device_find(Encoder_2_DevName);
-    if (Encoder_2_UartDev == RT_NULL)
+
+		/* step2：修改串口配置参数 */
+		config.baud_rate = BAUD_RATE_19200;        //修改波特率为 19200
+		config.data_bits = DATA_BITS_8;           //数据位 8
+		config.stop_bits = STOP_BITS_1;           //停止位 1
+		config.bufsz     = 128;                   //修改缓冲区 buff size 为 128
+		config.parity    = PARITY_NONE;           //无奇偶校验位
+
+		/* step3：控制串口设备。通过控制接口传入命令控制字，与控制参数 */
+		rt_device_control(Flow_front_UartDev, RT_DEVICE_CTRL_CONFIG, &config);
+
+    Flow_behind_UartDev = rt_device_find(Flow_behind_DevName);
+    if (Flow_behind_UartDev == RT_NULL)
     {
         while (1)
             continue;
     }
-    Encoder_3_UartDev = rt_device_find(Encoder_3_DevName);
-    if (Encoder_3_UartDev == RT_NULL)
-    {
-        while (1)
-            continue;
-    }
+		
+		rt_device_control(Flow_behind_UartDev, RT_DEVICE_CTRL_CONFIG, &config);
+    
 
     // 打开串口设备
-    res = rt_device_open(Encoder_1_UartDev, RT_DEVICE_FLAG_DMA_RX);
+    res = rt_device_open(Flow_front_UartDev, RT_DEVICE_FLAG_DMA_RX);
     if (res != RT_EOK)
     {
         while (1)
             continue;
     }
-    res = rt_device_open(Encoder_2_UartDev, RT_DEVICE_FLAG_DMA_RX);
+    res = rt_device_open(Flow_behind_UartDev, RT_DEVICE_FLAG_DMA_RX);
     if (res != RT_EOK)
     {
         while (1)
             continue;
     }
-    res = rt_device_open(Encoder_3_UartDev, RT_DEVICE_FLAG_DMA_RX);
-    if (res != RT_EOK)
-    {
-        while (1)
-            continue;
-    }
-
-    thread = rt_thread_create("encoder_1", encoder_1_thread,
+    
+    thread = rt_thread_create("flow_front", flow_front_thread,
                               RT_NULL, 1024,
-                              THREAD_PRIO_ENCODER1_RX, 1);
+                              THREAD_PRIO_FLOW_RX, 1);
     /* 创建成功则启动线程 */
     if (thread != RT_NULL)
     {
@@ -240,9 +176,9 @@ rt_err_t UART_REC_Init(void)
     {
         return RT_ERROR;
     }
-    thread = rt_thread_create("encoder_2", encoder_2_thread,
+    thread = rt_thread_create("flow_behind", flow_behind_thread,
                               RT_NULL, 1024,
-                              THREAD_PRIO_ENCODER2_RX, 1);
+                              THREAD_PRIO_FLOW_RX, 1);
     /* 创建成功则启动线程 */
     if (thread != RT_NULL)
     {
@@ -252,23 +188,10 @@ rt_err_t UART_REC_Init(void)
     {
         return RT_ERROR;
     }
-    thread = rt_thread_create("encoder_3", encoder_3_thread,
-                              RT_NULL, 1024,
-                              THREAD_PRIO_ENCODER3_RX, 1);
-    /* 创建成功则启动线程 */
-    if (thread != RT_NULL)
-    {
-        rt_thread_startup(thread);
-    }
-    else
-    {
-        return RT_ERROR;
-    }
-
+    
     /* 设置接收回调函数 */
-    rt_device_set_rx_indicate(Encoder_1_UartDev, encoder_1_RecCallback);
-    rt_device_set_rx_indicate(Encoder_2_UartDev, encoder_2_RecCallback);
-    rt_device_set_rx_indicate(Encoder_3_UartDev, encoder_3_RecCallback);
+    rt_device_set_rx_indicate(Flow_front_UartDev, flowfront_RecCallback);
+    rt_device_set_rx_indicate(Flow_behind_UartDev, flowbehind_RecCallback);
 
     return RT_EOK;
 }

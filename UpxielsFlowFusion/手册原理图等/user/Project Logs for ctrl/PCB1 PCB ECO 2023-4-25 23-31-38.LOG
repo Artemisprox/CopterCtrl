@@ -1,0 +1,5 @@
+Added Component: Designator=L2(IND-SMD_L7.3-W7.3)
+Add component (AddParameter): Name = "BOM名称"; Value = "功率电感"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=NetC20_1 Pin=L2-1
+Added Pin To Net: NetName=NetC12_1 Pin=L2-2
+Added Member To Class: ClassName=Sheet1 Member=Component L2 33uF/1.5A

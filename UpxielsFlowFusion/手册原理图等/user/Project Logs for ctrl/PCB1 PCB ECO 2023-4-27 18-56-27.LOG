@@ -1,0 +1,20 @@
+Removed Pin From Net: NetName=3V3 Pin=C7-1
+Removed Pin From Net: NetName=GND Pin=C7-2
+Removed Member From Class: ClassName=Sheet1 Member=C7
+Added Member To Class: ClassName=Sheet1 Member=Component C14 4.7uF/50V/0805
+Added Member To Class: ClassName=Sheet1 Member=Component C16 100nF/50V/0603
+Added Member To Class: ClassName=Sheet1 Member=Component C18 4.7uF/25V
+Added Member To Class: ClassName=Sheet1 Member=Component C20 10uF/16V/0805
+Added Member To Class: ClassName=Sheet1 Member=Component C22 100nF/50V/1210
+Added Member To Class: ClassName=Sheet1 Member=Component C24 4.7uF/25V
+Added Member To Class: ClassName=Sheet1 Member=Component C26 100nF/50V/0603
+Added Member To Class: ClassName=Sheet1 Member=Component C28 4.7uF/50V/0805
+Added Member To Class: ClassName=Sheet1 Member=Component C30 47uF/50V/1210
+Added Member To Class: ClassName=Sheet1 Member=Component C32 0.1uF/0603
+Added Member To Class: ClassName=Sheet1 Member=Component C34 47pF/0603
+Added Member To Class: ClassName=Sheet1 Member=Component D6 SD103AWS
+Added Member To Class: ClassName=Sheet1 Member=Component D8 SD103AWS
+Added Member To Class: ClassName=Sheet1 Member=Component R22 100¦¸/0603
+Added Member To Class: ClassName=Sheet1 Member=Component R26 100¦¸/0603
+Added Member To Class: ClassName=Sheet1 Member=Component R27 10K/0603
+Added Room: Name=Sheet1

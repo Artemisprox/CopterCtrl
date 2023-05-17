@@ -1,0 +1,41 @@
+Removed Member From Class: ClassName=Sheet1 Member=D?
+Change Component Designator: OldDesignator=D8 NewDesignator=D14
+Change Component Designator: OldDesignator=D9 NewDesignator=D15
+Change Component Designator: OldDesignator=D10 NewDesignator=D16
+Change Component Designator: OldDesignator=D11 NewDesignator=D17
+Change Component Designator: OldDesignator=D12 NewDesignator=D18
+Change Component Designator: OldDesignator=D? NewDesignator=D8
+Change Component Designator: OldDesignator=D? NewDesignator=D9
+Change Component Designator: OldDesignator=D? NewDesignator=D10
+Change Component Designator: OldDesignator=D? NewDesignator=D11
+Change Component Designator: OldDesignator=D? NewDesignator=D12
+Change Component Designator: OldDesignator=D? NewDesignator=D13
+Change Component Designator: OldDesignator=D? NewDesignator=D19
+Change Component Designator: OldDesignator=D? NewDesignator=D20
+Change Component Designator: OldDesignator=D? NewDesignator=D21
+Change Component Designator: OldDesignator=D? NewDesignator=D22
+Change Component Designator: OldDesignator=D? NewDesignator=D23
+Change Component Designator: OldDesignator=D? NewDesignator=D24
+Change Component Designator: OldDesignator=D? NewDesignator=D25
+Change Component Designator: OldDesignator=D? NewDesignator=D26
+Change Component Designator: OldDesignator=Q? NewDesignator=Q1
+Change Net Name : Old Net Name=NetD8_1 New Net Name=NetD14_1
+Change Net Name : Old Net Name=NetD9_1 New Net Name=NetD15_1
+Change Net Name : Old Net Name=NetD10_1 New Net Name=NetD16_1
+Change Net Name : Old Net Name=NetQ?_1 New Net Name=NetQ1_1
+Change Net Name : Old Net Name=NetQ?_3 New Net Name=NetQ1_3
+Added Member To Class: ClassName=Sheet1 Member=Component D13 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D14 LED
+Added Member To Class: ClassName=Sheet1 Member=Component D15 LED
+Added Member To Class: ClassName=Sheet1 Member=Component D16 LED
+Added Member To Class: ClassName=Sheet1 Member=Component D17 SD103AWS
+Added Member To Class: ClassName=Sheet1 Member=Component D18 SD103AWS
+Added Member To Class: ClassName=Sheet1 Member=Component D19 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D20 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D21 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D22 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D23 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D24 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D25 ESD5Z5VL
+Added Member To Class: ClassName=Sheet1 Member=Component D26 ESD5Z5VL
+Added Room: Name=Sheet1

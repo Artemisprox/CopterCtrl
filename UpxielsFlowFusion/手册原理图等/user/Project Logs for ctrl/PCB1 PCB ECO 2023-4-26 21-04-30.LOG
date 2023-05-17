@@ -1,0 +1,14 @@
+Removed Pin From Net: NetName=5V Pin=D4-2
+Removed Pin From Net: NetName=5V Pin=D23-2
+Removed Member From Class: ClassName=Sheet1 Member=D4
+Removed Member From Class: ClassName=Sheet1 Member=D23
+Added Pin To Net: NetName=5V Pin=C12-1
+Added Pin To Net: NetName=5V Pin=C13-1
+Added Pin To Net: NetName=5V Pin=C14-1
+Added Pin To Net: NetName=5V Pin=C15-1
+Added Pin To Net: NetName=5V Pin=C16-1
+Added Pin To Net: NetName=5V Pin=C17-1
+Added Pin To Net: NetName=5V Pin=CN6-4
+Added Pin To Net: NetName=5V Pin=L2-2
+Added Pin To Net: NetName=5V Pin=R11-2
+Added Room: Name=Sheet1

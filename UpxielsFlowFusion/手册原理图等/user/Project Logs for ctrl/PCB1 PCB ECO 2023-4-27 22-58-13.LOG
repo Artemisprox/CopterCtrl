@@ -1,0 +1,65 @@
+Removed Pin From Net: NetName=SWDIO Pin=D10-2
+Removed Pin From Net: NetName=3V3 Pin=R27-1
+Removed Pin From Net: NetName=SWDIO Pin=R27-2
+Change Component Designator: OldDesignator=D8 NewDesignator=D11
+Change Component Designator: OldDesignator=D9 NewDesignator=D12
+Change Component Designator: OldDesignator=R23 NewDesignator=R26
+Change Component Designator: OldDesignator=R24 NewDesignator=R27
+Change Component Designator: OldDesignator=R25 NewDesignator=R28
+Change Component Designator: OldDesignator=R26 NewDesignator=R29
+Change Component Designator: OldDesignator=R28 NewDesignator=R30
+Change Component Designator: OldDesignator=R29 NewDesignator=R31
+Added Component: Designator=D8(LED_0603)
+Added Component: Designator=D9(LED_0603)
+Added Component: Designator=D10(LED_0603)
+Added Component: Designator=P3(pad_signal)
+Added Component: Designator=P4(pad_signal)
+Added Component: Designator=P5(pad_signal)
+Added Component: Designator=R23(R 0603_S)
+Added Component: Designator=R24(R 0603_S)
+Added Component: Designator=R25(R 0603_S)
+Added Pin To Net: NetName=SWDIO Pin=CN6-1
+Added Pin To Net: NetName=GND Pin=D8-2
+Added Pin To Net: NetName=GND Pin=D9-2
+Added Pin To Net: NetName=GND Pin=D10-2
+Added Pin To Net: NetName=GPIO_PB12 Pin=P3-1
+Added Pin To Net: NetName=GPIO_PB12 Pin=U1-33
+Added Net: Name=GPIO_PB12
+Added Pin To Net: NetName=GPIO_PB13 Pin=P4-1
+Added Pin To Net: NetName=GPIO_PB13 Pin=U1-34
+Added Net: Name=GPIO_PB13
+Added Pin To Net: NetName=GPIO_PB14 Pin=P5-1
+Added Pin To Net: NetName=GPIO_PB14 Pin=U1-35
+Added Net: Name=GPIO_PB14
+Added Pin To Net: NetName=LED_PC7 Pin=R25-1
+Added Pin To Net: NetName=LED_PC7 Pin=U1-38
+Added Net: Name=LED_PC7
+Added Pin To Net: NetName=LED_PC8 Pin=R24-1
+Added Pin To Net: NetName=LED_PC8 Pin=U1-39
+Added Net: Name=LED_PC8
+Added Pin To Net: NetName=LED_PC9 Pin=R23-1
+Added Pin To Net: NetName=LED_PC9 Pin=U1-40
+Added Net: Name=LED_PC9
+Added Pin To Net: NetName=NetD8_1 Pin=D8-1
+Added Pin To Net: NetName=NetD8_1 Pin=R23-2
+Added Net: Name=NetD8_1
+Added Pin To Net: NetName=NetD9_1 Pin=D9-1
+Added Pin To Net: NetName=NetD9_1 Pin=R24-2
+Added Net: Name=NetD9_1
+Added Pin To Net: NetName=NetD10_1 Pin=D10-1
+Added Pin To Net: NetName=NetD10_1 Pin=R25-2
+Added Net: Name=NetD10_1
+Added Member To Class: ClassName=Sheet1 Member=Component C17 10nF/50V/0603
+Added Member To Class: ClassName=Sheet1 Member=Component C20 100nF/50V/1210
+Added Member To Class: ClassName=Sheet1 Member=Component C21 100nF/50V/0603
+Added Member To Class: ClassName=Sheet1 Member=Component C23 100nF/50V/0603
+Added Member To Class: ClassName=Sheet1 Member=Component C30 47pF/0603
+Added Member To Class: ClassName=Sheet1 Member=Component C31 47pF/0603
+Added Member To Class: ClassName=Sheet1 Member=Component D11 SD103AWS
+Added Member To Class: ClassName=Sheet1 Member=Component D12 SD103AWS
+Added Member To Class: ClassName=Sheet1 Member=Component P3 PAD_Signal
+Added Member To Class: ClassName=Sheet1 Member=Component P4 PAD_Signal
+Added Member To Class: ClassName=Sheet1 Member=Component P5 PAD_Signal
+Added Member To Class: ClassName=Sheet1 Member=Component R30 120¦¸/0603
+Added Member To Class: ClassName=Sheet1 Member=Component R31 10K/0603
+Added Room: Name=Sheet1

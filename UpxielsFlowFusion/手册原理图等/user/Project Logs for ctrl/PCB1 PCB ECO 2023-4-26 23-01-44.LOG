@@ -1,0 +1,99 @@
+Removed Pin From Net: NetName=GND Pin=D9-1
+Removed Pin From Net: NetName=NetCN1_2 Pin=D9-2
+Removed Pin From Net: NetName=GND Pin=D10-1
+Removed Pin From Net: NetName=GND Pin=D11-1
+Removed Pin From Net: NetName=NetCN2_2 Pin=D11-2
+Removed Pin From Net: NetName=GND Pin=D12-1
+Removed Pin From Net: NetName=GND Pin=D13-1
+Removed Pin From Net: NetName=NetCN3_2 Pin=D13-2
+Removed Pin From Net: NetName=GND Pin=D14-1
+Removed Pin From Net: NetName=GND Pin=D17-1
+Removed Pin From Net: NetName=NetCN4_2 Pin=D17-2
+Removed Pin From Net: NetName=GND Pin=D18-1
+Removed Pin From Net: NetName=GND Pin=D19-1
+Removed Pin From Net: NetName=NetCN5_2 Pin=D19-2
+Removed Pin From Net: NetName=GND Pin=D20-1
+Removed Pin From Net: NetName=GND Pin=D21-1
+Removed Pin From Net: NetName=NetCN6_1 Pin=D21-2
+Removed Pin From Net: NetName=GND Pin=D22-1
+Removed Pin From Net: NetName=GND Pin=D24-1
+Removed Pin From Net: NetName=CAN_L Pin=D24-2
+Removed Pin From Net: NetName=GND Pin=D25-1
+Removed Pin From Net: NetName=CAN_H Pin=D25-2
+Removed Pin From Net: NetName=NetCN1_2 Pin=R20-1
+Removed Pin From Net: NetName=USART1_RX Pin=R20-2
+Removed Pin From Net: NetName=NetCN2_2 Pin=R21-1
+Removed Pin From Net: NetName=USART2_TX Pin=R21-2
+Removed Pin From Net: NetName=NetCN3_2 Pin=R22-1
+Removed Pin From Net: NetName=USART3_TX Pin=R22-2
+Removed Pin From Net: NetName=USART1_TX Pin=R23-2
+Removed Pin From Net: NetName=USART2_RX Pin=R24-2
+Removed Pin From Net: NetName=USART3_RX Pin=R25-2
+Removed Pin From Net: NetName=NetCN5_2 Pin=R29-1
+Removed Pin From Net: NetName=UART5_TX Pin=R29-2
+Removed Pin From Net: NetName=UART4_RX Pin=R30-2
+Removed Pin From Net: NetName=UART5_RX Pin=R31-2
+Removed Pin From Net: NetName=NetCN6_1 Pin=R32-2
+Removed Pin From Net: NetName=NetCN6_1 Pin=R33-1
+Removed Pin From Net: NetName=SWDIO Pin=R33-2
+Removed Pin From Net: NetName=SWCLK Pin=R34-2
+Removed Member From Class: ClassName=Sheet1 Member=D9
+Removed Member From Class: ClassName=Sheet1 Member=D10
+Removed Member From Class: ClassName=Sheet1 Member=D11
+Removed Member From Class: ClassName=Sheet1 Member=D12
+Removed Member From Class: ClassName=Sheet1 Member=D13
+Removed Member From Class: ClassName=Sheet1 Member=D14
+Removed Member From Class: ClassName=Sheet1 Member=D17
+Removed Member From Class: ClassName=Sheet1 Member=D18
+Removed Member From Class: ClassName=Sheet1 Member=D19
+Removed Member From Class: ClassName=Sheet1 Member=D20
+Removed Member From Class: ClassName=Sheet1 Member=D21
+Removed Member From Class: ClassName=Sheet1 Member=D22
+Removed Member From Class: ClassName=Sheet1 Member=D24
+Removed Member From Class: ClassName=Sheet1 Member=D25
+Removed Member From Class: ClassName=Sheet1 Member=R20
+Removed Member From Class: ClassName=Sheet1 Member=R21
+Removed Member From Class: ClassName=Sheet1 Member=R22
+Removed Member From Class: ClassName=Sheet1 Member=R23
+Removed Member From Class: ClassName=Sheet1 Member=R24
+Removed Member From Class: ClassName=Sheet1 Member=R25
+Removed Member From Class: ClassName=Sheet1 Member=R29
+Removed Member From Class: ClassName=Sheet1 Member=R30
+Removed Member From Class: ClassName=Sheet1 Member=R31
+Removed Member From Class: ClassName=Sheet1 Member=R33
+Removed Member From Class: ClassName=Sheet1 Member=R34
+Change Component Comment : Designator=R28 Old Comment=330次/0603 New Comment=100次/0603
+Added Component: Designator=D?(SOD-323)
+Added Component: Designator=R?(R 0603_S)
+Added Component: Designator=R?(R 0603_S)
+Added Component: Designator=R?(R 0603_S)
+Added Component: Designator=R?(R 0603_S)
+Added Pin To Net: NetName=SWCLK Pin=CN6-2
+Added Pin To Net: NetName=USART1_TX Pin=D6-1
+Added Pin To Net: NetName=USART2_RX Pin=D7-1
+Added Pin To Net: NetName=USART3_RX Pin=D8-1
+Added Pin To Net: NetName=UART4_RX Pin=D15-1
+Added Pin To Net: NetName=UART5_RX Pin=D16-1
+Added Pin To Net: NetName=NetCN6_1 Pin=D?-1
+Added Pin To Net: NetName=SWDIO Pin=D?-2
+Added Pin To Net: NetName=USART1_TX Pin=R17-2
+Added Pin To Net: NetName=USART2_RX Pin=R18-2
+Added Pin To Net: NetName=USART3_RX Pin=R19-2
+Added Pin To Net: NetName=UART4_RX Pin=R26-2
+Added Pin To Net: NetName=UART5_RX Pin=R27-2
+Added Pin To Net: NetName=SWDIO Pin=R32-2
+Added Pin To Net: NetName=SWCLK Pin=R36-1
+Added Pin To Net: NetName=NetCN1_2 Pin=R?-1
+Added Pin To Net: NetName=NetCN2_2 Pin=R?-1
+Added Pin To Net: NetName=NetCN3_2 Pin=R?-1
+Added Pin To Net: NetName=NetCN5_2 Pin=R?-1
+Added Pin To Net: NetName=UART5_TX Pin=R?-2
+Added Pin To Net: NetName=USART1_RX Pin=R?-2
+Added Pin To Net: NetName=USART2_TX Pin=R?-2
+Added Pin To Net: NetName=USART3_TX Pin=R?-2
+Added Member To Class: ClassName=Sheet1 Member=Component D? SD103AWS
+Added Member To Class: ClassName=Sheet1 Member=Component R? 100次/0603
+Added Member To Class: ClassName=Sheet1 Member=Component R? 100次/0603
+Added Member To Class: ClassName=Sheet1 Member=Component R? 100次/0603
+Added Member To Class: ClassName=Sheet1 Member=Component R? 100次/0603
+Added Room: Name=Sheet1
