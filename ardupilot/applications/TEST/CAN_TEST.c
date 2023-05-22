@@ -160,19 +160,19 @@ static void TEST_CAN_Ctrl(void *parameter)
     struct rt_can_msg can_msg = {0};
     rt_int32_t count = 0;
 
-    can_msg.id = 0x001;              /* ID 为 0x78 */
+    can_msg.id = 0x200;              /* ID 为 0x78 */
     can_msg.ide = RT_CAN_STDID;     /* 标准格式 */
     can_msg.rtr = RT_CAN_DTR;       /* 数据帧 */
     can_msg.len = 8;                /* 数据长度为 8 */
     /* 待发送的 8 字节数据 */
-    can_msg.data[0] = 0x01;
-    can_msg.data[1] = 0x01;
-    can_msg.data[2] = 0x05;
-    can_msg.data[3] = 0x01;
-    can_msg.data[4] = 0x01;
-    can_msg.data[5] = 0x01;
-    can_msg.data[6] = 0x01;
-    can_msg.data[7] = 0x01;
+    can_msg.data[0] = 0x11;
+    can_msg.data[1] = 0x11;
+    can_msg.data[2] = 0x11;
+    can_msg.data[3] = 0x11;
+    can_msg.data[4] = 0x11;
+    can_msg.data[5] = 0x11;
+    can_msg.data[6] = 0x11;
+    can_msg.data[7] = 0x11;
 
     while(1)
     {

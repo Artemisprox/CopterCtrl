@@ -1,0 +1,5 @@
+Removed Pin From Net: NetName=D_GND Pin=R26-1
+Removed Pin From Net: NetName=D_GND Pin=R33-2
+Added Pin To Net: NetName=GND Pin=R26-1
+Added Pin To Net: NetName=GND Pin=R33-2
+Added Member To Class: ClassName=MCU Member=Component C28 100nF/50V/0603

@@ -14,7 +14,7 @@
 #include <rtthread.h>
 #include "drv_RC_PPM.h"
 #include "func_motor.h"
-//#include "drv_RGB.h"
+#include "drv_RGB.h"
 #include "mod_Monitor.h"
 #include "func_SensorRAW.h"
 #include "func_TempCtr.h"
@@ -28,7 +28,7 @@
 #include "drv_canthread.h"
 #include "func_state.h"
 #include "func_ESC_Cali.h"
-#define TEST 1
+#define TEST 0
 
 #if (TEST)
 #define KEY_TEST 0

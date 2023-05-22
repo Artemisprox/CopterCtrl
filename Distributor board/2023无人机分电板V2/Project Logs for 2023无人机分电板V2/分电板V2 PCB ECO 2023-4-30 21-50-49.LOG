@@ -1,0 +1,18 @@
+Added Component: Designator=CN5(大电流)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Add into BOM"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Convert to PCB"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet"; Value = "https://atta.szlcsc.com/upload/public/pdf/source/20180125/C98732_15168617837851301983.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Device"; Value = "XT60PW-M"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "JLCPCB Part Class"; Value = "Extended Part"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LCSC Part Name"; Value = "XT60PW 公头 板插卧式"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "AMASS(艾迈斯)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer Part"; Value = "XT60PW-M"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Name"; Value = "XT60PW-M"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Footprint"; Value = "-"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part"; Value = "C98732"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Symbol"; Value = "XT60PW-M"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=CN5-1
+Added Pin To Net: NetName=48V Pin=CN5-2
+Added Member To Class: ClassName=2023无人机分电板V3 Member=Component CN5 XT60PW-F

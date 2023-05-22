@@ -1,0 +1,12 @@
+Change Component Footprint: Designator=Q15 Old Footprint=SOT23_N New Footprint=SOT23-3N
+Change Component Comment : Designator=Q15 Old Comment=9013 New Comment=5N10-MS
+Change component parameters: Designator = "Q15"; Footprint = "SOT23-3N"; UniqueID = "\MWWYQPJO"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "BOM_JLCPCB Part Class"; Value = "Extended Part"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "BOM_Manufacturer"; Value = "Yangzhou Yangjie Elec Tech"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "BOM_Manufacturer Part"; Value = "YJL3400A"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "BOM_Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "BOM_Supplier Part"; Value = "C699302"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Contributor"; Value = "LCSC"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "spicePre"; Value = "Q"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "spiceSymbolName"; Value = "YJL3400A"; VariantName = "[No Variations]"

@@ -21,7 +21,7 @@ void UP_Flow_Process(uint8_t *pData,uint8_t rec_length , upxiels_rawdata* flow_d
 	for(i = 2 ; i < 12 ; i++)
 	{
 		xor_check ^= pData[i];
-    }
+  }
     if( xor_check != pData[12] )
         return ;
 

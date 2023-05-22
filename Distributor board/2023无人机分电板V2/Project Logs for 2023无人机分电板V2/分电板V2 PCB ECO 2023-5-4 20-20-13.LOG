@@ -1,0 +1,6 @@
+Removed Pin From Net: NetName=VCC_DCDC Pin=C14-1
+Removed Pin From Net: NetName=GND Pin=C14-2
+Removed Pin From Net: NetName=VCC_DCDC Pin=C15-1
+Removed Pin From Net: NetName=GND Pin=C15-2
+Removed Member From Class: ClassName=MCU Member=C14
+Removed Member From Class: ClassName=MCU Member=C15

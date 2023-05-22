@@ -1,0 +1,16 @@
+Removed Pin From Net: NetName=24V_IN Pin=CN1-1
+Removed Pin From Net: NetName=G_B Pin=CN1-2
+Removed Pin From Net: NetName=24V_IN Pin=CN2-1
+Removed Pin From Net: NetName=G_A Pin=CN2-2
+Removed Pin From Net: NetName=24V_IN Pin=CN3-1
+Removed Pin From Net: NetName=G_C Pin=CN3-2
+Removed Pin From Net: NetName=24V_IN Pin=CN4-1
+Removed Pin From Net: NetName=G_D Pin=CN4-2
+Added Pin To Net: NetName=G_B Pin=CN1-1
+Added Pin To Net: NetName=24V_IN Pin=CN1-2
+Added Pin To Net: NetName=G_A Pin=CN2-1
+Added Pin To Net: NetName=24V_IN Pin=CN2-2
+Added Pin To Net: NetName=G_C Pin=CN3-1
+Added Pin To Net: NetName=24V_IN Pin=CN3-2
+Added Pin To Net: NetName=G_D Pin=CN4-1
+Added Pin To Net: NetName=24V_IN Pin=CN4-2

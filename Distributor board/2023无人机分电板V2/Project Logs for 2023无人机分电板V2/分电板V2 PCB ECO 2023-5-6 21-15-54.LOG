@@ -1,0 +1,13 @@
+Change Component Designator: OldDesignator=48_ON NewDesignator=24_ON
+Added Component: Designator=48V(LED_0603)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R26(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=48V Pin=48V-1
+Added Pin To Net: NetName=D_GND Pin=R26-1
+Change Net Name : Old Net Name=Net48_ON_2 New Net Name=Net24_ON_2
+Added Pin To Net: NetName=Net48V_2 Pin=48V-2
+Added Pin To Net: NetName=Net48V_2 Pin=R26-2
+Added Net: Name=Net48V_2
+Added Member To Class: ClassName=MCU Member=Component 48V LED/À¶
+Added Member To Class: ClassName=MCU Member=Component R26 47K

@@ -64,12 +64,9 @@ int can_init(void)
 		return RT_ERROR;
 	}
 	//配置can驱动
-	res = rt_device_open(can_dev, RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX);
-	RT_ASSERT(res == RT_EOK);
+	//RT_ASSERT(res == RT_EOK);
 	res = rt_device_control(can_dev, RT_CAN_CMD_SET_MODE, (void *)RT_CAN_MODE_NORMAL);
 	res = rt_device_control(can_dev, RT_CAN_CMD_SET_BAUD, (void *)CAN1MBaud);
-	//设置接收回调函数
-	rt_device_set_rx_indicate(can_dev, can1_rx_call);
 
 #ifdef RT_CAN_USING_HDR
 	struct rt_can_filter_item items[1] =
@@ -81,6 +78,10 @@ int can_init(void)
 	res = rt_device_control(can1_dev, RT_CAN_CMD_SET_FILTER, &cfg);
     RT_ASSERT(res == RT_EOK);
 #endif
+	
+	res = rt_device_open(can_dev, RT_DEVICE_FLAG_INT_RX);
+	//设置接收回调函数
+	rt_device_set_rx_indicate(can_dev, can1_rx_call);
 
 	return res;
 }

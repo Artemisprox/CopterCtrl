@@ -1,0 +1,63 @@
+Removed Pin From Net: NetName=GND Pin=CN1-2
+Removed Pin From Net: NetName=GND Pin=CN2-2
+Removed Pin From Net: NetName=GND Pin=CN3-2
+Removed Pin From Net: NetName=GND Pin=CN4-2
+Removed Pin From Net: NetName=GND Pin=IN1-1
+Removed Pin From Net: NetName=24V_INB Pin=INB1-2
+Removed Pin From Net: NetName=24V_INB Pin=INB2-1
+Removed Pin From Net: NetName=48VB Pin=INB2-2
+Removed Pin From Net: NetName=24V_IN Pin=INC1-2
+Removed Pin From Net: NetName=24V_IN Pin=INC2-1
+Removed Pin From Net: NetName=48V Pin=INC2-2
+Removed Member From Class: ClassName=2023无人机分电板V3 Member=CN1
+Removed Member From Class: ClassName=2023无人机分电板V3 Member=CN2
+Removed Member From Class: ClassName=2023无人机分电板V3 Member=CN3
+Removed Member From Class: ClassName=2023无人机分电板V3 Member=CN4
+Removed Member From Class: ClassName=2023无人机分电板V3 Member=IN1
+Change Component Designator: OldDesignator=D? NewDesignator=D16
+Change Component Designator: OldDesignator=Q? NewDesignator=Q15
+Change Component Designator: OldDesignator=U?? NewDesignator=U5
+Added Pin To Net: NetName=GND Pin=*1-4
+Added Pin To Net: NetName=GND Pin=*2-4
+Added Pin To Net: NetName=GND Pin=*-4
+Added Pin To Net: NetName=GND Pin=C5-1
+Added Pin To Net: NetName=GND Pin=C6-2
+Added Pin To Net: NetName=GND Pin=C7-1
+Added Pin To Net: NetName=GND Pin=C8-1
+Added Pin To Net: NetName=GND Pin=C50-2
+Added Pin To Net: NetName=GND Pin=C51-2
+Added Pin To Net: NetName=GND Pin=C52-2
+Added Pin To Net: NetName=GND Pin=C53-2
+Added Pin To Net: NetName=GND Pin=CN5-2
+Added Pin To Net: NetName=GND Pin=D2-2
+Added Pin To Net: NetName=GND Pin=D22-2
+Added Pin To Net: NetName=GND Pin=D23-2
+Added Pin To Net: NetName=GND Pin=D24-2
+Added Pin To Net: NetName=GND Pin=D25-2
+Added Pin To Net: NetName=GND Pin=D26-2
+Added Pin To Net: NetName=GND Pin=D27-2
+Added Pin To Net: NetName=GND Pin=D28-2
+Added Pin To Net: NetName=GND Pin=D29-2
+Added Pin To Net: NetName=24V_IN Pin=INB1-2
+Added Pin To Net: NetName=24V_IN Pin=INB2-1
+Added Pin To Net: NetName=48V Pin=INB2-2
+Added Pin To Net: NetName=24V_INB Pin=INC1-2
+Added Pin To Net: NetName=24V_INB Pin=INC2-1
+Added Pin To Net: NetName=48VB Pin=INC2-2
+Added Pin To Net: NetName=GND Pin=R1-2
+Added Pin To Net: NetName=GND Pin=R2-2
+Added Pin To Net: NetName=GND Pin=R3-2
+Added Pin To Net: NetName=GND Pin=R11-1
+Added Pin To Net: NetName=GND Pin=R14-1
+Added Pin To Net: NetName=GND Pin=U3-1
+Added Pin To Net: NetName=GND Pin=U4-4
+Added Pin To Net: NetName=GND Pin=U4-5
+Change Net Name : Old Net Name=24V_INB New Net Name=24V_INC
+Change Net Name : Old Net Name=48VB New Net Name=48VC
+Change Net Name : Old Net Name=NetQ?_1 New Net Name=NetQ15_1
+Added Member To Class: ClassName=2023无人机分电板V3 Member=Component P1 固定孔
+Added Member To Class: ClassName=2023无人机分电板V3 Member=Component P2 固定孔
+Added Member To Class: ClassName=2023无人机分电板V3 Member=Component P3 固定孔
+Added Member To Class: ClassName=2023无人机分电板V3 Member=Component P4 固定孔
+Added Room: Name=2023无人机分电板V3
+Added Room: Name=MCU

@@ -1,0 +1,4 @@
+Removed Pin From Net: NetName=MCU_GND Pin=X1-2
+Change Component Designator: OldDesignator=R35 NewDesignator=R?
+Added Pin To Net: NetName=NetC11_1 Pin=X1-2
+Added Member To Class: ClassName=MCU Member=Component R? 0

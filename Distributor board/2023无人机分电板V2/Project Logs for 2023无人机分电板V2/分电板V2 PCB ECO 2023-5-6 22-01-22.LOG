@@ -1,0 +1,10 @@
+Removed Pin From Net: NetName=MCU_GND Pin=C11-1
+Removed Pin From Net: NetName=MCU_GND Pin=C12-1
+Added Component: Designator=R35(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=GND Pin=R35-2
+Added Pin To Net: NetName=NetC11_1 Pin=C11-1
+Added Pin To Net: NetName=NetC11_1 Pin=C12-1
+Added Pin To Net: NetName=NetC11_1 Pin=R35-1
+Added Net: Name=NetC11_1
+Added Member To Class: ClassName=MCU Member=Component R35 0

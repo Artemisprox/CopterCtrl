@@ -1,0 +1,10 @@
+Output: Generates pick and place files
+Type  : Pick Place
+From  : Variant [[No Variations]] of Project [2023无人机分电板V2.PrjPcb]
+   Generated File[Pick Place for 分电板V2.csv]
+
+
+Files Generated   : 1
+Documents Printed : 0
+
+Finished Output Generation At 19:08:14 On 2023/5/21

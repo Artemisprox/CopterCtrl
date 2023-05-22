@@ -1,0 +1,5 @@
+Removed Pin From Net: NetName=48V Pin=CN5-1
+Removed Pin From Net: NetName=GND Pin=CN5-2
+Change Component Footprint: Designator=CN5 Old Footprint=CONN-TH_XT60PW-F New Footprint=´óµçÁ÷
+Added Pin To Net: NetName=GND Pin=CN5-1
+Added Pin To Net: NetName=48V Pin=CN5-2

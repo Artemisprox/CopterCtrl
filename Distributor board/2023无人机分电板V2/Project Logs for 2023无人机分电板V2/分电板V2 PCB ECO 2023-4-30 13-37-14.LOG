@@ -1,0 +1,65 @@
+Added Component: Designator=R20(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R23(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R24(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R33(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R41(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R51(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R53(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R58(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R61(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R62(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R66(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R67(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R68(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=PB9_CAN_TX Pin=R20-1
+Added Pin To Net: NetName=NetR20_2 Pin=R20-2
+Added Pin To Net: NetName=CAN1_L Pin=R23-1
+Added Pin To Net: NetName=CAN1_H Pin=R23-2
+Added Pin To Net: NetName=PB8_CAN_RX Pin=R24-1
+Added Pin To Net: NetName=NetR24_2 Pin=R24-2
+Added Pin To Net: NetName=NetD8_2 Pin=R33-1
+Added Pin To Net: NetName=D_GND Pin=R33-2
+Added Pin To Net: NetName=VCC5V Pin=R41-1
+Added Pin To Net: NetName=NetR41_2 Pin=R41-2
+Added Pin To Net: NetName=NetR48_1 Pin=R51-1
+Added Pin To Net: NetName=NetR51_2 Pin=R51-2
+Added Pin To Net: NetName=NetR53_1 Pin=R53-1
+Added Pin To Net: NetName=NetR51_2 Pin=R53-2
+Added Pin To Net: NetName=GND Pin=R58-1
+Added Pin To Net: NetName=NetR58_2 Pin=R58-2
+Added Pin To Net: NetName=MCU3V3 Pin=R61-1
+Added Pin To Net: NetName=SDA Pin=R61-2
+Added Pin To Net: NetName=MCU3V3 Pin=R62-1
+Added Pin To Net: NetName=SCL Pin=R62-2
+Added Pin To Net: NetName=GND Pin=R66-1
+Added Pin To Net: NetName=NetQ14_2 Pin=R66-2
+Added Pin To Net: NetName=GND Pin=R67-1
+Added Pin To Net: NetName=NetQ16_2 Pin=R67-2
+Added Pin To Net: NetName=GND Pin=R68-1
+Added Pin To Net: NetName=NetQ17_2 Pin=R68-2
+Added Member To Class: ClassName=MCU Member=Component R20 330R/0603
+Added Member To Class: ClassName=MCU Member=Component R23 120R/0603
+Added Member To Class: ClassName=MCU Member=Component R24 330R/0603
+Added Member To Class: ClassName=MCU Member=Component R33 2k/0603
+Added Member To Class: ClassName=MCU Member=Component R41 4.7k/0603
+Added Member To Class: ClassName=MCU Member=Component R51 75K
+Added Member To Class: ClassName=MCU Member=Component R53 4.7K
+Added Member To Class: ClassName=MCU Member=Component R58 330R
+Added Member To Class: ClassName=MCU Member=Component R61 330R
+Added Member To Class: ClassName=MCU Member=Component R62 330R
+Added Member To Class: ClassName=MCU Member=Component R66 3.3K
+Added Member To Class: ClassName=MCU Member=Component R67 3.3K
+Added Member To Class: ClassName=MCU Member=Component R68 3.3K

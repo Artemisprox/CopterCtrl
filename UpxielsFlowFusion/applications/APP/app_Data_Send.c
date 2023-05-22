@@ -51,8 +51,8 @@ static void Send_thread(void *parameter)
     {
         // 定周期发送给三维鼠标
         rt_sem_take(Send_sem, RT_WAITING_FOREVER);
-		FlowDataFusion((upxiels_rawdata*)FlowData_Get(flow_front) , FlowData_Get(flow_behind) , &flow_send );
-		Data_Write(&flow_send , &SendData_buff);
+				FlowDataFusion((upxiels_rawdata*)FlowData_Get(flow_front) , FlowData_Get(flow_behind) , &flow_send );
+				Data_Write(&flow_send , &SendData_buff);
         // 数据发送
         size = rt_device_write(Send_dev, 0, (rt_uint8_t *)&SendData_buff, SENDDATA_LEN);
         if (size != SENDDATA_LEN)

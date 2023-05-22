@@ -5,7 +5,8 @@
 #include "drv_canthread.h"
 
 int main(void)
-{
-    UART_REC_Init();
+{	
+		UART_REC_Init();
 		can_init();
+		UART_Send_Init();
 }

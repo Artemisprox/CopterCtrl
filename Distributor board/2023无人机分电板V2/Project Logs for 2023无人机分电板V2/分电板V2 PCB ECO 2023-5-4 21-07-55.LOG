@@ -1,0 +1,9 @@
+Removed Pin From Net: NetName=VH Pin=U2-5
+Removed Pin From Net: NetName=VH Pin=U2-10
+Removed Pin From Net: NetName=VH Pin=U2-13
+Added Pin To Net: NetName=NetC1_2 Pin=U2-5
+Added Pin To Net: NetName=NetC1_2 Pin=U2-10
+Added Pin To Net: NetName=NetC1_2 Pin=U2-13
+Change Net Name : Old Net Name=NetC1_2 New Net Name=VH
+Change Net Name : Old Net Name=VH New Net Name=VH_IN
+Added Member To Class: ClassName=MCU Member=Component C3 CAP

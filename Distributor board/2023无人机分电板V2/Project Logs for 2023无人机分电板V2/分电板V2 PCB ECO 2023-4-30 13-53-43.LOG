@@ -1,0 +1,9 @@
+Added Component: Designator=D15(LED-SMD_L3.0-W3.0_C9900015600)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=VCC5V Pin=D15-1
+Added Pin To Net: NetName=NetD15_2 Pin=D15-2
+Added Pin To Net: NetName=VCC5V Pin=D15-3
+Added Pin To Net: NetName=NetD15_4 Pin=D15-4
+Added Pin To Net: NetName=VCC5V Pin=D15-5
+Added Pin To Net: NetName=NetD15_6 Pin=D15-6
+Added Member To Class: ClassName=MCU Member=Component D15 RGB3030

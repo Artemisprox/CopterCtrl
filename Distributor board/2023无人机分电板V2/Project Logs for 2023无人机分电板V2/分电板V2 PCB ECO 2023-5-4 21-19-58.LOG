@@ -1,0 +1,42 @@
+Change component parameters: Designator = "L1"; Footprint = "L 0603"; UniqueID = "\JJKSNMDF"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "BOM_Manufacturer"; Value = "Sunlord"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "BOM_Manufacturer Part"; Value = "UPZ1608U471-1R5TF"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "BOM_Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "BOM_Supplier Part"; Value = "C74335"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "nameAlias"; Value = "Value"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "spicePre"; Value = "L"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "spiceSymbolName"; Value = "UPZ1608U471-1R5TF"; VariantName = "[No Variations]"
+Added Component: Designator=C12(C 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=X1(OSC 3225-4P)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM_Manufacturer"; Value = "Yangxing Tech"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "BOM_Manufacturer Part"; Value = "OP322512MEDA4SI-u"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "BOM_Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "BOM_Supplier Part"; Value = "C382483"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contributor"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "nameAlias"; Value = "Frequency"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "spicePre"; Value = "X"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "spiceSymbolName"; Value = "OP322512MEDA4SI-U"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=MCU_GND Pin=C11-1
+Added Pin To Net: NetName=NetC11_2 Pin=C11-2
+Added Pin To Net: NetName=MCU_GND Pin=C12-1
+Added Pin To Net: NetName=3V3 Pin=C12-2
+Added Pin To Net: NetName=NetC11_2 Pin=L1-1
+Added Pin To Net: NetName=3V3 Pin=L1-2
+Added Pin To Net: NetName=NetR17_1 Pin=R17-1
+Added Pin To Net: NetName=NetC11_2 Pin=R17-2
+Added Pin To Net: NetName=NetR21_1 Pin=R21-1
+Added Pin To Net: NetName=OSC_12M Pin=R21-2
+Added Pin To Net: NetName=NetR17_1 Pin=X1-1
+Added Pin To Net: NetName=MCU_GND Pin=X1-2
+Added Pin To Net: NetName=NetR21_1 Pin=X1-3
+Added Pin To Net: NetName=NetC11_2 Pin=X1-4
+Added Member To Class: ClassName=MCU Member=Component C11 100nF
+Added Member To Class: ClassName=MCU Member=Component C12 1uF
+Added Member To Class: ClassName=MCU Member=Component L1 ¥≈÷È470¶∏/100MHz
+Added Member To Class: ClassName=MCU Member=Component R1 100K
+Added Member To Class: ClassName=MCU Member=Component R17 10k/0603
+Added Member To Class: ClassName=MCU Member=Component R21 10R
+Added Member To Class: ClassName=MCU Member=Component X1 YSO680PR_12M_3.3V

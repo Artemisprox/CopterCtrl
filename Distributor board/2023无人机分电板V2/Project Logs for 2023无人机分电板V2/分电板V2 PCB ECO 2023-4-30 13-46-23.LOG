@@ -1,0 +1,66 @@
+Added Component: Designator=U2(SOIC-14_L8.7-W3.9-P1.27-LS6.0-BL - duplicate)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Add into BOM"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Amplifier Type"; Value = "General Purpose"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Convert to PCB"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet"; Value = "https://atta.szlcsc.com/upload/public/pdf/source/20140704/1457707114488.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Device"; Value = "LM324DR"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Gain Bandwidth Product（GBP）"; Value = "1.2MHz"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Iq per channel (Typ)"; Value = "1.4mA"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "JLCPCB Part Class"; Value = "Extended Part"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LCSC Part Name"; Value = "LM324DR"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "TI(德州仪器)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer Part"; Value = "LM324DR"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Name"; Value = "LM324DR"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Circuits"; Value = "4"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Operating Temperature"; Value = "0°C ~ 70°C"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Output Type"; Value = "-"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Slew Rate（SR）"; Value = "0.5 V/us"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Footprint"; Value = "SOIC-14"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part"; Value = "C7943"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supply Voltage（Single）"; Value = "3V ~ 32V, ±1.5V ~ 16V"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Symbol"; Value = "LM324DR"; VariantName = "[No Variations]"
+Added Component: Designator=U9(NSOP-16_L9.9-W3.9-P1.27-LS6.0-BL)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Add into BOM"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Convert to PCB"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet"; Value = "https://atta.szlcsc.com/upload/public/pdf/source/20160706/1467801115498.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Device"; Value = "TM7705_C77545"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "JLCPCB Part Class"; Value = "Extended Part"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LCSC Part Name"; Value = "TM7705  窄体"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "TM(天微)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer Part"; Value = "TM7705"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Name"; Value = "TM7705"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Footprint"; Value = "SOIC-16"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part"; Value = "C77545"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Symbol"; Value = "TM7705_C77545"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=24V_SW Pin=U2-1
+Added Pin To Net: NetName=NetR10_2 Pin=U2-2
+Added Pin To Net: NetName=NetC4_2 Pin=U2-3
+Added Pin To Net: NetName=12V Pin=U2-4
+Added Pin To Net: NetName=VH Pin=U2-5
+Added Pin To Net: NetName=AGND Pin=U2-6
+Added Pin To Net: NetName=AGND Pin=U2-9
+Added Pin To Net: NetName=VH Pin=U2-10
+Added Pin To Net: NetName=AGND Pin=U2-11
+Added Pin To Net: NetName=AGND Pin=U2-12
+Added Pin To Net: NetName=VH Pin=U2-13
+Added Pin To Net: NetName=NetC39_2 Pin=U9-1
+Added Pin To Net: NetName=UA Pin=U9-2
+Added Pin To Net: NetName=UB Pin=U9-3
+Added Pin To Net: NetName=UC Pin=U9-4
+Added Pin To Net: NetName=NetR51_2 Pin=U9-5
+Added Pin To Net: NetName=NetR58_2 Pin=U9-6
+Added Pin To Net: NetName=SDA Pin=U9-7
+Added Pin To Net: NetName=SCL Pin=U9-8
+Added Pin To Net: NetName=OSC_8M Pin=U9-10
+Added Pin To Net: NetName=GND Pin=U9-11
+Added Pin To Net: NetName=VDD Pin=U9-12
+Added Pin To Net: NetName=AVDD Pin=U9-13
+Added Pin To Net: NetName=AVDD Pin=U9-14
+Added Pin To Net: NetName=AGND Pin=U9-15
+Added Pin To Net: NetName=AGND Pin=U9-16
+Added Member To Class: ClassName=2023无人机分电板V3 Member=Component U2 LM324DR
+Added Member To Class: ClassName=MCU Member=Component U9 BH45B1225

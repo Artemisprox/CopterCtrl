@@ -1,0 +1,30 @@
+Output: Gerber Files
+Type  : Gerber
+From  : Variant [[No Variations]] of Project [Free Documents]
+   Generated File[分电板V2.GTO]
+   Generated File[分电板V2.GTP]
+   Generated File[分电板V2.GTS]
+   Generated File[分电板V2.GTL]
+   Generated File[分电板V2.GP1]
+   Generated File[分电板V2.G1]
+   Generated File[分电板V2.GBL]
+   Generated File[分电板V2.GBS]
+   Generated File[分电板V2.GBP]
+   Generated File[分电板V2.GBO]
+   Generated File[分电板V2.GM1]
+   Generated File[分电板V2.GM6]
+   Generated File[分电板V2.GM13]
+   Generated File[分电板V2.GM15]
+   Generated File[分电板V2.GPT]
+   Generated File[分电板V2.GPB]
+   Generated File[分电板V2.GD1]
+   Generated File[分电板V2.GG1]
+   Generated File[分电板V2.RUL]
+   Generated File[分电板V2.EXTREP]
+   Generated File[分电板V2.REP]
+
+
+Files Generated   : 21
+Documents Printed : 0
+
+Finished Output Generation At 9:35:18 On 2023/5/16

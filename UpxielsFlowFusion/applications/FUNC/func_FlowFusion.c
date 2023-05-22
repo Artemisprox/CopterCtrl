@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <math.h>
 
-static double variance(float data1 , float data2)
+static double variance(int16_t data1 , int16_t data2)
 {
     return (data1 - data2)*(data1 - data2);
 }
 
+long temp = 0;
 void FlowDataFusion(upxiels_rawdata *data1 , upxiels_rawdata *data2 , upxiels_rawdata *data_out)
 {
     /*计算平均值*/
@@ -22,9 +23,10 @@ void FlowDataFusion(upxiels_rawdata *data1 , upxiels_rawdata *data2 , upxiels_ra
 	if( fabsf(IMU_RawData.YawSpe) > IMU_THRESHOLD )//正在进行yaw轴方向机动，光流计数据偏差是正常的
 		IMU_flag = 1;
 	else IMU_flag = 0;
-		
+	
+		temp = variance(data1->flow_x_integral , data2->flow_x_integral) + variance(data1->flow_y_integral , data2->flow_y_integral);
     /*光流数据比较*/
-    if( ( variance(data1->x_radians , data2->x_radians) + variance(data1->y_radians , data2->y_radians))  > FLOW_THRESHOLD)//在正常悬停下出现光流计数据失真
+    if( ( variance(data1->flow_x_integral , data2->flow_x_integral) + variance(data1->flow_y_integral , data2->flow_y_integral))  > FLOW_THRESHOLD)//在正常悬停下出现光流计数据失真
         Flow_flag = 1;
     else Flow_flag = 0;
 		
@@ -56,5 +58,7 @@ void FlowDataFusion(upxiels_rawdata *data1 , upxiels_rawdata *data2 , upxiels_ra
 		{
 			data_out->quality = 0;
 		}
+		
+		data_out->integration_timespan = data1->integration_timespan;
 		
 }

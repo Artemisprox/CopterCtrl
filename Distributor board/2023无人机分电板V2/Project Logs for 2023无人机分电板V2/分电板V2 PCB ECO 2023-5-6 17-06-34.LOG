@@ -1,0 +1,132 @@
+Removed Pin From Net: NetName=24V_IN Pin=CN7-1
+Removed Pin From Net: NetName=R_A Pin=CN7-2
+Removed Pin From Net: NetName=G_A Pin=CN7-3
+Removed Pin From Net: NetName=B_A Pin=CN7-4
+Removed Pin From Net: NetName=24V_IN Pin=CN8-1
+Removed Pin From Net: NetName=R_B Pin=CN8-2
+Removed Pin From Net: NetName=G_B Pin=CN8-3
+Removed Pin From Net: NetName=B_B Pin=CN8-4
+Removed Pin From Net: NetName=24V_IN Pin=CN9-1
+Removed Pin From Net: NetName=R_C Pin=CN9-2
+Removed Pin From Net: NetName=G_C Pin=CN9-3
+Removed Pin From Net: NetName=B_C Pin=CN9-4
+Removed Pin From Net: NetName=24V_IN Pin=CN10-1
+Removed Pin From Net: NetName=R_D Pin=CN10-2
+Removed Pin From Net: NetName=G_D Pin=CN10-3
+Removed Pin From Net: NetName=B_D Pin=CN10-4
+Removed Member From Class: ClassName=MCU Member=CN7
+Removed Member From Class: ClassName=MCU Member=CN8
+Removed Member From Class: ClassName=MCU Member=CN9
+Removed Member From Class: ClassName=MCU Member=CN10
+Added Component: Designator=CN1(CONN-TH_A2006WR-2X2P)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Add into BOM"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Material"; Value = "»ÆÍ­"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Convert to PCB"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet"; Value = "https://atta.szlcsc.com/upload/public/pdf/source/20180913/C273077_48101FEEEEEA06DA8F558152F6E7ED54.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Device"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "JLCPCB Part Class"; Value = "Extended Part"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LCSC Part Name"; Value = "PH 2mm 2x2P ¶ÆÎý"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "CJT(³¤½­Á¬½ÓÆ÷)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer Part"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Style"; Value = "-"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Name"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of PINs Per Row"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Rows"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pins Structure"; Value = "2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pitch"; Value = "2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Reference Series"; Value = "PH"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Row Spacing"; Value = "2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Footprint"; Value = "Íä²å,P=2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part"; Value = "C273077"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Symbol"; Value = "A2006WR-2X2P_C273077"; VariantName = "[No Variations]"
+Added Component: Designator=CN2(CONN-TH_A2006WR-2X2P)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Add into BOM"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Material"; Value = "»ÆÍ­"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Convert to PCB"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet"; Value = "https://atta.szlcsc.com/upload/public/pdf/source/20180913/C273077_48101FEEEEEA06DA8F558152F6E7ED54.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Device"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "JLCPCB Part Class"; Value = "Extended Part"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LCSC Part Name"; Value = "PH 2mm 2x2P ¶ÆÎý"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "CJT(³¤½­Á¬½ÓÆ÷)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer Part"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Style"; Value = "-"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Name"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of PINs Per Row"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Rows"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pins Structure"; Value = "2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pitch"; Value = "2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Reference Series"; Value = "PH"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Row Spacing"; Value = "2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Footprint"; Value = "Íä²å,P=2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part"; Value = "C273077"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Symbol"; Value = "A2006WR-2X2P_C273077"; VariantName = "[No Variations]"
+Added Component: Designator=CN3(CONN-TH_A2006WR-2X2P)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Add into BOM"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Material"; Value = "»ÆÍ­"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Convert to PCB"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet"; Value = "https://atta.szlcsc.com/upload/public/pdf/source/20180913/C273077_48101FEEEEEA06DA8F558152F6E7ED54.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Device"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "JLCPCB Part Class"; Value = "Extended Part"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LCSC Part Name"; Value = "PH 2mm 2x2P ¶ÆÎý"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "CJT(³¤½­Á¬½ÓÆ÷)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer Part"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Style"; Value = "-"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Name"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of PINs Per Row"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Rows"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pins Structure"; Value = "2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pitch"; Value = "2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Reference Series"; Value = "PH"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Row Spacing"; Value = "2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Footprint"; Value = "Íä²å,P=2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part"; Value = "C273077"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Symbol"; Value = "A2006WR-2X2P_C273077"; VariantName = "[No Variations]"
+Added Component: Designator=CN4(CONN-TH_A2006WR-2X2P)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Add into BOM"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Material"; Value = "»ÆÍ­"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Convert to PCB"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet"; Value = "https://atta.szlcsc.com/upload/public/pdf/source/20180913/C273077_48101FEEEEEA06DA8F558152F6E7ED54.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Device"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "JLCPCB Part Class"; Value = "Extended Part"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LCSC Part Name"; Value = "PH 2mm 2x2P ¶ÆÎý"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "CJT(³¤½­Á¬½ÓÆ÷)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer Part"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Style"; Value = "-"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Name"; Value = "A2006WR-2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of PINs Per Row"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Rows"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pins Structure"; Value = "2x2P"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pitch"; Value = "2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Reference Series"; Value = "PH"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Row Spacing"; Value = "2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "LCSC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Footprint"; Value = "Íä²å,P=2mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part"; Value = "C273077"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Symbol"; Value = "A2006WR-2X2P_C273077"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=24V_IN Pin=CN1-1
+Added Pin To Net: NetName=G_B Pin=CN1-2
+Added Pin To Net: NetName=R_B Pin=CN1-3
+Added Pin To Net: NetName=B_B Pin=CN1-4
+Added Pin To Net: NetName=24V_IN Pin=CN2-1
+Added Pin To Net: NetName=G_A Pin=CN2-2
+Added Pin To Net: NetName=R_A Pin=CN2-3
+Added Pin To Net: NetName=B_A Pin=CN2-4
+Added Pin To Net: NetName=24V_IN Pin=CN3-1
+Added Pin To Net: NetName=G_C Pin=CN3-2
+Added Pin To Net: NetName=R_C Pin=CN3-3
+Added Pin To Net: NetName=B_C Pin=CN3-4
+Added Pin To Net: NetName=24V_IN Pin=CN4-1
+Added Pin To Net: NetName=G_D Pin=CN4-2
+Added Pin To Net: NetName=R_D Pin=CN4-3
+Added Pin To Net: NetName=B_D Pin=CN4-4
+Added Member To Class: ClassName=MCU Member=Component CN1 A2006WR-2x2P
+Added Member To Class: ClassName=MCU Member=Component CN2 A2006WR-2x2P
+Added Member To Class: ClassName=MCU Member=Component CN3 A2006WR-2x2P
+Added Member To Class: ClassName=MCU Member=Component CN4 A2006WR-2x2P

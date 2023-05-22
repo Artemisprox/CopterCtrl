@@ -1,0 +1,13 @@
+Removed Pin From Net: NetName=AGND Pin=U9-15
+Added Component: Designator=R35B(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R35(R 0603_L)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=VREF Pin=R35-1
+Added Pin To Net: NetName=AGND Pin=R35B-2
+Added Pin To Net: NetName=NetR35_2 Pin=R35-2
+Added Pin To Net: NetName=NetR35_2 Pin=R35B-1
+Added Pin To Net: NetName=NetR35_2 Pin=U9-15
+Added Net: Name=NetR35_2
+Added Member To Class: ClassName=MCU Member=Component R35B NAN
+Added Member To Class: ClassName=MCU Member=Component R35 0

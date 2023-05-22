@@ -1,0 +1,4 @@
+Change Component Designator: OldDesignator=SW NewDesignator=24_ON
+Added Pin To Net: NetName=24V_SW Pin=24_ON-1
+Added Pin To Net: NetName=24V_SW Pin=R6-1
+Added Pin To Net: NetName=24V_SW Pin=R7-1

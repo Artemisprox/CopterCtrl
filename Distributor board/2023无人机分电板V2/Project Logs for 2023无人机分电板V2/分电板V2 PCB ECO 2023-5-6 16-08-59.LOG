@@ -1,0 +1,8 @@
+Removed Pin From Net: NetName=24V Pin=CN7-1
+Removed Pin From Net: NetName=24V Pin=CN8-1
+Removed Pin From Net: NetName=24V Pin=CN9-1
+Removed Pin From Net: NetName=24V Pin=CN10-1
+Added Pin To Net: NetName=24V_IN Pin=CN7-1
+Added Pin To Net: NetName=24V_IN Pin=CN8-1
+Added Pin To Net: NetName=24V_IN Pin=CN9-1
+Added Pin To Net: NetName=24V_IN Pin=CN10-1
