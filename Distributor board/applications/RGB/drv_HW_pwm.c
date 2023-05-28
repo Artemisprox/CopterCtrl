@@ -1,4 +1,5 @@
 #include "drv_HW_pwm.h"
+#include <rtdevice.h>
 
 extern void Error_Handler(void);
 extern void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
@@ -224,7 +225,7 @@ static void MX_TIM3_Init(void)
     /* USER CODE END TIM3_Init 2 */
     HAL_TIM_MspPostInit(&htim3);
 
-    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+    //HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);

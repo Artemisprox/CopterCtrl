@@ -3,7 +3,6 @@
 
 #include "stm32f1xx_hal.h"
 
-
 void HW_PWM_Init(void);
 void HW_PWM_Pulse_Set(TIM_TypeDef *TIMx , uint32_t Channel, int16_t Pulse);
 

@@ -4,7 +4,7 @@
 
 void BEEP_init(void)
 {
-	/* 蜂鸣器引脚为输出模式 */
+		/* 蜂鸣器引脚为输出模式 */
     rt_pin_mode(BEEP_PIN_NUM, PIN_MODE_OUTPUT);
     /* 默认低电平 */
     rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
