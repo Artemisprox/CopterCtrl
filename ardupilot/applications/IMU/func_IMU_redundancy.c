@@ -68,6 +68,7 @@ void IMU_redundancy_Thread(void *para)
         switch (copter_IMU_redun.IMU_using)//根据使用的陀螺仪将数据写入结构体，进入姿态解算部分
         {
         case IMU1_set:
+            AcclPosCorrect(&Sensor_RAW_IMU1.Accl_Raw,IMU1_set);
             copter_IMU_RAW.Gyro_Raw.x = Sensor_RAW_IMU1.Gyro_Raw.x - IMU1_OffSet.x;
             copter_IMU_RAW.Gyro_Raw.y = Sensor_RAW_IMU1.Gyro_Raw.y - IMU1_OffSet.y;
             copter_IMU_RAW.Gyro_Raw.z = Sensor_RAW_IMU1.Gyro_Raw.z - IMU1_OffSet.z;
@@ -80,6 +81,7 @@ void IMU_redundancy_Thread(void *para)
 						copter_IMU_RAW.RawDataReady = 1;
             break;
         case IMU2_set:
+            AcclPosCorrect(&Sensor_RAW_IMU2.Accl_Raw,IMU2_set);
             copter_IMU_RAW.Gyro_Raw.x = Sensor_RAW_IMU2.Gyro_Raw.x - IMU2_OffSet.x;
             copter_IMU_RAW.Gyro_Raw.y = Sensor_RAW_IMU2.Gyro_Raw.y - IMU2_OffSet.y;
             copter_IMU_RAW.Gyro_Raw.z = Sensor_RAW_IMU2.Gyro_Raw.z - IMU2_OffSet.z;

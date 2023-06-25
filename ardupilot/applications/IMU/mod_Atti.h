@@ -5,7 +5,6 @@
 #include <rtdevice.h>
 #include <board.h>
 
-
 extern int Atti_init(void);
 
 

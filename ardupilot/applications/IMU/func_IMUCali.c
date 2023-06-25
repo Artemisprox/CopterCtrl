@@ -3,10 +3,10 @@
 #include "drv_HWTimer.h"
 #include "func_SensorRAW.h"
 #include "func_TempCtr.h"
-
+#include "arm_math.h"
 
 #define FLASH_ERASE_PIN GET_PIN(B, 6)
-#define GYRO_SUM_MAX 60000 // Ð£×¼ÍÓÂÝÒÇ»ý·ÖÊ±ÐèÒªÊÕ¼¯Êý¾ÝµÄ¸öÊý
+#define GYRO_SUM_MAX 20000 // Ð£×¼ÍÓÂÝÒÇ»ý·ÖÊ±ÐèÒªÊÕ¼¯Êý¾ÝµÄ¸öÊý
 
 #define GYRO_RAWDATA(Axis) (copter_IMU_RAW.Gyro_Raw.Axis)
 #define ACCL_RAWDATA(Axis) (copter_IMU_RAW.Accl_Raw.Axis)
@@ -28,6 +28,9 @@
 // Ê¹ÓÃÆ«ÒÆÁ¿Ê±£¬ÏÈÓÃRawÊý¾Ý¼õÈ¥Æ«ÒÆÁ¿£¬ÔÙ½øÐÐ°²×°Î»ÖÃÐ£Õý
 AHRS_Gyro_t IMU1_OffSet = {0}; // Ä¬ÈÏÎª0
 AHRS_Gyro_t IMU2_OffSet = {0}; // Ä¬ÈÏÎª0
+AHRS_Eulr_t Accl_Pos = {0};    //Ä¬ÈÏÎª0
+static float Accl1_R[3][3] = {0};
+static float Accl2_R[3][3] = {0};
 
 IMU_set_e IMU_Cali_set;
 
@@ -42,12 +45,48 @@ void GetCaliIMUData(AHRS_Accl_t *AcclRaw, AHRS_Gyro_t *GyroRaw, AHRS_Accl_t *Acc
     Gyro->z = GYRO_Z_SOURCE;
 }
 
+//¼ÓËÙ¶È¼Æ°²×°Î»ÖÃÐ£×¼Ðý×ª¾ØÕó²ÎÊýÉèÖÃ
+void AcclInstallPosCal(float Accl_R[][3] , AHRS_Eulr_t first_euler)
+{
+    Accl_R[0][0] = 1.f;
+    Accl_R[0][1] = arm_sin_f32(first_euler.pit)/arm_cos_f32(first_euler.pit)*arm_sin_f32(first_euler.rol);
+    Accl_R[0][2] = arm_sin_f32(first_euler.pit)/arm_cos_f32(first_euler.pit)*arm_cos_f32(first_euler.rol);
+    Accl_R[1][1] = arm_cos_f32(first_euler.rol);
+    Accl_R[1][2] = -arm_sin_f32(first_euler.rol);
+    Accl_R[2][1] = arm_sin_f32(first_euler.rol)/arm_cos_f32(first_euler.pit);
+    Accl_R[2][2] = arm_cos_f32(first_euler.rol)/arm_cos_f32(first_euler.pit);
+}
+
+//¸ù¾ÝÐý×ª¾ØÕóÍê³É¼ÓËÙ¶È¼Æ°²×°Î»ÖÃÐ£×¼
+void AcclPosCorrect(AHRS_Accl_t *Accl , IMU_set_e IMU)
+{
+    float ax , ay , az;
+    ax = Accl->x;
+    ay = Accl->y;
+    az = Accl->z;
+
+    switch(IMU)
+    {
+        case IMU1_set:  
+            Accl->x = Accl1_R[0][0]*ax + Accl1_R[0][1]*ay + Accl1_R[0][2]*az;
+            Accl->y = Accl1_R[1][1]*ay + Accl1_R[1][2]*az;
+            Accl->z = Accl1_R[2][1]*ay + Accl1_R[2][2]*az; 
+            break;
+        case IMU2_set:  
+            Accl->x = Accl2_R[0][0]*ax + Accl2_R[0][1]*ay + Accl2_R[0][2]*az;
+            Accl->y = Accl2_R[1][1]*ay + Accl2_R[1][2]*az;
+            Accl->z = Accl2_R[2][1]*ay + Accl2_R[2][2]*az;
+            break;
+    }
+
+}
+
 // Flash´æ´¢º¯Êý
-static void FlashRecord(AHRS_Gyro_t *CaliData , rt_uint8_t IMU_set)
+static void FlashRecord(AHRS_Gyro_t *CaliData , AHRS_Eulr_t *Accl_pos , rt_uint8_t IMU_set)
 {
 		/*´ýÐ´ÈëÊý¾Ý*/
-    rt_uint8_t temp_data[13];
-		rt_uint8_t read_data[13];
+    rt_uint8_t temp_data[21];
+	rt_uint8_t read_data[21];
     temp_data[0] = ((rt_uint8_t *)(&CaliData->x))[0];
     temp_data[1] = ((rt_uint8_t *)(&CaliData->x))[1];
     temp_data[2] = ((rt_uint8_t *)(&CaliData->x))[2];
@@ -60,7 +99,15 @@ static void FlashRecord(AHRS_Gyro_t *CaliData , rt_uint8_t IMU_set)
     temp_data[9] = ((rt_uint8_t *)(&CaliData->z))[1];
     temp_data[10] = ((rt_uint8_t *)(&CaliData->z))[2];
     temp_data[11] = ((rt_uint8_t *)(&CaliData->z))[3];
-    temp_data[12] = 0x0F;
+    temp_data[12] = ((rt_uint8_t *)(&Accl_pos->pit))[0];
+    temp_data[13] = ((rt_uint8_t *)(&Accl_pos->pit))[1];
+    temp_data[14] = ((rt_uint8_t *)(&Accl_pos->pit))[2];
+    temp_data[15] = ((rt_uint8_t *)(&Accl_pos->pit))[3];
+    temp_data[16] = ((rt_uint8_t *)(&Accl_pos->rol))[0];
+    temp_data[17] = ((rt_uint8_t *)(&Accl_pos->rol))[1];
+    temp_data[18] = ((rt_uint8_t *)(&Accl_pos->rol))[2];
+    temp_data[19] = ((rt_uint8_t *)(&Accl_pos->rol))[3];
+    temp_data[20] = 0x0F;
 		
     /* ²âÁ¿Íê±Ï, ¿ªÊ¼¶ÁÐ´ Flash */
 //    Hwdt_Feed_Slowly(RT_TRUE); // ¿ªÊ¼²Ù×÷ Flash Êý¾Ý, ÐèÒª¿ªÊ¼»ºÂýÎ¹¹·
@@ -83,13 +130,13 @@ static void FlashRecord(AHRS_Gyro_t *CaliData , rt_uint8_t IMU_set)
 
     if(IMU_set == 1)
 		{
-			stm32_flash_write(IMU1_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
-			stm32_flash_write(IMU2_BIAS_DATA_ADDR, read_data, sizeof(float) * 3 + 1);
+			stm32_flash_write(IMU1_BIAS_DATA_ADDR, temp_data, sizeof(float) * 5 + 1);
+			stm32_flash_write(IMU2_BIAS_DATA_ADDR, read_data, sizeof(float) * 5 + 1);
 		}       
     else if(IMU_set == 2)
     {
-			stm32_flash_write(IMU1_BIAS_DATA_ADDR, read_data, sizeof(float) * 3 + 1);
-			stm32_flash_write(IMU2_BIAS_DATA_ADDR, temp_data, sizeof(float) * 3 + 1);
+			stm32_flash_write(IMU1_BIAS_DATA_ADDR, read_data, sizeof(float) * 5 + 1);
+			stm32_flash_write(IMU2_BIAS_DATA_ADDR, temp_data, sizeof(float) * 5 + 1);
 		} 
         
     rt_exit_critical();         // ÍË³öÁÙ½çÇø¼ÌÐøÆô¶¯µ÷¶ÈÆ÷
@@ -103,9 +150,10 @@ static struct rt_semaphore IMU2_CaliFinish_Sem; // Í¨ÐÅ½áÊøºóÍ¨ÖªÊý¾Ý´¦ÀíÏß³Ì´¦À
 static rt_thread_t IMU_GyroCali_Tid = RT_NULL; // IMUÐ£×¼Ïß³Ì
 
 static double Gyro_Sum[3] = {0};         // x¡¢y¡¢zÈýÖáµÄÐ£×¼ÇóºÍÊýÖµ
+static double Accl_Sum[3] = {0};        //¼ÓËÙ¶È¼Æ°²×°Î»ÖÃÐ£×¼
 static int GyroSum_Count;                // ¼ÇÂ¼²ÎÓëÇóºÍµÄÊý¾Ý¸öÊý
 static AHRS_Gyro_t GyroRawNow, Cali_Out; // µ±Ç°ÍÓÂÝÒÇRawÊý¾Ý¡¢×îÖÕÊä³öµÄ²â¶¨½á¹û
-
+static AHRS_Accl_t AcclRawNow, AcclPos_Out;//µ±Ç°½ÇËÙ¶È¼ÆÊý¾Ý£¬²â¶¨°²×°Î»ÖÃ
 #define X2CAL(x) ((x) * (x))
 
 // Ð£×¼Ïß³Ì
@@ -129,6 +177,9 @@ void IMU_GyroCali_Thread(void *Para)
             GyroRawNow.x = Sensor_RAW_IMU1.Gyro_Raw.x;
             GyroRawNow.y = Sensor_RAW_IMU1.Gyro_Raw.y;
 			GyroRawNow.z = Sensor_RAW_IMU1.Gyro_Raw.z;
+            AcclRawNow.x = Sensor_RAW_IMU1.Accl_Raw.x;
+            AcclRawNow.y = Sensor_RAW_IMU1.Accl_Raw.y;
+            AcclRawNow.z = Sensor_RAW_IMU1.Accl_Raw.z;
             TempOK = IMU1_IfTempOK;
             break;
         
@@ -138,6 +189,9 @@ void IMU_GyroCali_Thread(void *Para)
             GyroRawNow.x = Sensor_RAW_IMU2.Gyro_Raw.x;
             GyroRawNow.y = Sensor_RAW_IMU2.Gyro_Raw.y;
             GyroRawNow.z = Sensor_RAW_IMU2.Gyro_Raw.z;
+            AcclRawNow.x = Sensor_RAW_IMU2.Accl_Raw.x;
+            AcclRawNow.y = Sensor_RAW_IMU2.Accl_Raw.y;
+            AcclRawNow.z = Sensor_RAW_IMU2.Accl_Raw.z;
             TempOK = IMU2_IfTempOK;
             break;
         }
@@ -164,6 +218,9 @@ void IMU_GyroCali_Thread(void *Para)
             Gyro_Sum[0] = 0;
             Gyro_Sum[1] = 0;
             Gyro_Sum[2] = 0;
+            Accl_Sum[0] = 0;
+            Accl_Sum[1] = 0;
+            Accl_Sum[2] = 0;
             GyroSum_Count = 0;
             TimeCount = 0;
             Gyro_Cali_State++;
@@ -185,10 +242,16 @@ void IMU_GyroCali_Thread(void *Para)
             Gyro_Sum[0] += GyroRawNow.x;
             Gyro_Sum[1] += GyroRawNow.y;
             Gyro_Sum[2] += GyroRawNow.z;
+            Accl_Sum[0] += AcclRawNow.x;
+            Accl_Sum[1] += AcclRawNow.y;
+            Accl_Sum[2] += AcclRawNow.z;
             GyroSum_Count++;
             Cali_Out.x = Gyro_Sum[0] / GyroSum_Count;
             Cali_Out.y = Gyro_Sum[1] / GyroSum_Count;
             Cali_Out.z = Gyro_Sum[2] / GyroSum_Count;
+            AcclPos_Out.x = Accl_Sum[0] / GyroSum_Count;
+            AcclPos_Out.y = Accl_Sum[1] / GyroSum_Count;
+            AcclPos_Out.z = Accl_Sum[2] / GyroSum_Count;
             break;
 
         default:
@@ -202,27 +265,36 @@ void IMU_GyroCali_Thread(void *Para)
             Cali_Out.x = Gyro_Sum[0] / GyroSum_Count;
             Cali_Out.y = Gyro_Sum[1] / GyroSum_Count;
             Cali_Out.z = Gyro_Sum[2] / GyroSum_Count;
+            AcclPos_Out.x = Accl_Sum[0] / GyroSum_Count;
+            AcclPos_Out.y = Accl_Sum[1] / GyroSum_Count;
+            AcclPos_Out.z = Accl_Sum[2] / GyroSum_Count;
             GyroSumNow = X2CAL(Cali_Out.x) + X2CAL(Cali_Out.y) + X2CAL(Cali_Out.z);
+            /*µÃµ½ÍÓÂÝÒÇ°²×°Î»ÖÃ*/
+            Accl_Pos.pit = -atan2f(AcclPos_Out.x, sqrtf(AcclPos_Out.z * AcclPos_Out.z + AcclPos_Out.y * AcclPos_Out.y));
+            Accl_Pos.rol = atan2f(AcclPos_Out.y, AcclPos_Out.z);
+
             if (GyroSumNow < 2.0f)
             {
                 switch (IMU_Cali_set)
                 {
                 case IMU1_set:
-										Sensor_WaitFor_IMU1_RawData();
+					Sensor_WaitFor_IMU1_RawData();
                     // Êý¾Ý¼ÇÂ¼Íê³É£¬×¼±¸±£´æÊý¾Ý
-                    FlashRecord(&Cali_Out,IMU_Cali_set);
+                    FlashRecord(&Cali_Out, &Accl_Pos, IMU_Cali_set);
                     IMU1_OffSet.x = Cali_Out.x;
                     IMU1_OffSet.y = Cali_Out.y;
                     IMU1_OffSet.z = Cali_Out.z;
+                    AcclInstallPosCal(Accl1_R,Accl_Pos);
                     break;
                 
                 case IMU2_set:
                     Sensor_WaitFor_IMU2_RawData();
                     // ¶ÁÊý¾Ý
-                    FlashRecord(&Cali_Out,IMU_Cali_set);
+                    FlashRecord(&Cali_Out, &Accl_Pos, IMU_Cali_set);
                     IMU2_OffSet.x = Cali_Out.x;
                     IMU2_OffSet.y = Cali_Out.y;
                     IMU2_OffSet.z = Cali_Out.z;
+                    AcclInstallPosCal(Accl2_R,Accl_Pos);
                     break;
                 }
                break;
@@ -382,7 +454,7 @@ static int CaliKeyCheck()
 // ³¢ÊÔ´ÓFlashÖÐ¶ÁÈ¡ ÈôÎÞÊý¾Ý»òÐèÒªÖØ²â£¬Ôò»á×Ô¶¯ÖØ²â£¬Íê³Éºóº¯Êý·µ»Ø
 int LoadGyroOffSet(IMU_set_e IMU_set)
 {
-    uint8_t ReadTemp[12];
+    uint8_t ReadTemp[20];
 
     // ¶ÁÈ¡FlashÖÐµÄ±ê¼Ç
     rt_enter_critical();
@@ -417,6 +489,9 @@ int LoadGyroOffSet(IMU_set_e IMU_set)
                         IMU1_OffSet.x = *((float *)&ReadTemp[0]);
                         IMU1_OffSet.y = *((float *)&ReadTemp[4]);
                         IMU1_OffSet.z = *((float *)&ReadTemp[8]);
+                        Accl_Pos.pit = *((float *)&ReadTemp[12]);
+                        Accl_Pos.rol = *((float *)&ReadTemp[16]);
+                        AcclInstallPosCal(Accl1_R,Accl_Pos);
                         break;
                     
                     case IMU2_set:
@@ -424,6 +499,9 @@ int LoadGyroOffSet(IMU_set_e IMU_set)
                         IMU2_OffSet.x = *((float *)&ReadTemp[0]);
                         IMU2_OffSet.y = *((float *)&ReadTemp[4]);
                         IMU2_OffSet.z = *((float *)&ReadTemp[8]);
+                        Accl_Pos.pit = *((float *)&ReadTemp[12]);
+                        Accl_Pos.rol = *((float *)&ReadTemp[16]);
+                        AcclInstallPosCal(Accl2_R,Accl_Pos);
                         break;
                     }
             return 0;

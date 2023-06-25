@@ -4,9 +4,9 @@
 #define GYROCALI_WAIT_FOR_TEMPERATURE 1
 
 #define IMU1_BIAS_DATA_ADDR ((uint32_t)(0x08070000))
-#define IMU1_CALI_FLAG_ADDR ((uint32_t)(IMU1_BIAS_DATA_ADDR + 4*3))
+#define IMU1_CALI_FLAG_ADDR ((uint32_t)(IMU1_BIAS_DATA_ADDR + 4*5))
 #define IMU2_BIAS_DATA_ADDR ((uint32_t)(IMU1_CALI_FLAG_ADDR + 1))
-#define IMU2_CALI_FLAG_ADDR ((uint32_t)(IMU2_BIAS_DATA_ADDR + 4*3))
+#define IMU2_CALI_FLAG_ADDR ((uint32_t)(IMU2_BIAS_DATA_ADDR + 4*5))
 
 // 经过坐标换算和零飘校准后的数据
 typedef struct
@@ -34,3 +34,4 @@ extern AHRS_Gyro_t IMU2_OffSet; // 默认为0
 
 // 尝试从Flash中读取 若无数据或需要重测，则会自动重测，完成后函数返回
 extern int LoadGyroOffSet(IMU_set_e IMU_set);
+extern void AcclPosCorrect(AHRS_Accl_t *Accl , IMU_set_e IMU);

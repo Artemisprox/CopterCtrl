@@ -11,6 +11,7 @@
 
 static rt_thread_t atti_calcu = RT_NULL;
 static rt_int8_t Package_ID;
+static AHRS_Eulr_t first_euler = {0};
 
 /***
  * @brief 欧拉角初始化,yaw->pitch->roll顺规
@@ -20,7 +21,6 @@ static rt_int8_t Package_ID;
  ***/
 void Atti_FirstUpdate(AHRS_Accl_t *Accl)
 {
-    AHRS_Eulr_t first_euler = {0};
     float ax, ay, az;
 
     ax = Accl->x;
@@ -34,6 +34,20 @@ void Atti_FirstUpdate(AHRS_Accl_t *Accl)
 
     //欧拉角转四元数
     AHRS_Euler2Quarternion(&first_euler, &HERO_AHRS);
+}
+
+void AcclInstallCorrect(AHRS_Accl_t *Accl)
+{
+    float ax, ay, az;
+
+    ax = Accl->x;
+    ay = Accl->y;
+    az = Accl->z;
+
+    Accl->x = ax + arm_sin_f32(first_euler.pit)/arm_cos_f32(first_euler.pit)*arm_sin_f32(first_euler.rol)*ay + arm_sin_f32(first_euler.pit)/arm_cos_f32(first_euler.pit)*arm_cos_f32(first_euler.rol)*az ;
+    Accl->y = arm_cos_f32(first_euler.rol)*ay - arm_sin_f32(first_euler.rol)*az;
+    Accl->z = arm_sin_f32(first_euler.rol)/arm_cos_f32(first_euler.pit)*ay + arm_cos_f32(first_euler.rol)/arm_cos_f32(first_euler.pit)*ay ; 
+
 }
 
 #define ACCL_STATIC 9.8f // 定义正常模长
@@ -100,7 +114,7 @@ static void AttiCalcu_thread(void *parameter)
 
         // 坐标换算，零飘校正
         GetCaliIMUData(&copter_IMU_RAW.Accl_Raw, &copter_IMU_RAW.Gyro_Raw, &AcclFix, &GyroFix);
-
+/*
         if (first_flag)
         { // 初始位置还没确定
             FirstCount--;
@@ -120,7 +134,8 @@ static void AttiCalcu_thread(void *parameter)
             AttiReady_Flag = 0;
         }
         else
-        { // 初始位置确定完成
+        {*/
+             // 初始位置确定完成
             inv_sample_freq = 1 / copter_IMU_RAW.DataRate;
             Fresh_Beta();
 
@@ -137,7 +152,7 @@ static void AttiCalcu_thread(void *parameter)
             }
             else
                 AttiReady_Flag = 1;
-        }
+//}
         // 刷新姿态角数据
         IMU_SetData_Extern(GyroFix.y, GyroFix.z, GyroFix.x, HERO_Eulr.pit, HERO_Eulr.yaw, HERO_Eulr.rol, AttiReady_Flag && copter_IMU_RAW.RawDataReady);
         /*数据服务器写入*/
@@ -161,10 +176,10 @@ int Atti_init(void)
 
     //陀螺仪加热初始化
     IMU1_TempCTR_init();
-	  IMU2_TempCTR_init();
+	IMU2_TempCTR_init();
     // 尝试从Flash中读取零飘数据 若无数据或需要重测，则会自动重测，完成后函数返回
     LoadGyroOffSet(IMU1_set);
-	  LoadGyroOffSet(IMU2_set);
+	LoadGyroOffSet(IMU2_set);
     
     //陀螺仪冗余调度初始化
     IMU_redundancy_init();
