@@ -99,12 +99,12 @@ static void AttiCalcu_thread(void *parameter)
 {
     int count, AttiReady_Flag;
     count = 0;
-    rt_uint8_t first_flag = 1;
-    int FirstCount = 100; // 前100次计算时，对加速度计数据进行积分来确定初始角度
+//    rt_uint8_t first_flag = 1;
+//    int FirstCount = 100; // 前100次计算时，对加速度计数据进行积分来确定初始角度
     float inv_sample_freq;
 	
     AHRS_Accl_t AcclFix;       // 经过坐标变换后的加速度计数据
-    AHRS_Accl_t AcclSum = {0}; // 启动时
+//    AHRS_Accl_t AcclSum = {0}; // 启动时
     AHRS_Gyro_t GyroFix;       // 经过坐标变换和零飘校正后的角速度数据
 //    SWDG_START(SWDG_IMU_ID);		
 		
@@ -176,10 +176,10 @@ int Atti_init(void)
 
     //陀螺仪加热初始化
     IMU1_TempCTR_init();
-	IMU2_TempCTR_init();
+		IMU2_TempCTR_init();
     // 尝试从Flash中读取零飘数据 若无数据或需要重测，则会自动重测，完成后函数返回
     LoadGyroOffSet(IMU1_set);
-	LoadGyroOffSet(IMU2_set);
+		LoadGyroOffSet(IMU2_set);
     
     //陀螺仪冗余调度初始化
     IMU_redundancy_init();

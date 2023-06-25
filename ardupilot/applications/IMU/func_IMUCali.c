@@ -176,7 +176,7 @@ void IMU_GyroCali_Thread(void *Para)
             // 读数据
             GyroRawNow.x = Sensor_RAW_IMU1.Gyro_Raw.x;
             GyroRawNow.y = Sensor_RAW_IMU1.Gyro_Raw.y;
-			GyroRawNow.z = Sensor_RAW_IMU1.Gyro_Raw.z;
+						GyroRawNow.z = Sensor_RAW_IMU1.Gyro_Raw.z;
             AcclRawNow.x = Sensor_RAW_IMU1.Accl_Raw.x;
             AcclRawNow.y = Sensor_RAW_IMU1.Accl_Raw.y;
             AcclRawNow.z = Sensor_RAW_IMU1.Accl_Raw.z;
@@ -278,7 +278,7 @@ void IMU_GyroCali_Thread(void *Para)
                 switch (IMU_Cali_set)
                 {
                 case IMU1_set:
-					Sensor_WaitFor_IMU1_RawData();
+										Sensor_WaitFor_IMU1_RawData();
                     // 数据记录完成，准备保存数据
                     FlashRecord(&Cali_Out, &Accl_Pos, IMU_Cali_set);
                     IMU1_OffSet.x = Cali_Out.x;
@@ -305,6 +305,11 @@ void IMU_GyroCali_Thread(void *Para)
             }
         }
     }
+		
+		rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
+    rt_thread_mdelay(20);
+		rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
+		
 		switch(IMU_Cali_set)
 		{
 			case IMU1_set:
@@ -314,11 +319,6 @@ void IMU_GyroCali_Thread(void *Para)
 				rt_sem_release(&IMU2_CaliFinish_Sem);
 				break;
 		}
-    
-		
-		rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
-        rt_thread_mdelay(20);
-		rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
 		
     while (1)
     {
