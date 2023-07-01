@@ -38,7 +38,7 @@ static void remote_setpoint(uint8_t mode , RC_PPM_data *data)
 			copter_remote.throttle = (data->RC_throttle - rocker_min)/rocker_width*F_MAX;
 			copter_remote.pitch = (data->RC_pitch - rocker_middle)/rocker_width*2.0f*PITCH_MAX_DEG;
 			copter_remote.roll  = (data->RC_roll - rocker_middle)/rocker_width*2.0f*ROLL_MAX_DEG;
-			copter_remote.yaw   = (data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
+			copter_remote.yaw   = -(data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
 			break;
 	}
 }
@@ -83,7 +83,7 @@ static void remote_data_process(void)
 	switch(copter_rec_data.RC_switch_right)
 		{
 			case 500:   copter_remote.switch_arm = ARMED_T; break;
-			case 1000:  copter_remote.switch_arm = READY_T;break;//����뼱ͣ�м���һ��λ�÷�ֹ�����
+			case 1000:  copter_remote.switch_arm = READY_T;break;
 			case 1500:  copter_remote.switch_arm = EMERGENCY_STOP_T;break;
 		}
 

@@ -99,12 +99,12 @@ static void AttiCalcu_thread(void *parameter)
 {
     int count, AttiReady_Flag;
     count = 0;
-//    rt_uint8_t first_flag = 1;
-//    int FirstCount = 100; // 前100次计算时，对加速度计数据进行积分来确定初始角度
+    rt_uint8_t first_flag = 1;
+    int FirstCount = 100; // 前100次计算时，对加速度计数据进行积分来确定初始角度
     float inv_sample_freq;
 	
     AHRS_Accl_t AcclFix;       // 经过坐标变换后的加速度计数据
-//    AHRS_Accl_t AcclSum = {0}; // 启动时
+    AHRS_Accl_t AcclSum = {0}; // 启动时
     AHRS_Gyro_t GyroFix;       // 经过坐标变换和零飘校正后的角速度数据
 //    SWDG_START(SWDG_IMU_ID);		
 		
@@ -114,7 +114,7 @@ static void AttiCalcu_thread(void *parameter)
 
         // 坐标换算，零飘校正
         GetCaliIMUData(&copter_IMU_RAW.Accl_Raw, &copter_IMU_RAW.Gyro_Raw, &AcclFix, &GyroFix);
-/*
+
         if (first_flag)
         { // 初始位置还没确定
             FirstCount--;
@@ -134,7 +134,7 @@ static void AttiCalcu_thread(void *parameter)
             AttiReady_Flag = 0;
         }
         else
-        {*/
+        {
              // 初始位置确定完成
             inv_sample_freq = 1 / copter_IMU_RAW.DataRate;
             Fresh_Beta();
@@ -152,7 +152,7 @@ static void AttiCalcu_thread(void *parameter)
             }
             else
                 AttiReady_Flag = 1;
-//}
+}
         // 刷新姿态角数据
         IMU_SetData_Extern(GyroFix.y, GyroFix.z, GyroFix.x, HERO_Eulr.pit, HERO_Eulr.yaw, HERO_Eulr.rol, AttiReady_Flag && copter_IMU_RAW.RawDataReady);
         /*数据服务器写入*/

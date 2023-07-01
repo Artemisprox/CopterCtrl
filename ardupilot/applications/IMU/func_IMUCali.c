@@ -5,6 +5,8 @@
 #include "func_TempCtr.h"
 #include "arm_math.h"
 
+#define BEEP_PIN_NUM GET_PIN(C, 13)
+
 #define FLASH_ERASE_PIN GET_PIN(B, 6)
 #define GYRO_SUM_MAX 20000 // 校准陀螺仪积分时需要收集数据的个数
 

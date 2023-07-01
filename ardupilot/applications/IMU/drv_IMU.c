@@ -13,7 +13,10 @@ int AimlossFlag = 0; // 自瞄丢失目标为0，有目标为1。有目标时需
 rt_tick_t IMU_LastValid_tick = 0;
 void IMU_transfer2gm(void);
 
-
+static float lowpassfilter(float k , float now_data , float last_data)
+{
+	return (k*now_data + (1 - k)*last_data);
+}
 /***
  * @Name     gyro_read_extern
  * @brief    陀螺仪姿态解算函数调用，类似于CAN接收，用于板载陀螺仪的兼容
@@ -28,13 +31,43 @@ void IMU_SetData_Extern(float PitchSpe,
                         float RollAng,
                         int AttiReady)
 {
-    HERO_IMU.pitch_speed = PitchSpe / 3.1415926f * 180;
-    HERO_IMU.yaw_speed = YawSpe / 3.1415926f * 180;
-    HERO_IMU.roll_speed = RollSpe / 3.1415926f * 180;
-    HERO_IMU.pitch = PitchAng / 3.1415926f * 180;
-    HERO_IMU.yaw = YawAng / 3.1415926f * 180;
-    HERO_IMU.roll = RollAng / 3.1415926f * 180;
-    HERO_IMU.atti_ready = AttiReady;
+		static uint8_t First_flag = 1;
+		static IMU_t Last_data , temp ;
+		
+    temp.pitch_speed = PitchSpe / 3.1415926f * 180;
+		temp.yaw_speed = YawSpe / 3.1415926f * 180;
+		temp.roll_speed = RollSpe / 3.1415926f * 180;
+		temp.pitch = PitchAng / 3.1415926f * 180;
+		temp.yaw = YawAng / 3.1415926f * 180;
+		temp.roll = RollAng / 3.1415926f * 180;
+		First_flag = 1;
+
+    if(First_flag)
+		{
+			HERO_IMU.pitch_speed = temp.pitch_speed;
+			HERO_IMU.yaw_speed = temp.yaw_speed;
+			HERO_IMU.roll_speed = temp.roll_speed;
+			HERO_IMU.pitch = temp.pitch;
+			HERO_IMU.yaw = temp.yaw;
+			HERO_IMU.roll = temp.roll;
+			HERO_IMU.atti_ready = AttiReady;
+			First_flag = 0;
+		}else
+		{
+			HERO_IMU.pitch_speed = lowpassfilter(0.8f , temp.pitch_speed , Last_data.pitch_speed  );
+      HERO_IMU.yaw_speed = lowpassfilter(0.8f , temp.yaw_speed , Last_data.yaw_speed  );
+      HERO_IMU.roll_speed = lowpassfilter(0.8f , temp.roll_speed , Last_data.roll_speed  );
+      HERO_IMU.pitch = lowpassfilter(0.8f , temp.pitch , Last_data.pitch  );
+      HERO_IMU.yaw = lowpassfilter(0.8f , temp.yaw , Last_data.yaw  );
+      HERO_IMU.roll = lowpassfilter(0.8f , temp.roll , Last_data.roll );
+		}
+		
+		Last_data.pitch_speed =  HERO_IMU.pitch_speed;
+		Last_data.yaw_speed = HERO_IMU.yaw_speed;
+		Last_data.roll_speed = HERO_IMU.roll_speed;
+		Last_data.pitch = HERO_IMU.pitch;
+		Last_data.yaw = HERO_IMU.yaw;
+		Last_data.roll = HERO_IMU.roll;
 
    // IMU_transfer2gm(); // 换算坐标系
 }

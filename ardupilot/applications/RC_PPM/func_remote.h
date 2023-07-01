@@ -5,9 +5,9 @@
 #define POS_Y_MAX_V     1.0f //最大Y轴速度
 
 #define F_MAX            28.06f //最大升力
-#define PITCH_MAX_DEG    10 //最大俯仰角
-#define ROLL_MAX_DEG     10 //最大翻滚角
-#define YAW_MAX_SPE      30 //最大偏航角角度度
+#define PITCH_MAX_DEG    20 //最大俯仰角
+#define ROLL_MAX_DEG     20 //最大翻滚角
+#define YAW_MAX_SPE      60 //最大偏航角
 
 #define rocker_min       1107 //遥控器摇杆低位
 #define rocker_max       1930  //遥控器摇杆高位

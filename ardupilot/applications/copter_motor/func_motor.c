@@ -99,7 +99,6 @@ static void velocity_control(float error_x, float error_y, pid_t* x, pid_t* y)
 	PID_Calculate(y,error_y);
 }
 
-
 //姿态环线程
 static void atti_5ms_entry(void *parameter)
 {
@@ -118,11 +117,11 @@ static void atti_5ms_entry(void *parameter)
 		switch(copter_status.mode)
 		{
 			case POSITION:
-				error_p = IMU1_pos.Pitch + HERO_copter.copter_pitch.ang.set - HERO_IMU.pitch ;
-				error_r = IMU1_pos.Roll + HERO_copter.copter_roll.ang.set - HERO_IMU.roll ;
+				error_p = HERO_copter.copter_pitch.ang.set - HERO_IMU.pitch ;
+				error_r = HERO_copter.copter_roll.ang.set - HERO_IMU.roll ;
 			default:
-				error_p = IMU1_pos.Pitch + control_data.pitch - HERO_IMU.pitch ;
-				error_r = IMU1_pos.Roll + control_data.roll - HERO_IMU.roll ;
+				error_p = control_data.pitch - HERO_IMU.pitch ;
+				error_r = control_data.roll - HERO_IMU.roll ;
 		}
 	
 		if( copter_gimbal.en_flag )
@@ -141,10 +140,10 @@ static void atti_5ms_entry(void *parameter)
 		PID_Calculate(&HERO_copter.copter_roll.spe,error_r);
 		HERO_copter.copter_mixer.tau_x = HERO_copter.copter_roll.spe.out;
 
-//		error_y = control_data.yaw - HERO_IMU.yaw_speed;
-//		PID_Calculate(&HERO_copter.copter_yaw.spe,error_y);
-//		HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.spe.out;
-			HERO_copter.copter_mixer.tau_z = 0.0f;
+		error_y = control_data.yaw - HERO_IMU.yaw_speed;
+		PID_Calculate(&HERO_copter.copter_yaw.spe,error_y);
+		HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.spe.out;
+		//HERO_copter.copter_mixer.tau_z = 0.0f;
 		
 		if( copter_gimbal.en_flag )
 		{
@@ -159,6 +158,21 @@ static void atti_5ms_entry(void *parameter)
 		HERO_copter.copter_mixer.motor_duty2 = MIN_DUTY;
 		HERO_copter.copter_mixer.motor_duty3 = MIN_DUTY;
 		HERO_copter.copter_mixer.motor_duty4 = MIN_DUTY;
+		//状态清零
+		//姿态环
+		pid_clear(&HERO_copter.copter_pitch.ang);
+		pid_clear(&HERO_copter.copter_pitch.spe);
+		pid_clear(&HERO_copter.copter_roll.ang);
+		pid_clear(&HERO_copter.copter_roll.spe);
+		pid_clear(&HERO_copter.copter_yaw.ang);
+		pid_clear(&HERO_copter.copter_yaw.spe);
+		//位置环
+		pid_clear(&HERO_copter.copter_h.pos);
+		pid_clear(&HERO_copter.copter_h.pos);
+		pid_clear(&HERO_copter.copter_x.pos);
+		pid_clear(&HERO_copter.copter_x.pos);
+		pid_clear(&HERO_copter.copter_y.pos);
+		pid_clear(&HERO_copter.copter_y.pos);
 	}
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_1,HERO_copter.copter_mixer.motor_duty1);
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_2,HERO_copter.copter_mixer.motor_duty2);
@@ -184,7 +198,7 @@ static void pos_20ms_entry(void *parameter)
 	Package_Write_Pionter_End(status_ID,status);
 
    	pos_sensor local_pos;
-  pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
+  	pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
 	local_pos = *p_3 ;
 	Package_Write_Pionter_End(sensor_ID,pos_sensor);
 	
@@ -204,6 +218,7 @@ static void pos_20ms_entry(void *parameter)
 			error_y = control_data.roll -  local_pos.V_pos_y;
 			velocity_control(error_x,error_y,&HERO_copter.copter_x.vec , &HERO_copter.copter_y.vec );
 		}
+		//位置闭环包含速度闭环，故没有break
 		case HEIGHT:
 		{
 			error_h = control_data.throttle - local_pos.V_height;

@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>__TARGET_FPU_VFP, USE_HAL_DRIVER, __FPU_PRESENT=1U, STM32F446xx, __ARM_FEATURE_DSP=1, ARM_MATH_ROUNDING, ARM_MATH_MATRIX_CHECK, __FPU_USED=1U, ARM_MATH_CM4</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\..\include;applications\Communication;applications\coopter_state;applications\copter_motor;applications\EKF;applications\IMU;applications\Main;applications\RC_PPM;applications\Sensors;applications\TEST;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\libraries\HAL_Drivers\drv_flash;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\Remote;..\..\PublicLib\Hardware\RGBLight;..\..\PublicLib\Monitor;..\..\PublicLib\Software\CPU_Usage;..\..\PublicLib\Software\DataServer;..\..\PublicLib\Software\Filter;..\..\PublicLib\Software\Motor;..\..\PublicLib\Software\Pid;..\..\PublicLib\Software\Queue;..\..\PublicLib\Software\SetPlanning;..\..\PublicLib\Software\Utils;..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\..\include;applications\Communication;applications\coopter_state;applications\copter_motor;applications\EKF;applications\IMU;applications\Main;applications\RC_PPM;applications\Sensors;applications\TEST;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\libraries\HAL_Drivers\drv_flash;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\RGBLight;..\..\PublicLib\Monitor;..\..\PublicLib\Software\CPU_Usage;..\..\PublicLib\Software\DataServer;..\..\PublicLib\Software\Filter;..\..\PublicLib\Software\Motor;..\..\PublicLib\Software\Pid;..\..\PublicLib\Software\Queue;..\..\PublicLib\Software\SetPlanning;..\..\PublicLib\Software\Utils;..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -626,6 +626,11 @@
               <FileName>drv_RC_PPM.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\RC_PPM\drv_RC_PPM.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_RC_SBUS.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\RC_PPM\drv_RC_SBUS.c</FilePath>
             </File>
             <File>
               <FileName>drv_tim13.c</FileName>
@@ -970,16 +975,6 @@
               <FileName>drv_buzzer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\PublicLib\Hardware\Buzzer\drv_buzzer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Public/Hardware/Remote</GroupName>
-          <Files>
-            <File>
-              <FileName>drv_remote.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\PublicLib\Hardware\Remote\drv_remote.c</FilePath>
             </File>
           </Files>
         </Group>
