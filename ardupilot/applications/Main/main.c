@@ -35,8 +35,8 @@
 #define PWM_TEST 0
 #define UART_TEST 0
 #define IMU_TEST 0
-#define ESC_CALI 0
-#define SBUS_TEST 1
+#define ESC_CALI 1
+#define SBUS_TEST 0
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
 #include "KEY_TEST.h"

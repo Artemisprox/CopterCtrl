@@ -5,8 +5,8 @@
 
 typedef struct
 {
-	uint16_t distance;
-	int16_t distance_v;
+	float distance;
+	float distance_v;
 	uint16_t strength;
 	uint16_t temperature;
 	uint8_t data_num;

@@ -251,16 +251,16 @@ static void motor_start(void)
     remote_ID = Package_Find_Num("remote");
     IMU_ID = Package_Find_Num("IMU");
     sensor_ID = Package_Find_Num("pos_sensor");
-	  status_ID = Package_Find_Num("status");
-		recoil_ID = Package_Find_Num("compensate");
+	status_ID = Package_Find_Num("status");
+	recoil_ID = Package_Find_Num("compensate");
     /*线程初始化*/
     rt_thread_t thread;
     rt_sem_init(&atti_5ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);
-		rt_sem_init(&pos_20ms_sem, "copter_pos", 0, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&pos_20ms_sem, "copter_pos", 0, RT_IPC_FLAG_FIFO);
     thread = rt_thread_create("atti_ctrl", atti_5ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_ATTI_CONTROL, 1);
-		if (thread != RT_NULL)
+	if (thread != RT_NULL)
         rt_thread_startup(thread);
-		thread = rt_thread_create("pos_ctrl", pos_20ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_POS_CONTROL, 1);
+	thread = rt_thread_create("pos_ctrl", pos_20ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_POS_CONTROL, 1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);
 

@@ -1,0 +1,10 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.h')
+src += Glob('*.c')
+CPPPATH = [cwd]
+
+group = DefineGroup('User\MAVLINK', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

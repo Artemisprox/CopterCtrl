@@ -43,12 +43,12 @@ static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
 
 void TF_mini_DataProcess(uint8_t *pData)
 {
-    static uint8_t first_flag = 1 , distance_last;
+    static uint8_t first_flag = 1 ;
     int i = 0;
     uint8_t byte1 = 0;
     uint8_t byte2 = 0;
 		uint8_t check = 0;
-		uint16_t distance;
+		static uint16_t distance , distance_last;
 		long sum = 0;
     if (pData == NULL)
     {
@@ -77,16 +77,17 @@ void TF_mini_DataProcess(uint8_t *pData)
 				return;
 			}else
 			{
-			TF_mini_data.distance = distance;
+			TF_mini_data.distance = distance/100.0f;
 			TF_mini_data.strength = ((uint16_t)pData[4] | ((uint16_t)pData[5] << 8));
 			TF_mini_data.temperature = ((uint16_t)pData[6] | ((uint16_t)pData[7] << 8));
 			TF_mini_data.data_num ++;
-            TF_mini_data.Data_fresh_time = rt_tick_get();
-            if(first_flag == 0)
-                TF_mini_data.distance_v = (distance - distance_last)/0.02f;//使用高度变化量估计速度
-            else 
-                first_flag = 0;
-            distance_last = distance;
+      TF_mini_data.Data_fresh_time = rt_tick_get();
+      if(first_flag == 0)
+				TF_mini_data.distance_v = (distance - distance_last)/2.0f;//使用高度变化量估计速度
+      else 
+        first_flag = 0;
+			TF_mini_data.Data_valid = 1;
+      distance_last = distance;
 			}
 		}
     

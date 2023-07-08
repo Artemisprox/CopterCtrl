@@ -19,7 +19,6 @@ typedef struct
 	char speed_ready;										//角速度数据正常标志
 	char atti_ready;										//姿态数据正常标志
 
-	
 }IMU_t;//IMU传感器结构体
 
 typedef struct
@@ -60,4 +59,3 @@ extern void IMU_SetData_Extern(float PitchSpe,
 					  float RollAng,
 					  int   AttiReady);
 #endif
-

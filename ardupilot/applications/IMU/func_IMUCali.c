@@ -50,13 +50,14 @@ void GetCaliIMUData(AHRS_Accl_t *AcclRaw, AHRS_Gyro_t *GyroRaw, AHRS_Accl_t *Acc
 //加速度计安装位置校准旋转矩阵参数设置
 void AcclInstallPosCal(float Accl_R[][3] , AHRS_Eulr_t first_euler)
 {
-    Accl_R[0][0] = 1.f;
-    Accl_R[0][1] = arm_sin_f32(first_euler.pit)/arm_cos_f32(first_euler.pit)*arm_sin_f32(first_euler.rol);
-    Accl_R[0][2] = arm_sin_f32(first_euler.pit)/arm_cos_f32(first_euler.pit)*arm_cos_f32(first_euler.rol);
+    Accl_R[0][0] = arm_cos_f32(first_euler.pit);
+    Accl_R[0][1] = arm_sin_f32(first_euler.rol)*arm_sin_f32(first_euler.pit);
+    Accl_R[0][2] = arm_sin_f32(first_euler.pit)*arm_cos_f32(first_euler.rol);
     Accl_R[1][1] = arm_cos_f32(first_euler.rol);
     Accl_R[1][2] = -arm_sin_f32(first_euler.rol);
-    Accl_R[2][1] = arm_sin_f32(first_euler.rol)/arm_cos_f32(first_euler.pit);
-    Accl_R[2][2] = arm_cos_f32(first_euler.rol)/arm_cos_f32(first_euler.pit);
+		Accl_R[2][0] = -arm_sin_f32(first_euler.pit);
+    Accl_R[2][1] = arm_sin_f32(first_euler.rol)*arm_cos_f32(first_euler.pit);
+    Accl_R[2][2] = arm_cos_f32(first_euler.rol)*arm_cos_f32(first_euler.pit);
 }
 
 //根据旋转矩阵完成加速度计安装位置校准
@@ -77,7 +78,7 @@ void AcclPosCorrect(AHRS_Accl_t *Accl , IMU_set_e IMU)
         case IMU2_set:  
             Accl->x = Accl2_R[0][0]*ax + Accl2_R[0][1]*ay + Accl2_R[0][2]*az;
             Accl->y = Accl2_R[1][1]*ay + Accl2_R[1][2]*az;
-            Accl->z = Accl2_R[2][1]*ay + Accl2_R[2][2]*az;
+            Accl->z = Accl2_R[2][1]*ax + Accl2_R[2][1]*ay + Accl2_R[2][2]*az;
             break;
     }
 

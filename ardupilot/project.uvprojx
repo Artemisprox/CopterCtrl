@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>__TARGET_FPU_VFP, USE_HAL_DRIVER, __FPU_PRESENT=1U, STM32F446xx, __ARM_FEATURE_DSP=1, ARM_MATH_ROUNDING, ARM_MATH_MATRIX_CHECK, __FPU_USED=1U, ARM_MATH_CM4</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\..\include;applications\Communication;applications\coopter_state;applications\copter_motor;applications\EKF;applications\IMU;applications\Main;applications\RC_PPM;applications\Sensors;applications\TEST;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\libraries\HAL_Drivers\drv_flash;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\RGBLight;..\..\PublicLib\Monitor;..\..\PublicLib\Software\CPU_Usage;..\..\PublicLib\Software\DataServer;..\..\PublicLib\Software\Filter;..\..\PublicLib\Software\Motor;..\..\PublicLib\Software\Pid;..\..\PublicLib\Software\Queue;..\..\PublicLib\Software\SetPlanning;..\..\PublicLib\Software\Utils;..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\..\include;applications\Communication;applications\coopter_state;applications\copter_motor;applications\EKF;applications\IMU;applications\Main;applications\mavlink;applications\mavlink\testa;applications\RC_PPM;applications\Sensors;applications\TEST;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\libraries\HAL_Drivers\drv_flash;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common;..\..\PublicLib\Hardware\Buzzer;..\..\PublicLib\Hardware\RGBLight;..\..\PublicLib\Monitor;..\..\PublicLib\Software\CPU_Usage;..\..\PublicLib\Software\DataServer;..\..\PublicLib\Software\Filter;..\..\PublicLib\Software\Motor;..\..\PublicLib\Software\Pid;..\..\PublicLib\Software\Queue;..\..\PublicLib\Software\SetPlanning;..\..\PublicLib\Software\Utils;..\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -538,6 +538,11 @@
           <GroupName>IMU</GroupName>
           <Files>
             <File>
+              <FileName>Kalman.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\IMU\Kalman.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_HWTimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\IMU\drv_HWTimer.c</FilePath>
@@ -592,6 +597,11 @@
               <FileType>1</FileType>
               <FilePath>applications\IMU\mod_Atti.c</FilePath>
             </File>
+            <File>
+              <FileName>velocity_estimator.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\IMU\velocity_estimator.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -616,6 +626,71 @@
               <FileName>roboselect.h</FileName>
               <FileType>5</FileType>
               <FilePath>applications\Main\roboselect.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>User\MAVLINK</GroupName>
+          <Files>
+            <File>
+              <FileName>Mavlinktest.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\Mavlinktest.h</FilePath>
+            </File>
+            <File>
+              <FileName>checksum.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\checksum.h</FilePath>
+            </File>
+            <File>
+              <FileName>mavlink_conversions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\mavlink_conversions.h</FilePath>
+            </File>
+            <File>
+              <FileName>mavlink_helpers.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\mavlink_helpers.h</FilePath>
+            </File>
+            <File>
+              <FileName>mavlink_types.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\mavlink_types.h</FilePath>
+            </File>
+            <File>
+              <FileName>protocol.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\protocol.h</FilePath>
+            </File>
+            <File>
+              <FileName>mavlink_Mavlinktest.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\mavlink\Mavlinktest.c</FilePath>
+            </File>
+            <File>
+              <FileName>mavlink.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\testa\mavlink.h</FilePath>
+            </File>
+            <File>
+              <FileName>mavlink_msg_imu_data.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\testa\mavlink_msg_imu_data.h</FilePath>
+            </File>
+            <File>
+              <FileName>testa.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\testa\testa.h</FilePath>
+            </File>
+            <File>
+              <FileName>testsuite.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\testa\testsuite.h</FilePath>
+            </File>
+            <File>
+              <FileName>version.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>applications\mavlink\testa\version.h</FilePath>
             </File>
           </Files>
         </Group>
