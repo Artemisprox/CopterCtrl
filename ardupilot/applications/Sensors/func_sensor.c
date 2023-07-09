@@ -20,28 +20,29 @@ static struct rt_timer Pos_sensor_tim;/* 闭环线程定时器 */
 static float average_filter(float value , float sample)
 {
 	static int num = 0 ;
-	static float data[3] ;
+	static float data[5] ;
 	float out = 0;
-	if(num < 3)
+	if(num < 5)
 	{
 		data[num] = sample;
 		num++;
 		return (value*(num/1.0f/(num+1)) + sample/num) ;
 	}else
 	{
-		data[num%3] = sample;
+		data[num%5] = sample;
 		num ++;
 		int i = 0;
 		out = 0;
-		for( i = 0; i < 3; i++ )
-			out += data[i]/3.0f;
+		for( i = 0; i < 5; i++ )
+			out += data[i]/5.0f;
 	}
 	return out;
 }
 
 
 float jscope_test1 , jscope_test2;
-float temp1[2] , temp2[2] ;
+float temp1[2] , temp2[2] , last_distance = 0.0f;
+uint32_t height_data_del_time = 0;/*高度数据更新时间*/
 //使用互补滤波处理位置信息（加速度计估计速度+光流估计速度）
 static void Pos_sensor_thread_entry(void *parameter)
 {
@@ -53,7 +54,6 @@ static void Pos_sensor_thread_entry(void *parameter)
 	    Package_Write_Pionter_End(IMU_ID,IMU_t);
         Copter_IMU.yaw = 0;
 
-        uint32_t height_data_del_time = 0;/*高度数据更新时间*/
         uint32_t pos_data_del_time = 0;/*水平位置数据更新时间*/
 
         if(NiMingFlow_data.height_data_Valid || TF_mini_data.Data_fresh_time)//高度数据可用
@@ -101,7 +101,8 @@ static void Pos_sensor_thread_entry(void *parameter)
                     height_data_del_time = TF_mini_data.Data_fresh_time - fresh_time_last.height_time;
              
 					temp1[0] =  arm_cos_f32(Copter_IMU.roll/360.0f*2.0f*3.1415926f)*arm_cos_f32(Copter_IMU.pitch/360.0f*2.0f*3.1415926f)*TF_mini_data.distance;
-					temp1[1] = arm_cos_f32(Copter_IMU.roll/360.0f*2.0f*3.1415926f)*arm_cos_f32(Copter_IMU.pitch/360.0f*2.0f*3.1415926f)*TF_mini_data.distance_v;
+					temp1[1] = (temp1[0] - last_distance)/0.02f;
+                    last_distance = temp1[0];
 									
                     if( height_data_del_time != 0)
                     {
@@ -178,6 +179,12 @@ static void Pos_sensor_thread_entry(void *parameter)
 
     }
 
+}
+
+//获取高度数据
+float get_height(void)
+{
+    return copter_pos.distance;
 }
 
 static void Pos_sensor_20ms_IRQHandler(void *parameter)

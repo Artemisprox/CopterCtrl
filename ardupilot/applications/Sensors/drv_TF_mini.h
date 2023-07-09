@@ -11,7 +11,7 @@ typedef struct
 	uint16_t temperature;
 	uint8_t data_num;
 	uint8_t Data_valid;
-	uint8_t Data_fresh_time;
+	uint32_t Data_fresh_time;
 } TF_mini_rec;
 
 extern TF_mini_rec TF_mini_data;

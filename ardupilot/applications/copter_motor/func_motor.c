@@ -143,7 +143,6 @@ static void atti_5ms_entry(void *parameter)
 		error_y = control_data.yaw - HERO_IMU.yaw_speed;
 		PID_Calculate(&HERO_copter.copter_yaw.spe,error_y);
 		HERO_copter.copter_mixer.tau_z = HERO_copter.copter_yaw.spe.out;
-		//HERO_copter.copter_mixer.tau_z = 0.0f;
 		
 		if( copter_gimbal.en_flag )
 		{

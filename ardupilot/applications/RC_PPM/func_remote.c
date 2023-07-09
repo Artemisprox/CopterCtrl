@@ -3,6 +3,10 @@
 #include "drv_utils.h"
 #include "drv_dataserve.h"
 #include "func_state.h"
+#include "func_sensor.h"
+#include "drv_ExactSmooth.h"
+
+ExactSmth_CTRL_S height_ctrl;
 
 static remote_data copter_remote ={0};
 RC_PPM_data copter_rec_data_last = {0};
@@ -16,19 +20,41 @@ static int16_t low_pass_filter(int16_t data_now , int16_t data_last , float para
 	return data_now*param + data_last*(1-param);
 }
 
+void HeightCtrlInit(uint8_t mode)
+{
+	static uint8_t height_ctrl_first = 1;
+	if(mode == HEIGHT || mode == POSITION)
+	{	
+		if(height_ctrl_first)
+			{
+				height_ctrl.NowOutData = get_height();
+				height_ctrl.NowSetData = get_height();
+				height_ctrl_first = 0;
+			}else
+				height_ctrl_first = 1;
+	}
+}
+
 /*将遥控器数据转化为控制数据*/
 static void remote_setpoint(uint8_t mode , RC_PPM_data *data)
 {
-	
+	HeightCtrlInit(mode);
+	float height_temp;
 	switch (mode)
 	{
 		case POSITION ://定点模式：高度速度、x轴速度、y轴速度、yaw轴角速度
+			height_temp = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
+			Smooth_SetDataADD(&height_ctrl , height_temp);
+			Smooth_GetDataABS(&copter_remote.throttle, &height_ctrl);
 			copter_remote.throttle = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
 			copter_remote.pitch = (data->RC_pitch - rocker_middle)/rocker_width*2.0f*POS_X_MAX_V;
 			copter_remote.roll  = (data->RC_roll - rocker_middle)/rocker_width*2.0f*POS_Y_MAX_V;
 			copter_remote.yaw   = (data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
 			break;
 		case HEIGHT ://定高模式：高度速度、pitch轴角度、roll轴角度、yaw轴角速度
+			height_temp = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
+			Smooth_SetDataADD(&height_ctrl , height_temp);
+			Smooth_GetDataABS(&copter_remote.throttle, &height_ctrl);
 			copter_remote.throttle = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
 			copter_remote.pitch = (data->RC_pitch - rocker_middle)/rocker_width*2.0f*PITCH_MAX_DEG;
 			copter_remote.roll  = (data->RC_roll - rocker_middle)/rocker_width*2.0f*ROLL_MAX_DEG;
@@ -58,8 +84,8 @@ static void remote_data_process(void)
 	status *p_1 =  Package_Pionter_Single(status_ID,status);
 	copter_status = *p_1 ;
 	Package_Write_Pionter_End(status_ID,status);
-		copter_status.mode = STABILIZATION;
-		copter_status.rc_status = 1;
+	//copter_status.mode = STABILIZATION;
+	copter_status.rc_status = 1;
 
 	if(!copter_status.rc_status)//遥控器离线，保持当前状态不动
 	{
@@ -141,8 +167,9 @@ int RC_init(void)
 	//通过函数指针转移至遥控器数据接收线程中进行处理
 	Remote_Routine_Set(&remote_data_process);
 	RC_PPM_Init();
-  Package_Pionter_Add("remote", remote_data);
+  	Package_Pionter_Add("remote", remote_data);
 	Package_ID = Package_Find_Num("remote");
 	status_ID = Package_Find_Num("status");
+	Smooth_Init(&height_ctrl, 0.0f , 0.02f);
 	return RT_EOK;
 }

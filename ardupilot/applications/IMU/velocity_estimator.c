@@ -156,7 +156,7 @@ void Velocity_estimate(float height , float height_v , float height_observe[2] )
 
 void Velocity_estimator_init(void)
 {	
-	const float Q1 = 0.01f , Q2 = 0.2f , R1 = 0.002f , R2 = 3.0f;
+	const float Q1 = 0.01f , Q2 = 0.3f , R1 = 0.002f , R2 = 2.0f;
 	Kalman_height_init(&Height_KF , 0.02f , Q1 , Q2 , R1 , R2 );
 	accl_num = 0;
 }

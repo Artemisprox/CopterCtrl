@@ -1,6 +1,6 @@
 #include <rtthread.h>
 
-#define HEIGHT_MAX_V    0.5f //最大上升速度
+#define HEIGHT_MAX_V    2.0f //最大上升速度
 #define POS_X_MAX_V     1.0f //最大X轴速度
 #define POS_Y_MAX_V     1.0f //最大Y轴速度
 
