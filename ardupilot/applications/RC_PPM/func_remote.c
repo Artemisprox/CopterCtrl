@@ -43,18 +43,13 @@ static void remote_setpoint(uint8_t mode , RC_PPM_data *data)
 	switch (mode)
 	{
 		case POSITION ://定点模式：高度速度、x轴速度、y轴速度、yaw轴角速度
-			height_temp = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
-			Smooth_SetDataADD(&height_ctrl , height_temp);
-			Smooth_GetDataABS(&copter_remote.throttle, &height_ctrl);
 			copter_remote.throttle = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
 			copter_remote.pitch = (data->RC_pitch - rocker_middle)/rocker_width*2.0f*POS_X_MAX_V;
 			copter_remote.roll  = (data->RC_roll - rocker_middle)/rocker_width*2.0f*POS_Y_MAX_V;
 			copter_remote.yaw   = (data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
 			break;
 		case HEIGHT ://定高模式：高度速度、pitch轴角度、roll轴角度、yaw轴角速度
-			height_temp = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
-			Smooth_SetDataADD(&height_ctrl , height_temp);
-			Smooth_GetDataABS(&copter_remote.throttle, &height_ctrl);
+			copter_remote.throttle = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
 			copter_remote.throttle = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
 			copter_remote.pitch = (data->RC_pitch - rocker_middle)/rocker_width*2.0f*PITCH_MAX_DEG;
 			copter_remote.roll  = (data->RC_roll - rocker_middle)/rocker_width*2.0f*ROLL_MAX_DEG;
@@ -170,6 +165,5 @@ int RC_init(void)
   	Package_Pionter_Add("remote", remote_data);
 	Package_ID = Package_Find_Num("remote");
 	status_ID = Package_Find_Num("status");
-	Smooth_Init(&height_ctrl, 0.0f , 0.02f);
 	return RT_EOK;
 }

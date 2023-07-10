@@ -12,6 +12,8 @@
 #include "drv_dataserve.h"
 #include "drv_utils.h"
 #include "drv_IMUPosCali.h"
+#include "drv_SetPlanning.h"
+#include "drv_ExactSmooth.h"
 
 //电机模型:W0 + k*duty
 #define propeller_spe_base 1201 //基础转速
@@ -29,6 +31,8 @@ static status copter_status;
 
 static uint8_t remote_ID,IMU_ID,sensor_ID,status_ID,recoil_ID;
 
+SetPlanning_Str HeightCtrl ;
+ExactSmth_CTRL_S SmoothHeight;
 
 //机体系变换到大地系
 static void earth_body_tranfer(void)
@@ -117,8 +121,8 @@ static void atti_5ms_entry(void *parameter)
 		switch(copter_status.mode)
 		{
 			case POSITION:
-				error_p = HERO_copter.copter_pitch.ang.set - HERO_IMU.pitch ;
-				error_r = HERO_copter.copter_roll.ang.set - HERO_IMU.roll ;
+				error_p = HERO_copter.copter_y.vec.out - HERO_IMU.pitch ;
+				error_r = HERO_copter.copter_x.vec.out - HERO_IMU.roll ;
 			default:
 				error_p = control_data.pitch - HERO_IMU.pitch ;
 				error_r = control_data.roll - HERO_IMU.roll ;
@@ -167,11 +171,11 @@ static void atti_5ms_entry(void *parameter)
 		pid_clear(&HERO_copter.copter_yaw.spe);
 		//位置环
 		pid_clear(&HERO_copter.copter_h.pos);
-		pid_clear(&HERO_copter.copter_h.pos);
+		pid_clear(&HERO_copter.copter_h.vec);
 		pid_clear(&HERO_copter.copter_x.pos);
-		pid_clear(&HERO_copter.copter_x.pos);
+		pid_clear(&HERO_copter.copter_x.vec);
 		pid_clear(&HERO_copter.copter_y.pos);
-		pid_clear(&HERO_copter.copter_y.pos);
+		pid_clear(&HERO_copter.copter_y.vec);
 	}
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_1,HERO_copter.copter_mixer.motor_duty1);
 	MX_TIM_DUTY(TIM1,COPTER_MOTOR_2,HERO_copter.copter_mixer.motor_duty2);
@@ -219,9 +223,20 @@ static void pos_20ms_entry(void *parameter)
 		}
 		//位置闭环包含速度闭环，故没有break
 		case HEIGHT:
-		{
-			error_h = control_data.throttle - local_pos.V_height;
+		{	
+			float tempheight;
+			//Smooth_SetDataADD(&SmoothHeight , control_data.throttle);
+			//Smooth_GetDataABS(&tempheight , &SmoothHeight);
+			HeightCtrl.Input.Now.pos = get_height();
+			HeightCtrl.Input.Set.pos += control_data.throttle;
+			//SetPlanning_SetOutput(&HeightCtrl , get_height() + control_data.throttle );
+			SetPlanning_Cal(&HeightCtrl);
+			
+			error_h = HeightCtrl.Output.pos - local_pos.distance;
+			PID_Calculate(&HERO_copter.copter_h.pos,error_h);
+			error_h = HERO_copter.copter_h.pos.out - local_pos.V_height;
 			PID_Calculate(&HERO_copter.copter_h.vec,error_h);
+			HERO_copter.copter_mixer.f = HERO_copter.copter_h.vec.out;
 		}
 			break;
 		default:
@@ -252,6 +267,8 @@ static void motor_start(void)
     sensor_ID = Package_Find_Num("pos_sensor");
 	status_ID = Package_Find_Num("status");
 	recoil_ID = Package_Find_Num("compensate");
+
+
     /*线程初始化*/
     rt_thread_t thread;
     rt_sem_init(&atti_5ms_sem, "copter_atti", 0, RT_IPC_FLAG_FIFO);
@@ -262,6 +279,15 @@ static void motor_start(void)
 	thread = rt_thread_create("pos_ctrl", pos_20ms_entry, RT_NULL, 2048, THREAD_PRIO_MOTOR_POS_CONTROL, 1);
     if (thread != RT_NULL)
         rt_thread_startup(thread);
+	
+	Smooth_Init(&SmoothHeight , 0.0f , 20);
+	// 初始化设定值规划模块
+    SetPlanSettings_Str Setting;
+    Setting.dt = 1e-3f;
+    Setting.POS_Error_Max = 3;
+    Setting.Accl_Max = 2.0f;
+    Setting.Speed_Max = 2.0f;
+    SetPlanning_Init(&HeightCtrl, &Setting);
 
     /*定时线程*/
     rt_timer_init(&atti_5ms_tim, "atti_Tim", atti_5ms_IRQHandler, RT_NULL, 5,
