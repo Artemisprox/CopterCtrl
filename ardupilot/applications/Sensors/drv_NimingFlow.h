@@ -7,10 +7,10 @@ typedef struct
 {
 	uint32_t distance;
 	float distance_v;
-	int16_t Vx_Flow;
-	int16_t Vy_Flow;
-	int16_t pos_x;
-	int16_t pos_y;
+	float Vx_Flow;
+	float Vy_Flow;
+	float pos_x;
+	float pos_y;
 	
 	uint8_t  pos_data_Valid;
 	uint8_t  height_data_Valid;

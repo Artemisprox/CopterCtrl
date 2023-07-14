@@ -114,19 +114,22 @@ static void atti_5ms_entry(void *parameter)
 	IMU_t *p_2 =  Package_Pionter_Single(IMU_ID,IMU_t);
 	HERO_IMU = *p_2 ;
 	Package_Write_Pionter_End(IMU_ID,IMU_t);
-
+	
 	float error_p = 0,error_r = 0,error_y = 0;
 	if((!copter_status.emergency) && (copter_status.flight_status != READY))
 	{
 		switch(copter_status.mode)
 		{
 			case POSITION:
-				error_p = HERO_copter.copter_y.vec.out - HERO_IMU.pitch ;
-				error_r = HERO_copter.copter_x.vec.out - HERO_IMU.roll ;
+				error_p = HERO_copter.copter_x.vec.out - HERO_IMU.pitch ;
+				error_r = HERO_copter.copter_y.vec.out - HERO_IMU.roll ;
 			default:
 				error_p = control_data.pitch - HERO_IMU.pitch ;
 				error_r = control_data.roll - HERO_IMU.roll ;
 		}
+		
+		//if( copter_status.mode != STABILIZATION )
+		//	HERO_copter.copter_mixer.f = HERO_copter.copter_h.vec.out + fabsf( MASS*g/arm_cos_f32(HERO_IMU.pitch/360.0f*2*3.1415926f)/arm_cos_f32(HERO_IMU.roll/360.0f*2*3.1415926f) );
 	
 		if( copter_gimbal.en_flag )
 		{
@@ -152,7 +155,7 @@ static void atti_5ms_entry(void *parameter)
 		{
 			HERO_copter.copter_mixer.tau_x += copter_gimbal.x_torque;
 			HERO_copter.copter_mixer.tau_y += copter_gimbal.y_torque;
-		}
+		} 
 
 		matrix_control();//混控器
 	}else
@@ -211,6 +214,16 @@ static void pos_20ms_entry(void *parameter)
 	
 	float error_x,error_y,error_h = 0;
 	
+	static uint8_t height_ctrl_first = 1;
+	if(copter_status.mode == HEIGHT || copter_status.mode == POSITION)
+	{	
+		if(height_ctrl_first)
+			{
+				HeightCtrl.Input.Set.pos = get_height();
+				height_ctrl_first = 0;
+			}
+	}
+	
 	if(!copter_status.emergency && copter_status.flight_status != READY)
 		switch (copter_status.mode)
 		{
@@ -224,19 +237,32 @@ static void pos_20ms_entry(void *parameter)
 		//位置闭环包含速度闭环，故没有break
 		case HEIGHT:
 		{	
-			float tempheight;
+			//float tempheight;
 			//Smooth_SetDataADD(&SmoothHeight , control_data.throttle);
 			//Smooth_GetDataABS(&tempheight , &SmoothHeight);
-			HeightCtrl.Input.Now.pos = get_height();
-			HeightCtrl.Input.Set.pos += control_data.throttle;
-			//SetPlanning_SetOutput(&HeightCtrl , get_height() + control_data.throttle );
-			SetPlanning_Cal(&HeightCtrl);
 			
-			error_h = HeightCtrl.Output.pos - local_pos.distance;
-			PID_Calculate(&HERO_copter.copter_h.pos,error_h);
-			error_h = HERO_copter.copter_h.pos.out - local_pos.V_height;
-			PID_Calculate(&HERO_copter.copter_h.vec,error_h);
-			HERO_copter.copter_mixer.f = HERO_copter.copter_h.vec.out;
+			if( copter_status.flight_status == ARMED )
+			{
+				HeightCtrl.Input.Set.pos = get_height();
+				SetPlanning_SetOutput(&HeightCtrl , get_height());
+				//HERO_copter.copter_h.pos.set = get_height();
+				HERO_copter.copter_mixer.f = 0.0f;
+			}
+			else
+			{
+				HeightCtrl.Input.Set.pos += control_data.throttle*0.02f;
+				HeightCtrl.Input.Now.pos = get_height();
+				SetPlanning_Cal(&HeightCtrl);
+				//HERO_copter.copter_h.pos.set += control_data.throttle*0.02f; 
+				error_h = HeightCtrl.Output.pos - local_pos.distance;
+				PID_Calculate(&HERO_copter.copter_h.pos,error_h);
+				error_h = HERO_copter.copter_h.pos.out - local_pos.V_height + control_data.throttle;
+				//+ HeightCtrl.Output.spe;
+				//error_h = control_data.throttle - local_pos.V_height;
+				PID_Calculate(&HERO_copter.copter_h.vec,error_h);
+				HERO_copter.copter_mixer.f = HERO_copter.copter_h.vec.out + MASS*g/arm_cos_f32(HERO_IMU.pitch/360.0f*2*3.1415926f)/arm_cos_f32(HERO_IMU.roll/360.0f*2*3.1415926f) ;
+				//HERO_copter.copter_mixer.f = HERO_copter.copter_h.vec.out + MASS*g;
+			}
 		}
 			break;
 		default:
@@ -283,19 +309,19 @@ static void motor_start(void)
 	Smooth_Init(&SmoothHeight , 0.0f , 20);
 	// 初始化设定值规划模块
     SetPlanSettings_Str Setting;
-    Setting.dt = 1e-3f;
-    Setting.POS_Error_Max = 3;
-    Setting.Accl_Max = 2.0f;
-    Setting.Speed_Max = 2.0f;
+    Setting.dt = 0.02f;
+    Setting.POS_Error_Max = 2.0f;
+    Setting.Accl_Max = 4.0f;
+    Setting.Speed_Max = 4.0f;
     SetPlanning_Init(&HeightCtrl, &Setting);
 
     /*定时线程*/
-    rt_timer_init(&atti_5ms_tim, "atti_Tim", atti_5ms_IRQHandler, RT_NULL, 5,
+  rt_timer_init(&atti_5ms_tim, "atti_Tim", atti_5ms_IRQHandler, RT_NULL, 5,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 	rt_timer_init(&pos_20ms_tim, "pos_Tim", pos_20ms_IRQHandler, RT_NULL, 20,
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
     /* 开启定时器 */
-    rt_timer_start(&atti_5ms_tim);
+  rt_timer_start(&atti_5ms_tim);
 	rt_timer_start(&pos_20ms_tim);
 }
 
@@ -313,10 +339,10 @@ void Motor_init(void)
 	pid_init(&HERO_copter.copter_yaw.spe,YAWSPE_PID);
 	//位置环
 	pid_init(&HERO_copter.copter_h.pos,POS_H_PID);
-	pid_init(&HERO_copter.copter_h.pos,VEC_H_PID);
+	pid_init(&HERO_copter.copter_h.vec,VEC_H_PID);
 	pid_init(&HERO_copter.copter_x.pos,POS_X_PID);
-	pid_init(&HERO_copter.copter_x.pos,VEC_X_PID);
+	pid_init(&HERO_copter.copter_x.vec,VEC_X_PID);
 	pid_init(&HERO_copter.copter_y.pos,POS_Y_PID);
-	pid_init(&HERO_copter.copter_y.pos,VEC_Y_PID);
+	pid_init(&HERO_copter.copter_y.vec,VEC_Y_PID);
 	motor_start();
 }

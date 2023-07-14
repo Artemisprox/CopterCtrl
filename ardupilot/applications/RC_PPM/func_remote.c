@@ -20,40 +20,23 @@ static int16_t low_pass_filter(int16_t data_now , int16_t data_last , float para
 	return data_now*param + data_last*(1-param);
 }
 
-void HeightCtrlInit(uint8_t mode)
-{
-	static uint8_t height_ctrl_first = 1;
-	if(mode == HEIGHT || mode == POSITION)
-	{	
-		if(height_ctrl_first)
-			{
-				height_ctrl.NowOutData = get_height();
-				height_ctrl.NowSetData = get_height();
-				height_ctrl_first = 0;
-			}else
-				height_ctrl_first = 1;
-	}
-}
-
 /*将遥控器数据转化为控制数据*/
 static void remote_setpoint(uint8_t mode , RC_PPM_data *data)
 {
-	HeightCtrlInit(mode);
-	float height_temp;
 	switch (mode)
 	{
 		case POSITION ://定点模式：高度速度、x轴速度、y轴速度、yaw轴角速度
 			copter_remote.throttle = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
 			copter_remote.pitch = (data->RC_pitch - rocker_middle)/rocker_width*2.0f*POS_X_MAX_V;
 			copter_remote.roll  = (data->RC_roll - rocker_middle)/rocker_width*2.0f*POS_Y_MAX_V;
-			copter_remote.yaw   = (data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
+			copter_remote.yaw   = -(data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
 			break;
 		case HEIGHT ://定高模式：高度速度、pitch轴角度、roll轴角度、yaw轴角速度
 			copter_remote.throttle = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
 			copter_remote.throttle = (data->RC_throttle - rocker_middle)/rocker_width*2.0f*HEIGHT_MAX_V;
 			copter_remote.pitch = (data->RC_pitch - rocker_middle)/rocker_width*2.0f*PITCH_MAX_DEG;
 			copter_remote.roll  = (data->RC_roll - rocker_middle)/rocker_width*2.0f*ROLL_MAX_DEG;
-			copter_remote.yaw   = (data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
+			copter_remote.yaw   = -(data->RC_yaw - rocker_middle)/rocker_width*2.0f*YAW_MAX_SPE;
 			break;
 		case STABILIZATION ://自稳模式：推力、pitch轴角度、roll轴角度、yaw轴角速度
 			copter_remote.throttle = (data->RC_throttle - rocker_min)/rocker_width*F_MAX;

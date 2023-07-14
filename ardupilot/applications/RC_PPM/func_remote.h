@@ -1,8 +1,8 @@
 #include <rtthread.h>
 
-#define HEIGHT_MAX_V    2.0f //最大上升速度
-#define POS_X_MAX_V     1.0f //最大X轴速度
-#define POS_Y_MAX_V     1.0f //最大Y轴速度
+#define HEIGHT_MAX_V    4.0f //最大上升速度
+#define POS_X_MAX_V     2.0f //最大X轴速度
+#define POS_Y_MAX_V     2.0f //最大Y轴速度
 
 #define F_MAX            28.06f //最大升力
 #define PITCH_MAX_DEG    20 //最大俯仰角

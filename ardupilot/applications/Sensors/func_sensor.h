@@ -2,7 +2,7 @@
 
 #define PERIOD 0.02f
 #define DATA_FUSE 1
-#define USING_FLOW 0
+#define USING_FLOW 1
 
 typedef struct
 {

@@ -43,6 +43,7 @@ static float average_filter(float value , float sample)
 float jscope_test1 , jscope_test2;
 float temp1[2] , temp2[2] , last_distance = 0.0f;
 uint32_t height_data_del_time = 0;/*高度数据更新时间*/
+uint32_t pos_data_del_time = 0;/*水平位置数据更新时间*/
 //使用互补滤波处理位置信息（加速度计估计速度+光流估计速度）
 static void Pos_sensor_thread_entry(void *parameter)
 {
@@ -54,49 +55,60 @@ static void Pos_sensor_thread_entry(void *parameter)
 	    Package_Write_Pionter_End(IMU_ID,IMU_t);
         Copter_IMU.yaw = 0;
 
-        uint32_t pos_data_del_time = 0;/*水平位置数据更新时间*/
-
-        if(NiMingFlow_data.height_data_Valid || TF_mini_data.Data_fresh_time)//高度数据可用
+        if(NiMingFlow_data.height_data_Valid || TF_mini_data.Data_valid )//高度数据可用
         {
             if(first_flag)
             {
                 /*第一次进行参数初始化*/
-                copter_pos.distance = NiMingFlow_data.distance;
+				if(USING_FLOW)
+                {
+                    copter_pos.distance = NiMingFlow_data.distance;
+                    copter_pos.pos_y = NiMingFlow_data.pos_y;
+                    copter_pos.pos_x = NiMingFlow_data.pos_x;
+                }	
+				else
+					copter_pos.distance = TF_mini_data.distance;
+								
                 copter_pos.V_height = 0;
                 copter_pos.V_pos_x = 0;
                 copter_pos.V_pos_y = 0;
-                copter_pos.pos_y = 0;
-                copter_pos.pos_x = 0;
                 first_flag = 0;
             }else
             {   
-                if (USING_FLOW)
-                {
-                     /*如果高度数据未更新，则认为数据不准确*/
-                    height_data_del_time = NiMingFlow_data.height_data_fresh_time - fresh_time_last.height_time;
-                    
-                    if( height_data_del_time != 0)
-                    {
-                        if(DATA_FUSE)//启用板载加速度计融合
-                        {
-                            /*高度估计*/
-                            //Compensate_filter(&copter_pos.V_height,NiMingFlow_data.distance_v, copter_acc.acc_z);
-                            //Compensate_filter(&copter_pos.distance,NiMingFlow_data.distance, copter_pos.V_height);
-                        }else
-                        {
-                            copter_pos.V_height = NiMingFlow_data.distance_v;
-                            copter_pos.distance = NiMingFlow_data.distance;
-                        }
-                        
-                        copter_pos.height_valid = 1;//更新时间校验和数据校验都通过，认为数据可用
-                        fresh_time_last.height_time = NiMingFlow_data.height_data_fresh_time;
-                    }else
-                    {
-                        copter_pos.height_valid = 0;
-                    }
-                   
-                }else
-                {
+//                if (USING_FLOW)
+//                {
+//                     /*如果高度数据未更新，则认为数据不准确*/
+//                    height_data_del_time = NiMingFlow_data.height_data_fresh_time - fresh_time_last.height_time;
+//									
+//					temp1[0] =  arm_cos_f32(Copter_IMU.roll/360.0f*2.0f*3.1415926f)*arm_cos_f32(Copter_IMU.pitch/360.0f*2.0f*3.1415926f)*NiMingFlow_data.distance;
+//					temp1[1] = (temp1[0] - last_distance)/0.02f;
+//                    last_distance = temp1[0];
+//                    
+//                    if( height_data_del_time != 0)
+//                    {
+//                        if(DATA_FUSE)//启用板载加速度计融合
+//                        {
+//                            /*高度估计*/
+//                            temp1[1] = average_filter(copter_pos.V_height , temp1[1] );
+//							//jscope_test1 = temp1[1];
+//                            Velocity_estimate(temp1[0] , temp1[1] , temp2 );
+//							copter_pos.distance = temp2[0];
+//							copter_pos.V_height = temp2[1];
+//                        }else
+//                        {
+//                            copter_pos.V_height = NiMingFlow_data.distance_v;
+//                            copter_pos.distance = NiMingFlow_data.distance;
+//                        }
+//                        
+//                        copter_pos.height_valid = 1;//更新时间校验和数据校验都通过，认为数据可用
+//                        fresh_time_last.height_time = NiMingFlow_data.height_data_fresh_time;
+//                    }else
+//                    {
+//                        copter_pos.height_valid = 0;
+//                    }
+//                   
+//                }else
+//                {
                     /*如果高度数据未更新，则认为数据不准确*/
                     height_data_del_time = TF_mini_data.Data_fresh_time - fresh_time_last.height_time;
              
@@ -109,16 +121,16 @@ static void Pos_sensor_thread_entry(void *parameter)
                         if(DATA_FUSE)//启用板载加速度计融合
                         {
                             /*高度估计*/
-														jscope_test2 = temp1[1];
-														temp1[1] = average_filter(copter_pos.V_height , temp1[1] );
-														jscope_test1 = temp1[1];
+							//jscope_test2 = temp1[1];
+							temp1[1] = average_filter(copter_pos.V_height , temp1[1] );
+							//jscope_test1 = temp1[1];
                             Velocity_estimate(temp1[0] , temp1[1] , temp2 );
-														copter_pos.distance = temp2[0];
-														copter_pos.V_height = temp2[1];
+							copter_pos.distance = temp2[0];
+							copter_pos.V_height = temp2[1];
                             //Compensate_filter(&copter_pos.distance, TF_mini_data.distance, copter_acc.acc_z, PERIOD);
                         }else
                         {
-														copter_pos.V_height = temp1[1];
+							copter_pos.V_height = temp1[1];
 							//average_filter(copter_pos.V_height , TF_mini_data.distance_v );
                             //copter_pos.V_height = HERO_IMU.height_estimator;
                             copter_pos.distance = temp1[0];
@@ -129,29 +141,23 @@ static void Pos_sensor_thread_entry(void *parameter)
                     {
                         copter_pos.height_valid = 0;
                     }
-                }
+//                }
                 
                 if(NiMingFlow_data.pos_data_Valid)
                 {
                     /*如果位置数据未更新，则认为数据不准确*/
                     pos_data_del_time = NiMingFlow_data.pos_data_fresh_time - fresh_time_last.pos_time;
+					//fresh_time_last.pos_time = NiMingFlow_data.pos_data_fresh_time;
 
                     if( pos_data_del_time != 0)
                     {
-                        if(DATA_FUSE)//启用板载加速度计融合
-                        {
-                             /*速度估计*/
-                           // Compensate_filter(&copter_pos.V_pos_x,NiMingFlow_data.Vx_Flow, copter_acc.acc_x);
-                            //Compensate_filter(&copter_pos.V_pos_y,NiMingFlow_data.Vy_Flow, copter_acc.acc_y);
-                        }else
-                        {
-                            copter_pos.V_pos_x = NiMingFlow_data.Vx_Flow;
-                            copter_pos.V_pos_y = NiMingFlow_data.Vy_Flow;
-                        }
-
+                       
+                        copter_pos.V_pos_x = NiMingFlow_data.Vx_Flow;
+                        copter_pos.V_pos_y = NiMingFlow_data.Vy_Flow;
+                        
                         /*位置估计*/
-                        copter_pos.pos_x += copter_pos.V_pos_x*PERIOD;
-                        copter_pos.pos_y += copter_pos.V_pos_y*PERIOD;
+                        copter_pos.pos_x += NiMingFlow_data.pos_x;
+                        copter_pos.pos_y += NiMingFlow_data.pos_y;
                     
                         copter_pos.pos_valid = 1;//更新时间校验和数据校验都通过，认为数据可用
                         fresh_time_last.pos_time = NiMingFlow_data.pos_data_fresh_time;
@@ -196,9 +202,9 @@ static void Pos_sensor_20ms_IRQHandler(void *parameter)
 
 rt_err_t Sensor_Init(void)
 {
-    if(USING_FLOW)
+    //if(USING_FLOW)
         NiMingFlow_Init();
-    else
+   // else
         TF_mini_Init();
     
     Package_Pionter_Add("pos_sensor", pos_sensor);

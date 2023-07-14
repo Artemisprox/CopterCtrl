@@ -97,11 +97,22 @@ static uint8_t arm_confirm(data_check *data_valid , remote_data data)
 static uint8_t flying_check(void)
 {
     uint8_t flag = 0;
-    if(copter_status.flight_status == ARMED && (copter_remote.throttle_low_flag == 0) )
+    if(copter_status.mode == STABILIZATION)
     {
-        copter_status.flight_status = FLYING;
-        flag = 1;
-    }    
+        if(copter_status.flight_status == ARMED && (copter_remote.throttle_low_flag == 0) )
+        {
+            copter_status.flight_status = FLYING;
+            flag = 1;
+        }
+    }
+    else if(copter_status.mode == HEIGHT || copter_status.mode == POSITION )
+    {
+        if(copter_status.flight_status == ARMED && (copter_remote.throttle >= 0.5f) )
+        {
+            copter_status.flight_status = FLYING;
+            flag = 1;
+        }
+    }
     
     return flag;
 }
@@ -159,9 +170,15 @@ static void mode_check(data_check *data_valid)
             if( data_valid->height_valid )
             {
                 copter_status.mode = HEIGHT;
+				//rt_pin_write(GET_PIN(C, 13), PIN_HIGH);
+				//rt_thread_mdelay(50);
+				rt_pin_write(GET_PIN(C, 13), PIN_LOW);
                 break;
             }
         default:
+				//rt_pin_write(GET_PIN(C, 13), PIN_HIGH);
+				//rt_thread_mdelay(50);
+				//rt_pin_write(GET_PIN(C, 13), PIN_LOW);
                 copter_status.mode = STABILIZATION;
                 break;
     }
