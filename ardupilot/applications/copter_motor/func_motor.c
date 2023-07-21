@@ -28,6 +28,7 @@ static recoil_data copter_gimbal;
 static copter_ctrl HERO_copter;
 static remote_data control_data;
 static status copter_status;
+pos_sensor local_pos;
 
 static uint8_t remote_ID,IMU_ID,sensor_ID,status_ID,recoil_ID;
 
@@ -123,6 +124,7 @@ static void atti_5ms_entry(void *parameter)
 			case POSITION:
 				error_p = HERO_copter.copter_x.vec.out - HERO_IMU.pitch ;
 				error_r = HERO_copter.copter_y.vec.out - HERO_IMU.roll ;
+				break;
 			default:
 				error_p = control_data.pitch - HERO_IMU.pitch ;
 				error_r = control_data.roll - HERO_IMU.roll ;
@@ -187,6 +189,14 @@ static void atti_5ms_entry(void *parameter)
 	}
 }
 
+uint8_t pos_control_check(void)
+{
+	if(( control_data.throttle < 0.05f && control_data.throttle > -0.05f ) && ( local_pos.V_height < 0.2f && local_pos.V_height > -0.2f ))
+		return 1;
+	else 
+		return 0;
+}
+
 //位置线程
 static void pos_20ms_entry(void *parameter)
 {
@@ -203,7 +213,6 @@ static void pos_20ms_entry(void *parameter)
 	copter_status = *p_2 ;
 	Package_Write_Pionter_End(status_ID,status);
 
-   	pos_sensor local_pos;
   	pos_sensor *p_3 =  Package_Pionter_Single(sensor_ID,pos_sensor);
 	local_pos = *p_3 ;
 	Package_Write_Pionter_End(sensor_ID,pos_sensor);
@@ -237,27 +246,38 @@ static void pos_20ms_entry(void *parameter)
 		//位置闭环包含速度闭环，故没有break
 		case HEIGHT:
 		{	
+			/*在正常定高模式下采用位置闭环，在进行人为控制时采用速度闭环，以提高响应速度*/
+			/*模式切换的依据为 控制输入与当前速度 ， 当摇杆归中且速度降低至可接受范围内时，转入位置闭环*/
+
 			//float tempheight;
 			//Smooth_SetDataADD(&SmoothHeight , control_data.throttle);
 			//Smooth_GetDataABS(&tempheight , &SmoothHeight);
-			
+			static float pos_set;
 			if( copter_status.flight_status == ARMED )
 			{
-				HeightCtrl.Input.Set.pos = get_height();
-				SetPlanning_SetOutput(&HeightCtrl , get_height());
+				//HeightCtrl.Input.Set.pos = get_height();
+				pos_set = get_height();
+				//SetPlanning_SetOutput(&HeightCtrl , get_height());
 				//HERO_copter.copter_h.pos.set = get_height();
 				HERO_copter.copter_mixer.f = 0.0f;
 			}
 			else
 			{
-				HeightCtrl.Input.Set.pos += control_data.throttle*0.02f;
-				HeightCtrl.Input.Now.pos = get_height();
-				SetPlanning_Cal(&HeightCtrl);
+				if(pos_control_check())
+				{
+					HERO_copter.copter_h.pos.set = pos_set ;
+				}else
+				{
+					HERO_copter.copter_h.pos.set = get_height();
+					pos_set = get_height();
+				}
+				//HeightCtrl.Input.Set.pos += control_data.throttle*0.02f;
+				//HeightCtrl.Input.Now.pos = get_height();
+				//SetPlanning_Cal(&HeightCtrl);
 				//HERO_copter.copter_h.pos.set += control_data.throttle*0.02f; 
-				error_h = HeightCtrl.Output.pos - local_pos.distance;
+				error_h = HERO_copter.copter_h.pos.set - local_pos.distance;
 				PID_Calculate(&HERO_copter.copter_h.pos,error_h);
 				error_h = HERO_copter.copter_h.pos.out - local_pos.V_height + control_data.throttle;
-				//+ HeightCtrl.Output.spe;
 				//error_h = control_data.throttle - local_pos.V_height;
 				PID_Calculate(&HERO_copter.copter_h.vec,error_h);
 				HERO_copter.copter_mixer.f = HERO_copter.copter_h.vec.out + MASS*g/arm_cos_f32(HERO_IMU.pitch/360.0f*2*3.1415926f)/arm_cos_f32(HERO_IMU.roll/360.0f*2*3.1415926f) ;

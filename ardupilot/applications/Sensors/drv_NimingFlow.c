@@ -85,11 +85,11 @@ void NiMingFlow_DataProcess(uint8_t *pData,uint8_t rec_length)
 		
 		if(mode == 2)
 		{
-			NiMingFlow_data.Vx_Flow =  ((int16_t)((uint16_t)pData[5] | ((uint16_t)pData[6] << 8))) / 10000.0f;
-			NiMingFlow_data.Vy_Flow =  ((int16_t)((uint16_t)pData[7] | ((uint16_t)pData[8] << 8))) / 10000.0f;
-			NiMingFlow_data.pos_x   =  ((int16_t)((uint16_t)pData[13] | ((uint16_t)pData[14] << 8))) / 10000.0f;
-			NiMingFlow_data.pos_y   =  ((int16_t)((uint16_t)pData[15] | ((uint16_t)pData[16] << 8))) / 10000.0f;
-			NiMingFlow_data.quality =  pData[17];
+			NiMingFlow_data.Vx_Flow =  ((int16_t)((uint16_t)pData[6] | ((uint16_t)pData[7] << 8))) / 100.0f;
+			NiMingFlow_data.Vy_Flow =  -((int16_t)((uint16_t)pData[8] | ((uint16_t)pData[9] << 8))) / 100.0f;
+			NiMingFlow_data.pos_x   =  ((int16_t)((uint16_t)pData[14] | ((uint16_t)pData[15] << 8))) / 100.0f;
+			NiMingFlow_data.pos_y   =  ((int16_t)((uint16_t)pData[16] | ((uint16_t)pData[17] << 8))) / 100.0f;
+			NiMingFlow_data.quality =  pData[18];
             
             if(NiMingFlow_data.quality > 150)
             {
