@@ -2,9 +2,9 @@
 #define CAN_TEST_H
 
 #include <rtdevice.h>
+#include "drv_motor.h"
 
-#define THREAD_PRIO_TEST_CAN1RX 5
-#define THREAD_PRIO_TEST_CAN2RX 5
+Motor_t *Read_Gun_Motor(void);
 
 rt_err_t CAN_Init(void);
 

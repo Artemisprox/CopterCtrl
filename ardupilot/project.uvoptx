@@ -120,7 +120,6 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>d</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -264,6 +263,11 @@
           <count>22</count>
           <WinNumber>1</WinNumber>
           <ItemText>copter_pos</ItemText>
+        </Ww>
+        <Ww>
+          <count>23</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>m_launch,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
@@ -496,7 +500,7 @@
 
   <Group>
     <GroupName>Communication</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

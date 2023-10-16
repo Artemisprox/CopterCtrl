@@ -2,6 +2,7 @@
 #include "drv_IMU.h"
 #include "drv_battery.h"
 #include "mod_recoil_force_compensate.h"
+#include "CAN_TEST.h"
 
 volatile int Last_CANID; // 用于检查收到的无效报文的ID
 
@@ -9,6 +10,7 @@ void can1_rec(struct rt_can_msg *msg)
 {
     switch (msg->id)
     {
+    /*
     //发射机构
     case GIMBAL_ID:
         gun_readmsg(msg->data);
@@ -25,6 +27,10 @@ void can1_rec(struct rt_can_msg *msg)
 
     default:
         Last_CANID = msg->id;
+        return;
+    */
+    case 0x201:
+        motor_readmsg(msg->data, &Read_Gun_Motor()->dji);
         return;
     }
 }
@@ -58,4 +64,3 @@ void can2_rec(struct rt_can_msg *msg)
     }
 */
 }
-

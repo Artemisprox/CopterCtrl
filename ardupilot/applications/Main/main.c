@@ -14,7 +14,7 @@
 #include <rtthread.h>
 #include "drv_RC_PPM.h"
 #include "func_motor.h"
-#include "drv_RGB.h"
+//#include "drv_RGB.h"
 #include "mod_Monitor.h"
 #include "func_SensorRAW.h"
 #include "func_TempCtr.h"
@@ -26,16 +26,16 @@
 #include "func_sensor.h"
 #include "drv_canthread.h"
 #include "func_state.h"
-#define TEST 0
+#define TEST 1
 #define BEEP_PIN_NUM GET_PIN(C, 13)
 #if (TEST)
 #define KEY_TEST 0
-#define CAN_TEST 0
+#define CAN_TEST 1
 #define RGB_TEST 0
 #define PWM_TEST 0
 #define UART_TEST 0
 #define IMU_TEST 0
-#define ESC_CALI 1
+#define ESC_CALI 0
 #define SBUS_TEST 0
 #include "CAN_TEST.h"
 #include "RGB_TEST.h"
