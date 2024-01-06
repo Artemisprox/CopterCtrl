@@ -4,20 +4,20 @@
 #include "drv_thread.h"
 
 static rt_device_t serial = RT_NULL;
-struct rt_semaphore TF_mini_sem; /* ÓÃÓÚ½ÓÊÕÏûÏ¢µÄĞÅºÅÁ¿ */
+struct rt_semaphore TF_mini_sem; /* ç”¨äºæ¥æ”¶æ¶ˆæ¯çš„ä¿¡å·é‡ */
 uint8_t TF_mini_rx_buffer[RT_SERIAL_RB_BUFSZ + 1];
 
 static char msg_pool[256];
 
-/* ´®¿ÚÉè±¸¾ä±ú */
+/* ä¸²å£è®¾å¤‡å¥æŸ„ */
 static rt_device_t serial;
-/* ÏûÏ¢¶ÓÁĞ¿ØÖÆ¿é */
+/* æ¶ˆæ¯é˜Ÿåˆ—æ§åˆ¶å— */
 static struct rt_messagequeue TF_mini_rx_mq;
 
-/*TFmini½ÓÊÕÊı¾İ½á¹¹*/
+/*TFminiæ¥æ”¶æ•°æ®ç»“æ„*/
 TF_mini_rec TF_mini_data = {0};
 
-/* ´®¿Ú½ÓÊÕÏûÏ¢½á¹¹*/
+/* ä¸²å£æ¥æ”¶æ¶ˆæ¯ç»“æ„*/
 struct rx_msg
 {
     rt_device_t dev;
@@ -25,7 +25,7 @@ struct rx_msg
 };
 
 
-/* ½ÓÊÕÊı¾İ»Øµ÷º¯Êı */
+/* æ¥æ”¶æ•°æ®å›è°ƒå‡½æ•° */
 static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
 {
     struct rx_msg msg;
@@ -35,7 +35,7 @@ static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
     result = rt_mq_send(&TF_mini_rx_mq, &msg, sizeof(msg));
     if (result == -RT_EFULL)
     {
-        /* ÏûÏ¢¶ÓÁĞÂú */
+        /* æ¶ˆæ¯é˜Ÿåˆ—æ»¡ */
         rt_kprintf("message queue full!\n");
     }
     return result;
@@ -56,9 +56,9 @@ void TF_mini_DataProcess(uint8_t *pData)
         return;
     }
 
-		byte1 = pData[0];//ÆğÊ¼Ö¡
-		byte2 = pData[1];//ÆğÊ¼Ö¡
-		check = pData[8];//Ğ£ÑéÖ¡
+		byte1 = pData[0];//èµ·å§‹å¸§
+		byte2 = pData[1];//èµ·å§‹å¸§
+		check = pData[8];//æ ¡éªŒå¸§
 		
 		for(i = 0; i < 8 ; i++ )
 		{
@@ -72,7 +72,7 @@ void TF_mini_DataProcess(uint8_t *pData)
 		{
 			
 			distance = ((uint16_t)pData[2] | ((uint16_t)pData[3] << 8));
-			if(distance == 0xFFFF || distance == 0xFFFE || distance == 0xFFFD )//Êı¾İ»ñÈ¡´íÎó
+			if(distance == 0xFFFF || distance == 0xFFFE || distance == 0xFFFD )//æ•°æ®è·å–é”™è¯¯
 			{
 				TF_mini_data.Data_valid = 0;
 				return;
@@ -84,7 +84,7 @@ void TF_mini_DataProcess(uint8_t *pData)
 			TF_mini_data.data_num ++;
       TF_mini_data.Data_fresh_time = rt_tick_get();
       //if(first_flag == 0)
-			//	TF_mini_data.distance_v = (distance - distance_last)/2.0f;//Ê¹ÓÃ¸ß¶È±ä»¯Á¿¹À¼ÆËÙ¶È
+			//	TF_mini_data.distance_v = (distance - distance_last)/2.0f;//ä½¿ç”¨é«˜åº¦å˜åŒ–é‡ä¼°è®¡é€Ÿåº¦
       //else 
       //  first_flag = 0;
 			TF_mini_data.Data_valid = 1;
@@ -103,32 +103,32 @@ static void TF_serial_thread_entry(void *parameter)
     rt_err_t result;
     rt_uint32_t rx_length;
 //    rt_int8_t LastData_Valid = 0;
-    //³õÊ¼»¯
+    //åˆå§‹åŒ–
     
     while (1)
     {
         rt_memset(&msg, 0, sizeof(msg));
-        /* ´ÓÏûÏ¢¶ÓÁĞÖĞ¶ÁÈ¡ÏûÏ¢*/
+        /* ä»æ¶ˆæ¯é˜Ÿåˆ—ä¸­è¯»å–æ¶ˆæ¯*/
         result = rt_mq_recv(&TF_mini_rx_mq, &msg, sizeof(msg), RT_WAITING_FOREVER);
         if (result == RT_EOK)
         {
-            /* ´Ó´®¿Ú¶ÁÈ¡Êı¾İ*/
+            /* ä»ä¸²å£è¯»å–æ•°æ®*/
             rx_length = rt_device_read(msg.dev, 0, TF_mini_rx_buffer, msg.size);
 						//rt_device_read(serial, -1, TF_mini_buffer_p, 1);
 						//TF_mini_buffer_p ++ ;
             if (rx_length != 9)
-            { // Èç¹û³¤¶È²»¶Ô£¬ÔòÖ±½ÓÌø¹ı£¬µ«ÊÇ±ØĞë´Órt_device_read¶Á³ö£¬·ñÔò»º³åÇø»áÒç³ö
+            { // å¦‚æœé•¿åº¦ä¸å¯¹ï¼Œåˆ™ç›´æ¥è·³è¿‡ï¼Œä½†æ˜¯å¿…é¡»ä»rt_device_readè¯»å‡ºï¼Œå¦åˆ™ç¼“å†²åŒºä¼šæº¢å‡º
                 continue;
             }
             TF_mini_rx_buffer[rx_length] = '\0';
 
             TF_mini_DataProcess(TF_mini_rx_buffer);
 
-            //TF_mini_data.Data_fresh_time = rt_tick_get(); // Ë¢ĞÂÊı¾İµÄ¸üĞÂÊ±¼ä
+            //TF_mini_data.Data_fresh_time = rt_tick_get(); // åˆ·æ–°æ•°æ®çš„æ›´æ–°æ—¶é—´
 						
 						
 		 //rt_memcpy(&RC_data_last, &RC_data, sizeof(RC_data));
-     //ÊÍ·ÅÒ£¿ØÆ÷Êı¾İ´¦ÀíĞÅºÅÁ¿
+     //é‡Šæ”¾é¥æ§å™¨æ•°æ®å¤„ç†ä¿¡å·é‡
      //   while (rt_sem_trytake(&TF_mini_sem) == RT_EOK)
      //       continue;
      //   rt_sem_release(&TF_mini_sem);
@@ -139,39 +139,39 @@ static void TF_serial_thread_entry(void *parameter)
 
 rt_err_t TF_mini_Init(void)
 {
-		struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; /* ³õÊ¼»¯ÅäÖÃ²ÎÊı */
+		struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; /* åˆå§‹åŒ–é…ç½®å‚æ•° */
 
-    /* step1£º²éÕÒ´®¿ÚÉè±¸ */
+    /* step1ï¼šæŸ¥æ‰¾ä¸²å£è®¾å¤‡ */
     serial = rt_device_find(TF_mini_device);
 
-    /* step2£ºĞŞ¸Ä´®¿ÚÅäÖÃ²ÎÊı */
-    config.baud_rate = BAUD_RATE_115200;      //ĞŞ¸Ä²¨ÌØÂÊÎª 9600
-    config.data_bits = DATA_BITS_8; //Êı¾İÎ» 8
-    config.stop_bits = STOP_BITS_1; //Í£Ö¹Î» 1
-    config.bufsz = 128;             //ĞŞ¸Ä»º³åÇø buff size Îª 128
+    /* step2ï¼šä¿®æ”¹ä¸²å£é…ç½®å‚æ•° */
+    config.baud_rate = BAUD_RATE_115200;      //ä¿®æ”¹æ³¢ç‰¹ç‡ä¸º 9600
+    config.data_bits = DATA_BITS_8; //æ•°æ®ä½ 8
+    config.stop_bits = STOP_BITS_1; //åœæ­¢ä½ 1
+    config.bufsz = 128;             //ä¿®æ”¹ç¼“å†²åŒº buff size ä¸º 128
     config.parity = PARITY_EVEN;    //
 
-    /* step3£º¿ØÖÆ´®¿ÚÉè±¸¡£Í¨¹ı¿ØÖÆ½Ó¿Ú´«ÈëÃüÁî¿ØÖÆ×Ö£¬Óë¿ØÖÆ²ÎÊı */
+    /* step3ï¼šæ§åˆ¶ä¸²å£è®¾å¤‡ã€‚é€šè¿‡æ§åˆ¶æ¥å£ä¼ å…¥å‘½ä»¤æ§åˆ¶å­—ï¼Œä¸æ§åˆ¶å‚æ•° */
     rt_device_control(serial, RT_DEVICE_CTRL_CONFIG, &config);
 
-    /* ³õÊ¼»¯ÏûÏ¢¶ÓÁĞ */
+    /* åˆå§‹åŒ–æ¶ˆæ¯é˜Ÿåˆ— */
     rt_mq_init(&TF_mini_rx_mq, "rx_mq",
-               msg_pool,              /* ´æ·ÅÏûÏ¢µÄ»º³åÇø */
-               sizeof(struct rx_msg), /* Ò»ÌõÏûÏ¢µÄ×î´ó³¤¶È */
-               sizeof(msg_pool),      /* ´æ·ÅÏûÏ¢µÄ»º³åÇø´óĞ¡ */
-               RT_IPC_FLAG_FIFO);     /* Èç¹ûÓĞ¶à¸öÏß³ÌµÈ´ı£¬°´ÕÕÏÈÀ´ÏÈµÃµ½µÄ·½·¨·ÖÅäÏûÏ¢ */
+               msg_pool,              /* å­˜æ”¾æ¶ˆæ¯çš„ç¼“å†²åŒº */
+               sizeof(struct rx_msg), /* ä¸€æ¡æ¶ˆæ¯çš„æœ€å¤§é•¿åº¦ */
+               sizeof(msg_pool),      /* å­˜æ”¾æ¶ˆæ¯çš„ç¼“å†²åŒºå¤§å° */
+               RT_IPC_FLAG_FIFO);     /* å¦‚æœæœ‰å¤šä¸ªçº¿ç¨‹ç­‰å¾…ï¼ŒæŒ‰ç…§å…ˆæ¥å…ˆå¾—åˆ°çš„æ–¹æ³•åˆ†é…æ¶ˆæ¯ */
 
-    /* ÒÔ DMA ½ÓÊÕ¼°ÂÖÑ¯·¢ËÍ·½Ê½´ò¿ª´®¿ÚÉè±¸ */
+    /* ä»¥ DMA æ¥æ”¶åŠè½®è¯¢å‘é€æ–¹å¼æ‰“å¼€ä¸²å£è®¾å¤‡ */
     rt_device_open(serial, RT_DEVICE_FLAG_DMA_RX );
-    /* ÉèÖÃ½ÓÊÕ»Øµ÷º¯Êı */
+    /* è®¾ç½®æ¥æ”¶å›è°ƒå‡½æ•° */
     rt_device_set_rx_indicate(serial, uart_input);
 
-    //³õÊ¼»¯ĞÅºÅÁ¿
+    //åˆå§‹åŒ–ä¿¡å·é‡
     rt_sem_init(&TF_mini_sem, "TF_mini_rec", 0, RT_IPC_FLAG_FIFO);
 
-    /* ´´½¨ serial Ïß³Ì */
+    /* åˆ›å»º serial çº¿ç¨‹ */
     rt_thread_t thread = rt_thread_create("serial", TF_serial_thread_entry, RT_NULL, 2048, THREAD_PRIO_SENSOR_UART_RX, 5);
-    /* ´´½¨³É¹¦ÔòÆô¶¯Ïß³Ì */
+    /* åˆ›å»ºæˆåŠŸåˆ™å¯åŠ¨çº¿ç¨‹ */
     if (thread != RT_NULL)
     {
         rt_thread_startup(thread);

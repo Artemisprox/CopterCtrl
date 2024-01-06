@@ -2,13 +2,16 @@
 //#include "func_IMU_redundancy.h"
 #include "func_IMUCali.h"
 #include <rtthread.h>
+#include "INS_FLOW.h"
+#include "Filter.h"
 
 IMU_redun copter_IMU_redun;
-Sensor_RAW_t copter_IMU_RAW;
+Sensor_RAW_t copter_IMU_RAW , copter_IMU_RAW_Last;
 
 struct rt_semaphore IMU_1ms_sem; /* 定时信号量 */
 struct rt_semaphore IMU_redun_sem; /* 定时信号量 */
 static struct rt_timer IMU_redundancy_tim;/* 定时器 */
+#define low_p 0.9f
 
 static void IMU_redundancy_1ms_IRQHandler(void *parameter)
 {
@@ -19,6 +22,7 @@ static void IMU_redundancy_1ms_IRQHandler(void *parameter)
 
 void IMU_redundancy_Thread(void *para)
 {   
+		static int16_t first_flag =1;
 		rt_int16_t IMU1_times_flag = 0;
 		rt_int16_t IMU2_times_flag = 0;
     //记录陀螺仪数据更新时间
@@ -29,6 +33,17 @@ void IMU_redundancy_Thread(void *para)
     while(1)
     {
         rt_sem_take(&IMU_1ms_sem,RT_WAITING_FOREVER);//等待定时中断产生
+			
+				if(first_flag)
+				{
+					first_flag = 0;
+					copter_IMU_RAW_Last.Accl_Raw.x = copter_IMU_RAW.Accl_Raw.x;
+					copter_IMU_RAW_Last.Accl_Raw.y = copter_IMU_RAW.Accl_Raw.y;
+					copter_IMU_RAW_Last.Accl_Raw.z = copter_IMU_RAW.Accl_Raw.z;
+					copter_IMU_RAW_Last.Gyro_Raw.x = copter_IMU_RAW.Gyro_Raw.x;
+					copter_IMU_RAW_Last.Gyro_Raw.y = copter_IMU_RAW.Gyro_Raw.y;
+					copter_IMU_RAW_Last.Gyro_Raw.z = copter_IMU_RAW.Gyro_Raw.z;
+				}
 
         if(copter_IMU_redun.IMU1_fresh_last == Sensor_RAW_IMU1.DataFreshtime)//若该时间段内陀螺仪未更新，则认为通信断开
         {
@@ -94,6 +109,28 @@ void IMU_redundancy_Thread(void *para)
 						copter_IMU_RAW.RawDataReady = 1;
             break;
         }
+						copter_IMU_RAW.Accl_Raw.x = low_pass_filter_f(copter_IMU_RAW.Accl_Raw.x , copter_IMU_RAW_Last.Accl_Raw.x ,low_p);
+						copter_IMU_RAW.Accl_Raw.y = low_pass_filter_f(copter_IMU_RAW.Accl_Raw.y , copter_IMU_RAW_Last.Accl_Raw.y ,low_p);
+						copter_IMU_RAW.Accl_Raw.z = low_pass_filter_f(copter_IMU_RAW.Accl_Raw.z , copter_IMU_RAW_Last.Accl_Raw.z ,low_p);
+						copter_IMU_RAW.Gyro_Raw.x = low_pass_filter_f(copter_IMU_RAW.Gyro_Raw.x , copter_IMU_RAW_Last.Gyro_Raw.x ,low_p);
+						copter_IMU_RAW.Gyro_Raw.y = low_pass_filter_f(copter_IMU_RAW.Gyro_Raw.y , copter_IMU_RAW_Last.Gyro_Raw.y ,low_p);
+						copter_IMU_RAW.Gyro_Raw.z = low_pass_filter_f(copter_IMU_RAW.Gyro_Raw.z , copter_IMU_RAW_Last.Gyro_Raw.z ,low_p);
+				
+//						ins_flow_data.flo[0] = copter_IMU_RAW.Accl_Raw.x;
+//						ins_flow_data.flo[1] = copter_IMU_RAW.Accl_Raw.y;
+//						ins_flow_data.flo[2] = copter_IMU_RAW.Accl_Raw.z;
+//						ins_flow_data.flo[3] = copter_IMU_RAW.Gyro_Raw.x;
+//						ins_flow_data.flo[4] = copter_IMU_RAW.Gyro_Raw.y;
+//						ins_flow_data.flo[5] = copter_IMU_RAW.Gyro_Raw.z;
+
+				copter_IMU_RAW_Last.Accl_Raw.x = copter_IMU_RAW.Accl_Raw.x;
+				copter_IMU_RAW_Last.Accl_Raw.y = copter_IMU_RAW.Accl_Raw.y;
+				copter_IMU_RAW_Last.Accl_Raw.z = copter_IMU_RAW.Accl_Raw.z;
+				copter_IMU_RAW_Last.Gyro_Raw.x = copter_IMU_RAW.Gyro_Raw.x;
+				copter_IMU_RAW_Last.Gyro_Raw.y = copter_IMU_RAW.Gyro_Raw.y;
+				copter_IMU_RAW_Last.Gyro_Raw.z = copter_IMU_RAW.Gyro_Raw.z;
+				
+				
         while (rt_sem_trytake(&IMU_redun_sem) == RT_EOK)
             continue; //取完多余的信号量
         rt_sem_release(&IMU_redun_sem);

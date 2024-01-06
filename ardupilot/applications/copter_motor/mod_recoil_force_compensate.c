@@ -67,7 +67,7 @@ void recoil_force_thread(void * param)
 void recoil_compensate_init(void)
 {
     Package_Pionter_Add("compensate", recoil_data);
-		Package_ID = Package_Find_Num("compensate");
+	Package_ID = Package_Find_Num("compensate");
 	
 		/*线程初始化*/
     rt_thread_t thread;

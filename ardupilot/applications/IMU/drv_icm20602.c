@@ -6,25 +6,25 @@
 #include "drv_icm20602.h"
 #include "math.h"
 
-//========ICM20602¼Ä´æÆ÷µØÖ·========================
+//========ICM20602å¯„å­˜å™¨åœ°å€========================
 /********************************************
-*¸´Î»ºóËùÓĞ¼Ä´æÆ÷µØÖ·¶¼Îª0£¬³ıÁË
+*å¤ä½åæ‰€æœ‰å¯„å­˜å™¨åœ°å€éƒ½ä¸º0ï¼Œé™¤äº†
 *Register 26  CONFIG				= 0x80
 *Register 107 Power Management 1 	= 0x41
 *Register 117 WHO_AM_I 				= 0x12
 *********************************************/
-//ÍÓÂİÒÇÎÂ¶È²¹³¥
+//é™€èºä»ªæ¸©åº¦è¡¥å¿
 #define	ICM20_XG_OFFS_TC_H				0x04
 #define	ICM20_XG_OFFS_TC_L				0x05
 #define	ICM20_YG_OFFS_TC_H				0x07
 #define	ICM20_YG_OFFS_TC_L				0x08
 #define	ICM20_ZG_OFFS_TC_H				0x0A
 #define	ICM20_ZG_OFFS_TC_L				0x0B
-//¼ÓËÙ¶È×Ô¼ìÊä³ö(³ö²úÊ±ÉèÖÃ£¬ÓÃÓÚÓëÓÃ»§µÄ×Ô¼ìÊä³öÖµ±È½Ï£©
+//åŠ é€Ÿåº¦è‡ªæ£€è¾“å‡º(å‡ºäº§æ—¶è®¾ç½®ï¼Œç”¨äºä¸ç”¨æˆ·çš„è‡ªæ£€è¾“å‡ºå€¼æ¯”è¾ƒï¼‰
 #define	ICM20_SELF_TEST_X_ACCEL			0x0D
 #define	ICM20_SELF_TEST_Y_ACCEL			0x0E
 #define	ICM20_SELF_TEST_Z_ACCEL			0x0F
-//ÍÓÂİÒÇ¾²Ì¬Æ«ÒÆ
+//é™€èºä»ªé™æ€åç§»
 #define	ICM20_XG_OFFS_USRH				0x13
 #define	ICM20_XG_OFFS_USRL				0x14
 #define	ICM20_YG_OFFS_USRH				0x15
@@ -39,7 +39,7 @@
 #define	ICM20_ACCEL_CONFIG2				0x1D
 #define	ICM20_LP_MODE_CFG				0x1E
 
-//ÔË¶¯»½ĞÑ¼ÓËÙ¶ÈãĞÖµ
+//è¿åŠ¨å”¤é†’åŠ é€Ÿåº¦é˜ˆå€¼
 #define	ICM20_ACCEL_WOM_X_THR			0x20
 #define	ICM20_ACCEL_WOM_Y_THR			0x21
 #define	ICM20_ACCEL_WOM_Z_THR			0x22
@@ -52,24 +52,24 @@
 #define	ICM20_FIFO_WM_INT_STATUS		0x39
 #define	ICM20_INT_STATUS				0x3A
 
-//¼ÓËÙ¶ÈÊä³ö
+//åŠ é€Ÿåº¦è¾“å‡º
 #define	ICM20_ACCEL_XOUT_H				0x3B
 #define	ICM20_ACCEL_XOUT_L				0x3C
 #define	ICM20_ACCEL_YOUT_H				0x3D
 #define	ICM20_ACCEL_YOUT_L				0x3E
 #define	ICM20_ACCEL_ZOUT_H				0x3F
 #define	ICM20_ACCEL_ZOUT_L				0x40
-//ÎÂ¶ÈÊä³ö
+//æ¸©åº¦è¾“å‡º
 #define	ICM20_TEMP_OUT_H				0x41
 #define	ICM20_TEMP_OUT_L				0x42
-//½ÇËÙ¶ÈÊä³ö
+//è§’é€Ÿåº¦è¾“å‡º
 #define	ICM20_GYRO_XOUT_H				0x43
 #define	ICM20_GYRO_XOUT_L				0x44
 #define	ICM20_GYRO_YOUT_H				0x45
 #define	ICM20_GYRO_YOUT_L				0x46
 #define	ICM20_GYRO_ZOUT_H				0x47
 #define	ICM20_GYRO_ZOUT_L				0x48
-//ÍÓÂİÒÇ×Ô¼ìÊä³ö
+//é™€èºä»ªè‡ªæ£€è¾“å‡º
 #define	ICM20_SELF_TEST_X_GYRO			0x50
 #define	ICM20_SELF_TEST_Y_GYRO			0x51
 #define	ICM20_SELF_TEST_Z_GYRO			0x52
@@ -79,7 +79,7 @@
 #define	ICM20_SIGNAL_PATH_RESET			0x68
 #define	ICM20_ACCEL_INTEL_CTRL 			0x69
 #define	ICM20_USER_CTRL					0x6A
-//µçÔ´¿ØÖÆ
+//ç”µæºæ§åˆ¶
 #define	ICM20_PWR_MGMT_1				0x6B
 #define	ICM20_PWR_MGMT_2				0x6C
 
@@ -89,7 +89,7 @@
 #define	ICM20_FIFO_R_W					0x74
 
 #define	ICM20_WHO_AM_I 					0x75
-//¼ÓËÙ¶È¾²Ì¬Æ«ÒÆ
+//åŠ é€Ÿåº¦é™æ€åç§»
 #define	ICM20_XA_OFFSET_H				0x77
 #define	ICM20_XA_OFFSET_L				0x78
 #define	ICM20_YA_OFFSET_H				0x7A
@@ -97,12 +97,12 @@
 #define	ICM20_ZA_OFFSET_H				0x7D
 #define	ICM20_ZA_OFFSET_L 				0x7E
 
-//¼ÓËÙ¶ÈÁ¿³Ì
+//åŠ é€Ÿåº¦é‡ç¨‹
 #define ICM20_ACCEL_FS_2G (0 << 3)
 #define ICM20_ACCEL_FS_4G (1 << 3)
 #define ICM20_ACCEL_FS_8G (2 << 3)
 #define ICM20_ACCEL_FS_16G (3 << 3)
-//½ÇËÙ¶ÈÁ¿³Ì
+//è§’é€Ÿåº¦é‡ç¨‹
 #define ICM20_GYRO_FS_250DPS (0 << 3)
 #define ICM20_GYRO_FS_500DPS (1 << 3)
 #define ICM20_GYRO_FS_1000DPS (2 << 3)
@@ -134,13 +134,13 @@
 
 #define ICM20602_ADDRESS	0xD2
 
-#define GRAVITY_MSS 	9.80665f							//g×ªm/s2
-#define DEG_TO_RAD    0.0174532f 							//¶È×ª»¡¶È
-#define RAD_TO_DEG    57.29578f								//¶È×ª»¡¶È
+#define GRAVITY_MSS 	9.80665f							//gè½¬m/s2
+#define DEG_TO_RAD    0.0174532f 							//åº¦è½¬å¼§åº¦
+#define RAD_TO_DEG    57.29578f								//åº¦è½¬å¼§åº¦
 
 #define SPI_DEVICE_NAME     "spi10"
 
-//struct  rt_spi_device *spi_dev;		/* spi Éè±¸¾ä±ú */
+//struct  rt_spi_device *spi_dev;		/* spi è®¾å¤‡å¥æŸ„ */
 
 static uint8_t icm20602_write_reg(uint8_t reg, uint8_t val , struct  rt_spi_device *spi_dev)
 {
@@ -301,7 +301,7 @@ int icm20602_get_gyro_IMU2(float *gyro)
     return 0;
 }
 
-// µ¥Î»ÉãÊÏ¶È
+// å•ä½æ‘„æ°åº¦
 int icm20602_get_temper_IMU1(float *temper)
 {
     int16_t temp_adc;
@@ -337,12 +337,12 @@ int icm20602_get_temper_IMU2(float *temper)
 int icm20602_Reginit(struct  rt_spi_device *spi_dev)
 {
     rt_uint8_t id;
-    icm20602_write_reg(ICM20_PWR_MGMT_1, 0x80 , spi_dev); //¸´Î»£¬¸´Î»ºóÎ»0x41,Ë¯ÃßÄ£Ê½
+    icm20602_write_reg(ICM20_PWR_MGMT_1, 0x80 , spi_dev); //å¤ä½ï¼Œå¤ä½åä½0x41,ç¡çœ æ¨¡å¼
     rt_thread_mdelay(10);
-    icm20602_write_reg(ICM20_PWR_MGMT_1, 0x01 , spi_dev); //¹Ø±ÕË¯Ãß£¬×Ô¶¯Ñ¡ÔñÊ±ÖÓ
+    icm20602_write_reg(ICM20_PWR_MGMT_1, 0x01 , spi_dev); //å…³é—­ç¡çœ ï¼Œè‡ªåŠ¨é€‰æ‹©æ—¶é’Ÿ
     rt_thread_mdelay(10);
 
-    id = icm20602_read_reg(ICM20_WHO_AM_I , spi_dev); //¶ÁÈ¡ID
+    id = icm20602_read_reg(ICM20_WHO_AM_I , spi_dev); //è¯»å–ID
     if (id != 0x12)
     {
         rt_kprintf("icm init failed! error id is %x !\n", id);
@@ -350,31 +350,31 @@ int icm20602_Reginit(struct  rt_spi_device *spi_dev)
     }
 
     icm20602_write_reg(ICM20_PWR_MGMT_2, 0x00 , spi_dev);
-    icm20602_write_reg(ICM20_SMPLRT_DIV, 0 , spi_dev);                                  //·ÖÆµÊı=Îª0+1£¬Êı¾İÊä³öËÙÂÊÎªÄÚ²¿²ÉÑùËÙÂÊ
-    icm20602_write_reg(ICM20_CONFIG, DLPF_BW_41 , spi_dev);                             // GYROµÍÍ¨ÂË²¨ÉèÖÃ  1k rate
-    icm20602_write_reg(ICM20_ACCEL_CONFIG2, ACCEL_AVER_4 | ACCEL_DLPF_BW_44 , spi_dev); // ACCELµÍÍ¨ÂË²¨ÉèÖÃ
+    icm20602_write_reg(ICM20_SMPLRT_DIV, 0 , spi_dev);                                  //åˆ†é¢‘æ•°=ä¸º0+1ï¼Œæ•°æ®è¾“å‡ºé€Ÿç‡ä¸ºå†…éƒ¨é‡‡æ ·é€Ÿç‡
+    icm20602_write_reg(ICM20_CONFIG, DLPF_BW_41 , spi_dev);                             // GYROä½é€šæ»¤æ³¢è®¾ç½®  1k rate
+    icm20602_write_reg(ICM20_ACCEL_CONFIG2, ACCEL_AVER_4 | ACCEL_DLPF_BW_44 , spi_dev); // ACCELä½é€šæ»¤æ³¢è®¾ç½®
 
-    //ÉèÖÃÁ¿³Ì
-    icm20602_set_accel_fullscale(ICM20_ACCEL_FS_16G , spi_dev);   //¡À8g
-    icm20602_set_gyro_fullscale(ICM20_GYRO_FS_2000DPS , spi_dev); //¡À2000dps
+    //è®¾ç½®é‡ç¨‹
+    icm20602_set_accel_fullscale(ICM20_ACCEL_FS_16G , spi_dev);   //Â±8g
+    icm20602_set_gyro_fullscale(ICM20_GYRO_FS_2000DPS , spi_dev); //Â±2000dps
 
-    icm20602_write_reg(ICM20_LP_MODE_CFG, 0x00 , spi_dev); //¹Ø±ÕµÍ¹¦ºÄ
-    icm20602_write_reg(ICM20_FIFO_EN, 0x00 , spi_dev);     //¹Ø±ÕFIFO
+    icm20602_write_reg(ICM20_LP_MODE_CFG, 0x00 , spi_dev); //å…³é—­ä½åŠŸè€—
+    icm20602_write_reg(ICM20_FIFO_EN, 0x00 , spi_dev);     //å…³é—­FIFO
 
-    icm20602_write_reg(ICM20_INT_PIN_CFG, (uint8_t)(1 << 4) , spi_dev); // INTÊä³öÉèÖÃ
-    icm20602_write_reg(ICM20_INT_ENABLE, (uint8_t)(1 << 0) , spi_dev);  // INTÊä³öÊ¹ÄÜ
+    icm20602_write_reg(ICM20_INT_PIN_CFG, (uint8_t)(1 << 4) , spi_dev); // INTè¾“å‡ºè®¾ç½®
+    icm20602_write_reg(ICM20_INT_ENABLE, (uint8_t)(1 << 0) , spi_dev);  // INTè¾“å‡ºä½¿èƒ½
 
     rt_thread_mdelay(10);
 
     return 0;
 }
 
-// ³õÊ¼»¯SPIºÍICM20602Ğ¾Æ¬
+// åˆå§‹åŒ–SPIå’ŒICM20602èŠ¯ç‰‡
 void ICM_init()
 {
     rt_int8_t flag = 0 ;
 
-    // ÅäÖÃ SPI Éè±¸
+    // é…ç½® SPI è®¾å¤‡
     spi_ICM20602_init();
     
     if(icm20602_Reginit(spi_dev_IMU1))

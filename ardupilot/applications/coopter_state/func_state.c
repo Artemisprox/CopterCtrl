@@ -78,13 +78,13 @@ static uint8_t arm_confirm(data_check *data_valid , remote_data data)
         {
             //检查各个数据是否齐全
             //if( data_valid->atti_valid && data_valid->battery_OK && data_valid->rc_valid )
-						if( data_valid->atti_valid && data_valid->rc_valid )
+			if( data_valid->atti_valid && data_valid->rc_valid )
             {
                 copter_status.flight_status = ARMED;
                 flag = 1;
             }
-
-        }else
+        }
+        else
         {
             /*摇杆未回中*/
             error_write(THROTTLE_HIGH);
@@ -202,10 +202,9 @@ static void package_update(void)
 	copter_power = *p_4 ;
 	Package_Write_Pionter_End(battery_ID,battery);
 
-    recoil_data *p_5 =  Package_Pionter_Single(gun_ID,recoil_data);
-	copter_gimbal = *p_5 ;
-	Package_Write_Pionter_End(gun_ID,recoil_data);
-
+//    recoil_data *p_5 =  Package_Pionter_Single(gun_ID,recoil_data);
+//	copter_gimbal = *p_5 ;
+//	Package_Write_Pionter_End(gun_ID,recoil_data);
 }
 
 //状态决策线程
@@ -221,17 +220,23 @@ static void State_decide_thread_entry(void *parameter)
             copter_status.emergency = 1;
         else copter_status.emergency = 0;
 
-        if(gimbal_status_check(&copter_gimbal))
-        {
-            error_write(GIMBAL_LOST);
-        }
+//        if(gimbal_status_check(&copter_gimbal))
+//        {
+//            error_write(GIMBAL_LOST);
+//        }
         if(!(copter_data_valid.battery_OK = copter_power.Battery_data_rec && copter_power.Battery_status))
-            error_write(CHECK_BATTERY);
-        copter_status.power_ready =  copter_power.Battery_status;
-        if(!(copter_data_valid.pos_valid = copter_pos.pos_valid))
+				{
+					error_write(CHECK_BATTERY);
+					copter_status.power_ready =  copter_power.Battery_status;
+        }
+				if(!(copter_data_valid.pos_valid = copter_pos.pos_valid))
+				{
             error_write(POS_LOST);
-        if(!(copter_data_valid.height_valid = copter_pos.height_valid))
+        }
+				if(!(copter_data_valid.height_valid = copter_pos.height_valid))
+				{
             error_write(HEIGHT_LOST);
+				}
         if(!rc_status_check(&copter_remote))
         {
             error_write(RC_LOST);
@@ -264,7 +269,7 @@ static void State_decide_thread_entry(void *parameter)
         *p = copter_status;
         Package_Write_Pionter_End(status_ID,status);
         
-        error_read();
+//        error_read();
 
         rt_sem_take(&State_20ms_sem,RT_WAITING_FOREVER);
     }
@@ -285,7 +290,7 @@ rt_err_t StateDecide_Init(void)
 {  
     Battery_Init();
     recoil_compensate_init();
-		//初始状态设置
+	//初始状态设置
     copter_status_init();
     //错误处理
     error_handle_init();

@@ -132,7 +132,7 @@ int8_t AHRS_UpdateGyro(AHRS_t *ahrs_gyro, AHRS_t *ahrs,
 }
 
 /* 2 * proportional gain (Kp) */
-static float beta = 0.005f;
+static float beta = 0.010f;
 
 float AHRS_GetBeta()
 {

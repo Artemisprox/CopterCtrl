@@ -44,7 +44,7 @@ void spi_ICM20602_init(void)
 		/* config spi */
 		struct rt_spi_configuration cfg;
         cfg.data_width = 8;
-        cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB;; /* SPI Compatible: Mode 0 and Mode 3 */
+        cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible: Mode 0 and Mode 3 */
         cfg.max_hz = 10 * 1000 * 1000; /* 10M */
 		rt_spi_configure(spi_dev_IMU1, &cfg);
 		rt_spi_configure(spi_dev_IMU2, &cfg);

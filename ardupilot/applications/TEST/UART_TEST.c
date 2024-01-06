@@ -1,6 +1,6 @@
 #include "UART_TEST.h"
 
-#define SAMPLE_UART_NAME "uart5"
+#define SAMPLE_UART_NAME       "uart5"
 
 /* 用于接收消息的信号量 */
 static struct rt_semaphore rx_sem;
@@ -39,7 +39,9 @@ int UART_Init(void)
     char uart_name[RT_NAME_MAX];
     char str[] = "hello RT-Thread!\r\n";
 
+
     rt_strncpy(uart_name, SAMPLE_UART_NAME, RT_NAME_MAX);
+ 
 
     /* 查找系统中的串口设备 */
     serial = rt_device_find(uart_name);
@@ -55,10 +57,11 @@ int UART_Init(void)
     rt_device_open(serial, RT_DEVICE_FLAG_INT_RX);
     /* 设置接收回调函数 */
     rt_device_set_rx_indicate(serial, uart_input);
+    /* 发送字符串 */
     rt_device_write(serial, 0, str, (sizeof(str) - 1));
 
     /* 创建 serial 线程 */
-    rt_thread_t thread = rt_thread_create("serial", serial_thread_entry, RT_NULL, 1024, 25, 10);
+    rt_thread_t thread = rt_thread_create("serial", serial_thread_entry, RT_NULL, 1024, 23, 10);
     /* 创建成功则启动线程 */
     if (thread != RT_NULL)
     {

@@ -34,7 +34,6 @@ static void battery_100ms_IRQHandler(void *parameter)
     
 static void battery_thread_entry(void *parameter)
 {
-   
     while(1)
     {
         if(rt_sem_trytake(&battery_rec_sem) == RT_EOK)
@@ -102,7 +101,7 @@ rt_err_t Battery_Init(void)
 //    Battery_adc_Init(ADC_BATTERY6);
     /*数据服务器初始化*/
     Package_Pionter_Add("battery", battery);
-	  Package_ID = Package_Find_Num("battery");
+	Package_ID = Package_Find_Num("battery");
 	/*定时器处理线程*/
     rt_thread_t thread;
     rt_sem_init(&battery_100ms_sem, "battery_sem", 0, RT_IPC_FLAG_FIFO);

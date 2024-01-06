@@ -3,9 +3,10 @@
 #include "stm32f4xx_hal.h"
 #include "board.h"
 #include "drv_thread.h"
+#include "INS_FLOW.h"
 
-static int16_t channel_duty[30]={0};//»»ËãµÃµ½µÄ¸÷¸öÍ¨µÀµÄÕ¼¿Õ±È
-static int	pulse_width_us;//ÓÃÓÚ¼ÆËãÂö³å¿í¶È
+static int16_t channel_duty[30]={0};//æ¢ç®—å¾—åˆ°çš„å„ä¸ªé€šé“çš„å ç©ºæ¯”
+static int pulse_width_us;//ç”¨äºè®¡ç®—è„‰å†²å®½åº¦
 static int Now_Tick;
 static int Last_Tick;
 static int pulse_flag = 0;
@@ -24,12 +25,12 @@ rt_err_t RC_PPM_Init(void)
 	rt_thread_t RC_PPM = RT_NULL;
 	
 	RC_PPM = rt_thread_create(
-        "RC_PPM_receive",                     //Ïß³ÌÃû
-        RC_PPM_REC_Thread,       			//Ïß³ÌÈë¿Ú
-        RT_NULL,                      //Èë¿Ú²ÎÊıÎŞ
-        1024,                         //Ïß³ÌÕ»
-        THREAD_PRIO_RC_RX, //Ïß³ÌÓÅÏÈ¼¶
-        1);                           //Ïß³ÌÊ±¼äÆ¬´óĞ¡
+        "RC_PPM_receive",                     //çº¿ç¨‹å
+        RC_PPM_REC_Thread,       			//çº¿ç¨‹å…¥å£
+        RT_NULL,                      //å…¥å£å‚æ•°æ— 
+        1024,                         //çº¿ç¨‹æ ˆ
+        THREAD_PRIO_RC_RX, //çº¿ç¨‹ä¼˜å…ˆçº§
+        1);                           //çº¿ç¨‹æ—¶é—´ç‰‡å¤§å°
 	
 	rt_thread_startup(RC_PPM);
 	
@@ -44,31 +45,32 @@ static void pulse_process(void *args)
 {
 	int Delt_Tick = 0;
 	
-	Now_Tick = TIM13_GetCnt();//»ñÈ¡µ±Ç°Ê±¿ÌĞÅÏ¢
+	Now_Tick = TIM13_GetCnt();//è·å–å½“å‰æ—¶åˆ»ä¿¡æ¯
 	
 		Delt_Tick = Now_Tick - Last_Tick; 
 		Last_Tick = Now_Tick;
 		
 		if(Delt_Tick <= 0)
 		{
-			Delt_Tick += 65536;//¿çÈ¦½âËã
+			Delt_Tick += 65536;//è·¨åœˆè§£ç®—
 		}
 		
-		pulse_width_us = Delt_Tick;//Âö³åµÄÊ±¼ä³¤¶È£¨us£©
+		pulse_width_us = Delt_Tick;//è„‰å†²çš„æ—¶é—´é•¿åº¦ï¼ˆusï¼‰
 
-//	ÔÚÎ´ÖªÒ£¿ØÆ÷Í¨µÀÊıµÄÇé¿öÏÂ¿ÉÊ¹ÓÃ¸Ã·½·¨
-		if(pulse_width_us > 2000.0)//³¤¼ä¸ôÂö³åÊÓÎªÏÂÒ»ĞÅºÅµÄÆğÊ¼Î»
+		//åœ¨æœªçŸ¥é¥æ§å™¨é€šé“æ•°çš„æƒ…å†µä¸‹å¯ä½¿ç”¨è¯¥æ–¹æ³•
+		if(pulse_width_us > 2000.0)//é•¿é—´éš”è„‰å†²è§†ä¸ºä¸‹ä¸€ä¿¡å·çš„èµ·å§‹ä½
 		{
 			pulse_flag = 0;
 			if(header_flag <= 5)
 				header_flag++;
 			else if( header_flag > 5)
+			{
 				rt_sem_release(&RC_PPM_rec);
+			}
 		}
-		
 		else if(pulse_width_us > 0 && pulse_width_us < 2000)
 		{
-			channel_duty[pulse_flag] = pulse_width_us;//»»ËãÎªÕ¼¿Õ±ÈĞÎÊ½
+			channel_duty[pulse_flag] = pulse_width_us;//æ¢ç®—ä¸ºå ç©ºæ¯”å½¢å¼
 			pulse_flag++;
 		}
 //		if(pulse_flag == 8)
@@ -80,14 +82,14 @@ static void pulse_process(void *args)
 //		}	
 			
 		
-//ÔÚÒÑÖªÍ¨µÀÊıµÄÇé¿öÏÂ¿ÉÒÔÖ±½Ó¸ù¾İÍ¨µÀÊıÁ¿½âÎöĞÅºÅ
+//åœ¨å·²çŸ¥é€šé“æ•°çš„æƒ…å†µä¸‹å¯ä»¥ç›´æ¥æ ¹æ®é€šé“æ•°é‡è§£æä¿¡å·
 //		if(pulse_width_us > 0 && pulse_width_us <= 2000 )
 //		{	
-//			channel_duty[pulse_flag] = pulse_width_us;//»»ËãÎªÕ¼¿Õ±ÈĞÎÊ½
+//			channel_duty[pulse_flag] = pulse_width_us;//æ¢ç®—ä¸ºå ç©ºæ¯”å½¢å¼
 //		}
 //		pulse_flag++;
 //		
-//		if(pulse_flag == 8)//³¤¼ä¸ôÂö³åÊÓÎªÏÂÒ»ĞÅºÅµÄÆğÊ¼Î»
+//		if(pulse_flag == 8)//é•¿é—´éš”è„‰å†²è§†ä¸ºä¸‹ä¸€ä¿¡å·çš„èµ·å§‹ä½
 //		{
 //			pulse_flag = 0;
 //			rt_sem_release(&RC_PPM_rec);
@@ -110,18 +112,17 @@ void RC_PPM_REC_Thread(void *Para)
 	{	
 	rt_sem_take(&RC_PPM_rec,RT_WAITING_FOREVER);
 
-	//ÒÔÏÂÎªÎŞ¼¶±ä»¯Í¨µÀ£¬ÊµÊ±¸üĞÂ
-	copter_rec_data.RC_roll 					= channel_duty[0];
-	copter_rec_data.RC_pitch 					= channel_duty[1];
-	copter_rec_data.RC_yaw 						= channel_duty[3];
-	copter_rec_data.RC_throttle 			= channel_duty[2];
-	copter_rec_data.RC_roller 				= channel_duty[4];
+	//ä»¥ä¸‹ä¸ºäº”çº§å˜åŒ–é€šé“ï¼Œå®æ—¶æ›´æ–°
+	copter_rec_data.RC_roll 	= channel_duty[0];
+	copter_rec_data.RC_pitch 	= channel_duty[1];
+	copter_rec_data.RC_yaw 		= channel_duty[3];
+	copter_rec_data.RC_throttle = channel_duty[2];
 	
-	//ÒÔÏÂÎª¿ª¹ØÍ¨µÀ£¬¿ª¹Ø¸Ä±ä´¥·¢ÊÂ¼ş
+	//ä»¥ä¸‹ä¸ºå¼€å…³é€šé“ï¼Œå¼€å…³æ”¹å˜è§¦å‘äº‹ä»¶
 	RC_S1_now 	= channel_duty[5];
 	RC_S2_now 	= channel_duty[6];
-		
-	//Èıµµ¿ª¹Ø
+
+	//ä¸‰æ¡£å¼€å…³
 	if(RC_S1_now <= s1_low )
 			copter_rec_data.RC_switch_left = 500;
 	else if (RC_S1_now > s1_low && RC_S1_now < s1_high )
@@ -129,38 +130,14 @@ void RC_PPM_REC_Thread(void *Para)
 	else if (RC_S1_now > s1_high )
 			copter_rec_data.RC_switch_left = 1500;
 
-//		if( RC_S1_now != copter_rec_data.RC_switch_left )
-//    	copter_rec_data.RC_switch_left = RC_S1_now;
-//	if( RC_S1_now != copter_rec_data.RC_switch_left )
-//	{
-//		copter_rec_data.RC_switch_left = RC_S1_now;
-//		/*ÒÔÏÂÎª¿ª¹Ø¶ÔÓ¦ÊÂ¼ş´úÂë*/
-//		switch(copter_rec_data.RC_switch_left)
-//			{
-//				case 500:   break;
-//				case 1000:  break;
-//				case 1500:  break;
-//			}
-//	}
 	if(RC_S2_now <= s2_low )
 			copter_rec_data.RC_switch_right = 500;
 	else if (RC_S2_now > s2_low && RC_S2_now < s2_high )
 			copter_rec_data.RC_switch_right = 1000;
 	else if (RC_S2_now > s2_high )
 			copter_rec_data.RC_switch_right = 1500;
-	
-//	if( RC_S2_now != copter_rec_data.RC_switch_right )
-//		copter_rec_data.RC_switch_right = RC_S2_now;
-//		/*ÒÔÏÂÎª¿ª¹Ø¶ÔÓ¦ÊÂ¼ş´úÂë*/
-//		switch(copter_rec_data.RC_switch_right)
-//			{
-//				case 500:   break;
-//				case 1000:  break;
-//				case 1500:  break;
-//			}
-//	}
 
-  	Remote_Routine();//Ò£¿ØÆ÷Êı¾İ´¦Àí
+  	Remote_Routine();//é¥æ§å™¨æ•°æ®å¤„ç†
 }
 }
 

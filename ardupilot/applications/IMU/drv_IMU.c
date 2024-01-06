@@ -3,6 +3,8 @@
 #include "drv_utils.h"
 #include "func_TempCtr.h"
 #include "drv_dataserve.h"
+#include "Filter.h"
+
 
 IMU_t HERO_IMU; // IMU数据,unit:m/s^2,rad/s
 ATTI_t gimbal_atti;
@@ -43,24 +45,25 @@ void IMU_SetData_Extern(float PitchSpe,
 		First_flag = 1;
 
     if(First_flag)
-		{
-			HERO_IMU.pitch_speed = temp.pitch_speed;
-			HERO_IMU.yaw_speed = temp.yaw_speed;
-			HERO_IMU.roll_speed = temp.roll_speed;
-			HERO_IMU.pitch = temp.pitch;
-			HERO_IMU.yaw = temp.yaw;
-			HERO_IMU.roll = temp.roll;
-			HERO_IMU.atti_ready = AttiReady;
-			First_flag = 0;
-		}else
-		{
-			HERO_IMU.pitch_speed = lowpassfilter(0.8f , temp.pitch_speed , Last_data.pitch_speed  );
-      HERO_IMU.yaw_speed = lowpassfilter(0.8f , temp.yaw_speed , Last_data.yaw_speed  );
-      HERO_IMU.roll_speed = lowpassfilter(0.8f , temp.roll_speed , Last_data.roll_speed  );
-      HERO_IMU.pitch = lowpassfilter(0.8f , temp.pitch , Last_data.pitch  );
-      HERO_IMU.yaw = lowpassfilter(0.8f , temp.yaw , Last_data.yaw  );
-      HERO_IMU.roll = lowpassfilter(0.8f , temp.roll , Last_data.roll );
-		}
+	{
+		HERO_IMU.pitch_speed = temp.pitch_speed;
+		HERO_IMU.yaw_speed = temp.yaw_speed;
+		HERO_IMU.roll_speed = temp.roll_speed;
+		HERO_IMU.pitch = temp.pitch;
+		HERO_IMU.yaw = temp.yaw;
+	    HERO_IMU.roll = temp.roll;
+		HERO_IMU.atti_ready = AttiReady;
+		First_flag = 0;
+	}
+    else
+	{
+	    HERO_IMU.pitch_speed = lowpassfilter(0.8f , temp.pitch_speed , Last_data.pitch_speed  );
+        HERO_IMU.yaw_speed = lowpassfilter(0.8f , temp.yaw_speed , Last_data.yaw_speed  );
+        HERO_IMU.roll_speed = lowpassfilter(0.8f , temp.roll_speed , Last_data.roll_speed  );
+        HERO_IMU.pitch = lowpassfilter(0.8f , temp.pitch , Last_data.pitch  );
+        HERO_IMU.yaw = lowpassfilter(0.8f , temp.yaw , Last_data.yaw  );
+        HERO_IMU.roll = lowpassfilter(0.8f , temp.roll , Last_data.roll );
+	}
 		
 		Last_data.pitch_speed =  HERO_IMU.pitch_speed;
 		Last_data.yaw_speed = HERO_IMU.yaw_speed;

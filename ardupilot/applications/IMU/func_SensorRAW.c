@@ -27,9 +27,8 @@ static int8_t Sensor_ParseTemp_IMU1()
 
     if (Sensor_RAW_IMU1.Temperature != last_temp)
     { // 检测到温度数据更新
-        while (rt_sem_trytake(&imu1_temp_pid_sem) == RT_EOK)
-            ;                          // 清空多余的信号量
-        rt_sem_release(&imu1_temp_pid_sem); // 重新释放信号量
+        while (rt_sem_trytake(&imu1_temp_pid_sem) == RT_EOK); // 清空多余的信号量
+        rt_sem_release(&imu1_temp_pid_sem);                   // 重新释放信号量
     }
 
     last_temp = Sensor_RAW_IMU1.Temperature;
@@ -193,7 +192,7 @@ static void IMU1_irq(void *Para)
     }
 }
 
-// IO中断中进行频率计算和事件集的发送，其它线程中进行SPI读取
+//IO中断中进行频率计算和事件集的发送，其它线程中进行SPI读取
 static void IMU2_irq(void *Para)
 {
     int DeltaCount;
@@ -238,34 +237,32 @@ static void IMU1_SensorRAWProcess_thread(void *Para)
     while (1)
     {
         // 等待数据产生
-        rt_event_recv(&IMU_Event, EVT_IMU1,
-                      RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, 2, &EVT_recv);
+        rt_event_recv(&IMU_Event, EVT_IMU1, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, 2, &EVT_recv);
 
-      //  SWDG_FEED(SWDG_RAW_DATA_PROCESS_ID);
+        //  SWDG_FEED(SWDG_RAW_DATA_PROCESS_ID);
         if (EVT_recv == 0)
         {
             rt_thread_delay(1); // 出问题了
-				}
-				else{
+		}
+		else
+        {
 				
-				rt_sem_take(&IMU_Read_Sem,RT_WAITING_FOREVER);//IMU读取信号量，防止spi读取时被打断
+			rt_sem_take(&IMU_Read_Sem,RT_WAITING_FOREVER);//IMU读取信号量，防止spi读取时被打断
 				
-				Sensor_FreshData_IMU1();//读取IMU1数据
+			Sensor_FreshData_IMU1();//读取IMU1数据
 				
-				// 取完可能存在的堆积的信号量
-        while (rt_sem_trytake(&IMU_Read_Sem) == RT_EOK)
-            ;
-        // 发送信号量，触发姿态融合算法
-        rt_sem_release(&IMU_Read_Sem);
-					
-        // 取完可能存在的堆积的信号量
-        while (rt_sem_trytake(&IMU1_CALTrig_Sem) == RT_EOK)
-            ;
-        // 发送信号量，触发姿态融合算法
-        rt_sem_release(&IMU1_CALTrig_Sem);
-        }
+			// 取完可能存在的堆积的信号量
+            while (rt_sem_trytake(&IMU_Read_Sem) == RT_EOK);
 
-        
+            // 发送信号量，触发姿态融合算法
+            rt_sem_release(&IMU_Read_Sem);
+					
+            // 取完可能存在的堆积的信号量
+            while (rt_sem_trytake(&IMU1_CALTrig_Sem) == RT_EOK);
+
+            // 发送信号量，触发姿态融合算法
+            rt_sem_release(&IMU1_CALTrig_Sem);
+        }   
     }
 }
 
@@ -278,31 +275,31 @@ static void IMU2_SensorRAWProcess_thread(void *Para)
     while (1)
     {
         // 等待数据产生
-        rt_event_recv(&IMU_Event, EVT_IMU2,
-                      RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, 2, &EVT_recv);
+        rt_event_recv(&IMU_Event, EVT_IMU2, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, 2, &EVT_recv);
 
       //  SWDG_FEED(SWDG_RAW_DATA_PROCESS_ID);
         if (EVT_recv == 0)
         {
             rt_thread_delay(1); // 出问题了
-				}else
-				{
+		}
+        else
+		{
 					
-				rt_sem_take(&IMU_Read_Sem,RT_WAITING_FOREVER);//IMU读取信号量，防止spi读取时被打断
+			rt_sem_take(&IMU_Read_Sem,RT_WAITING_FOREVER);//IMU读取信号量，防止spi读取时被打断
 					
-				Sensor_FreshData_IMU2();
+			Sensor_FreshData_IMU2();
 
 						// 取完可能存在的堆积的信号量
-        while (rt_sem_trytake(&IMU_Read_Sem) == RT_EOK)
-            ;
-        // 发送信号量，触发姿态融合算法
-        rt_sem_release(&IMU_Read_Sem);
+            while (rt_sem_trytake(&IMU_Read_Sem) == RT_EOK);
+
+            // 发送信号量，触发姿态融合算法
+            rt_sem_release(&IMU_Read_Sem);
 					
-        // 取完可能存在的堆积的信号量
-        while (rt_sem_trytake(&IMU2_CALTrig_Sem) == RT_EOK)
-            ;
-        // 发送信号量，触发姿态融合算法
-        rt_sem_release(&IMU2_CALTrig_Sem);
+            // 取完可能存在的堆积的信号量
+            while (rt_sem_trytake(&IMU2_CALTrig_Sem) == RT_EOK);
+
+            // 发送信号量，触发姿态融合算法
+            rt_sem_release(&IMU2_CALTrig_Sem);
         }
 
         
@@ -333,7 +330,7 @@ static void HWTrig_init(void)
     FirstRecFlag1 = 1;
     LastCount1 = 0;
 	
-		FirstFilterFlag2 = 1;
+	FirstFilterFlag2 = 1;
     FirstRecFlag2 = 1;
     LastCount2 = 0;
 
@@ -347,11 +344,11 @@ static void HWTrig_init(void)
     //初始化中断数据接收线程
     IMU_SpiTrans = rt_thread_create(
         "IMU1_PRO",                     //线程名
-        IMU1_SensorRAWProcess_thread,       //线程入口
-        RT_NULL,                      //入口参数无
-        2048,                         //线程栈
-        THREAD_PRIO_RAW_DATA_PROCESS, //线程优先级
-        1);                           //线程时间片大小
+        IMU1_SensorRAWProcess_thread,   //线程入口
+        RT_NULL,                        //入口参数无
+        2048,                           //线程栈
+        THREAD_PRIO_RAW_DATA_PROCESS,   //线程优先级
+        1);                             //线程时间片大小
 
     //线程创建失败返回false
     if (IMU_SpiTrans == RT_NULL)
@@ -373,11 +370,11 @@ static void HWTrig_init(void)
     //初始化中断数据接收线程
     IMU_SpiTrans = rt_thread_create(
         "IMU2_PRO",                     //线程名
-        IMU2_SensorRAWProcess_thread,       //线程入口
-        RT_NULL,                      //入口参数无
-        2048,                         //线程栈
-        THREAD_PRIO_RAW_DATA_PROCESS, //线程优先级
-        1);                           //线程时间片大小
+        IMU2_SensorRAWProcess_thread,   //线程入口
+        RT_NULL,                        //入口参数无
+        2048,                           //线程栈
+        THREAD_PRIO_RAW_DATA_PROCESS,   //线程优先级
+        1);                             //线程时间片大小
 
     //线程创建失败返回false
     if (IMU_SpiTrans == RT_NULL)
@@ -404,7 +401,7 @@ int SensorRawProcess_Init()
     Sensor_RAW_IMU2.RawDataReady = 0;
 
     // 初始化用于控温的信号量，信号量在每次检测到温度数据变化后释放一个
-	  rt_sem_init(&imu1_temp_pid_sem, "TP1_Sem", 0, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&imu1_temp_pid_sem, "TP1_Sem", 0, RT_IPC_FLAG_FIFO);
     rt_sem_init(&imu2_temp_pid_sem, "TP2_Sem", 0, RT_IPC_FLAG_FIFO);
 		
     // 初始化传感芯片

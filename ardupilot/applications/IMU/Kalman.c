@@ -42,6 +42,7 @@ float Kalman_calculate(Kalman_Forward_v_one_dimension *Kalman,float v_now,float 
 #define Kt3 (Kalman->Kalman_gain[1][0])
 #define Kt4 (Kalman->Kalman_gain[1][1])
 
+//二维卡尔曼滤波，状态观测量为速度和距离
 void Kalman_height_calculate(Kalman_Height_t*Kalman,float height,float height_v,float height_a)
 {
     if (Kalman->Inited == 0)

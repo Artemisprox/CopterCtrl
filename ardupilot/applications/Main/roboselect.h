@@ -359,25 +359,40 @@
 //四旋翼控制相关设置
 #define COPTER_MOTOR_1 TIM_CHANNEL_1                    //右上角电机，逆时针        
 #define COPTER_MOTOR_2 TIM_CHANNEL_2                    //左下角电机，逆时针          
-#define COPTER_MOTOR_3 TIM_CHANNEL_3        	          //右下角电机，顺时针        
-#define COPTER_MOTOR_4 TIM_CHANNEL_4                    //左上角电机，顺时针            
-#define MASS 		   		 1.0f                         			//整机重量
-#define g              9.8f       												//重力加速度
-#define COPTER_ARM_LENGTH   0.15766f														//升力作用长度，单位m
-#define Ct    (1.0486f/10000000)                                                    //升力力矩常数
-#define Cm    (1.6464f/1000000000)                                                    //扭转力矩常数
-#define POS_X_PID 0,0,0,0,0,0														//X轴位置控制，单P
-#define VEC_X_PID 10.0f,0.8f,1.0f,2.0f,30,-30														//X轴速度控制
-#define POS_Y_PID 0,0,0,0,0,0 													//Y轴位置控制，单P
-#define VEC_Y_PID 10.0f,0.8f,1.0f,2.0f,30,-30													//Y轴速度控制
-#define POS_H_PID 1.0f,0.0f,0.8f,0.5f,8,-8 													//高度控制，单P
-#define VEC_H_PID 1.8f,0.1f,0.5f,0.4f,100,-100                        	  //高度速度控制
-#define PITCHSPE_PID 0.0028f,0.000067f,0.0000f,0.2f,1000.0f,-1000.0f												//PITCH角度控制
-#define PITCHANG_PID 2.3f,0.073f,1.0f,0.04f,200.0f,-200.0f												//PITCH角速度控制
-#define ROLLSPE_PID  0.0028f,0.000067f,0.0000f,0.2f,1000.0f,-1000.0f												//ROLL角度控制
-#define ROLLANG_PID  2.3f,0.073f,1.0f,0.04f,200.0f,-200.0f												//ROLL角速度控制
-#define YAWSPE_PID 	 0.0013f,0.0001f,0,0.012f,100,-100												//YAW角度控制
-#define YAWANG_PID   0.5,0,0,0,100,-100												//YAW角速度控制
+#define COPTER_MOTOR_3 TIM_CHANNEL_3        	        //左上角电机，顺时针        
+#define COPTER_MOTOR_4 TIM_CHANNEL_4                    //右下角电机，顺时针            
+#define MASS 		   		 1.15f                       //整机重量
+#define g              9.7988f       					//重力加速度
+#define COPTER_ARM_LENGTH   0.15766f					//升力作用长度，单位m
+#define Ct    (1.0486f/10000000)                        //升力力矩常数
+#define Cm    (1.6464f/1000000000)                      //扭转力矩常数
+#define POS_X_PID 3.0,0,0,0,5,-5							//X轴位置控制，单P
+#define VEC_X_PID 12.0f,0.5f,1.0f,5.0f,30,-30			//X轴速度控制
+#define POS_Y_PID 3.0,0,0,0,5,-5 							//Y轴位置控制，单P
+#define VEC_Y_PID 12.0f,0.5f,1.0f,5.0f,30,-30			//Y轴速度控制
+#define POS_H_PID 3.0f,0.0f,0.0f,0.5f,8,-8 				//高度控制，单P
+#define VEC_H_PID 5.0f,0.0005f,0.5f,0.4f,100,-100          //高度速度控制*/
+#define PITCHSPE_PID 0.003,0.00007,0.0,1.4f,1000.0f,-1000.0f		//PITCH角速度控制0.0038,0.0001,0.03,0.1f,1000.0f,-1000.0f
+#define PITCHANG_PID 2.1f,0.03,2.0,1.2f,200.0f,-200.0f							//PITCH角度控制6.0f,0,2.0,0.0f,200.0f,-200.0f
+#define ROLLSPE_PID  0.003,0.00007,0.0,1.4f,1000.0f,-1000.0f		//ROLL角速度控制0.0032,0.0001,0.0029,0.3f,1000.0f,-1000.0f
+#define ROLLANG_PID  2.1f,0.03,2.0,1.2f,200.0f,-200.0f								//ROLL角度控制4.0f,0.05,25.0,5.0f,200.0f,-200.0f
+#define YAWSPE_PID 	 0.002,0.000005,0.00,0.4f,50,-50					//YAW角速度控制
+#define YAWANG_PID   0.5,0,0,0,100,-100													//YAW角度控制
+
+#define TEST_PID     0.0032,0,0,0,0,0
 #endif
 
 #endif /* __ROBOSELECT_H__ */
+/*#define POS_X_PID 0,0,0,0,0,0							//X轴位置控制，单P
+#define VEC_X_PID 10.0f,0.8f,1.0f,2.0f,30,-30			//X轴速度控制
+#define POS_Y_PID 0,0,0,0,0,0 							//Y轴位置控制，单P
+#define VEC_Y_PID 10.0f,0.8f,1.0f,2.0f,30,-30			//Y轴速度控制
+#define POS_H_PID 1.0f,0.0f,0.8f,0.5f,8,-8 				//高度控制，单P
+#define VEC_H_PID 1.8f,0.1f,0.5f,0.4f,100,-100          //高度速度控制*/
+/*自稳模式
+#define PITCHSPE_PID 0.003,0.00007,0.011,0.4f,1000.0f,-1000.0f		//PITCH角速度控制0.0038,0.0001,0.03,0.1f,1000.0f,-1000.0f
+#define PITCHANG_PID 2.5f,0.18,0.2,3.0f,200.0f,-200.0f							//PITCH角度控制6.0f,0,2.0,0.0f,200.0f,-200.0f
+#define ROLLSPE_PID  0.003,0.00007,0.011,0.4f,1000.0f,-1000.0f		//ROLL角速度控制0.0032,0.0001,0.0029,0.3f,1000.0f,-1000.0f
+#define ROLLANG_PID  2.5f,0.18,0.2,3.0f,200.0f,-200.0f								//ROLL角度控制4.0f,0.05,25.0,5.0f,200.0f,-200.0f
+#define YAWSPE_PID 	 0.002,0.000005,0.00,0.4f,50,-50					//YAW角速度控制
+#define YAWANG_PID   0.5,0,0,0,100,-100													//YAW角度控制*/

@@ -27,7 +27,7 @@ void IMU_PosCali_Thread(void *Para)
     while(1)
     {
         IMU_WaitForRawData();
-        if(PosCount < IMUDataColletNum )
+        if(PosCount < IMUDataColletNum)
         {
             Pos_Sum[0] +=  HERO_IMU.pitch;
             Pos_Sum[1] +=  HERO_IMU.roll;
@@ -103,11 +103,11 @@ void IMU_PosCali_Init(void)
         THREAD_PRIO_IMU_POSCALI, // 线程优先级
         1);                       // 线程时间片大小
 
-			// 线程创建失败返回false
-			if (IMU_PosCali_Tid == RT_NULL)
-			{
-					return;
-			}
+	// 线程创建失败返回false
+	if (IMU_PosCali_Tid == RT_NULL)
+	{
+		return;
+	}
 	rt_thread_startup(IMU_PosCali_Tid);
 	
     rt_sem_take(&IMU1_PosCaliFinish_Sem,RT_WAITING_FOREVER);

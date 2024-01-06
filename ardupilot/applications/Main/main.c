@@ -11,10 +11,16 @@
 
 //#include "drv_buzzer.h"
 #include "drv_TF_mini.h"
+#include "roboselect.h"
 #include <rtthread.h>
 #include "drv_RC_PPM.h"
+<<<<<<< Updated upstream
 #include "func_motor.h"
 //#include "drv_RGB.h"
+=======
+#include "drv_RGB.h"
+#include "func_motor.h"
+>>>>>>> Stashed changes
 #include "mod_Monitor.h"
 #include "func_SensorRAW.h"
 #include "func_TempCtr.h"
@@ -26,14 +32,20 @@
 #include "func_sensor.h"
 #include "drv_canthread.h"
 #include "func_state.h"
+<<<<<<< Updated upstream
 #define TEST 1
+=======
+#include "INS_FLOW.h"
+#include "ELC_SPD_CTRL_TEST.h"
+#define TEST 0
+>>>>>>> Stashed changes
 #define BEEP_PIN_NUM GET_PIN(C, 13)
 #if (TEST)
 #define KEY_TEST 0
 #define CAN_TEST 1
 #define RGB_TEST 0
 #define PWM_TEST 0
-#define UART_TEST 0
+#define UART_TEST 1
 #define IMU_TEST 0
 #define ESC_CALI 0
 #define SBUS_TEST 0
@@ -43,7 +55,7 @@
 #include "PWM_TEST.h"
 #include "UART_TEST.h"
 #include "IMU_TEST.h"
-#include "drv_RGB.h"
+
 #include "drv_RC_SBUS.h"
 #include "func_ESC_Cali.h"
 #endif
@@ -88,20 +100,21 @@ int main(void)
 	MainRGB_init();
   ESC_cali_Init();
 #endif
+
 #else
 
-	/* 蜂鸣器引脚为输出模式 */
-    rt_pin_mode(BEEP_PIN_NUM, PIN_MODE_OUTPUT);
-  /* 默认低电平 */
-    rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
+// 	/* 蜂鸣器引脚为输出模式 */
+//     rt_pin_mode(BEEP_PIN_NUM, PIN_MODE_OUTPUT);
+//   /* 默认低电平 */
+//     rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
 
-    // 上电提示音
-				rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
-        rt_thread_mdelay(20);
-				rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
-        MainRGB_init();
+//     // 上电提示音
+// 	rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
+//     rt_thread_mdelay(20);
+// 	rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
+     MainRGB_init();
         //red_keepon();
-				//red_keepon();
+
 //所有程序注意, 如果初始化函数存在非 RT_EOK 的返回值单片机会直接复位
 //        if (MONITOR_INIT(1024, 1, THREAD_PRIO_MONITOR) != RT_EOK)
 //            Robot_Reset_Gimbal();
@@ -115,20 +128,13 @@ int main(void)
 
         if( Sensor_Init() != RT_EOK)
             Robot_Reset_Gimbal();
-
+			
         if(StateDecide_Init() != RT_EOK)
             Robot_Reset_Gimbal();
-				
-//					MX_TIM1_PWM_Init();
-//					MX_TIM_DUTY(TIM1,TIM_CHANNEL_1,0.1f);
-//					MX_TIM_DUTY(TIM1,TIM_CHANNEL_2,0.1f);
-//					MX_TIM_DUTY(TIM1,TIM_CHANNEL_3,0.1f);
-//					MX_TIM_DUTY(TIM1,TIM_CHANNEL_4,0.1f);
-        Motor_init();
-					
-		//		RC_init();
-    //		while(1);
+        Test_UART_Init();
 
-    //    return RT_EOK;
+        Motor_init();
+
+    return RT_EOK;
 #endif
 }

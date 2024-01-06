@@ -2,7 +2,10 @@
 
 #define PERIOD 0.02f
 #define DATA_FUSE 1
+#define SIMPLE_FUSE	2 
+#define NO_FUSE 3
 #define USING_FLOW 1
+#define test 1
 
 typedef struct
 {
@@ -31,5 +34,6 @@ typedef struct
 }data_fresh_time;
 
 extern float get_height(void);
+extern float get_v_height(void);
 extern rt_err_t Sensor_Init(void);
 //extern pos_sensor copter_pos;

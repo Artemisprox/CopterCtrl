@@ -9,10 +9,14 @@
 #include "drv_utils.h"
 #include "drv_IMU.h"
 #include "velocity_estimator.h"
+#include "INS_FLOW.h"
 
 static rt_thread_t atti_calcu = RT_NULL;
 static rt_int8_t Package_ID;
 static AHRS_Eulr_t first_euler = {0};
+extern Sensor_RAW_t copter_IMU_RAW;
+
+#define LOW_K 0.6f 
 
 /***
  * @brief 欧拉角初始化,yaw->pitch->roll顺规
@@ -60,6 +64,7 @@ static float Accl_Len = ACCL_STATIC, Accl_Filter;
 static float Accl_Error;
 
 static volatile float Accl_BetaFix_EN = 1;
+float test_g=9.8f;
 
 static void Fresh_Beta(void)
 {
@@ -80,7 +85,7 @@ static void Fresh_Beta(void)
     if (Accl_Error < 0.3f)
         // 误差小于一定值时，认为当前加速度计数据完全没有问题
         Accl_Error = 0;
-
+		test_g = Accl_Len;
     Beta_Filter = BETA_MAX - Accl_Error * BETA_FIX_K;
     if (Beta_Filter < BETA_MIN)
         Beta_Filter = BETA_MIN;
@@ -107,7 +112,7 @@ static void AttiCalcu_thread(void *parameter)
     AHRS_Accl_t AcclFix;       // 经过坐标变换后的加速度计数据
     AHRS_Accl_t AcclSum = {0}; // 启动时
     AHRS_Gyro_t GyroFix;       // 经过坐标变换和零飘校正后的角速度数据
-//    SWDG_START(SWDG_IMU_ID);		
+    //    SWDG_START(SWDG_IMU_ID);		
 		
     while (1)
     {
@@ -115,7 +120,7 @@ static void AttiCalcu_thread(void *parameter)
 
         // 坐标换算，零飘校正
         GetCaliIMUData(&copter_IMU_RAW.Accl_Raw, &copter_IMU_RAW.Gyro_Raw, &AcclFix, &GyroFix);
-
+				float datarate = copter_IMU_RAW.DataRate;
         if (first_flag)
         { // 初始位置还没确定
             FirstCount--;
@@ -136,6 +141,14 @@ static void AttiCalcu_thread(void *parameter)
         }
         else
         {
+					
+//							ins_flow_data.flo[0] = AcclFix.x;
+//							ins_flow_data.flo[1] = AcclFix.y;
+//							ins_flow_data.flo[2] = AcclFix.z;
+//							ins_flow_data.flo[3] = GyroFix.x;
+//							ins_flow_data.flo[4] = GyroFix.y;
+//							ins_flow_data.flo[5] = GyroFix.z;
+					
              // 初始位置确定完成
             inv_sample_freq = 1 / copter_IMU_RAW.DataRate;
             Fresh_Beta();
@@ -153,11 +166,13 @@ static void AttiCalcu_thread(void *parameter)
             }
             else
                 AttiReady_Flag = 1;
-}
+        }
         // 刷新姿态角数据
         IMU_SetData_Extern(GyroFix.y, GyroFix.z, GyroFix.x, HERO_Eulr.pit, HERO_Eulr.yaw, HERO_Eulr.rol, AttiReady_Flag && copter_IMU_RAW.RawDataReady);
+
         //刷新高度估计数据
-        accl_vec_estimator(HERO_IMU , AcclFix);
+        accl_vec_estimator(HERO_IMU , AcclFix , datarate);
+				
         /*数据服务器写入*/
         IMU_t *p =  Package_Pionter_Single(Package_ID,IMU_t);
         *p = HERO_IMU;
@@ -189,7 +204,7 @@ int Atti_init(void)
 
     //数据服务器初始化
     Package_Pionter_Add("IMU", HERO_IMU);
-	  Package_ID = Package_Find_Num("IMU");
+	Package_ID = Package_Find_Num("IMU");
 
     //初始化姿态解算线程
     atti_calcu = rt_thread_create(
@@ -199,10 +214,6 @@ int Atti_init(void)
         4096,                  //线程栈
         THREAD_PRIO_ATTICALCU, //线程优先级
         2);                    //线程时间片大小
-
-    //线程创建失败返回false
-    if (atti_calcu == RT_NULL)
-        return RT_ERROR;
 
     //线程启动失败返回false
     if (rt_thread_startup(atti_calcu) != RT_EOK)

@@ -5,7 +5,7 @@
 typedef enum
 {
 	red_slow = 1,
-	red_keep ,
+	red_keep,
 	blue_quick,
 	blue_slow,
 	blue_keep,

@@ -41,7 +41,7 @@ typedef struct
     matrix temp_inverse_m;
 } Kalman_Height_t;
 
-// 一位卡尔曼滤波器计算，状态观测量只有一个速度
+// 一维卡尔曼滤波器计算，状态观测量只有一个速度
 extern float Kalman_calculate(Kalman_Forward_v_one_dimension *Kalman, float v_now, float a_now);
 
 // 初始化二阶卡尔曼
@@ -50,7 +50,7 @@ extern void Kalman_height_init(Kalman_Height_t *Kalman, float preiod, float Q1, 
 // 一维卡尔曼滤波器初始化
 extern void Kalman_one_dimension_init(Kalman_Forward_v_one_dimension *Kalman, float preiod, float Q, float R);
 
-// 二姐卡尔曼滤波器初始化
+// 二阶卡尔曼滤波器初始化
 extern void Kalman_height_calculate(Kalman_Height_t *Kalman, float height, float height_v, float height_a);
 
 #endif
